@@ -4,7 +4,14 @@
     "conjuring:soulfire_forge",
     "spectrum:pedestal",
     "adorn:trading_station",
-    "guild:quest_screen"
+    "guild:quest_screen",
+    "bankstorage:bank_1",
+		"bankstorage:bank_2",
+		"bankstorage:bank_3",
+		"bankstorage:bank_4",
+		"bankstorage:bank_5",
+		"bankstorage:bank_6",
+		"bankstorage:bank_7"
   ],
   // Neither the opened inventory, nor your player inventory will be sortable when this inventory is opened
   "hideSortBtnsList": [
