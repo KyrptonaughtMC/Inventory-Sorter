@@ -69,7 +69,14 @@ public class IgnoreList implements AbstractConfigFile {
             new Identifier("adorn:trading_station"),
             new Identifier("guild:quest_screen"),
             new Identifier("conjuring:soulfire_forge"),
-            new Identifier("spectrum:pedestal")
+            new Identifier("spectrum:pedestal"),
+            new Identifier("bankstorage:bank_1"),
+		    new Identifier("bankstorage:bank_2"),
+		    new Identifier("bankstorage:bank_3"),
+		    new Identifier("bankstorage:bank_4"),
+		    new Identifier("bankstorage:bank_5"),
+		    new Identifier("bankstorage:bank_6"),
+		    new Identifier("bankstorage:bank_7")
     );
 
     public boolean isSortBlackListed(Identifier screenHandlerTypeID) {
