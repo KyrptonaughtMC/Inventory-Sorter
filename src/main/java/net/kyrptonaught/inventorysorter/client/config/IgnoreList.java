@@ -34,9 +34,9 @@ public class IgnoreList implements AbstractConfigFile {
             doNotSortList.addAll(newList.doNotSortList);
             hideSortBtnsList.addAll(newList.hideSortBtnsList);
             InventorySorterMod.configManager.save("blacklist");
-            SystemToast.add(MinecraftClient.getInstance().getToastManager(), SystemToast.Type.TUTORIAL_HINT, Text.translatable("key.inventorysorter.toast.pass"), null);
+            SystemToast.add(MinecraftClient.getInstance().getToastManager(), SystemToast.Type.PERIODIC_NOTIFICATION, Text.translatable("key.inventorysorter.toast.pass"), null);
         } catch (Exception e) {
-            SystemToast.add(MinecraftClient.getInstance().getToastManager(), SystemToast.Type.TUTORIAL_HINT, Text.translatable("key.inventorysorter.toast.error"), Text.translatable("key.inventorysorter.toast.error2"));
+            SystemToast.add(MinecraftClient.getInstance().getToastManager(), SystemToast.Type.PERIODIC_NOTIFICATION, Text.translatable("key.inventorysorter.toast.error"), Text.translatable("key.inventorysorter.toast.error2"));
             e.printStackTrace();
         }
     }
