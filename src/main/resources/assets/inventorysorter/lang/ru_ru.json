@@ -1,9 +1,11 @@
 {
-  "key.categories.inventorysorter": "Inventory Sorting",
+  "key.inventorysorter.config": "Настройки сортировки инвентаря",
+  "key.categories.inventorysorter": "Сортировка инвентаря",
   "key.inventorysorter.sort": "Сортировать инвентарь",
   "key.inventorysorter.config.category.display": "Отображать",
   "key.inventorysorter.config.category.logic": "Авто",
   "key.inventorysorter.config.category.activation": "Активация",
+  "key.inventorysorter.config.category.blacklist": "Чёрный список",
   "key.inventorysorter.config.displaysort": "Отображать кнопку в инвентаре",
   "key.inventorysorter.config.middleclick": "Нажатие колёсиком по слоту, чтобы отсортировать инвентарь",
   "key.inventorysorter.config.doubleclick": "Двойной клик по слоту, чтобы отсортировать инвентарь",
@@ -11,5 +13,42 @@
   "key.inventorysorter.config.sortplayer": "Сортировать инвентарь игрока",
   "key.inventorysorter.config.sorttype": "Метод сортировки",
   "key.inventorysorter.config.displaytooltip": "Отображать подсказку кнопки сортировки",
-  "key.inventorysorter.config.sortmousehighlighted": "Сортировка инвентаря при наведении курсора мыши"
+  "key.inventorysorter.config.sortmousehighlighted": "Сортировка инвентаря при наведении курсора мыши",
+  "key.inventorysorter.config.showdebug": "Показывать отладочный текст",
+  "key.inventorysorter.config.debugtooltip": "Всплывающая подсказка при наведении курсора на кнопку сортировки\nбудет содержать инструкцию по внесению этого инвентаря в чёрный список",
+  "key.inventorysorter.config.blacklistURL": "URL-адрес внешнего чёрного списка",
+  "key.inventorysorter.config.downloadListButton": "Список загрузок",
+  "key.inventorysorter.config.hidesort": "Скрыть обе кнопки сортировки",
+  "key.inventorysorter.config.nosort": "Показывать только сортировку инвентаря игрока",
+  "key.inventorysorter.config.hidetooltip": "Ни открытый инвентарь, ни инвентарь вашего игрока\nне будут доступны для сортировки при открытии этого инвентаря",
+  "key.inventorysorter.config.nosorttooltip": "Кнопка сортировки открытого инвентаря не будет видна, \nтолько игроку, когда этот инвентарь будет открыт",
+  "key.inventorysorter.toast.pass": "Успешно загружено",
+  "key.inventorysorter.toast.error": "Ошибка загрузки",
+  "key.inventorysorter.toast.error2": "Дополнительную информацию смотрите в журналах",
+
+  "key.inventorysorter.sorting.invalid": "Просматривается недействительный инвентарь",
+  "key.inventorysorter.sorting.sorted": "Отсортированный инвентарь",
+  "key.inventorysorter.sorting.notsortable": "Этот инвентарь не поддается сортировке",
+  "key.inventorysorter.sorting.failed": "Не удалось отсортировать инвентарь",
+  "key.inventorysorter.sorting.error": "Ошибка отсортировки инвентаря",
+
+  "key.inventorysorter.cmd.updatesortingtype": "Обновлённый тип сортировки",
+  "key.inventorysorter.cmd.middleClickSort": "Установить нажатие колёсиком, чтобы сортировать ",
+  "key.inventorysorter.cmd.doubleClickSort": "Установить слот двойной клик, чтобы сортировать ",
+  "key.inventorysorter.cmd.addblacklist": "Добавлено в чёрный список: ",
+  "key.inventorysorter.cmd.invalidscreen": "Неверный идентификатор экрана",
+
+  "key.inventorysorter.sorttype.name": "Имя",
+  "key.inventorysorter.sorttype.category": "Категория",
+  "key.inventorysorter.sorttype.mod": "Мод",
+  "key.inventorysorter.sorttype.id": "Идентификатор",
+
+  "key.inventorysorter.sortbtn.sort": "Сортировка по: ",
+  "key.inventorysorter.sortbtn.debug": "Нажмите, удерживая левый Ctrl",
+  "key.inventorysorter.sortbtn.debug2": "чтобы внести этот инвентарь в чёрный список",
+
+  "key.inventorysorter.sortbtn.clickhere": "Кликните сюда",
+  "key.inventorysorter.sortbtn.dnsadd": " для автоматического добавления в список \"Не сортировать инвентарь\"",
+  "key.inventorysorter.sortbtn.dndadd": " для автоматического добавления в список \"Скрыть кнопки сортировки\"",
+  "key.inventorysorter.sortbtn.error": "Экран нельзя добавить в чёрный список, или экран уже занесен в чёрный список"
 }
