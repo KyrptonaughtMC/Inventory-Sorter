@@ -1,26 +1,37 @@
 package net.kyrptonaught.inventorysorter.network;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.kyrptonaught.inventorysorter.InventorySorterMod;
 import net.kyrptonaught.inventorysorter.client.config.IgnoreList;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
-public class SyncBlacklistPacket {
-    private static final Identifier SYNC_BLACKLIST = new Identifier("inventorysorter", "sync_blacklist_packet");
+public record SyncBlacklistPacket(ByteBuf buffer) implements CustomPayload {
+    private static final CustomPayload.Id<SyncBlacklistPacket> ID = new CustomPayload.Id<>(Identifier.of("inventorysorter", "sync_blacklist_packet"));
+    private static final PacketCodec<RegistryByteBuf, SyncBlacklistPacket> CODEC = CustomPayload.codecOf(SyncBlacklistPacket::write, SyncBlacklistPacket::new);
+
+    public SyncBlacklistPacket(PacketByteBuf buf) {
+        this(buf.readBytes(buf.readableBytes()));
+    }
 
     public static void registerSyncOnPlayerJoin() {
-        ServerPlayConnectionEvents.JOIN.register((serverPlayNetworkHandler, packetSender, minecraftServer) -> packetSender.sendPacket(SYNC_BLACKLIST, getBuf()));
+        PayloadTypeRegistry.playS2C().register(SyncBlacklistPacket.ID, SyncBlacklistPacket.CODEC);
+        ServerPlayConnectionEvents.JOIN.register((serverPlayNetworkHandler, packetSender, minecraftServer) -> packetSender.sendPacket(new SyncBlacklistPacket(getBuf())));
     }
 
     public static void sync(ServerPlayerEntity player) {
-        ServerPlayNetworking.send(player, SYNC_BLACKLIST, getBuf());
+        ServerPlayNetworking.send(player, new SyncBlacklistPacket(getBuf()));
     }
 
     private static PacketByteBuf getBuf() {
@@ -41,7 +52,8 @@ public class SyncBlacklistPacket {
 
     @Environment(EnvType.CLIENT)
     public static void registerReceiveBlackList() {
-        ClientPlayNetworking.registerGlobalReceiver(SYNC_BLACKLIST, (client, handler, packet, sender) -> {
+        ClientPlayNetworking.registerGlobalReceiver(SyncBlacklistPacket.ID, (payload, context) -> {
+            PacketByteBuf packet = new PacketByteBuf(payload.buffer);
             int numHides = packet.readInt();
             for (int i = 0; i < numHides; i++)
                 InventorySorterMod.getBlackList().hideSortBtnsList.add(packet.readString());
@@ -50,5 +62,14 @@ public class SyncBlacklistPacket {
             for (int i = 0; i < numNoSort; i++)
                 InventorySorterMod.getBlackList().doNotSortList.add(packet.readString());
         });
+    }
+
+    public void write(PacketByteBuf buf) {
+        buf.writeBytes(buffer);
+    }
+
+    @Override
+    public Id<? extends CustomPayload> getId() {
+        return ID;
     }
 }

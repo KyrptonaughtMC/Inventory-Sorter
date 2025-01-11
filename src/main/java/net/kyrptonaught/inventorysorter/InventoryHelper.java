@@ -41,7 +41,7 @@ public class InventoryHelper {
         if (blockState.hasBlockEntity()) {
             BlockEntity blockEntity = world.getBlockEntity(blockPos);
             inventory = HopperBlockEntity.getInventoryAt(world, blockPos);
-            namedScreenHandlerFactory = block.createScreenHandlerFactory(blockState, world, blockPos);
+            namedScreenHandlerFactory = blockState.createScreenHandlerFactory(world, blockPos);
             if (namedScreenHandlerFactory == null && blockEntity instanceof NamedScreenHandlerFactory)
                 namedScreenHandlerFactory = (NamedScreenHandlerFactory) blockEntity;
         }
@@ -132,7 +132,7 @@ public class InventoryHelper {
             return false;
         if (itemStack_1.getDamage() != itemStack_2.getDamage())
             return false;
-        return ItemStack.canCombine(itemStack_1, itemStack_2);
+        return ItemStack.areItemsAndComponentsEqual(itemStack_1, itemStack_2);
     }
 
     public static boolean shouldDisplayBtns(PlayerEntity player) {

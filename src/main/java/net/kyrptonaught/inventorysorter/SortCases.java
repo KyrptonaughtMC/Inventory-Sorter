@@ -1,10 +1,18 @@
 package net.kyrptonaught.inventorysorter;
 
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.minecraft.component.ComponentMap;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.ItemEnchantmentsComponent;
+import net.minecraft.component.type.ProfileComponent;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
@@ -32,10 +40,9 @@ public class SortCases {
                 return Registries.ITEM.getId(item).getNamespace() + itemName;
             }
             case NAME -> {
-                if (stack.hasCustomName()) return stack.getName() + itemName;
+                return stack.getName() + itemName;
             }
         }
-
 
         return itemName;
     }
@@ -52,9 +59,9 @@ public class SortCases {
 
     private static String specialCases(ItemStack stack) {
         Item item = stack.getItem();
-        NbtCompound tag = stack.getNbt();
+        ComponentMap component = stack.getComponents();
 
-        if (tag != null && tag.contains("SkullOwner"))
+        if (component != null && component.contains(DataComponentTypes.PROFILE))
             return playerHeadCase(stack);
         if (stack.getCount() != stack.getMaxCount())
             return stackSize(stack);
@@ -66,9 +73,8 @@ public class SortCases {
     }
 
     private static String playerHeadCase(ItemStack stack) {
-        NbtCompound tag = stack.getNbt();
-        NbtCompound skullOwner = tag.getCompound("SkullOwner");
-        String ownerName = skullOwner.getString("Name");
+        ProfileComponent profileComponent = stack.getComponents().get(DataComponentTypes.PROFILE);
+        String ownerName = profileComponent.name().isPresent() ? profileComponent.name().get() : stack.getItem().toString();
 
         // this is duplicated logic, so we should probably refactor
         String count = "";
@@ -84,22 +90,17 @@ public class SortCases {
     }
 
     private static String enchantedBookNameCase(ItemStack stack) {
-        NbtList enchants = EnchantedBookItem.getEnchantmentNbt(stack);
+        ItemEnchantmentsComponent enchantmentsComponent = stack.getComponents().get(DataComponentTypes.STORED_ENCHANTMENTS);
         List<String> names = new ArrayList<>();
         StringBuilder enchantNames = new StringBuilder();
-        for (int i = 0; i < enchants.size(); i++) {
-            NbtCompound enchantTag = enchants.getCompound(i);
-            Identifier enchantID = Identifier.tryParse(enchantTag.getString("id"));
-            if (enchantID == null) continue;
-            Enchantment enchant = Registries.ENCHANTMENT.get(enchantID);
-            if (enchant == null) continue;
-            names.add(enchant.getName(enchantTag.getInt("lvl")).getString());
+        for (Object2IntMap.Entry<RegistryEntry<Enchantment>> enchant : enchantmentsComponent.getEnchantmentsMap()) {
+            names.add(Registries.ENCHANTMENT.get(enchant.getKey().getKey().get()).getName(enchant.getIntValue()).getString());
         }
         Collections.sort(names);
         for (String enchant : names) {
             enchantNames.append(enchant).append(" ");
         }
-        return stack.getItem().toString() + " " + enchants.size() + " " + enchantNames;
+        return stack.getItem().toString() + " " + enchantmentsComponent.getSize() + " " + enchantNames;
     }
 
     private static String toolDuribilityCase(ItemStack stack) {

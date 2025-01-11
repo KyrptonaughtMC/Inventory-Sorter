@@ -1,14 +1,14 @@
 plugins {
-	id 'fabric-loom' version '1.2-SNAPSHOT'
+	id 'fabric-loom' version '1.9-SNAPSHOT'
 	id 'maven-publish'
 }
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
-
-archivesBaseName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
+
+base {
+	archivesName = project.archives_base_name
+}
 
 
 repositories {
@@ -23,14 +23,15 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	modImplementation include("net.kyrptonaught:kyrptconfig:1.5.8-1.20.4") { exclude group: "net.fabricmc.fabric-api" }
+	modImplementation include("net.kyrptonaught:kyrptconfig:1.6.1-1.20.5") {
+		exclude module: "modmenu"
+		exclude group: "net.fabricmc.fabric-api"
+	}
 
-	//update modmenu when kyrptconfig is pulling old version
-	modImplementation ("com.terraformersmc:modmenu:9.0.0"){
+	modImplementation ("com.terraformersmc:modmenu:10.0.0" ){
 		transitive(false)
 	}
 }
-
 
 processResources {
 	inputs.property "version", project.version
@@ -41,12 +42,21 @@ processResources {
 }
 
 tasks.withType(JavaCompile).configureEach {
-	// Minecraft 1.18 (1.18-pre2) upwards uses Java 17.
-	it.options.release = 17
+	it.options.release = 21
+}
+
+java {
+	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+	// if it is present.
+	// If you remove this line, sources will not be generated.
+	withSourcesJar()
+
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
 }
 
 jar {
 	from("LICENSE") {
-		rename { "${it}_${project.archivesBaseName}"}
+		rename { "${it}_${project.base.archivesName.get()}"}
 	}
 }

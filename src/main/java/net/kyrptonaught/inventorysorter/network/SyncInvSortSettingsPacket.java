@@ -1,38 +1,56 @@
 package net.kyrptonaught.inventorysorter.network;
 
-import io.netty.buffer.Unpooled;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.kyrptonaught.inventorysorter.SortCases;
 import net.kyrptonaught.inventorysorter.client.InventorySorterModClient;
+import net.kyrptonaught.inventorysorter.client.config.ConfigOptions;
 import net.kyrptonaught.inventorysorter.interfaces.InvSorterPlayer;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
-public class SyncInvSortSettingsPacket {
-    private static final Identifier SYNC_SETTINGS = new Identifier("inventorysorter", "sync_settings_packet");
+public record SyncInvSortSettingsPacket(boolean middleClick, boolean doubleClick,
+                                        int sortType) implements CustomPayload {
+    private static final CustomPayload.Id<SyncInvSortSettingsPacket> ID = new CustomPayload.Id<>(Identifier.of("inventorysorter", "sync_settings_packet"));
+    private static final PacketCodec<RegistryByteBuf, SyncInvSortSettingsPacket> CODEC = CustomPayload.codecOf(SyncInvSortSettingsPacket::write, SyncInvSortSettingsPacket::new);
+
+    public SyncInvSortSettingsPacket(PacketByteBuf buf) {
+        this(buf.readBoolean(), buf.readBoolean(), buf.readInt());
+    }
 
     @Environment(EnvType.CLIENT)
     public static void registerSyncOnPlayerJoin() {
-        PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-        buf.writeBoolean(InventorySorterModClient.getConfig().middleClick);
-        buf.writeBoolean(InventorySorterModClient.getConfig().doubleClickSort);
-        buf.writeInt(InventorySorterModClient.getConfig().sortType.ordinal());
-        ClientPlayNetworking.send(SYNC_SETTINGS, buf);
+        ConfigOptions config = InventorySorterModClient.getConfig();
+        ClientPlayNetworking.send(new SyncInvSortSettingsPacket(config.middleClick, config.doubleClickSort, config.sortType.ordinal()));
     }
 
     public static void registerReceiveSyncData() {
-        ServerPlayNetworking.registerGlobalReceiver(SYNC_SETTINGS, ((server, player, handler, buf, responseSender) -> {
-            boolean middleClick = buf.readBoolean();
-            boolean doubleClick = buf.readBoolean();
-            int sortType = buf.readInt();
-            server.execute(() -> {
-                ((InvSorterPlayer) player).setMiddleClick(middleClick);
-                ((InvSorterPlayer) player).setDoubleClickSort(doubleClick);
-                ((InvSorterPlayer) player).setSortType(SortCases.SortType.values()[sortType]);
+        PayloadTypeRegistry.playC2S().register(SyncInvSortSettingsPacket.ID, SyncInvSortSettingsPacket.CODEC);
+        ServerPlayNetworking.registerGlobalReceiver(SyncInvSortSettingsPacket.ID, ((payload, context) -> {
+            ServerPlayerEntity player = context.player();
+            player.getServer().execute(() -> {
+                ((InvSorterPlayer) player).setMiddleClick(payload.middleClick);
+                ((InvSorterPlayer) player).setDoubleClickSort(payload.doubleClick);
+                ((InvSorterPlayer) player).setSortType(SortCases.SortType.values()[payload.sortType]);
             });
         }));
+    }
+
+    public void write(PacketByteBuf buf) {
+        buf.writeBoolean(middleClick);
+        buf.writeBoolean(doubleClick);
+        buf.writeInt(sortType);
+    }
+
+    @Override
+    public Id<? extends CustomPayload> getId() {
+        return ID;
     }
 }

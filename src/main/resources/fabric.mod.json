@@ -33,7 +33,6 @@
   },
   "depends": {
     "fabricloader": ">=0.12.5",
-    "fabric": "*",
-    "java": ">=17"
+    "fabric": "*"
   }
 }
