@@ -2,7 +2,6 @@ package net.kyrptonaught.inventorysorter;
 
 import net.kyrptonaught.inventorysorter.interfaces.SortableContainer;
 import net.kyrptonaught.inventorysorter.mixin.ScreenHandlerTypeAccessor;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.HopperBlockEntity;
@@ -35,7 +34,6 @@ public class InventoryHelper {
         NamedScreenHandlerFactory namedScreenHandlerFactory = null;
 
         BlockState blockState = world.getBlockState(blockPos);
-        Block block = blockState.getBlock();
 
         // check that block has block entity
         if (blockState.hasBlockEntity()) {

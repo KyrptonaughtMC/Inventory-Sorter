@@ -28,8 +28,8 @@ import java.util.List;
 @Environment(EnvType.CLIENT)
 public class SortButtonWidget extends TexturedButtonWidget {
     private static final ButtonTextures TEXTURES = new ButtonTextures(
-            new Identifier(InventorySorterMod.MOD_ID, "textures/gui/button_unfocused.png"),
-            new Identifier(InventorySorterMod.MOD_ID, "textures/gui/button_focused.png"));
+            Identifier.of(InventorySorterMod.MOD_ID, "textures/gui/button_unfocused.png"),
+            Identifier.of(InventorySorterMod.MOD_ID, "textures/gui/button_focused.png"));
     private final boolean playerInv;
 
     public SortButtonWidget(int int_1, int int_2, boolean playerInv) {

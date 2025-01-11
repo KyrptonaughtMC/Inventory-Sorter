@@ -8,26 +8,14 @@ import net.minecraft.component.type.ProfileComponent;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.*;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
 import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class SortCases {
-    public enum SortType {
-        NAME, CATEGORY, MOD, ID;
-
-        public String getTranslationKey() {
-            return "key." + InventorySorterMod.MOD_ID + ".sorttype." + this.toString().toLowerCase();
-        }
-    }
-
     static String getStringForSort(ItemStack stack, SortType sortType) {
         Item item = stack.getItem();
         String itemName = specialCases(stack);
@@ -93,8 +81,8 @@ public class SortCases {
         ItemEnchantmentsComponent enchantmentsComponent = stack.getComponents().get(DataComponentTypes.STORED_ENCHANTMENTS);
         List<String> names = new ArrayList<>();
         StringBuilder enchantNames = new StringBuilder();
-        for (Object2IntMap.Entry<RegistryEntry<Enchantment>> enchant : enchantmentsComponent.getEnchantmentsMap()) {
-            names.add(Registries.ENCHANTMENT.get(enchant.getKey().getKey().get()).getName(enchant.getIntValue()).getString());
+        for (Object2IntMap.Entry<RegistryEntry<Enchantment>> enchant : enchantmentsComponent.getEnchantmentEntries()) {
+            names.add(Enchantment.getName(enchant.getKey(), enchant.getIntValue()).getString());
         }
         Collections.sort(names);
         for (String enchant : names) {
@@ -105,5 +93,13 @@ public class SortCases {
 
     private static String toolDuribilityCase(ItemStack stack) {
         return stack.getItem().toString() + stack.getDamage();
+    }
+
+    public enum SortType {
+        NAME, CATEGORY, MOD, ID;
+
+        public String getTranslationKey() {
+            return "key." + InventorySorterMod.MOD_ID + ".sorttype." + this.toString().toLowerCase();
+        }
     }
 }
