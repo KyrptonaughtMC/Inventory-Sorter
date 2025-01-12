@@ -53,9 +53,9 @@ public class SortCases {
             return playerHeadCase(stack);
         if (stack.getCount() != stack.getMaxCount())
             return stackSize(stack);
-        if (item instanceof EnchantedBookItem)
+        if (stack.isOf(Items.ENCHANTED_BOOK))
             return enchantedBookNameCase(stack);
-        if (item instanceof ToolItem)
+        if (stack.isDamageable())
             return toolDuribilityCase(stack);
         return item.toString();
     }

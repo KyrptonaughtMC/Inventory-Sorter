@@ -8,11 +8,13 @@ import net.kyrptonaught.inventorysorter.InventorySorterMod;
 import net.kyrptonaught.inventorysorter.SortCases;
 import net.kyrptonaught.inventorysorter.network.InventorySortPacket;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.ShaderProgramKeys;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ButtonTextures;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.ClickEvent;
@@ -60,13 +62,13 @@ public class SortButtonWidget extends TexturedButtonWidget {
 
     @Override
     public void renderWidget(DrawContext context, int int_1, int int_2, float float_1) {
-        RenderSystem.setShader(GameRenderer::getPositionProgram);
+        RenderSystem.setShader(ShaderProgramKeys.POSITION);
         RenderSystem.enableDepthTest();
         context.getMatrices().push();
         context.getMatrices().scale(.5f, .5f, 1);
         context.getMatrices().translate(getX(), getY(), 0);
-
-        context.drawTexture(TEXTURES.get(true, isSelected() || isHovered()), getX(), getY(), 0, 0, 20, 18, 20, 18);
+        Identifier identifier = TEXTURES.get(true, isSelected() || isHovered());
+        context.drawGuiTexture(RenderLayer::getGuiTextured, identifier, 0, 0, 20, 18);
         this.renderTooltip(context, int_1, int_2);
         context.getMatrices().pop();
     }

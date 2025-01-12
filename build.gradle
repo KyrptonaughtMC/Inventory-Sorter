@@ -23,12 +23,12 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	modImplementation include("net.kyrptonaught:kyrptconfig:1.6.1-1.20.5") {
+	modImplementation include("net.kyrptonaught:kyrptconfig:1.6.1-1.21.4") {
 		exclude module: "modmenu"
 		exclude group: "net.fabricmc.fabric-api"
 	}
 
-	modImplementation ("com.terraformersmc:modmenu:10.0.0" ){
+	modImplementation ("com.terraformersmc:modmenu:13.0.0" ){
 		transitive(false)
 	}
 }
