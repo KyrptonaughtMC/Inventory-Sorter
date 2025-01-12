@@ -16,7 +16,7 @@ import java.net.URL;
 import java.util.HashSet;
 
 public class IgnoreList implements AbstractConfigFile {
-    public static final String DOWNLOAD_URL = "https://raw.githubusercontent.com/kyrptonaught/Inventory-Sorter/1.19/DownloadableBlacklist.json5";
+    public static final String DOWNLOAD_URL = "https://raw.githubusercontent.com/kyrptonaught/Inventory-Sorter/1.21/DownloadableBlacklist.json5";
 
     @Comment("URL for blacklist to be downloaded from")
     public String blacklistDownloadURL = DOWNLOAD_URL;
@@ -34,9 +34,9 @@ public class IgnoreList implements AbstractConfigFile {
             doNotSortList.addAll(newList.doNotSortList);
             hideSortBtnsList.addAll(newList.hideSortBtnsList);
             InventorySorterMod.configManager.save("blacklist");
-            SystemToast.add(MinecraftClient.getInstance().getToastManager(), SystemToast.Type.TUTORIAL_HINT, Text.translatable("key.inventorysorter.toast.pass"), null);
+            SystemToast.add(MinecraftClient.getInstance().getToastManager(), SystemToast.Type.PERIODIC_NOTIFICATION, Text.translatable("key.inventorysorter.toast.pass"), null);
         } catch (Exception e) {
-            SystemToast.add(MinecraftClient.getInstance().getToastManager(), SystemToast.Type.TUTORIAL_HINT, Text.translatable("key.inventorysorter.toast.error"), Text.translatable("key.inventorysorter.toast.error2"));
+            SystemToast.add(MinecraftClient.getInstance().getToastManager(), SystemToast.Type.PERIODIC_NOTIFICATION, Text.translatable("key.inventorysorter.toast.error"), Text.translatable("key.inventorysorter.toast.error2"));
             e.printStackTrace();
         }
     }
@@ -48,28 +48,35 @@ public class IgnoreList implements AbstractConfigFile {
     public HashSet<String> hideSortBtnsList = new HashSet<>();
 
     public transient HashSet<Identifier> defaultHideSortBtnsList = Sets.newHashSet(
-            new Identifier("guild:quest_screen"),
-            new Identifier("ae2:crystal_growth"),
-            new Identifier("ae2:advanced_inscriber"),
-            new Identifier("ae2:item_terminal"),
-            new Identifier("ae2:drive"),
-            new Identifier("ae2:patternterm"),
-            new Identifier("ae2:craftingterm"),
-            new Identifier("dankstorage:portable_dank_1"),
-            new Identifier("dankstorage:portable_dank_2"),
-            new Identifier("dankstorage:portable_dank_3"),
-            new Identifier("dankstorage:portable_dank_4"),
-            new Identifier("dankstorage:portable_dank_5"),
-            new Identifier("dankstorage:portable_dank_6"),
-            new Identifier("dankstorage:portable_dank_7")
+            Identifier.of("guild:quest_screen"),
+            Identifier.of("ae2:crystal_growth"),
+            Identifier.of("ae2:advanced_inscriber"),
+            Identifier.of("ae2:item_terminal"),
+            Identifier.of("ae2:drive"),
+            Identifier.of("ae2:patternterm"),
+            Identifier.of("ae2:craftingterm"),
+            Identifier.of("dankstorage:portable_dank_1"),
+            Identifier.of("dankstorage:portable_dank_2"),
+            Identifier.of("dankstorage:portable_dank_3"),
+            Identifier.of("dankstorage:portable_dank_4"),
+            Identifier.of("dankstorage:portable_dank_5"),
+            Identifier.of("dankstorage:portable_dank_6"),
+            Identifier.of("dankstorage:portable_dank_7")
     );
 
     public transient HashSet<Identifier> defaultDoNotSortList = Sets.newHashSet(
             Registries.SCREEN_HANDLER.getId(ScreenHandlerType.CRAFTING),
-            new Identifier("adorn:trading_station"),
-            new Identifier("guild:quest_screen"),
-            new Identifier("conjuring:soulfire_forge"),
-            new Identifier("spectrum:pedestal")
+            Identifier.of("adorn:trading_station"),
+            Identifier.of("guild:quest_screen"),
+            Identifier.of("conjuring:soulfire_forge"),
+            Identifier.of("spectrum:pedestal"),
+            Identifier.of("bankstorage:bank_1"),
+            Identifier.of("bankstorage:bank_2"),
+            Identifier.of("bankstorage:bank_3"),
+            Identifier.of("bankstorage:bank_4"),
+            Identifier.of("bankstorage:bank_5"),
+            Identifier.of("bankstorage:bank_6"),
+            Identifier.of("bankstorage:bank_7")
     );
 
     public boolean isSortBlackListed(Identifier screenHandlerTypeID) {

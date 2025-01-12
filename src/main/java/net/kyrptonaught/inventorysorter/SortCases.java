@@ -1,12 +1,17 @@
 package net.kyrptonaught.inventorysorter;
 
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.minecraft.component.ComponentMap;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.ItemEnchantmentsComponent;
+import net.minecraft.component.type.ProfileComponent;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.*;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.Registries;
 import net.minecraft.resource.featuretoggle.FeatureSet;
 import net.minecraft.util.Identifier;
+import net.minecraft.registry.entry.RegistryEntry;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,14 +22,6 @@ import java.util.function.Function;
 import java.util.stream.IntStream;
 
 public class SortCases {
-    public enum SortType {
-        NAME, CATEGORY, MOD, ID;
-
-        public String getTranslationKey() {
-            return "key." + InventorySorterMod.MOD_ID + ".sorttype." + this.toString().toLowerCase();
-        }
-    }
-
     static Comparator<ItemStack> getComparator(SortType sortType) {
         var defaultComparator = Comparator.comparing(SortCases::specialCases);
         switch (sortType) {
@@ -68,23 +65,22 @@ public class SortCases {
 
     private static String specialCases(ItemStack stack) {
         Item item = stack.getItem();
-        NbtCompound tag = stack.getNbt();
+        ComponentMap component = stack.getComponents();
 
-        if (tag != null && tag.contains("SkullOwner"))
+        if (component != null && component.contains(DataComponentTypes.PROFILE))
             return playerHeadCase(stack);
         if (stack.getCount() != stack.getMaxCount())
             return stackSize(stack);
-        if (item instanceof EnchantedBookItem)
+        if (stack.isOf(Items.ENCHANTED_BOOK))
             return enchantedBookNameCase(stack);
-        if (item instanceof ToolItem)
+        if (stack.isDamageable())
             return toolDuribilityCase(stack);
         return item.toString();
     }
 
     private static String playerHeadCase(ItemStack stack) {
-        NbtCompound tag = stack.getNbt();
-        NbtCompound skullOwner = tag.getCompound("SkullOwner");
-        String ownerName = skullOwner.getString("Name");
+        ProfileComponent profileComponent = stack.getComponents().get(DataComponentTypes.PROFILE);
+        String ownerName = profileComponent.name().isPresent() ? profileComponent.name().get() : stack.getItem().toString();
 
         // this is duplicated logic, so we should probably refactor
         String count = "";
@@ -100,25 +96,28 @@ public class SortCases {
     }
 
     private static String enchantedBookNameCase(ItemStack stack) {
-        NbtList enchants = EnchantedBookItem.getEnchantmentNbt(stack);
+        ItemEnchantmentsComponent enchantmentsComponent = stack.getComponents().get(DataComponentTypes.STORED_ENCHANTMENTS);
         List<String> names = new ArrayList<>();
         StringBuilder enchantNames = new StringBuilder();
-        for (int i = 0; i < enchants.size(); i++) {
-            NbtCompound enchantTag = enchants.getCompound(i);
-            Identifier enchantID = Identifier.tryParse(enchantTag.getString("id"));
-            if (enchantID == null) continue;
-            Enchantment enchant = Registries.ENCHANTMENT.get(enchantID);
-            if (enchant == null) continue;
-            names.add(enchant.getName(enchantTag.getInt("lvl")).getString());
+        for (Object2IntMap.Entry<RegistryEntry<Enchantment>> enchant : enchantmentsComponent.getEnchantmentEntries()) {
+            names.add(Enchantment.getName(enchant.getKey(), enchant.getIntValue()).getString());
         }
         Collections.sort(names);
         for (String enchant : names) {
             enchantNames.append(enchant).append(" ");
         }
-        return stack.getItem().toString() + " " + enchants.size() + " " + enchantNames;
+        return stack.getItem().toString() + " " + enchantmentsComponent.getSize() + " " + enchantNames;
     }
 
     private static String toolDuribilityCase(ItemStack stack) {
         return stack.getItem().toString() + stack.getDamage();
+    }
+
+    public enum SortType {
+        NAME, CATEGORY, MOD, ID;
+
+        public String getTranslationKey() {
+            return "key." + InventorySorterMod.MOD_ID + ".sorttype." + this.toString().toLowerCase();
+        }
     }
 }

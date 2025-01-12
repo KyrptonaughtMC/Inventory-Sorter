@@ -29,7 +29,7 @@ public class SortCommand {
                     HitResult hit = commandContext.getSource().getPlayer().raycast(6, 1, false);
                     if (hit instanceof BlockHitResult) {
                         Text feedBack = InventoryHelper.sortBlock(commandContext.getSource().getPlayer().getWorld(), ((BlockHitResult) hit).getBlockPos(), commandContext.getSource().getPlayer(), ((InvSorterPlayer) commandContext.getSource().getPlayer()).getSortType());
-                        commandContext.getSource().sendFeedback(()->feedBack, false);
+                        commandContext.getSource().sendFeedback(() -> feedBack, false);
                     }
                     return 1;
                 }));
@@ -39,7 +39,7 @@ public class SortCommand {
                     InventoryHelper.sortInv(commandContext.getSource().getPlayer(), true, ((InvSorterPlayer) commandContext.getSource().getPlayer()).getSortType());
 
                     Text feedBack = Text.translatable("key.inventorysorter.sorting.sorted");
-                    commandContext.getSource().sendFeedback(()->feedBack, false);
+                    commandContext.getSource().sendFeedback(() -> feedBack, false);
                     return 1;
                 }));
 
@@ -71,7 +71,7 @@ public class SortCommand {
                             .executes(context -> {
                                 ((InvSorterPlayer) context.getSource().getPlayer()).setSortType(sortType);
                                 Text feedBack = Text.translatable("key.inventorysorter.cmd.updatesortingtype");
-                                context.getSource().sendFeedback(()->feedBack, false);
+                                context.getSource().sendFeedback(() -> feedBack, false);
                                 return 1;
                             })));
         }
@@ -83,14 +83,14 @@ public class SortCommand {
 
     public static int executeBlackList(CommandContext<ServerCommandSource> commandContext, boolean isDNS) {
         String id = StringArgumentType.getString(commandContext, "screenid");
-        if (Registries.SCREEN_HANDLER.containsId(new Identifier(id))) {
+        if (Registries.SCREEN_HANDLER.containsId(Identifier.of(id))) {
             if (isDNS) InventorySorterMod.getBlackList().doNotSortList.add(id);
             else InventorySorterMod.getBlackList().hideSortBtnsList.add(id);
             InventorySorterMod.configManager.save();
             commandContext.getSource().getServer().getPlayerManager().getPlayerList().forEach(SyncBlacklistPacket::sync);
-            commandContext.getSource().sendFeedback(()->Text.translatable("key.inventorysorter.cmd.addblacklist").append(id), false);
+            commandContext.getSource().sendFeedback(() -> Text.translatable("key.inventorysorter.cmd.addblacklist").append(id), false);
         } else
-            commandContext.getSource().sendFeedback(()->Text.translatable("key.inventorysorter.cmd.invalidscreen"), false);
+            commandContext.getSource().sendFeedback(() -> Text.translatable("key.inventorysorter.cmd.invalidscreen"), false);
         return 1;
     }
 
@@ -100,7 +100,7 @@ public class SortCommand {
                         .executes(context -> {
                             storage.accept(context.getSource().getPlayer(), false);
                             Text feedBack = response.copy().append("False");
-                            context.getSource().sendFeedback(()->feedBack, false);
+                            context.getSource().sendFeedback(() -> feedBack, false);
                             return 1;
                         })));
         invsortCommand.then(CommandManager.literal(command)
@@ -108,7 +108,7 @@ public class SortCommand {
                         .executes(context -> {
                             storage.accept(context.getSource().getPlayer(), true);
                             Text feedBack = response.copy().append("True");
-                            context.getSource().sendFeedback(()->feedBack, false);
+                            context.getSource().sendFeedback(() -> feedBack, false);
                             return 1;
                         })));
     }

@@ -2,7 +2,6 @@ package net.kyrptonaught.inventorysorter;
 
 import net.kyrptonaught.inventorysorter.interfaces.SortableContainer;
 import net.kyrptonaught.inventorysorter.mixin.ScreenHandlerTypeAccessor;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.HopperBlockEntity;
@@ -35,13 +34,12 @@ public class InventoryHelper {
         NamedScreenHandlerFactory namedScreenHandlerFactory = null;
 
         BlockState blockState = world.getBlockState(blockPos);
-        Block block = blockState.getBlock();
 
         // check that block has block entity
         if (blockState.hasBlockEntity()) {
             BlockEntity blockEntity = world.getBlockEntity(blockPos);
             inventory = HopperBlockEntity.getInventoryAt(world, blockPos);
-            namedScreenHandlerFactory = block.createScreenHandlerFactory(blockState, world, blockPos);
+            namedScreenHandlerFactory = blockState.createScreenHandlerFactory(world, blockPos);
             if (namedScreenHandlerFactory == null && blockEntity instanceof NamedScreenHandlerFactory)
                 namedScreenHandlerFactory = (NamedScreenHandlerFactory) blockEntity;
         }
@@ -132,7 +130,7 @@ public class InventoryHelper {
             return false;
         if (itemStack_1.getDamage() != itemStack_2.getDamage())
             return false;
-        return ItemStack.canCombine(itemStack_1, itemStack_2);
+        return ItemStack.areItemsAndComponentsEqual(itemStack_1, itemStack_2);
     }
 
     public static boolean shouldDisplayBtns(PlayerEntity player) {
