@@ -6,19 +6,14 @@ import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ItemEnchantmentsComponent;
 import net.minecraft.component.type.ProfileComponent;
 import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
-import net.minecraft.resource.featuretoggle.FeatureSet;
-import net.minecraft.util.Identifier;
 import net.minecraft.registry.entry.RegistryEntry;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.stream.IntStream;
 
 public class SortCases {
@@ -29,15 +24,12 @@ public class SortCases {
                 return Comparator.comparing(SortCases::getGroupIdentifier).thenComparing(defaultComparator);
             }
             case MOD -> {
-                return Comparator.comparing((ItemStack stack) -> {
-                    return Registries.ITEM.getId(stack.getItem()).getNamespace();
-                }).thenComparing(defaultComparator);
+                return Comparator.comparing((ItemStack stack) -> Registries.ITEM.getId(stack.getItem()).getNamespace()).thenComparing(defaultComparator);
             }
             case NAME -> {
                 return Comparator.comparing(stack -> {
                     var name = specialCases(stack);
-                    if (stack.hasCustomName()) return stack.getName() + name;
-                    return name;
+                    return stack.getName() + name;
                 });
             }
             default -> {
@@ -53,7 +45,7 @@ public class SortCases {
             var stacks = group.getSearchTabStacks().stream().toList();
             var index = IntStream
                     .range(0, stacks.size())
-                    .filter(j -> ItemStack.canCombine(stacks.get(j), stack))
+                    .filter(j -> ItemStack.areItemsAndComponentsEqual(stacks.get(j), stack))
                     .findFirst();
 
             if (index.isPresent()) {
