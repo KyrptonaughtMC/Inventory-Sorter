@@ -63,7 +63,7 @@ public class ServerPlayerEntityMixin implements InvSorterPlayer {
     public void readSortType(NbtCompound nbt, CallbackInfo ci) {
         if (nbt.contains(saveKEY)) {
             NbtCompound invSortNbt = nbt.getCompound(saveKEY);
-            if (invSortNbt.contains(sortTypeKey)) sortType = SortCases.SortType.values()[invSortNbt.getInt(saveKEY)];
+            if (invSortNbt.contains(sortTypeKey)) sortType = SortCases.SortType.values()[invSortNbt.getInt(sortTypeKey)];
             if (invSortNbt.contains(middleClickKey)) middleClick = invSortNbt.getBoolean(middleClickKey);
             if (invSortNbt.contains(doubleClickKey)) doubleClick = invSortNbt.getBoolean(doubleClickKey);
         }

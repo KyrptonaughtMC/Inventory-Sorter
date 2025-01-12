@@ -91,7 +91,7 @@ public class InventoryHelper {
         for (int i = 0; i < invSize; i++)
             addStackWithMerge(stacks, inv.getStack(startSlot + i));
 
-        stacks.sort(Comparator.comparing(stack -> SortCases.getStringForSort(stack, sortType)));
+        stacks.sort(SortCases.getComparator(sortType));
         if (stacks.size() == 0) return;
         for (int i = 0; i < invSize; i++)
             inv.setStack(startSlot + i, i < stacks.size() ? stacks.get(i) : ItemStack.EMPTY);

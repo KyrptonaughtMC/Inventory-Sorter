@@ -9,40 +9,58 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
+import net.minecraft.resource.featuretoggle.FeatureSet;
+import net.minecraft.util.Identifier;
 import net.minecraft.registry.entry.RegistryEntry;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.stream.IntStream;
 
 public class SortCases {
-    static String getStringForSort(ItemStack stack, SortType sortType) {
-        Item item = stack.getItem();
-        String itemName = specialCases(stack);
+    static Comparator<ItemStack> getComparator(SortType sortType) {
+        var defaultComparator = Comparator.comparing(SortCases::specialCases);
         switch (sortType) {
             case CATEGORY -> {
-                ItemGroup group = getFirstItemGroup(stack);
-                return (group != null ? group.getDisplayName().getString() : "zzz") + itemName;
+                return Comparator.comparing(SortCases::getGroupIdentifier).thenComparing(defaultComparator);
             }
             case MOD -> {
-                return Registries.ITEM.getId(item).getNamespace() + itemName;
+                return Comparator.comparing((ItemStack stack) -> {
+                    return Registries.ITEM.getId(stack.getItem()).getNamespace();
+                }).thenComparing(defaultComparator);
             }
             case NAME -> {
-                return stack.getName() + itemName;
+                return Comparator.comparing(stack -> {
+                    var name = specialCases(stack);
+                    if (stack.hasCustomName()) return stack.getName() + name;
+                    return name;
+                });
+            }
+            default -> {
+                return defaultComparator;
             }
         }
-
-        return itemName;
     }
 
-    private static ItemGroup getFirstItemGroup(ItemStack stack) {
+    private static int getGroupIdentifier(ItemStack stack) {
         List<ItemGroup> groups = ItemGroups.getGroups();
-        for (ItemGroup group : groups) {
-            if (group.contains(new ItemStack(stack.getItem())))
-                return group;
+        for (int i = 0; i < groups.size(); i++) {
+            var group = groups.get(i);
+            var stacks = group.getSearchTabStacks().stream().toList();
+            var index = IntStream
+                    .range(0, stacks.size())
+                    .filter(j -> ItemStack.canCombine(stacks.get(j), stack))
+                    .findFirst();
 
+            if (index.isPresent()) {
+                return i * 1000 + index.getAsInt();
+            }
         }
-        return null;
+        return 99999;
     }
 
     private static String specialCases(ItemStack stack) {
