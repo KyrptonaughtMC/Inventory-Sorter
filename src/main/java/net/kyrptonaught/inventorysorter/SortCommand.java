@@ -86,7 +86,8 @@ public class SortCommand {
         if (Registries.SCREEN_HANDLER.containsId(Identifier.of(id))) {
             if (isDNS) InventorySorterMod.getBlackList().doNotSortList.add(id);
             else InventorySorterMod.getBlackList().hideSortBtnsList.add(id);
-            InventorySorterMod.configManager.save();
+            //@TODO: InventorySorterMod.configManager.save();
+            //InventorySorterMod.configManager.save();
             commandContext.getSource().getServer().getPlayerManager().getPlayerList().forEach(SyncBlacklistPacket::sync);
             commandContext.getSource().sendFeedback(() -> Text.translatable("key.inventorysorter.cmd.addblacklist").append(id), false);
         } else

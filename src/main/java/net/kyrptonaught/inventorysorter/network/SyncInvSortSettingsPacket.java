@@ -7,7 +7,8 @@ import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.kyrptonaught.inventorysorter.SortCases;
 import net.kyrptonaught.inventorysorter.client.InventorySorterModClient;
-import net.kyrptonaught.inventorysorter.client.config.ConfigOptions;
+import net.kyrptonaught.inventorysorter.client.config.NewConfigOptions;
+import net.kyrptonaught.inventorysorter.client.config.OldConfigOptions;
 import net.kyrptonaught.inventorysorter.interfaces.InvSorterPlayer;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.RegistryByteBuf;
@@ -27,8 +28,8 @@ public record SyncInvSortSettingsPacket(boolean middleClick, boolean doubleClick
 
     @Environment(EnvType.CLIENT)
     public static void registerSyncOnPlayerJoin() {
-        ConfigOptions config = InventorySorterModClient.getConfig();
-        ClientPlayNetworking.send(new SyncInvSortSettingsPacket(config.middleClick, config.doubleClickSort, config.sortType.ordinal()));
+        NewConfigOptions config = InventorySorterModClient.getConfig();
+        ClientPlayNetworking.send(new SyncInvSortSettingsPacket(config.enableMiddleClickSort, config.enableDoubleClickSort, config.sortType.ordinal()));
     }
 
     public static void registerReceiveSyncData() {

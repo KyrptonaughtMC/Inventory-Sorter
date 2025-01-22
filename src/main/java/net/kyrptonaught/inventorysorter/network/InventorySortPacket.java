@@ -35,7 +35,7 @@ public record InventorySortPacket(boolean playerInv, int sortType) implements Cu
     @Environment(EnvType.CLIENT)
     public static void sendSortPacket(boolean playerInv) {
         ClientPlayNetworking.send(new InventorySortPacket(playerInv, InventorySorterModClient.getConfig().sortType.ordinal()));
-        if (!playerInv && InventorySorterModClient.getConfig().sortPlayer)
+        if (!playerInv && InventorySorterModClient.getConfig().sortPlayerInventory)
             sendSortPacket(true);
     }
 

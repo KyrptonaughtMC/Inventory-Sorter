@@ -53,10 +53,10 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
     private void invsort$init(CallbackInfo callbackinfo) {
         if (client == null || client.player == null)
             return;
-        if (InventorySorterModClient.getConfig().displaySort && InventoryHelper.shouldDisplayBtns(client.player)) {
+        if (InventorySorterModClient.getConfig().showSortButton && InventoryHelper.shouldDisplayBtns(client.player)) {
             boolean playerOnly = !InventoryHelper.canSortInventory(client.player);
             this.addDrawableChild(invsort$SortBtn = new SortButtonWidget(this.x + this.backgroundWidth - 20, this.y + (playerOnly ? (backgroundHeight - 95) : 6), playerOnly));
-            if (!playerOnly && InventorySorterModClient.getConfig().seperateBtn)
+            if (!playerOnly && InventorySorterModClient.getConfig().separateButton)
                 this.addDrawableChild(new SortButtonWidget(invsort$SortBtn.getX(), this.y + ((SortableContainerScreen) (this)).getMiddleHeight(), true));
         }
     }
@@ -67,7 +67,7 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
             return;
         if (InventorySorterModClient.isKeybindPressed(button, InputUtil.Type.MOUSE)) {
             boolean playerOnlyInv = !InventoryHelper.canSortInventory(client.player);
-            if (!playerOnlyInv && InventorySorterModClient.getConfig().sortMouseHighlighted) {
+            if (!playerOnlyInv && InventorySorterModClient.getConfig().sortHighlightedItem) {
                 if (focusedSlot != null)
                     playerOnlyInv = focusedSlot.inventory instanceof PlayerInventory;
             }
@@ -82,7 +82,7 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
             return;
         if (InventorySorterModClient.isKeybindPressed(keycode, InputUtil.Type.KEYSYM)) {
             boolean playerOnlyInv = !InventoryHelper.canSortInventory(client.player);
-            if (!playerOnlyInv && InventorySorterModClient.getConfig().sortMouseHighlighted) {
+            if (!playerOnlyInv && InventorySorterModClient.getConfig().sortHighlightedItem) {
                 if (focusedSlot != null)
                     playerOnlyInv = focusedSlot.inventory instanceof PlayerInventory;
             }

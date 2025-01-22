@@ -9,20 +9,19 @@ import net.kyrptonaught.inventorysorter.interfaces.InvSorterPlayer;
 import net.kyrptonaught.inventorysorter.network.InventorySortPacket;
 import net.kyrptonaught.inventorysorter.network.SyncBlacklistPacket;
 import net.kyrptonaught.inventorysorter.network.SyncInvSortSettingsPacket;
-import net.kyrptonaught.kyrptconfig.config.ConfigManager;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemGroups;
-import net.minecraft.resource.featuretoggle.FeatureSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class InventorySorterMod implements ModInitializer {
-    public static ConfigManager.MultiConfigManager configManager = new ConfigManager.MultiConfigManager(InventorySorterMod.MOD_ID);
     public static final String MOD_ID = "inventorysorter";
+    private static IgnoreList ignoreList = new IgnoreList();
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
     @Override
     public void onInitialize() {
-        configManager.registerFile("blacklist.json5", new IgnoreList());
-        configManager.load();
         CommandRegistrationCallback.EVENT.register(SortCommand::register);
         InventorySortPacket.registerReceivePacket();
         SyncInvSortSettingsPacket.registerReceiveSyncData();
@@ -31,7 +30,7 @@ public class InventorySorterMod implements ModInitializer {
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             var context = new ItemGroup.DisplayContext(server.getSaveProperties().getEnabledFeatures(), false, server.getRegistryManager());
             ItemGroups.getGroups().forEach(group -> {
-                if(group.getSearchTabStacks().isEmpty()) group.updateEntries(context);
+                if (group.getSearchTabStacks().isEmpty()) group.updateEntries(context);
             });
         });
 
@@ -44,6 +43,7 @@ public class InventorySorterMod implements ModInitializer {
     }
 
     public static IgnoreList getBlackList() {
-        return (IgnoreList) configManager.getConfig("blacklist.json5");
+        return ignoreList;
+//        return (IgnoreList) configManager.getConfig("blacklist.json5");
     }
 }

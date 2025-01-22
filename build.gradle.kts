@@ -1,3 +1,5 @@
+import gg.meza.stonecraft.mod
+
 plugins {
     id("gg.meza.stonecraft")
 }
@@ -11,16 +13,16 @@ modSettings {
 }
 
 repositories {
-	maven("https://maven.kyrptonaught.dev")
 	maven("https://maven.terraformersmc.com/releases")
+    maven("https://maven.shedaniel.me")
 }
 
 dependencies {
-    modImplementation("net.kyrptonaught:kyrptconfig:1.6.1-1.21.4") {
-        exclude(module = "modmenu")
+    modImplementation("com.google.code.gson:gson:2.+")
+    modApi("com.terraformersmc:modmenu:${mod.prop("modmenu_version")}")
+    modApi("me.shedaniel.cloth:cloth-config-fabric:${mod.prop("cloth_version")}") {
         exclude(group = "net.fabricmc.fabric-api")
     }
-    modImplementation("com.terraformersmc:modmenu:13.0.0")
 }
 
 tasks.jar {

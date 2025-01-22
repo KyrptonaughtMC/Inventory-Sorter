@@ -25,7 +25,7 @@ public abstract class MixinCreativeInventoryScreen implements SortableContainerS
 
     @Inject(method = "init", at = @At("TAIL"))
     private void invsort$init(CallbackInfo callbackinfo) {
-        if (InventorySorterModClient.getConfig().displaySort) {
+        if (InventorySorterModClient.getConfig().showSortButton) {
             SortButtonWidget sortbtn = this.getSortButton();
             if (sortbtn != null)
                 sortbtn.visible = this.isInventoryTabSelected();
@@ -34,7 +34,7 @@ public abstract class MixinCreativeInventoryScreen implements SortableContainerS
 
     @Inject(method = "render", at = @At("TAIL"))
     private void invsort$render(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        if (InventorySorterModClient.getConfig().displaySort) {
+        if (InventorySorterModClient.getConfig().showSortButton) {
             SortButtonWidget sortbtn = this.getSortButton();
             if (sortbtn != null)
                 sortbtn.visible = this.isInventoryTabSelected();

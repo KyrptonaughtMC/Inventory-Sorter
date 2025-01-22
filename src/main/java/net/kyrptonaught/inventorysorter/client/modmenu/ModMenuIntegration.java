@@ -1,75 +1,94 @@
 package net.kyrptonaught.inventorysorter.client.modmenu;
 
-import com.google.common.collect.Sets;
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
+import me.shedaniel.clothconfig2.api.ConfigBuilder;
+import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.kyrptonaught.inventorysorter.InventorySorterMod;
 import net.kyrptonaught.inventorysorter.SortCases;
 import net.kyrptonaught.inventorysorter.client.InventorySorterModClient;
-import net.kyrptonaught.inventorysorter.client.config.ConfigOptions;
 import net.kyrptonaught.inventorysorter.client.config.IgnoreList;
-import net.kyrptonaught.kyrptconfig.config.screen.ConfigScreen;
-import net.kyrptonaught.kyrptconfig.config.screen.ConfigSection;
-import net.kyrptonaught.kyrptconfig.config.screen.items.*;
-import net.kyrptonaught.kyrptconfig.config.screen.items.lists.StringList;
+import net.kyrptonaught.inventorysorter.client.config.NewConfigOptions;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
-import java.util.ArrayList;
-
+/**
+ * Not using AutoConfig to maintain the translatable text
+ */
 @Environment(EnvType.CLIENT)
 public class ModMenuIntegration implements ModMenuApi {
-
 
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
         return (screen) -> {
-            ConfigOptions options = InventorySorterModClient.getConfig();
+
+            NewConfigOptions options = InventorySorterModClient.getConfig();
             IgnoreList ignoreList = InventorySorterMod.getBlackList();
-            ConfigScreen configScreen = new ConfigScreen(screen, Text.translatable("key.inventorysorter.config"));
-            configScreen.setSavingEvent(() -> {
-                InventorySorterMod.configManager.save();
+
+            ConfigBuilder screenBuilder = ConfigBuilder.create()
+                    .setParentScreen(screen)
+                    .setDefaultBackgroundTexture(Identifier.of("minecraft", "textures/block/dirt.png"))
+                    .setTitle(Text.translatable("key.inventorysorter.config"));
+            ConfigEntryBuilder entryBuilder = screenBuilder.entryBuilder();
+
+            screenBuilder.setSavingRunnable(() -> {
+                InventorySorterModClient.getConfig().save();
                 if (MinecraftClient.getInstance().player != null)
                     InventorySorterModClient.syncConfig();
             });
 
-            ConfigSection displaySection = new ConfigSection(configScreen, Text.translatable("key.inventorysorter.config.category.display"));
-            displaySection.addConfigItem(new BooleanItem(Text.translatable("key.inventorysorter.config.displaysort"), options.displaySort, true).setSaveConsumer(val -> options.displaySort = val));
-            displaySection.addConfigItem(new BooleanItem(Text.translatable("key.inventorysorter.config.seperatebtn"), options.seperateBtn, true).setSaveConsumer(val -> options.seperateBtn = val));
-            displaySection.addConfigItem(new BooleanItem(Text.translatable("key.inventorysorter.config.displaytooltip"), options.displayTooltip, true).setSaveConsumer(val -> options.displayTooltip = val));
+            screenBuilder.getOrCreateCategory(Text.translatable("key.inventorysorter.config.category.display"))
+                    .addEntry(entryBuilder.startBooleanToggle(Text.translatable("key.inventorysorter.config.displaysort"), options.showSortButton)
+                            .setDefaultValue(true)
+                            .setTooltip(Text.translatable("key.inventorysorter.config.displaysort.tooltip"))
+                            .setSaveConsumer(b -> options.showSortButton = b)
+                            .build())
+                    .addEntry(entryBuilder.startBooleanToggle(Text.translatable("key.inventorysorter.config.seperatebtn"), options.separateButton)
+                            .setDefaultValue(true)
+                            .setTooltip(Text.translatable("key.inventorysorter.config.seperatebtn.tooltip"))
+                            .setSaveConsumer(b -> options.separateButton = b)
+                            .build())
+                    .addEntry(entryBuilder.startBooleanToggle(Text.translatable("key.inventorysorter.config.displaytooltip"), options.showTooltips)
+                            .setDefaultValue(true)
+                            .setTooltip(Text.translatable("key.inventorysorter.config.displaytooltip.tooltip"))
+                            .setSaveConsumer(b -> options.showTooltips = b)
+                            .build());
 
-            ConfigSection logicSection = new ConfigSection(configScreen, Text.translatable("key.inventorysorter.config.category.logic"));
-            logicSection.addConfigItem(new EnumItem<>(Text.translatable("key.inventorysorter.config.sorttype"), SortCases.SortType.values(), options.sortType, SortCases.SortType.NAME).setSaveConsumer(val -> options.sortType = val));
-            logicSection.addConfigItem(new BooleanItem(Text.translatable("key.inventorysorter.config.sortplayer"), options.sortPlayer, false).setSaveConsumer(val -> options.sortPlayer = val));
+            screenBuilder.getOrCreateCategory(Text.translatable("key.inventorysorter.config.category.logic"))
+                    .addEntry(entryBuilder.startEnumSelector(Text.translatable("key.inventorysorter.config.sorttype"), SortCases.SortType.class, options.sortType)
+                            .setDefaultValue(SortCases.SortType.NAME)
+                            .setTooltip(Text.translatable("key.inventorysorter.config.sorttype.tooltip"))
+                            .setSaveConsumer(val -> options.sortType = val)
+                            .build())
+                    .addEntry(entryBuilder.startBooleanToggle(Text.translatable("key.inventorysorter.config.sortplayer"), options.sortPlayerInventory)
+                            .setDefaultValue(false)
+                            .setTooltip(Text.translatable("key.inventorysorter.config.sortplayer.tooltip"))
+                            .setSaveConsumer(val -> options.sortPlayerInventory = val)
+                            .build());
 
-            ConfigSection activationSection = new ConfigSection(configScreen, Text.translatable("key.inventorysorter.config.category.activation"));
-            activationSection.addConfigItem(new KeybindItem(Text.translatable("key.inventorysorter.sort"), options.keybinding.rawKey, "key.keyboard.p").setSaveConsumer(key -> options.keybinding.setRaw(key)));
-            activationSection.addConfigItem(new BooleanItem(Text.translatable("key.inventorysorter.config.middleclick"), options.middleClick, true).setSaveConsumer(val -> options.middleClick = val));
-            activationSection.addConfigItem(new BooleanItem(Text.translatable("key.inventorysorter.config.doubleclick"), options.doubleClickSort, true).setSaveConsumer(val -> options.doubleClickSort = val));
-            activationSection.addConfigItem(new BooleanItem(Text.translatable("key.inventorysorter.config.sortmousehighlighted"), options.sortMouseHighlighted, true).setSaveConsumer(val -> options.sortMouseHighlighted = val));
+            screenBuilder.getOrCreateCategory(Text.translatable("key.inventorysorter.config.category.activation"))
+                    .addEntry(entryBuilder.startBooleanToggle(Text.translatable("key.inventorysorter.config.middleclick"), options.enableMiddleClickSort)
+                            .setDefaultValue(true)
+                            .setTooltip(Text.translatable("key.inventorysorter.config.middleclick.tooltip"))
+                            .setSaveConsumer(val -> options.enableMiddleClickSort = val)
+                            .build())
+                    .addEntry(entryBuilder.startBooleanToggle(Text.translatable("key.inventorysorter.config.doubleclick"), options.enableDoubleClickSort)
+                            .setDefaultValue(true)
+                            .setTooltip(Text.translatable("key.inventorysorter.config.doubleclick.tooltip"))
+                            .setSaveConsumer(val -> options.enableDoubleClickSort = val)
+                            .build())
+                    .addEntry(entryBuilder.startBooleanToggle(Text.translatable("key.inventorysorter.config.sortmousehighlighted"), options.sortHighlightedItem)
+                            .setDefaultValue(true)
+                            .setTooltip(Text.translatable("key.inventorysorter.config.sortmousehighlighted.tooltip"))
+                            .setSaveConsumer(val -> options.sortHighlightedItem = val)
+                            .build());
 
-            ConfigSection blackListSection = new ConfigSection(configScreen, Text.translatable("key.inventorysorter.config.category.blacklist"));
 
-            blackListSection.addConfigItem(new BooleanItem(Text.translatable("key.inventorysorter.config.showdebug"), options.debugMode, false).setSaveConsumer(val -> options.debugMode = val).setToolTipWithNewLine("key.inventorysorter.config.debugtooltip"));
+            return screenBuilder.build();
 
-            TextItem blackListURL = (TextItem) new TextItem(Text.translatable("key.inventorysorter.config.blacklistURL"), ignoreList.blacklistDownloadURL, IgnoreList.DOWNLOAD_URL).setMaxLength(1024).setSaveConsumer(val -> ignoreList.blacklistDownloadURL = val);
-            blackListSection.addConfigItem(blackListURL);
-
-            StringList hideList = (StringList) new StringList(Text.translatable("key.inventorysorter.config.hidesort"), ignoreList.hideSortBtnsList.stream().toList(), new ArrayList<>()).setSaveConsumer(val -> ignoreList.hideSortBtnsList = Sets.newHashSet(val)).setToolTipWithNewLine("key.inventorysorter.config.hidetooltip");
-            StringList nosortList = (StringList) new StringList(Text.translatable("key.inventorysorter.config.nosort"), ignoreList.doNotSortList.stream().toList(), new ArrayList<>()).setSaveConsumer(val -> ignoreList.doNotSortList = Sets.newHashSet(val)).setToolTipWithNewLine("key.inventorysorter.config.nosorttooltip");
-
-            blackListSection.addConfigItem(new ButtonItem(Text.translatable("key.inventorysorter.config.downloadListButton")).setClickEvent(() -> {
-                blackListURL.save();
-                ignoreList.downloadList();
-                hideList.setValue(ignoreList.hideSortBtnsList.stream().toList());
-                nosortList.setValue(ignoreList.doNotSortList.stream().toList());
-            }));
-
-            blackListSection.addConfigItem(hideList);
-            blackListSection.addConfigItem(nosortList);
-            return configScreen;
         };
     }
 }
