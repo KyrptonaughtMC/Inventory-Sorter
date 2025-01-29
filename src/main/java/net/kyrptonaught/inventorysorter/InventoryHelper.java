@@ -1,6 +1,7 @@
 package net.kyrptonaught.inventorysorter;
 
 import net.kyrptonaught.inventorysorter.interfaces.SortableContainer;
+import net.kyrptonaught.inventorysorter.mixin.ScreenHandlerTypeAccessor;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.HopperBlockEntity;
@@ -138,7 +139,7 @@ public class InventoryHelper {
             return true;
         }
 
-        ScreenHandlerType<?> type = player.currentScreenHandler.getType();
+        ScreenHandlerType<?> type = ((ScreenHandlerTypeAccessor) player.currentScreenHandler).gettype();
         if (type == null) {
             return true;
         }
@@ -159,7 +160,7 @@ public class InventoryHelper {
     public static boolean canSortInventory(PlayerEntity player, ScreenHandler screenHandler) {
         if (screenHandler == null || !screenHandler.canUse(player))
             return false;
-        ScreenHandlerType<?> type = screenHandler.getType();
+        ScreenHandlerType<?> type = ((ScreenHandlerTypeAccessor) screenHandler).gettype();
         if (type == null) return false;
         Identifier id = Registries.SCREEN_HANDLER.getId(type);
         if (id == null) return false;

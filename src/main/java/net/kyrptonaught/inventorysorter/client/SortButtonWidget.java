@@ -11,11 +11,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.ShaderProgramKeys;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ButtonTextures;
-import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
-import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.MutableText;
@@ -70,7 +67,7 @@ public class SortButtonWidget extends TexturedButtonWidget {
         context.getMatrices().scale(.5f, .5f, 1);
         context.getMatrices().translate(getX(), getY(), 0);
         Identifier identifier = TEXTURES.get(true, isSelected() || isHovered());
-        context.drawTexture(RenderLayer::getGuiTextured, identifier, getX(), getY(), 0,0,20,18,20, 18);
+        context.drawTexture(RenderLayer::getGuiTextured, identifier, getX(), getY(), 0, 0, 20, 18, 20, 18);
         this.renderTooltip(context, int_1, int_2);
         context.getMatrices().pop();
     }
