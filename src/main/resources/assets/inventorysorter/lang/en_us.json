@@ -2,7 +2,7 @@
   "key.inventorysorter.config": "Inventory Sorting Config",
   "key.categories.inventorysorter": "Inventory Sorting",
   "key.inventorysorter.sort": "Sort Inventory",
-  "key.inventorysorter.sort.tooltip": "Sort Inventory key",
+  "inventorysorter.keybinds.sort": "Sort Inventory key",
   "key.inventorysorter.config.category.display": "Display",
   "key.inventorysorter.config.category.logic": "Logic",
   "key.inventorysorter.config.category.activation": "Activation",

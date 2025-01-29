@@ -1,7 +1,6 @@
 package net.kyrptonaught.inventorysorter;
 
 import net.kyrptonaught.inventorysorter.interfaces.SortableContainer;
-import net.kyrptonaught.inventorysorter.mixin.ScreenHandlerTypeAccessor;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.HopperBlockEntity;
@@ -21,9 +20,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.OptionalInt;
+
+import static net.kyrptonaught.inventorysorter.client.InventorySorterModClient.compatibility;
 
 public class InventoryHelper {
 
@@ -57,7 +57,7 @@ public class InventoryHelper {
                 // check if inventory is sortable
                 if (canSortInventory(player, screenHandler)) {
                     // actually sort inv
-                    sortInv(inventory, 0, inventory.size(), sortType);
+                    sortInventory(inventory, 0, inventory.size(), sortType);
                     player.closeHandledScreen();
                     return Text.translatable("key.inventorysorter.sorting.sorted");
                 } else {
@@ -72,21 +72,21 @@ public class InventoryHelper {
         return Text.translatable("key.inventorysorter.sorting.error");
     }
 
-    public static boolean sortInv(PlayerEntity player, boolean sortPlayerInv, SortCases.SortType sortType) {
-        if (sortPlayerInv) {
-            sortInv(player.getInventory(), 9, 27, sortType);
+    public static boolean sortInventory(PlayerEntity player, boolean shouldSortPlayerInventory, SortCases.SortType sortType) {
+        if (shouldSortPlayerInventory) {
+            sortInventory(player.getInventory(), 9, 27, sortType);
             return true;
         } else if (canSortInventory(player)) {
             Inventory inv = ((SortableContainer) player.currentScreenHandler).getInventory();
             if (inv != null) {
-                sortInv(inv, 0, inv.size(), sortType);
+                sortInventory(inv, 0, inv.size(), sortType);
                 return true;
             }
         }
         return false;
     }
 
-    static void sortInv(Inventory inv, int startSlot, int invSize, SortCases.SortType sortType) {
+    static void sortInventory(Inventory inv, int startSlot, int invSize, SortCases.SortType sortType) {
         List<ItemStack> stacks = new ArrayList<>();
         for (int i = 0; i < invSize; i++)
             addStackWithMerge(stacks, inv.getStack(startSlot + i));
@@ -133,14 +133,22 @@ public class InventoryHelper {
         return ItemStack.areItemsAndComponentsEqual(itemStack_1, itemStack_2);
     }
 
-    public static boolean shouldDisplayBtns(PlayerEntity player) {
-        if (player.currentScreenHandler == null || !player.currentScreenHandler.canUse(player) || player.currentScreenHandler instanceof PlayerScreenHandler)
+    public static boolean shouldDisplayButtons(PlayerEntity player) {
+        if (player.currentScreenHandler == null || !player.currentScreenHandler.canUse(player) || player.currentScreenHandler instanceof PlayerScreenHandler) {
             return true;
-        ScreenHandlerType<?> type = ((ScreenHandlerTypeAccessor) player.currentScreenHandler).gettype();
-        if (type == null) return true;
+        }
+
+        ScreenHandlerType<?> type = player.currentScreenHandler.getType();
+        if (type == null) {
+            return true;
+        }
+
         Identifier id = Registries.SCREEN_HANDLER.getId(type);
-        if (id == null) return true;
-        return !InventorySorterMod.getBlackList().isDisplayBlacklisted(id);
+        if (id == null) {
+            return true;
+        }
+
+        return compatibility.shouldShowSortButton(id);
     }
 
     public static boolean canSortInventory(PlayerEntity player) {
@@ -151,7 +159,7 @@ public class InventoryHelper {
     public static boolean canSortInventory(PlayerEntity player, ScreenHandler screenHandler) {
         if (screenHandler == null || !screenHandler.canUse(player))
             return false;
-        ScreenHandlerType<?> type = ((ScreenHandlerTypeAccessor) screenHandler).gettype();
+        ScreenHandlerType<?> type = screenHandler.getType();
         if (type == null) return false;
         Identifier id = Registries.SCREEN_HANDLER.getId(type);
         if (id == null) return false;
@@ -159,7 +167,7 @@ public class InventoryHelper {
     }
 
     private static boolean isSortableContainer(ScreenHandler screenHandler, Identifier screenID) {
-        if (InventorySorterMod.getBlackList().isSortBlackListed(screenID))
+        if (!compatibility.canSort(screenID))
             return false;
         if (!((SortableContainer) screenHandler).hasSlots())
             return false;

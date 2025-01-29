@@ -2,3 +2,39 @@
 Lighweight and simple inventory Sorter for Minecraft, written in Fabric
 
 Download at https://www.curseforge.com/minecraft/mc-mods/inventory-sorting
+
+# 2.0 Potentially BREAKING CHANGES
+
+In order to enable further quick iterations on the mod and to keep up with the new pace of Minecraft versions,
+I had to migrate to a new config system for the mod.
+
+For most users, this should be an unnoticeable change but for some of you the following changes might be relevant:
+
+
+## Configuration
+
+The configuration file has moved from `config/inventorysorter/config.json5` to `config/inventorysorter.json`
+
+The configuration _should_ automatically migrate, but it is recommended to check it after you have started the game with 2.0 once.
+
+## Keybinds
+
+Due to the migration of the configuration file (and the configuration library used), the sort keybind has been reset.
+I tried to save it, but I couldn't find a way to do it.
+
+Please rebind the key in the controls menu if you have changed it from the default.
+
+## Where did the blacklist go?
+
+The blacklist functionality has been renamed to a "Compatibility" list to better reflect what it does.
+
+If you had a blacklist in the old configuration file, it should have been migrated to the new configuration file.
+Instead of having a separate file for the blacklist, it is now part of the main configuration file.
+
+The configuration options have been removed from the configuration screen itself for a few reasons:
+
+- The default compatibility list is automatically loaded at startup, you don't need to press a button anymore
+- The config screen was a bit fiddly and not very user-friendly (for the few people who actually used it)
+- With upcoming changes I want to make the compatibility features more powerful and friendly for other mod developers to hook into
+
+If you see any issues with the migration, please let me know on the issue tracker.

@@ -6,14 +6,14 @@ import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.kyrptonaught.inventorysorter.InventorySorterMod;
 import net.kyrptonaught.inventorysorter.SortCases;
 import net.kyrptonaught.inventorysorter.client.InventorySorterModClient;
-import net.kyrptonaught.inventorysorter.client.config.IgnoreList;
 import net.kyrptonaught.inventorysorter.client.config.NewConfigOptions;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+
+import static net.kyrptonaught.inventorysorter.client.InventorySorterModClient.getConfig;
 
 /**
  * Not using AutoConfig to maintain the translatable text
@@ -25,8 +25,7 @@ public class ModMenuIntegration implements ModMenuApi {
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
         return (screen) -> {
 
-            NewConfigOptions options = InventorySorterModClient.getConfig();
-            IgnoreList ignoreList = InventorySorterMod.getBlackList();
+            NewConfigOptions options = getConfig();
 
             ConfigBuilder screenBuilder = ConfigBuilder.create()
                     .setParentScreen(screen)
@@ -35,7 +34,7 @@ public class ModMenuIntegration implements ModMenuApi {
             ConfigEntryBuilder entryBuilder = screenBuilder.entryBuilder();
 
             screenBuilder.setSavingRunnable(() -> {
-                InventorySorterModClient.getConfig().save();
+                getConfig().save();
                 if (MinecraftClient.getInstance().player != null)
                     InventorySorterModClient.syncConfig();
             });

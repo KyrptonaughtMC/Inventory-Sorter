@@ -4,6 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import net.kyrptonaught.inventorysorter.compat.sources.CommandLoader;
 import net.kyrptonaught.inventorysorter.interfaces.InvSorterPlayer;
 import net.kyrptonaught.inventorysorter.network.SyncBlacklistPacket;
 import net.minecraft.command.CommandRegistryAccess;
@@ -18,6 +19,8 @@ import net.minecraft.util.hit.HitResult;
 
 import java.util.function.BiConsumer;
 
+import static net.kyrptonaught.inventorysorter.client.InventorySorterModClient.compatibility;
+import static net.kyrptonaught.inventorysorter.client.InventorySorterModClient.getConfig;
 
 public class SortCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess registryAccess, CommandManager.RegistrationEnvironment environment) {
@@ -36,7 +39,7 @@ public class SortCommand {
         invsortCommand.then(CommandManager.literal("sortme")
                 .requires((source) -> source.hasPermissionLevel(0))
                 .executes((commandContext) -> {
-                    InventoryHelper.sortInv(commandContext.getSource().getPlayer(), true, ((InvSorterPlayer) commandContext.getSource().getPlayer()).getSortType());
+                    InventoryHelper.sortInventory(commandContext.getSource().getPlayer(), true, ((InvSorterPlayer) commandContext.getSource().getPlayer()).getSortType());
 
                     Text feedBack = Text.translatable("key.inventorysorter.sorting.sorted");
                     commandContext.getSource().sendFeedback(() -> feedBack, false);
@@ -46,14 +49,17 @@ public class SortCommand {
         invsortCommand.then(CommandManager.literal("downloadBlacklist")
                 .then(CommandManager.argument("URL", StringArgumentType.greedyString()).executes(context -> {
                     String URL = StringArgumentType.getString(context, "URL");
-                    InventorySorterMod.getBlackList().downloadList(URL);
+                    CommandLoader remoteConfigData = new CommandLoader(URL);
+
+                    remoteConfigData.getPreventSort().forEach(id -> getConfig().preventSortForScreens.add(id.toString()));
+                    remoteConfigData.getShouldHideSortButtons().forEach(id -> getConfig().hideButtonsForScreens.add(id.toString()));
+
+                    getConfig().save();
+                    compatibility.reload();
+
                     context.getSource().getServer().getPlayerManager().getPlayerList().forEach(SyncBlacklistPacket::sync);
                     return 1;
-                })).executes(context -> {
-                    InventorySorterMod.getBlackList().downloadList();
-                    context.getSource().getServer().getPlayerManager().getPlayerList().forEach(SyncBlacklistPacket::sync);
-                    return 1;
-                })
+                }))
         );
 
         invsortCommand.then(CommandManager.literal("blacklist")
@@ -84,10 +90,13 @@ public class SortCommand {
     public static int executeBlackList(CommandContext<ServerCommandSource> commandContext, boolean isDNS) {
         String id = StringArgumentType.getString(commandContext, "screenid");
         if (Registries.SCREEN_HANDLER.containsId(Identifier.of(id))) {
-            if (isDNS) InventorySorterMod.getBlackList().doNotSortList.add(id);
-            else InventorySorterMod.getBlackList().hideSortBtnsList.add(id);
-            //@TODO: InventorySorterMod.configManager.save();
-            //InventorySorterMod.configManager.save();
+            if (isDNS) {
+                getConfig().preventSortForScreens.add(id);
+            } else {
+                getConfig().hideButtonsForScreens.add(id);
+            }
+            getConfig().save();
+            compatibility.reload();
             commandContext.getSource().getServer().getPlayerManager().getPlayerList().forEach(SyncBlacklistPacket::sync);
             commandContext.getSource().sendFeedback(() -> Text.translatable("key.inventorysorter.cmd.addblacklist").append(id), false);
         } else

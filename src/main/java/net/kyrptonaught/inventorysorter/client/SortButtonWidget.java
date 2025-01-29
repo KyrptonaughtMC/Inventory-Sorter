@@ -27,6 +27,8 @@ import org.lwjgl.glfw.GLFW;
 import java.util.ArrayList;
 import java.util.List;
 
+import static net.kyrptonaught.inventorysorter.client.InventorySorterModClient.getConfig;
+
 @Environment(EnvType.CLIENT)
 public class SortButtonWidget extends TexturedButtonWidget {
     private static final ButtonTextures TEXTURES = new ButtonTextures(
@@ -41,7 +43,7 @@ public class SortButtonWidget extends TexturedButtonWidget {
 
     @Override
     public void onPress() {
-        if (InventorySorterModClient.getConfig().enableDebugMode && GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), GLFW.GLFW_KEY_LEFT_CONTROL) == 1) {
+        if (getConfig().enableDebugMode && GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), GLFW.GLFW_KEY_LEFT_CONTROL) == 1) {
             if (InventoryHelper.canSortInventory(MinecraftClient.getInstance().player)) {
                 String screenID = Registries.SCREEN_HANDLER.getId(MinecraftClient.getInstance().player.currentScreenHandler.getType()).toString();
                 System.out.println("Add the line below to config/inventorysorter/blacklist.json5 to blacklist this inventory");
@@ -75,7 +77,8 @@ public class SortButtonWidget extends TexturedButtonWidget {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-        int current = InventorySorterModClient.getConfig().sortType.ordinal();
+        // @TODO: FIX THIS
+        int current = getConfig().sortType.ordinal();
         if (verticalAmount > 0) {
             current++;
             if (current >= SortCases.SortType.values().length)
@@ -85,18 +88,17 @@ public class SortButtonWidget extends TexturedButtonWidget {
             if (current < 0)
                 current = SortCases.SortType.values().length - 1;
         }
-        InventorySorterModClient.getConfig().sortType = SortCases.SortType.values()[current];
-        //@TODO: InventorySorterMod.configManager.save();
-        //InventorySorterMod.configManager.save();
+        getConfig().sortType = SortCases.SortType.values()[current];
+        getConfig().save();
         InventorySorterModClient.syncConfig();
         return true;
     }
 
 
     public void renderTooltip(DrawContext context, int mouseX, int mouseY) {
-        if (InventorySorterModClient.getConfig().showTooltips && this.isHovered()) {
+        if (getConfig().showTooltips && this.isHovered()) {
             List<Text> lines = new ArrayList<>();
-            lines.add(Text.translatable("key.inventorysorter.sortbtn.sort").append(Text.translatable(InventorySorterModClient.getConfig().sortType.getTranslationKey())));
+            lines.add(Text.translatable("key.inventorysorter.sortbtn.sort").append(Text.translatable(getConfig().sortType.getTranslationKey())));
             if (GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), GLFW.GLFW_KEY_LEFT_CONTROL) == 1) {
                 lines.add(Text.translatable("key.inventorysorter.sortbtn.debug"));
                 lines.add(Text.translatable("key.inventorysorter.sortbtn.debug2"));

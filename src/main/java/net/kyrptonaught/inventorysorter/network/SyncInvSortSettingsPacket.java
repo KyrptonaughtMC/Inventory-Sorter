@@ -6,9 +6,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.kyrptonaught.inventorysorter.SortCases;
-import net.kyrptonaught.inventorysorter.client.InventorySorterModClient;
 import net.kyrptonaught.inventorysorter.client.config.NewConfigOptions;
-import net.kyrptonaught.inventorysorter.client.config.OldConfigOptions;
 import net.kyrptonaught.inventorysorter.interfaces.InvSorterPlayer;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.RegistryByteBuf;
@@ -16,6 +14,8 @@ import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
+
+import static net.kyrptonaught.inventorysorter.client.InventorySorterModClient.getConfig;
 
 public record SyncInvSortSettingsPacket(boolean middleClick, boolean doubleClick,
                                         int sortType) implements CustomPayload {
@@ -28,7 +28,7 @@ public record SyncInvSortSettingsPacket(boolean middleClick, boolean doubleClick
 
     @Environment(EnvType.CLIENT)
     public static void registerSyncOnPlayerJoin() {
-        NewConfigOptions config = InventorySorterModClient.getConfig();
+        NewConfigOptions config = getConfig();
         ClientPlayNetworking.send(new SyncInvSortSettingsPacket(config.enableMiddleClickSort, config.enableDoubleClickSort, config.sortType.ordinal()));
     }
 

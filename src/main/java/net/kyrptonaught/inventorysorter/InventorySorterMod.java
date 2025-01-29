@@ -4,7 +4,6 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.kyrptonaught.inventorysorter.client.config.IgnoreList;
 import net.kyrptonaught.inventorysorter.interfaces.InvSorterPlayer;
 import net.kyrptonaught.inventorysorter.network.InventorySortPacket;
 import net.kyrptonaught.inventorysorter.network.SyncBlacklistPacket;
@@ -17,7 +16,6 @@ import org.slf4j.LoggerFactory;
 
 public class InventorySorterMod implements ModInitializer {
     public static final String MOD_ID = "inventorysorter";
-    private static IgnoreList ignoreList = new IgnoreList();
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
     @Override
@@ -40,10 +38,5 @@ public class InventorySorterMod implements ModInitializer {
                 ((InvSorterPlayer) newPlayer).setMiddleClick(((InvSorterPlayer) oldPlayer).getMiddleClick());
             }
         });
-    }
-
-    public static IgnoreList getBlackList() {
-        return ignoreList;
-//        return (IgnoreList) configManager.getConfig("blacklist.json5");
     }
 }

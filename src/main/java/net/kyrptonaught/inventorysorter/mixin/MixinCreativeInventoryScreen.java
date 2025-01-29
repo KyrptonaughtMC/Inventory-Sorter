@@ -16,6 +16,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import static net.kyrptonaught.inventorysorter.client.InventorySorterModClient.getConfig;
+
 @Environment(EnvType.CLIENT)
 @Mixin(CreativeInventoryScreen.class)
 public abstract class MixinCreativeInventoryScreen implements SortableContainerScreen {
@@ -25,7 +27,7 @@ public abstract class MixinCreativeInventoryScreen implements SortableContainerS
 
     @Inject(method = "init", at = @At("TAIL"))
     private void invsort$init(CallbackInfo callbackinfo) {
-        if (InventorySorterModClient.getConfig().showSortButton) {
+        if (getConfig().showSortButton) {
             SortButtonWidget sortbtn = this.getSortButton();
             if (sortbtn != null)
                 sortbtn.visible = this.isInventoryTabSelected();
@@ -34,7 +36,7 @@ public abstract class MixinCreativeInventoryScreen implements SortableContainerS
 
     @Inject(method = "render", at = @At("TAIL"))
     private void invsort$render(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        if (InventorySorterModClient.getConfig().showSortButton) {
+        if (getConfig().showSortButton) {
             SortButtonWidget sortbtn = this.getSortButton();
             if (sortbtn != null)
                 sortbtn.visible = this.isInventoryTabSelected();

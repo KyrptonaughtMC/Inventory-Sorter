@@ -4,8 +4,7 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "MixinContainer",
-    "ServerPlayerEntityMixin",
-    "ScreenHandlerTypeAccessor"
+    "ServerPlayerEntityMixin"
   ],
   "client": [
     "MixinContainerScreen",

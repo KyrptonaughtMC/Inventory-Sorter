@@ -12,6 +12,17 @@ modSettings {
     }
 }
 
+sourceSets {
+    test {
+        java {
+            srcDirs(rootProject.layout.projectDirectory.dir("src/test/java"))
+        }
+        resources {
+            srcDirs(rootProject.layout.projectDirectory.dir("src/test/resources"))
+        }
+    }
+}
+
 repositories {
 	maven("https://maven.terraformersmc.com/releases")
     maven("https://maven.shedaniel.me")

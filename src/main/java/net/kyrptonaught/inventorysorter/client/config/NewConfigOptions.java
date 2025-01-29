@@ -3,6 +3,9 @@ package net.kyrptonaught.inventorysorter.client.config;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.kyrptonaught.inventorysorter.SortCases;
+import net.kyrptonaught.inventorysorter.client.InventorySorterModClient;
+import net.kyrptonaught.inventorysorter.compat.config.CompatConfig;
+import net.minecraft.client.util.InputUtil;
 
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -11,7 +14,7 @@ import java.nio.file.Path;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.MOD_ID;
 
-public class NewConfigOptions {
+public class NewConfigOptions extends CompatConfig {
 
     public boolean showSortButton = true;
     public boolean showTooltips = true;
@@ -52,6 +55,13 @@ public class NewConfigOptions {
         newOptions.enableDoubleClickSort = oldOptions.doubleClickSort;
         newOptions.sortHighlightedItem = oldOptions.sortMouseHighlighted;
         newOptions.enableDebugMode = oldOptions.debugMode;
+
+        if (oldOptions.keybinding != null) {
+            // @TODO come up with something for this
+            InputUtil.Key boundKey = InputUtil.fromTranslationKey(oldOptions.keybinding);
+            InventorySorterModClient.sortButton.setBoundKey(boundKey); // this doesn't seem to take effect
+        }
+
         return newOptions;
     }
 }
