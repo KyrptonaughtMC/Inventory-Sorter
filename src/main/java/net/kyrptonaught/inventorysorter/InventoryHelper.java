@@ -89,8 +89,9 @@ public class InventoryHelper {
 
     static void sortInventory(Inventory inv, int startSlot, int invSize, SortCases.SortType sortType) {
         List<ItemStack> stacks = new ArrayList<>();
-        for (int i = 0; i < invSize; i++)
+        for (int i = 0; i < invSize; i++) {
             addStackWithMerge(stacks, inv.getStack(startSlot + i));
+        }
 
         stacks.sort(SortCases.getComparator(sortType));
         if (stacks.size() == 0) return;
@@ -100,7 +101,9 @@ public class InventoryHelper {
     }
 
     private static void addStackWithMerge(List<ItemStack> stacks, ItemStack newStack) {
-        if (newStack.getItem() == Items.AIR) return;
+        if (newStack.getItem() == Items.AIR) {
+            return;
+        }
         if (newStack.isStackable() && newStack.getCount() != newStack.getMaxCount())
             for (int j = stacks.size() - 1; j >= 0; j--) {
                 ItemStack oldStack = stacks.get(j);

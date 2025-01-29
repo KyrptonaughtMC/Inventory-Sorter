@@ -18,7 +18,7 @@ import java.util.stream.IntStream;
 
 public class SortCases {
     static Comparator<ItemStack> getComparator(SortType sortType) {
-        var defaultComparator = Comparator.comparing(SortCases::specialCases);
+        var defaultComparator = Comparator.comparing(SortCases::getSortableName);
         switch (sortType) {
             case CATEGORY -> {
                 return Comparator.comparing(SortCases::getGroupIdentifier).thenComparing(defaultComparator);
@@ -27,10 +27,7 @@ public class SortCases {
                 return Comparator.comparing((ItemStack stack) -> Registries.ITEM.getId(stack.getItem()).getNamespace()).thenComparing(defaultComparator);
             }
             case NAME -> {
-                return Comparator.comparing(stack -> {
-                    var name = specialCases(stack);
-                    return stack.getName() + name;
-                });
+                return Comparator.comparing(SortCases::getSortableName);
             }
             default -> {
                 return defaultComparator;
@@ -55,24 +52,21 @@ public class SortCases {
         return 99999;
     }
 
-    private static String specialCases(ItemStack stack) {
-        Item item = stack.getItem();
+    private static String getSortableName(ItemStack stack) {
         ComponentMap component = stack.getComponents();
 
         if (component != null && component.contains(DataComponentTypes.PROFILE))
             return playerHeadCase(stack);
-        if (stack.getCount() != stack.getMaxCount())
-            return stackSize(stack);
         if (stack.isOf(Items.ENCHANTED_BOOK))
             return enchantedBookNameCase(stack);
         if (stack.isDamageable())
             return toolDuribilityCase(stack);
-        return item.toString();
+        return stackSize(stack);
     }
 
     private static String playerHeadCase(ItemStack stack) {
         ProfileComponent profileComponent = stack.getComponents().get(DataComponentTypes.PROFILE);
-        String ownerName = profileComponent.name().isPresent() ? profileComponent.name().get() : stack.getItem().toString();
+        String ownerName = profileComponent.name().isPresent() ? profileComponent.name().get() : stack.getName().getString();
 
         // this is duplicated logic, so we should probably refactor
         String count = "";
@@ -80,11 +74,14 @@ public class SortCases {
             count = Integer.toString(stack.getCount());
         }
 
-        return stack.getItem().toString() + " " + ownerName + count;
+        return ownerName + count;
     }
 
     private static String stackSize(ItemStack stack) {
-        return stack.getItem().toString() + stack.getCount();
+        String postfix = (stack.getCount() == stack.getMaxCount()) ? "0" : String.valueOf(stack.getCount());
+        //We're returning a string to be used as the basis of a comparison.
+        // Full stacks need to come before non-full stacks, hence the 0 postfix.
+        return stack.getName().getString() + postfix;
     }
 
     private static String enchantedBookNameCase(ItemStack stack) {
