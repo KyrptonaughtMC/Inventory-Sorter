@@ -10,6 +10,10 @@ modSettings {
         musicVolume = 0.0
         narrator = false
     }
+
+    variableReplacements = mapOf(
+        "schema" to "\$schema",
+    )
 }
 
 sourceSets {
@@ -34,6 +38,7 @@ dependencies {
     modApi("me.shedaniel.cloth:cloth-config-fabric:${mod.prop("cloth_version")}") {
         exclude(group = "net.fabricmc.fabric-api")
     }
+    modImplementation("com.github.erosb:everit-json-schema:1.14.4")
 }
 
 tasks.jar {
@@ -41,3 +46,4 @@ tasks.jar {
 		rename { "${it}_${project.base.archivesName.get()}"}
 	}
 }
+

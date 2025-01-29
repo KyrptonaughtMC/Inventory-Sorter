@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "showSortButton": { "type": "boolean", "default": true },
+    "showTooltips": { "type": "boolean", "default": true },
+    "separateButton": { "type": "boolean", "default": true },
+    "sortPlayerInventory": { "type": "boolean", "default": false },
+    "sortType": {"default": "NAME", "enum": ["NAME", "CATEGORY", "MOD"], "type": "string"},
+    "enableMiddleClickSort": { "type": "boolean", "default": true },
+    "enableDoubleClickSort": { "type": "boolean", "default": true },
+    "sortHighlightedItem": { "type": "boolean", "default": true },
+    "enableDebugMode": { "type": "boolean", "default": false },
+    "customCompatibilityListDownloadUrl": { "type": "string" },
+    "preventSortForScreens": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "hideButtonsForScreens": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "required": [
+    "sortType"
+  ]
+}
