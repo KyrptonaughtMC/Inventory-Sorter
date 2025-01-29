@@ -6,7 +6,7 @@
     "showTooltips": { "type": "boolean", "default": true },
     "separateButton": { "type": "boolean", "default": true },
     "sortPlayerInventory": { "type": "boolean", "default": false },
-    "sortType": {"default": "NAME", "enum": ["NAME", "CATEGORY", "MOD"], "type": "string"},
+    "sortType": {"default": "NAME", "enum": ["NAME", "CATEGORY", "MOD", "ID"], "type": "string"},
     "enableMiddleClickSort": { "type": "boolean", "default": true },
     "enableDoubleClickSort": { "type": "boolean", "default": true },
     "sortHighlightedItem": { "type": "boolean", "default": true },
