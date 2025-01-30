@@ -4,6 +4,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.kyrptonaught.inventorysorter.commands.CommandRegistry;
 import net.kyrptonaught.inventorysorter.interfaces.InvSorterPlayer;
 import net.kyrptonaught.inventorysorter.network.InventorySortPacket;
 import net.kyrptonaught.inventorysorter.network.SyncBlacklistPacket;
@@ -20,7 +21,7 @@ public class InventorySorterMod implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        CommandRegistrationCallback.EVENT.register(SortCommand::register);
+        CommandRegistrationCallback.EVENT.register(CommandRegistry::register);
         InventorySortPacket.registerReceivePacket();
         SyncInvSortSettingsPacket.registerReceiveSyncData();
         SyncBlacklistPacket.registerSyncOnPlayerJoin();

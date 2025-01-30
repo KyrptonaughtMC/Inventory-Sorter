@@ -1,0 +1,29 @@
+package net.kyrptonaught.inventorysorter.commands;
+
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
+import net.kyrptonaught.inventorysorter.SortCases;
+import net.kyrptonaught.inventorysorter.interfaces.InvSorterPlayer;
+import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.text.Text;
+
+public class SortTypeCommand {
+    public static void register(CommandDispatcher<ServerCommandSource> dispatcher, LiteralArgumentBuilder<ServerCommandSource> rootCommand) {
+        for (SortCases.SortType sortType : SortCases.SortType.values()) {
+            dispatcher.register(rootCommand
+                    .then(CommandManager.literal("sortType")
+                            .then(CommandManager.literal(sortType.name())
+                                    .executes(context -> SortTypeCommand.run(context, sortType))))
+            );
+        }
+    }
+
+    public static int run(CommandContext<ServerCommandSource> commandContext, SortCases.SortType sortType) {
+        ((InvSorterPlayer) commandContext.getSource().getPlayer()).setSortType(sortType);
+        Text feedBack = Text.translatable("key.inventorysorter.cmd.updatesortingtype");
+        commandContext.getSource().sendFeedback(() -> feedBack, false);
+        return 1;
+    }
+}
