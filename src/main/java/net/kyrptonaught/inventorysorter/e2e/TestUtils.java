@@ -52,6 +52,12 @@ public class TestUtils {
                 ctx.assertEquals(actualAmplifier, expectedAmplifier, "Slot " + entry.getKey() + " does not have the expected ominous bottle amplifier");
             }
 
+            if (entry.getValue().getComponents().contains(DataComponentTypes.BLOCK_STATE)) {
+                Map<String, String> expectedBlockState = entry.getValue().getComponents().get(DataComponentTypes.BLOCK_STATE).properties();
+                Map<String, String> actualBlockState = stack.getComponents().get(DataComponentTypes.BLOCK_STATE).properties();
+                ctx.assertEquals(actualBlockState, expectedBlockState, "Slot " + entry.getKey() + " does not have the expected block state");
+            }
+
         }
     }
 

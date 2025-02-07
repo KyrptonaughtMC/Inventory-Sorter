@@ -19,6 +19,7 @@ import java.util.stream.IntStream;
 public class SortCases {
     static Comparator<ItemStack> getComparator(SortType sortType) {
         var defaultComparator = Comparator.comparing(SortCases::getSortableName)
+                .thenComparing(SortCases::isOminous)
                 .thenComparing(SortCases::getOminousAmplifier)
                 .thenComparing(ItemStack::getDamage)
                 .thenComparing(ItemStack::getCount, Comparator.reverseOrder());
@@ -67,6 +68,16 @@ public class SortCases {
         }
 
         return 0;
+    }
+
+    private static boolean isOminous(ItemStack stack) {
+        ComponentMap components = stack.getComponents();
+        if (!components.contains(DataComponentTypes.BLOCK_STATE)) {
+            return false;
+        }
+
+        String result = components.get(DataComponentTypes.BLOCK_STATE).properties().getOrDefault("ominous", "false");
+        return Boolean.parseBoolean(result);
     }
 
     private static String getSortableName(ItemStack stack) {

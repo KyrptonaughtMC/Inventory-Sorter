@@ -1,10 +1,12 @@
 package net.kyrptonaught.inventorysorter.e2e;
 
 import com.mojang.authlib.GameProfile;
+import it.unimi.dsi.fastutil.booleans.Boolean2ObjectFunction;
 import net.kyrptonaught.inventorysorter.InventoryHelper;
 import net.kyrptonaught.inventorysorter.SortCases;
 import net.minecraft.component.ComponentChanges;
 import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.BlockStateComponent;
 import net.minecraft.component.type.OminousBottleAmplifierComponent;
 import net.minecraft.component.type.ProfileComponent;
 import net.minecraft.enchantment.Enchantment;
@@ -404,5 +406,29 @@ public class SortingTests {
 
         ctx.complete();
 
+    }
+
+    @GameTest(templateName = template)
+    public void testVaults(TestContext ctx) {
+        Boolean2ObjectFunction<ComponentChanges> setOminous = (boolean isOminous) -> {
+            return ComponentChanges.builder().add(DataComponentTypes.BLOCK_STATE, new BlockStateComponent(Map.of("ominous", String.valueOf(isOminous)))).build();
+        };
+
+        Scenario scenario = setUpScene(ctx, Map.of(
+                2, new ItemStack(RegistryEntry.of(Items.VAULT), 12, setOminous.apply(false)),
+                12, new ItemStack(RegistryEntry.of(Items.VAULT), 32, setOminous.apply(true)),
+                22, new ItemStack(RegistryEntry.of(Items.VAULT), 10, setOminous.apply(false)),
+                6, new ItemStack(RegistryEntry.of(Items.VAULT), 12, setOminous.apply(false)),
+                3, new ItemStack(RegistryEntry.of(Items.VAULT), 12, setOminous.apply(true))
+        ));
+
+        InventoryHelper.sortInventory(scenario.player(), false, SortCases.SortType.NAME);
+
+        assertContents(ctx, scenario, Map.of(
+                0, new ItemStack(RegistryEntry.of(Items.VAULT), 34, setOminous.apply(false)),
+                1, new ItemStack(RegistryEntry.of(Items.VAULT), 44, setOminous.apply(true))
+        ));
+
+        ctx.complete();
     }
 }
