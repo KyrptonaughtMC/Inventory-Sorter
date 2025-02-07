@@ -3,19 +3,11 @@ package net.kyrptonaught.inventorysorter.client;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
-import net.kyrptonaught.inventorysorter.compat.Compatibility;
-import net.kyrptonaught.inventorysorter.compat.sources.ConfigLoader;
-import net.kyrptonaught.inventorysorter.compat.sources.LocalLoader;
-import net.kyrptonaught.inventorysorter.compat.sources.OfficialListLoader;
-import net.kyrptonaught.inventorysorter.client.config.Config;
-import net.kyrptonaught.inventorysorter.client.config.NewConfigOptions;
 import net.kyrptonaught.inventorysorter.network.SyncBlacklistPacket;
 import net.kyrptonaught.inventorysorter.network.SyncInvSortSettingsPacket;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
-
-import java.util.List;
 
 public class InventorySorterModClient implements ClientModInitializer {
 
@@ -24,15 +16,6 @@ public class InventorySorterModClient implements ClientModInitializer {
             InputUtil.Type.KEYSYM,
             GLFW.GLFW_KEY_P,
             "key.categories.inventorysorter"
-    );
-
-    private static final NewConfigOptions CONFIG = Config.load();
-    public static final Compatibility compatibility = new Compatibility(
-            List.of(
-                    new LocalLoader(),
-                    new OfficialListLoader(),
-                    new ConfigLoader(CONFIG)
-            )
     );
 
     @Override
@@ -52,9 +35,5 @@ public class InventorySorterModClient implements ClientModInitializer {
             case MOUSE -> sortButton.matchesMouse(pressedKeyCode);
             default -> false;
         };
-    }
-
-    public static NewConfigOptions getConfig() {
-        return CONFIG;
     }
 }

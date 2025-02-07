@@ -18,7 +18,7 @@ import net.minecraft.util.Identifier;
 import java.util.Set;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.LOGGER;
-import static net.kyrptonaught.inventorysorter.client.InventorySorterModClient.compatibility;
+import static net.kyrptonaught.inventorysorter.InventorySorterMod.compatibility;
 
 public record SyncBlacklistPacket(ByteBuf buffer) implements CustomPayload {
     private static final CustomPayload.Id<SyncBlacklistPacket> ID = new CustomPayload.Id<>(Identifier.of("inventorysorter", "sync_blacklist_packet"));

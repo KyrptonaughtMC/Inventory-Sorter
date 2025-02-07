@@ -24,7 +24,7 @@ import org.lwjgl.glfw.GLFW;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.kyrptonaught.inventorysorter.client.InventorySorterModClient.getConfig;
+import static net.kyrptonaught.inventorysorter.InventorySorterMod.getConfig;
 
 @Environment(EnvType.CLIENT)
 public class SortButtonWidget extends TexturedButtonWidget {

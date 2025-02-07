@@ -13,8 +13,8 @@ import net.minecraft.util.Identifier;
 
 import java.util.List;
 
-import static net.kyrptonaught.inventorysorter.client.InventorySorterModClient.compatibility;
-import static net.kyrptonaught.inventorysorter.client.InventorySorterModClient.getConfig;
+import static net.kyrptonaught.inventorysorter.InventorySorterMod.compatibility;
+import static net.kyrptonaught.inventorysorter.InventorySorterMod.getConfig;
 
 public class CompatibilityCommands {
 

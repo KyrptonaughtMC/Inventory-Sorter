@@ -1,4 +1,4 @@
-package net.kyrptonaught.inventorysorter.client.config;
+package net.kyrptonaught.inventorysorter.config;
 
 import net.fabricmc.loader.api.FabricLoader;
 import java.nio.file.Path;

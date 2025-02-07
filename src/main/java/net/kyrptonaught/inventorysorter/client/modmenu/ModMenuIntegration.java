@@ -8,13 +8,13 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.kyrptonaught.inventorysorter.SortCases;
 import net.kyrptonaught.inventorysorter.client.InventorySorterModClient;
-import net.kyrptonaught.inventorysorter.client.config.NewConfigOptions;
+import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
-import static net.kyrptonaught.inventorysorter.client.InventorySorterModClient.getConfig;
+import static net.kyrptonaught.inventorysorter.InventorySorterMod.getConfig;
 
 /**
  * Not using AutoConfig to maintain the translatable text

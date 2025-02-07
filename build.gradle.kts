@@ -16,17 +16,6 @@ modSettings {
     )
 }
 
-sourceSets {
-    test {
-        java {
-            srcDirs(rootProject.layout.projectDirectory.dir("src/test/java"))
-        }
-        resources {
-            srcDirs(rootProject.layout.projectDirectory.dir("src/test/resources"))
-        }
-    }
-}
-
 repositories {
 	maven("https://maven.terraformersmc.com/releases")
     maven("https://maven.shedaniel.me")
@@ -39,6 +28,13 @@ dependencies {
         exclude(group = "net.fabricmc.fabric-api")
     }
     modImplementation("com.github.erosb:everit-json-schema:1.14.4")
+
+    testImplementation("net.fabricmc:fabric-loader-junit:${mod.prop("loader_version")}")
+    testImplementation("com.google.jimfs:jimfs:1.1")
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 tasks.jar {

@@ -1,4 +1,4 @@
-package net.kyrptonaught.inventorysorter.client.config;
+package net.kyrptonaught.inventorysorter.config;
 
 import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Jankson;
 import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.JsonObject;

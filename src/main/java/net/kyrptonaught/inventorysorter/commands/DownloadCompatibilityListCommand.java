@@ -9,8 +9,8 @@ import net.kyrptonaught.inventorysorter.network.SyncBlacklistPacket;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 
-import static net.kyrptonaught.inventorysorter.client.InventorySorterModClient.compatibility;
-import static net.kyrptonaught.inventorysorter.client.InventorySorterModClient.getConfig;
+import static net.kyrptonaught.inventorysorter.InventorySorterMod.compatibility;
+import static net.kyrptonaught.inventorysorter.InventorySorterMod.getConfig;
 
 public class DownloadCompatibilityListCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher, LiteralArgumentBuilder<ServerCommandSource> rootCommand) {

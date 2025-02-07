@@ -27,6 +27,9 @@
     "client": [
       "net.kyrptonaught.inventorysorter.client.InventorySorterModClient"
     ],
+    "fabric-gametest" : [
+      "net.kyrptonaught.inventorysorter.e2e.SortingTests"
+    ],
     "modmenu": [
       "net.kyrptonaught.inventorysorter.client.modmenu.ModMenuIntegration"
     ]

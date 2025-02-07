@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static net.kyrptonaught.inventorysorter.client.InventorySorterModClient.getConfig;
+import static net.kyrptonaught.inventorysorter.InventorySorterMod.getConfig;
 
 @Environment(EnvType.CLIENT)
 @Mixin(CreativeInventoryScreen.class)

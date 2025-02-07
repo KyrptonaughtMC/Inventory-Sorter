@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.OptionalInt;
 
-import static net.kyrptonaught.inventorysorter.client.InventorySorterModClient.compatibility;
+import static net.kyrptonaught.inventorysorter.InventorySorterMod.compatibility;
 
 public class InventoryHelper {
 

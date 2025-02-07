@@ -29,7 +29,7 @@ public class LocalLoader implements CompatibilityLoader {
 
     private Set<Identifier> load(String path) {
         LOGGER.debug("Loading local compatibility data from: {}", path);
-        URL url = ClassLoaderUtil.getClassLoader().getResource(path);
+        URL url = CompatibilityLoader.class.getClassLoader().getResource(path);
         Set<Identifier> identifiers;
 
         try {

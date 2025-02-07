@@ -1,4 +1,4 @@
-package net.kyrptonaught.inventorysorter.client.config;
+package net.kyrptonaught.inventorysorter.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -14,7 +14,6 @@ import java.io.IOException;
 
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
-import org.everit.json.schema.Validator;
 import org.everit.json.schema.loader.SchemaLoader;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -40,7 +39,7 @@ public class NewConfigOptions extends CompatConfig {
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final String CONFIG_FILE = MOD_ID + ".json";
-    private static final String SCHEMA = "config-schema.json";
+    private static final String CLIENT_SCHEMA = "config-schema.json";
 
     public void save() {
         Path filePath = ConfigPathResolver.getConfigPath(CONFIG_FILE);
@@ -54,14 +53,14 @@ public class NewConfigOptions extends CompatConfig {
 
     public static NewConfigOptions load() throws IOException {
         Path filePath = ConfigPathResolver.getConfigPath(CONFIG_FILE);
-        URL url = ClassLoaderUtil.getClassLoader().getResource(SCHEMA);
+        URL url = NewConfigOptions.class.getClassLoader().getResource(CLIENT_SCHEMA);
 
         try(InputStream inputStream = url.openStream()) {
-            LOGGER.info("Validating config file...");
+            LOGGER.debug("Validating config file...");
             JSONObject schema = new JSONObject(new JSONTokener(inputStream));
             Schema schemaValidator = SchemaLoader.load(schema);
             schemaValidator.validate(new JSONObject(new JSONTokener(new FileReader(filePath.toFile()))));
-            LOGGER.info("Config file is valid.");
+            LOGGER.debug("Config file is valid.");
         } catch (ValidationException e) {
             LOGGER.error("There's an error in the config file inventorysorter.json:");
             LOGGER.error(e.getErrorMessage());

@@ -3,7 +3,6 @@ package net.kyrptonaught.inventorysorter.compat;
 import com.google.gson.Gson;
 import net.kyrptonaught.inventorysorter.compat.sources.CompatibilityLoader;
 import net.minecraft.util.Identifier;
-import static net.kyrptonaught.inventorysorter.InventorySorterMod.LOGGER;
 
 import java.io.Reader;
 import java.util.HashSet;

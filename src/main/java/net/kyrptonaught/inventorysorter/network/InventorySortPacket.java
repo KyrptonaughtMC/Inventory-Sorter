@@ -14,7 +14,7 @@ import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
-import static net.kyrptonaught.inventorysorter.client.InventorySorterModClient.getConfig;
+import static net.kyrptonaught.inventorysorter.InventorySorterMod.getConfig;
 
 public record InventorySortPacket(boolean shouldSortPlayerInventory, int sortType) implements CustomPayload {
     private static final CustomPayload.Id<InventorySortPacket> ID = new CustomPayload.Id<>(Identifier.of("inventorysorter", "sort_inv_packet"));

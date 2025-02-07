@@ -4,12 +4,12 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "MixinContainer",
-    "ServerPlayerEntityMixin"
+    "ServerPlayerEntityMixin",
+    "ScreenHandlerTypeAccessor"
   ],
   "client": [
     "MixinContainerScreen",
-    "MixinCreativeInventoryScreen",
-    "ScreenHandlerTypeAccessor"
+    "MixinCreativeInventoryScreen"
   ],
   "injectors": {
     "defaultRequire": 1
