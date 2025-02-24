@@ -376,7 +376,7 @@ public class SortingTests {
     public void testOminousPotions(TestContext ctx) {
 
         IntFunction<ComponentChanges> potionLevel = (int level) -> ComponentChanges.builder()
-                .add(DataComponentTypes.OMINOUS_BOTTLE_AMPLIFIER, new OminousBottleAmplifierComponent(level-1))
+                .add(DataComponentTypes.OMINOUS_BOTTLE_AMPLIFIER, new OminousBottleAmplifierComponent(level - 1))
                 .build();
 
 
@@ -410,9 +410,9 @@ public class SortingTests {
 
     @GameTest(templateName = template)
     public void testVaults(TestContext ctx) {
-        Boolean2ObjectFunction<ComponentChanges> setOminous = (boolean isOminous) -> {
-            return ComponentChanges.builder().add(DataComponentTypes.BLOCK_STATE, new BlockStateComponent(Map.of("ominous", String.valueOf(isOminous)))).build();
-        };
+        Boolean2ObjectFunction<ComponentChanges> setOminous = (boolean isOminous) -> ComponentChanges.builder()
+                .add(DataComponentTypes.BLOCK_STATE, new BlockStateComponent(Map.of("ominous", String.valueOf(isOminous))))
+                .build();
 
         Scenario scenario = setUpScene(ctx, Map.of(
                 2, new ItemStack(RegistryEntry.of(Items.VAULT), 12, setOminous.apply(false)),
