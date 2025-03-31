@@ -14,6 +14,7 @@ import net.minecraft.network.NetworkSide;
 import net.minecraft.server.network.ConnectedClientData;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.test.TestContext;
+/*? if >=1.21.5 {*/import net.minecraft.text.Text;/*?}*/
 import net.minecraft.util.math.BlockPos;
 
 import java.util.Map;
@@ -26,6 +27,10 @@ public class TestUtils {
     public record Scenario(ServerPlayerEntity player, ChestBlockEntity chest) {
     }
 
+    private static /*? if <1.21.5 {*//*String*//*?} else {*/Text/*?}*/ getMessage(String message) {
+        return /*? if <1.21.5 {*//*message*//*?} else {*/Text.of(message)/*?}*/;
+    }
+
     public static void assertContents(TestContext ctx, Scenario scenario, Map<Integer, ItemStack> expectedContents) {
 
         int slotCount = scenario.chest.size();
@@ -33,29 +38,29 @@ public class TestUtils {
         for (int i = 0; i < slotCount; i++) {
             if (!expectedContents.containsKey(i)) {
                 ItemStack stack = scenario.chest.getStack(i);
-                ctx.assertEquals(stack, ItemStack.EMPTY, "Slot " + i + " should be empty");
+                ctx.assertEquals(stack, ItemStack.EMPTY, getMessage("Slot " + i + " should be empty"));
             }
         }
 
         for (Map.Entry<Integer, ItemStack> entry : expectedContents.entrySet()) {
             ItemStack stack = scenario.chest.getStack(entry.getKey());
-            ctx.assertEquals(stack.getItem(), entry.getValue().getItem(), "Slot " + entry.getKey() + " does not have the expected item");
-            ctx.assertEquals(stack.getCount(), entry.getValue().getCount(), "Slot " + entry.getKey() + " does not have the expected count");
+            ctx.assertEquals(stack.getItem(), entry.getValue().getItem(), getMessage("Slot " + entry.getKey() + " does not have the expected item"));
+            ctx.assertEquals(stack.getCount(), entry.getValue().getCount(), getMessage("Slot " + entry.getKey() + " does not have the expected count"));
 
             int expectedDamage = entry.getValue().getDamage();
             int actualDamage = stack.getDamage();
-            ctx.assertEquals(actualDamage, expectedDamage, "Slot " + entry.getKey() + " does not have the expected damage");
+            ctx.assertEquals(actualDamage, expectedDamage, getMessage("Slot " + entry.getKey() + " does not have the expected damage"));
 
             if (entry.getValue().getComponents().contains(DataComponentTypes.OMINOUS_BOTTLE_AMPLIFIER)) {
                 int expectedAmplifier = entry.getValue().getComponents().get(DataComponentTypes.OMINOUS_BOTTLE_AMPLIFIER).value();
                 int actualAmplifier = stack.getComponents().get(DataComponentTypes.OMINOUS_BOTTLE_AMPLIFIER).value();
-                ctx.assertEquals(actualAmplifier, expectedAmplifier, "Slot " + entry.getKey() + " does not have the expected ominous bottle amplifier");
+                ctx.assertEquals(actualAmplifier, expectedAmplifier, getMessage("Slot " + entry.getKey() + " does not have the expected ominous bottle amplifier"));
             }
 
             if (entry.getValue().getComponents().contains(DataComponentTypes.BLOCK_STATE)) {
                 Map<String, String> expectedBlockState = entry.getValue().getComponents().get(DataComponentTypes.BLOCK_STATE).properties();
                 Map<String, String> actualBlockState = stack.getComponents().get(DataComponentTypes.BLOCK_STATE).properties();
-                ctx.assertEquals(actualBlockState, expectedBlockState, "Slot " + entry.getKey() + " does not have the expected block state");
+                ctx.assertEquals(actualBlockState, expectedBlockState, getMessage("Slot " + entry.getKey() + " does not have the expected block state"));
             }
 
         }
@@ -72,7 +77,7 @@ public class TestUtils {
         player.teleport(abspos.getX() + 2, abspos.getY(), abspos.getZ() + 2, false);
         player.lookAt(EntityAnchorArgumentType.EntityAnchor.EYES, abspos.toCenterPos());
 
-        ChestBlockEntity chest = (ChestBlockEntity) ctx.getBlockEntity(inventoryPosition);
+        ChestBlockEntity chest = (ChestBlockEntity) ctx.getBlockEntity(inventoryPosition/*? if >=1.21.5 {*/, ChestBlockEntity.class/*?}*/);
 
         for (Map.Entry<Integer, ItemStack> entry : inventoryContents.entrySet()) {
             chest.setStack(entry.getKey(), entry.getValue());

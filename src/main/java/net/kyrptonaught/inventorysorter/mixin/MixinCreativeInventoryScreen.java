@@ -2,14 +2,10 @@ package net.kyrptonaught.inventorysorter.mixin;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.kyrptonaught.inventorysorter.client.InventorySorterModClient;
 import net.kyrptonaught.inventorysorter.client.SortButtonWidget;
 import net.kyrptonaught.inventorysorter.client.SortableContainerScreen;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemGroups;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;

@@ -18,7 +18,7 @@ public class Config {
         NewConfigOptions newConfig = convertedOptions();
 
         if (oldCompatibilityListPath.toFile().exists()) {
-            LOGGER.info("Found old comaptibility file, converting to new format...");
+            LOGGER.info("Found old compatibility file, converting to new format...");
             OldCompatibilityListOptions denyListOptions = OldCompatibilityListOptions.load();
             newConfig.customCompatibilityListDownloadUrl = denyListOptions.blacklistDownloadURL;
             newConfig.hideButtonsForScreens = denyListOptions.hideSortBtnsList;

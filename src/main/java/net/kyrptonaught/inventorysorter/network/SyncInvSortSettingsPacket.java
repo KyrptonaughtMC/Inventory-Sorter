@@ -29,7 +29,11 @@ public record SyncInvSortSettingsPacket(boolean middleClick, boolean doubleClick
     @Environment(EnvType.CLIENT)
     public static void registerSyncOnPlayerJoin() {
         NewConfigOptions config = getConfig();
-        ClientPlayNetworking.send(new SyncInvSortSettingsPacket(config.enableMiddleClickSort, config.enableDoubleClickSort, config.sortType.ordinal()));
+        ClientPlayNetworking.send(new SyncInvSortSettingsPacket(
+                config.enableMiddleClickSort,
+                config.enableDoubleClickSort,
+                config.sortType.ordinal())
+        );
     }
 
     public static void registerReceiveSyncData() {

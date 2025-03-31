@@ -71,13 +71,19 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
         }
 
         if (InventorySorterModClient.isKeybindPressed(button, 0, InputUtil.Type.MOUSE)) {
-            boolean playerOnlyInv = InventoryHelper.canSortInventory(client.player);
+            boolean canSortInventory = InventoryHelper.canSortInventory(client.player);
+            boolean shouldSortPlayerInventory = getConfig().sortPlayerInventory;
+            boolean isContainerInventory = (focusedSlot != null) && (!(focusedSlot.inventory instanceof PlayerInventory));
 
-            if (playerOnlyInv && getConfig().sortHighlightedItem && focusedSlot != null) {
-                playerOnlyInv = !(focusedSlot.inventory instanceof PlayerInventory);
+            if (canSortInventory) {
+                if (getConfig().sortHighlightedItem) {
+                    if (isContainerInventory) {
+                        shouldSortPlayerInventory = false;
+                    }
+                }
             }
 
-            InventorySortPacket.sendSortPacket(!playerOnlyInv);
+            InventorySortPacket.sendSortPacket(shouldSortPlayerInventory);
             callbackInfoReturnable.setReturnValue(true);
         }
     }

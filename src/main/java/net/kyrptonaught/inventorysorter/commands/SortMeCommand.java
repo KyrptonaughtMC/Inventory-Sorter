@@ -8,8 +8,6 @@ import net.kyrptonaught.inventorysorter.interfaces.InvSorterPlayer;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.HitResult;
 
 public class SortMeCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher, LiteralArgumentBuilder<ServerCommandSource> rootCommand) {
@@ -20,7 +18,7 @@ public class SortMeCommand {
         InventoryHelper.sortInventory(commandContext.getSource().getPlayer(), true, ((InvSorterPlayer) commandContext.getSource().getPlayer()).getSortType());
 
         Text feedBack = Text.translatable("key.inventorysorter.sorting.sorted");
-        commandContext.getSource().sendFeedback(() -> feedBack, false);
+        commandContext.getSource().sendFeedback(() -> Text.of(feedBack.getString()), false);
         return 1;
     }
 }

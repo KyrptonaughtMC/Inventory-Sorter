@@ -17,7 +17,11 @@ import net.minecraft.item.Items;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.test.GameTest;
+/*? if <1.21.5 {*/
+/*import net.minecraft.test.GameTest;
+*//*?} else {*/
+import net.fabricmc.fabric.api.gametest.v1.GameTest;
+/*?}*/
 import net.minecraft.test.TestContext;
 import net.minecraft.text.Text;
 
@@ -25,14 +29,14 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.IntFunction;
 
-import static net.fabricmc.fabric.api.gametest.v1.FabricGameTest.EMPTY_STRUCTURE;
+/*? if <1.21.5 {*//*import static net.fabricmc.fabric.api.gametest.v1.FabricGameTest.EMPTY_STRUCTURE;*//*?}*/
 import static net.kyrptonaught.inventorysorter.e2e.TestUtils.*;
 
 public class SortingTests {
 
-    public static final String template = EMPTY_STRUCTURE;
+    /*? if <1.21.5 {*//*public static final String template = EMPTY_STRUCTURE;*//*?}*/
 
-    @GameTest(templateName = template)
+    @GameTest(/*? if <1.21.5 {*//*templateName = template*//*?}*/)
     public void testSimpleStackable(TestContext ctx) {
         Scenario scenario = setUpScene(ctx, Map.of(
                 5, new ItemStack(Items.DIAMOND, 32),
@@ -46,7 +50,7 @@ public class SortingTests {
         ctx.complete();
     }
 
-    @GameTest(templateName = template)
+    @GameTest(/*? if <1.21.5 {*//*templateName = template*//*?}*/)
     public void testSimpleStackableWithLeftovers(TestContext ctx) {
 
         Scenario scenario = setUpScene(ctx, Map.of(
@@ -64,7 +68,7 @@ public class SortingTests {
         ctx.complete();
     }
 
-    @GameTest(templateName = template)
+    @GameTest(/*? if <1.21.5 {*//*templateName = template*//*?}*/)
     public void testSortWithStackables(TestContext ctx) {
         Scenario scenario = setUpScene(ctx, Map.ofEntries(
                 Map.entry(0, new ItemStack(Items.ACACIA_LEAVES, 12)),
@@ -99,7 +103,7 @@ public class SortingTests {
         ctx.complete();
     }
 
-    @GameTest(templateName = template)
+    @GameTest(/*? if <1.21.5 {*//*templateName = template*//*?}*/)
     public void testCustomMaxStackSizeSorting(TestContext ctx) {
 
         ComponentChanges changes = ComponentChanges.builder().add(DataComponentTypes.MAX_STACK_SIZE, 99).build();
@@ -132,7 +136,7 @@ public class SortingTests {
         ctx.complete();
     }
 
-    @GameTest(templateName = template)
+    @GameTest(/*? if <1.21.5 {*//*templateName = template*//*?}*/)
     public void testSameItemDifferentName(TestContext ctx) {
 
         ComponentChanges changes = ComponentChanges.builder()
@@ -159,7 +163,7 @@ public class SortingTests {
         ctx.complete();
     }
 
-    @GameTest(templateName = template)
+    @GameTest(/*? if <1.21.5 {*//*templateName = template*//*?}*/)
     public void testSimplePickaxes(TestContext ctx) {
         Scenario scenario = setUpScene(ctx, Map.of(
                 0, new ItemStack(Items.NETHERITE_PICKAXE, 1),
@@ -184,7 +188,7 @@ public class SortingTests {
         ctx.complete();
     }
 
-    @GameTest(templateName = template)
+    @GameTest(/*? if <1.21.5 {*//*templateName = template*//*?}*/)
     public void testDamagedPickaxes(TestContext ctx) {
         ItemStack diamondPick80PercentDamaged = new ItemStack(
                 RegistryEntry.of(Items.DIAMOND_PICKAXE), 1,
@@ -229,7 +233,7 @@ public class SortingTests {
         ctx.complete();
     }
 
-    @GameTest(templateName = template)
+    @GameTest(/*? if <1.21.5 {*//*templateName = template*//*?}*/)
     public void testPlayerHeads(TestContext ctx) {
 
         ProfileComponent houseofmeza = new ProfileComponent(new GameProfile(UUID.randomUUID(), "houseofmeza"));
@@ -273,7 +277,7 @@ public class SortingTests {
         ctx.complete();
     }
 
-    @GameTest(templateName = template)
+    @GameTest(/*? if <1.21.5 {*//*templateName = template*//*?}*/)
     public void testEnchantedBooks(TestContext ctx) {
         Registry<Enchantment> registry = ctx.getWorld().getRegistryManager().getOrThrow(RegistryKeys.ENCHANTMENT);
 
@@ -327,7 +331,7 @@ public class SortingTests {
         ctx.complete();
     }
 
-    @GameTest(templateName = template)
+    @GameTest(/*? if <1.21.5 {*//*templateName = template*//*?}*/)
     public void testCategorySort(TestContext ctx) {
         ItemStack coloredBlockStack = new ItemStack(Items.WHITE_WOOL, 64);
         ItemStack naturalBlockStack = new ItemStack(Items.DIRT, 64);
@@ -372,7 +376,7 @@ public class SortingTests {
 
     }
 
-    @GameTest(templateName = template)
+    @GameTest(/*? if <1.21.5 {*//*templateName = template*//*?}*/)
     public void testOminousPotions(TestContext ctx) {
 
         IntFunction<ComponentChanges> potionLevel = (int level) -> ComponentChanges.builder()
@@ -408,7 +412,7 @@ public class SortingTests {
 
     }
 
-    @GameTest(templateName = template)
+    @GameTest(/*? if <1.21.5 {*//*templateName = template*//*?}*/)
     public void testVaults(TestContext ctx) {
         Boolean2ObjectFunction<ComponentChanges> setOminous = (boolean isOminous) -> ComponentChanges.builder()
                 .add(DataComponentTypes.BLOCK_STATE, new BlockStateComponent(Map.of("ominous", String.valueOf(isOminous))))

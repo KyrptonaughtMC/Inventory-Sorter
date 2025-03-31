@@ -94,7 +94,9 @@ public class InventoryHelper {
         }
 
         stacks.sort(SortCases.getComparator(sortType));
-        if (stacks.size() == 0) return;
+        if (stacks.size() == 0) {
+            return;
+        }
         for (int i = 0; i < invSize; i++)
             inv.setStack(startSlot + i, i < stacks.size() ? stacks.get(i) : ItemStack.EMPTY);
         inv.markDirty();
@@ -109,7 +111,9 @@ public class InventoryHelper {
                 ItemStack oldStack = stacks.get(j);
                 if (canMergeItems(newStack, oldStack)) {
                     combineStacks(newStack, oldStack);
-                    if (oldStack.getItem() == Items.AIR || oldStack.getCount() == 0) stacks.remove(j);
+                    if (oldStack.getItem() == Items.AIR || oldStack.getCount() == 0) {
+                        stacks.remove(j);
+                    }
                 }
             }
         stacks.add(newStack);
@@ -126,14 +130,18 @@ public class InventoryHelper {
     }
 
     private static boolean canMergeItems(ItemStack itemStack_1, ItemStack itemStack_2) {
-        if (!itemStack_1.isStackable() || !itemStack_2.isStackable())
+        if (!itemStack_1.isStackable() || !itemStack_2.isStackable()) {
             return false;
-        if (itemStack_1.getCount() == itemStack_1.getMaxCount() || itemStack_2.getCount() == itemStack_2.getMaxCount())
+        }
+        if (itemStack_1.getCount() == itemStack_1.getMaxCount() || itemStack_2.getCount() == itemStack_2.getMaxCount()) {
             return false;
-        if (itemStack_1.getItem() != itemStack_2.getItem())
+        }
+        if (itemStack_1.getItem() != itemStack_2.getItem()) {
             return false;
-        if (itemStack_1.getDamage() != itemStack_2.getDamage())
+        }
+        if (itemStack_1.getDamage() != itemStack_2.getDamage()) {
             return false;
+        }
         return ItemStack.areItemsAndComponentsEqual(itemStack_1, itemStack_2);
     }
 
@@ -156,28 +164,39 @@ public class InventoryHelper {
     }
 
     public static boolean canSortInventory(PlayerEntity player) {
-        if (player.currentScreenHandler instanceof PlayerScreenHandler) return false;
+        if (player.currentScreenHandler instanceof PlayerScreenHandler) {
+            return false;
+        }
         return canSortInventory(player, player.currentScreenHandler);
     }
 
     public static boolean canSortInventory(PlayerEntity player, ScreenHandler screenHandler) {
-        if (screenHandler == null || !screenHandler.canUse(player))
+        if (screenHandler == null || !screenHandler.canUse(player)) {
             return false;
+        }
         ScreenHandlerType<?> type = ((ScreenHandlerTypeAccessor) screenHandler).gettype();
-        if (type == null) return false;
+        if (type == null) {
+            return false;
+        }
         Identifier id = Registries.SCREEN_HANDLER.getId(type);
-        if (id == null) return false;
+        if (id == null) {
+            return false;
+        }
         return isSortableContainer(screenHandler, id);
     }
 
     private static boolean isSortableContainer(ScreenHandler screenHandler, Identifier screenID) {
-        if (!compatibility.canSort(screenID))
+        if (!compatibility.canSort(screenID)) {
             return false;
-        if (!((SortableContainer) screenHandler).hasSlots())
+        }
+        if (!((SortableContainer) screenHandler).hasSlots()) {
             return false;
+        }
 
         int numSlots = screenHandler.slots.size();
-        if (numSlots <= 36) return false;
+        if (numSlots <= 36) {
+            return false;
+        }
         return numSlots - 36 >= 9;
     }
 }

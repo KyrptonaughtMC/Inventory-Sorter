@@ -79,6 +79,12 @@ public class ModMenuIntegration implements ModMenuApi {
                             .setYesNoTextSupplier(b -> b ? on() : off())
                             .setTooltip(Text.translatable("key.inventorysorter.config.sortplayer.tooltip"))
                             .setSaveConsumer(val -> options.sortPlayerInventory = val)
+                            .build())
+                    .addEntry(entryBuilder.startBooleanToggle(Text.translatable("key.inventorysorter.config.sortmousehighlighted"), options.sortHighlightedItem)
+                            .setDefaultValue(true)
+                            .setYesNoTextSupplier(b -> b ? on() : off())
+                            .setTooltip(Text.translatable("key.inventorysorter.config.sortmousehighlighted.tooltip"))
+                            .setSaveConsumer(val -> options.sortHighlightedItem = val)
                             .build());
 
             screenBuilder.getOrCreateCategory(Text.translatable("key.inventorysorter.config.category.activation"))
@@ -93,12 +99,6 @@ public class ModMenuIntegration implements ModMenuApi {
                             .setYesNoTextSupplier(b -> b ? on() : off())
                             .setTooltip(Text.translatable("key.inventorysorter.config.doubleclick.tooltip"))
                             .setSaveConsumer(val -> options.enableDoubleClickSort = val)
-                            .build())
-                    .addEntry(entryBuilder.startBooleanToggle(Text.translatable("key.inventorysorter.config.sortmousehighlighted"), options.sortHighlightedItem)
-                            .setDefaultValue(true)
-                            .setYesNoTextSupplier(b -> b ? on() : off())
-                            .setTooltip(Text.translatable("key.inventorysorter.config.sortmousehighlighted.tooltip"))
-                            .setSaveConsumer(val -> options.sortHighlightedItem = val)
                             .build());
 
 

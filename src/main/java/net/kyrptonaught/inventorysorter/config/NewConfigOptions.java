@@ -2,7 +2,6 @@ package net.kyrptonaught.inventorysorter.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.ibm.icu.impl.ClassLoaderUtil;
 import net.kyrptonaught.inventorysorter.SortCases;
 import net.kyrptonaught.inventorysorter.client.InventorySorterModClient;
 import net.kyrptonaught.inventorysorter.compat.config.CompatConfig;

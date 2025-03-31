@@ -1,6 +1,5 @@
 package net.kyrptonaught.inventorysorter.compat.sources;
 
-import com.ibm.icu.impl.ClassLoaderUtil;
 import net.minecraft.util.Identifier;
 
 import java.io.FileNotFoundException;

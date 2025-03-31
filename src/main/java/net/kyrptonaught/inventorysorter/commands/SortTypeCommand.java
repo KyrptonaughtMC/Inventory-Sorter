@@ -23,7 +23,7 @@ public class SortTypeCommand {
     public static int run(CommandContext<ServerCommandSource> commandContext, SortCases.SortType sortType) {
         ((InvSorterPlayer) commandContext.getSource().getPlayer()).setSortType(sortType);
         Text feedBack = Text.translatable("key.inventorysorter.cmd.updatesortingtype");
-        commandContext.getSource().sendFeedback(() -> feedBack, false);
+        commandContext.getSource().sendFeedback(() -> Text.of(feedBack.getString()), false);
         return 1;
     }
 }

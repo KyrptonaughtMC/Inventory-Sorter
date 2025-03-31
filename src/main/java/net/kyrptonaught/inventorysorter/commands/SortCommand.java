@@ -20,7 +20,7 @@ public class SortCommand {
         HitResult hit = commandContext.getSource().getPlayer().raycast(6, 1, false);
         if (hit instanceof BlockHitResult) {
             Text feedBack = InventoryHelper.sortBlock(commandContext.getSource().getPlayer().getWorld(), ((BlockHitResult) hit).getBlockPos(), commandContext.getSource().getPlayer(), ((InvSorterPlayer) commandContext.getSource().getPlayer()).getSortType());
-            commandContext.getSource().sendFeedback(() -> feedBack, false);
+            commandContext.getSource().sendFeedback(() -> Text.of(feedBack.getString()), false);
         }
         return 1;
     }

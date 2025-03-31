@@ -29,7 +29,7 @@ public class MiddleClickSortCommand {
         if (commandContext.getSource().getPlayer() == null) return 0;
         ((InvSorterPlayer) commandContext.getSource().getPlayer()).setMiddleClick(false);
         // @TODO instead of appending, use proper translation with placeholders
-        commandContext.getSource().sendFeedback(() -> FEEDBACK_MESSAGE.copy().append(OFF_MESSAGE), false);
+        commandContext.getSource().sendFeedback(() -> Text.of(FEEDBACK_MESSAGE.copy().append(OFF_MESSAGE).getString()), false);
         return 1;
     }
 
@@ -37,7 +37,7 @@ public class MiddleClickSortCommand {
         if (commandContext.getSource().getPlayer() == null) return 0;
         ((InvSorterPlayer) commandContext.getSource().getPlayer()).setMiddleClick(true);
         // @TODO instead of appending, use proper translation with placeholders
-        commandContext.getSource().sendFeedback(() -> FEEDBACK_MESSAGE.copy().append(ON_MESSAGE), false);
+        commandContext.getSource().sendFeedback(() -> Text.of(FEEDBACK_MESSAGE.copy().append(ON_MESSAGE).getString()), false);
         return 1;
     }
 }
