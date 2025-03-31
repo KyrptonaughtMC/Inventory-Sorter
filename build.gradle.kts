@@ -23,8 +23,6 @@ repositories {
 }
 
 dependencies {
-    modImplementation("com.google.code.gson:gson:2.+")
-    include("com.google.code.gson:gson:2.+")
     modImplementation("com.github.erosb:everit-json-schema:1.14.4")
     include("com.github.erosb:everit-json-schema:1.14.4")
     include("org.json:json:20231013")
