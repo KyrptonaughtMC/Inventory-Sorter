@@ -22,8 +22,10 @@ import net.minecraft.registry.entry.RegistryEntry;
 *//*?} else {*/
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 /*?}*/
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.test.TestContext;
 import net.minecraft.text.Text;
+import net.minecraft.world.GameMode;
 
 import java.util.Map;
 import java.util.UUID;
@@ -63,6 +65,26 @@ public class SortingTests {
         assertContents(ctx, scenario, Map.of(
                 0, new ItemStack(Items.DIAMOND, 64),
                 1, new ItemStack(Items.DIAMOND, 1)
+        ));
+
+        ctx.complete();
+    }
+
+    @GameTest(/*? if <1.21.5 {*//*templateName = template*//*?}*/)
+    public void testSpectatorsCannotSort(TestContext ctx) {
+        Scenario scenario = setUpScene(ctx, Map.of(
+                5, new ItemStack(Items.DIAMOND, 32),
+                6, new ItemStack(Items.DIAMOND, 33)
+        ), TestUtils.IS_SPECTATOR);
+
+        ServerPlayerEntity player = scenario.player();
+        player.changeGameMode(GameMode.SPECTATOR);
+
+        InventoryHelper.sortInventory(player, false, SortCases.SortType.NAME);
+
+        assertContents(ctx, scenario, Map.of(
+                5, new ItemStack(Items.DIAMOND, 32),
+                6, new ItemStack(Items.DIAMOND, 33)
         ));
 
         ctx.complete();

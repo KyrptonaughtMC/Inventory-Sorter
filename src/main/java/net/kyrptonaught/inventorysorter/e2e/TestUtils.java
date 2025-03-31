@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class TestUtils {
-
+    public static boolean IS_SPECTATOR=true;
     private static ServerPlayerEntity player;
 
     public record Scenario(ServerPlayerEntity player, ChestBlockEntity chest) {
@@ -67,9 +67,11 @@ public class TestUtils {
     }
 
     public static Scenario setUpScene(TestContext ctx, Map<Integer, ItemStack> inventoryContents) {
-        if (player == null) {
-            player = createMockServerPlayer(ctx);
-        }
+        return setUpScene(ctx, inventoryContents, false);
+    }
+
+    public static Scenario setUpScene(TestContext ctx, Map<Integer, ItemStack> inventoryContents, boolean isSpectator) {
+        player = createMockServerPlayer(ctx, isSpectator);
         BlockPos inventoryPosition = new BlockPos(0, 0, 0);
         BlockPos abspos = ctx.getAbsolutePos(inventoryPosition);
         ctx.setBlockState(inventoryPosition, Blocks.CHEST.getDefaultState());
@@ -88,11 +90,11 @@ public class TestUtils {
         return new Scenario(player, chest);
     }
 
-    public static ServerPlayerEntity createMockServerPlayer(TestContext ctx) {
+    public static ServerPlayerEntity createMockServerPlayer(TestContext ctx, boolean isSpectator) {
         ConnectedClientData connectedClientData = ConnectedClientData.createDefault(new GameProfile(UUID.randomUUID(), "test-mock-player"), false);
         ServerPlayerEntity serverPlayerEntity = new ServerPlayerEntity(ctx.getWorld().getServer(), ctx.getWorld(), connectedClientData.gameProfile(), connectedClientData.syncedOptions()) {
             public boolean isSpectator() {
-                return false;
+                return isSpectator;
             }
 
             public boolean isCreative() {

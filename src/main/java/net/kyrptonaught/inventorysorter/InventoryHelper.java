@@ -18,12 +18,14 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.GameMode;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.OptionalInt;
 
+import static net.kyrptonaught.inventorysorter.InventorySorterMod.LOGGER;
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.compatibility;
 
 public class InventoryHelper {
@@ -182,6 +184,11 @@ public class InventoryHelper {
         if (id == null) {
             return false;
         }
+
+        if (player.isSpectator()) {
+            return false;
+        }
+
         return isSortableContainer(screenHandler, id);
     }
 
