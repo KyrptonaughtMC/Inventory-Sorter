@@ -57,14 +57,14 @@ public record SyncBlacklistPacket(ByteBuf buffer) implements CustomPayload {
             int numHides = packet.readInt();
             for (int i = 0; i < numHides; i++) {
                 String readString = packet.readString();
-                LOGGER.info("Hiding sort button for: " + readString);
+                LOGGER.debug("Hiding sort button for: " + readString);
                 compatibility.addShouldHideSortButton(readString);
             }
 
             int numNoSort = packet.readInt();
             for (int i = 0; i < numNoSort; i++) {
                 String readString = packet.readString();
-                LOGGER.info("Preventing sort for: " + readString);
+                LOGGER.debug("Preventing sort for: " + readString);
                 compatibility.addPreventSort(readString);
             }
         });
