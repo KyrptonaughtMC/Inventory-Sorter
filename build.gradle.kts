@@ -1,4 +1,5 @@
 import gg.meza.stonecraft.mod
+import me.modmuss50.mpp.ReleaseType
 
 plugins {
     id("gg.meza.stonecraft")
@@ -47,6 +48,7 @@ tasks.jar {
 }
 
 publishMods {
+    type = ReleaseType.of(providers.environmentVariable("RELEASE_TYPE").getOrElse("beta"))
     modrinth {
         if (mod.isFabric) {
             requires("fabric-api")
