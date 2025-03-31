@@ -11,6 +11,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.getConfig;
 
@@ -27,6 +28,15 @@ public abstract class MixinCreativeInventoryScreen implements SortableContainerS
             SortButtonWidget sortbtn = this.getSortButton();
             if (sortbtn != null)
                 sortbtn.visible = this.isInventoryTabSelected();
+        }
+    }
+
+    @Inject(method = "mouseScrolled", at = @At("HEAD"))
+    public void mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount, CallbackInfoReturnable<Boolean> cir) {
+        SortButtonWidget sortbtn = this.getSortButton();
+
+        if (sortbtn.visible && sortbtn.isMouseOver(mouseX, mouseY)) {
+            sortbtn.mouseScrolled(mouseX, mouseY, verticalAmount, horizontalAmount);
         }
     }
 

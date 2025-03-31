@@ -17,10 +17,17 @@ import net.minecraft.util.Identifier;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.getConfig;
 
-public record SyncInvSortSettingsPacket(boolean middleClick, boolean doubleClick,
-                                        int sortType) implements CustomPayload {
+public record SyncInvSortSettingsPacket(
+        boolean middleClick,
+        boolean doubleClick,
+        int sortType
+) implements CustomPayload {
+
     private static final CustomPayload.Id<SyncInvSortSettingsPacket> ID = new CustomPayload.Id<>(Identifier.of("inventorysorter", "sync_settings_packet"));
-    private static final PacketCodec<RegistryByteBuf, SyncInvSortSettingsPacket> CODEC = CustomPayload.codecOf(SyncInvSortSettingsPacket::write, SyncInvSortSettingsPacket::new);
+    private static final PacketCodec<RegistryByteBuf, SyncInvSortSettingsPacket> CODEC = CustomPayload.codecOf(
+            SyncInvSortSettingsPacket::write,
+            SyncInvSortSettingsPacket::new
+    );
 
     public SyncInvSortSettingsPacket(PacketByteBuf buf) {
         this(buf.readBoolean(), buf.readBoolean(), buf.readInt());
@@ -29,15 +36,26 @@ public record SyncInvSortSettingsPacket(boolean middleClick, boolean doubleClick
     @Environment(EnvType.CLIENT)
     public static void registerSyncOnPlayerJoin() {
         NewConfigOptions config = getConfig();
+
         ClientPlayNetworking.send(new SyncInvSortSettingsPacket(
                 config.enableMiddleClickSort,
                 config.enableDoubleClickSort,
                 config.sortType.ordinal())
         );
+
+        ClientPlayNetworking.registerGlobalReceiver(SyncInvSortSettingsPacket.ID, ((payload, context) -> {
+            NewConfigOptions currentConfig = getConfig();
+            currentConfig.enableMiddleClickSort = payload.middleClick;
+            currentConfig.enableDoubleClickSort = payload.doubleClick;
+            currentConfig.sortType = SortCases.SortType.values()[payload.sortType];
+            currentConfig.save();
+        }));
     }
 
     public static void registerReceiveSyncData() {
         PayloadTypeRegistry.playC2S().register(SyncInvSortSettingsPacket.ID, SyncInvSortSettingsPacket.CODEC);
+        PayloadTypeRegistry.playS2C().register(SyncInvSortSettingsPacket.ID, SyncInvSortSettingsPacket.CODEC);
+
         ServerPlayNetworking.registerGlobalReceiver(SyncInvSortSettingsPacket.ID, ((payload, context) -> {
             ServerPlayerEntity player = context.player();
             player.getServer().execute(() -> {

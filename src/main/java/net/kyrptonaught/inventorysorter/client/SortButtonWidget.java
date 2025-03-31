@@ -14,7 +14,9 @@ import net.minecraft.client.MinecraftClient;
 /*import net.minecraft.client.gl.ShaderProgramKeys;
 *//*?}*/
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.ButtonTextures;
+import net.minecraft.client.gui.widget.ScrollableWidget;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.registry.Registries;
@@ -83,7 +85,7 @@ public class SortButtonWidget extends TexturedButtonWidget {
     }
 
     @Override
-    public void renderWidget(DrawContext context, int int_1, int int_2, float float_1) {
+    public void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
         /*? if <1.21.5 {*/
         /*RenderSystem.setShader(ShaderProgramKeys.POSITION);
         RenderSystem.enableDepthTest();
@@ -93,13 +95,12 @@ public class SortButtonWidget extends TexturedButtonWidget {
         context.getMatrices().translate(getX(), getY(), 0);
         Identifier identifier = TEXTURES.get(true, isSelected() || isHovered());
         context.drawTexture(RenderLayer::getGuiTextured, identifier, getX(), getY(), 0, 0, 20, 18, 20, 18);
-        this.renderTooltip(context, int_1, int_2);
+        this.renderTooltip(context, mouseX, mouseY);
         context.getMatrices().pop();
     }
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-        // @TODO: FIX THIS
         int current = getConfig().sortType.ordinal();
         if (verticalAmount > 0) {
             current++;

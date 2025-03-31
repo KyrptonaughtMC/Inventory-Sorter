@@ -3,6 +3,7 @@ package net.kyrptonaught.inventorysorter.mixin;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.kyrptonaught.inventorysorter.InventoryHelper;
+import net.kyrptonaught.inventorysorter.InventorySorterMod;
 import net.kyrptonaught.inventorysorter.client.InventorySorterModClient;
 import net.kyrptonaught.inventorysorter.client.SortButtonWidget;
 import net.kyrptonaught.inventorysorter.client.SortableContainerScreen;
@@ -18,6 +19,7 @@ import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -44,11 +46,31 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
 
     @Shadow
     protected Slot focusedSlot;
+
+    @Unique
     private SortButtonWidget invsort$SortBtn;
+    @Unique
+    private SortButtonWidget invsort$PlayerSortBtn;
 
     protected MixinContainerScreen(Text text_1) {
         super(text_1);
     }
+
+    @Inject(method = "mouseScrolled", at = @At("HEAD"))
+    public void mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount, CallbackInfoReturnable<Boolean> cir) {
+        if (client == null || client.player == null) {
+            return;
+        }
+
+        if (invsort$SortBtn != null && invsort$SortBtn.isMouseOver(mouseX, mouseY)) {
+            invsort$SortBtn.mouseScrolled(mouseX, mouseY, verticalAmount, horizontalAmount);
+        }
+
+        if (invsort$PlayerSortBtn != null && invsort$PlayerSortBtn.isMouseOver(mouseX, mouseY)) {
+            invsort$PlayerSortBtn.mouseScrolled(mouseX, mouseY, verticalAmount, horizontalAmount);
+        }
+    }
+
 
     @Inject(method = "init", at = @At("TAIL"))
     private void invsort$init(CallbackInfo callbackinfo) {
@@ -60,7 +82,7 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
             boolean playerOnly = !InventoryHelper.canSortInventory(client.player);
             this.addDrawableChild(invsort$SortBtn = new SortButtonWidget(this.x + this.backgroundWidth - 20, this.y + (playerOnly ? (backgroundHeight - 95) : 6), playerOnly));
             if (!playerOnly && getConfig().separateButton)
-                this.addDrawableChild(new SortButtonWidget(invsort$SortBtn.getX(), this.y + ((SortableContainerScreen) (this)).getMiddleHeight(), true));
+                this.addDrawableChild(invsort$PlayerSortBtn = new SortButtonWidget(invsort$SortBtn.getX(), this.y + ((SortableContainerScreen) (this)).getMiddleHeight(), true));
         }
     }
 
