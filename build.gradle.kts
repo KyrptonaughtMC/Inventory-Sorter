@@ -23,11 +23,14 @@ repositories {
 
 dependencies {
     modImplementation("com.google.code.gson:gson:2.+")
+    include("com.google.code.gson:gson:2.+")
+    modImplementation("com.github.erosb:everit-json-schema:1.14.4")
+    include("com.github.erosb:everit-json-schema:1.14.4")
+    include("org.json:json:20231013")
     modApi("com.terraformersmc:modmenu:${mod.prop("modmenu_version")}")
     modApi("me.shedaniel.cloth:cloth-config-fabric:${mod.prop("cloth_version")}") {
         exclude(group = "net.fabricmc.fabric-api")
     }
-    modImplementation("com.github.erosb:everit-json-schema:1.14.4")
 
     testImplementation("net.fabricmc:fabric-loader-junit:${mod.prop("loader_version")}")
     testImplementation("com.google.jimfs:jimfs:1.1")

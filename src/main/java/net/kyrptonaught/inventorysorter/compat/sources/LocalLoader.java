@@ -1,9 +1,9 @@
 package net.kyrptonaught.inventorysorter.compat.sources;
 
+import com.ibm.icu.impl.ClassLoaderUtil;
 import net.minecraft.util.Identifier;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
@@ -28,16 +28,21 @@ public class LocalLoader implements CompatibilityLoader {
 
     private Set<Identifier> load(String path) {
         LOGGER.debug("Loading local compatibility data from: {}", path);
-        URL url = CompatibilityLoader.class.getClassLoader().getResource(path);
-        Set<Identifier> identifiers;
-
-        try {
-            FileReader fileInputStream = new FileReader(Paths.get(url.toURI()).toFile());
-            identifiers = parseJson(fileInputStream);
-        } catch (URISyntaxException | FileNotFoundException e) {
+        Set<Identifier> identifiers = null;
+        try (InputStream is = ClassLoaderUtil.getClassLoader().getResourceAsStream(path)) {
+            if (is != null) {
+                InputStreamReader reader = new InputStreamReader(is);
+                identifiers = parseJson(reader);
+            }
+        } catch (IOException e) {
             LOGGER.info("Could not find file: " + path + " in jar, creating empty list");
             throw new RuntimeException(e);
         }
+
+        if (identifiers == null) {
+            return Set.of();
+        }
+
         return identifiers;
     }
 
