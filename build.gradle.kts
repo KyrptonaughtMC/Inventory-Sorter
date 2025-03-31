@@ -43,3 +43,22 @@ tasks.jar {
 	}
 }
 
+publishMods {
+    modrinth {
+        if (mod.isFabric) {
+            requires("fabric-api")
+            optional("modmenu")
+        }
+        requires("cloth-config")
+    }
+
+    curseforge {
+        clientRequired = false
+        serverRequired = true
+        if (mod.isFabric) {
+            requires("fabric-api")
+            optional("modmenu")
+        }
+        requires("cloth-config")
+    }
+}
