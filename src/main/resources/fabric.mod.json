@@ -36,6 +36,6 @@
   },
   "depends": {
     "fabricloader": ">=0.12.5",
-    "fabric": "*"
+    "fabric-api": "*"
   }
 }
