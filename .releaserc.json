@@ -47,7 +47,7 @@
     ["semantic-release-discord-notifier", {
       "embedJson": {
         "username": "YourModName",
-        "avatar_url": "https://stonecraft.meza.gg/img/stonecraft@0.25x.png",
+        "avatar_url": "https://cdn.modrinth.com/data/5ibSyLAz/5590c9168b256a538bcc7704f2984b7ee29f9c1b.png",
         "content": "# :rocket: ${nextRelease.version} just dropped",
         "embeds": [
           {
@@ -67,13 +67,13 @@
                 "type": 2,
                 "style": 5,
                 "label": "Download from Modrinth",
-                "url": "https://modrinth.com/mod/yourmodslug"
+                "url": "https://modrinth.com/mod/inventory-sorting"
               },
               {
                 "type": 2,
                 "style": 5,
                 "label": "Download from Curseforge",
-                "url": "https://www.curseforge.com/minecraft/mc-mods/yourmodslug"
+                "url": "https://www.curseforge.com/minecraft/mc-mods/inventory-sorting"
               }
             ]
           }
