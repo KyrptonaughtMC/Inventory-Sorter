@@ -1,12 +1,10 @@
 package net.kyrptonaught.inventorysorter.compat.sources;
 
-import com.ibm.icu.impl.ClassLoaderUtil;
 import net.minecraft.util.Identifier;
 
-import java.io.*;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Paths;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Set;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.LOGGER;
@@ -29,7 +27,7 @@ public class LocalLoader implements CompatibilityLoader {
     private Set<Identifier> load(String path) {
         LOGGER.debug("Loading local compatibility data from: {}", path);
         Set<Identifier> identifiers = null;
-        try (InputStream is = ClassLoaderUtil.getClassLoader().getResourceAsStream(path)) {
+        try (InputStream is = LocalLoader.class.getResourceAsStream(path)) {
             if (is != null) {
                 InputStreamReader reader = new InputStreamReader(is);
                 identifiers = parseJson(reader);
