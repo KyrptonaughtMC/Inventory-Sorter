@@ -46,7 +46,6 @@ tasks.jar {
 }
 
 publishMods {
-    type = ReleaseType.of(providers.environmentVariable("RELEASE_TYPE").getOrElse("beta"))
     modrinth {
         if (mod.isFabric) {
             requires("fabric-api")

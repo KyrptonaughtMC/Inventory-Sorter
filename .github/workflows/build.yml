@@ -7,9 +7,6 @@ permissions:
   contents: write
   pull-requests: write
 
-env:
-  TYPE: ${{ endsWith(github.ref_name, 'main') && 'release' || (endsWith(github.ref_name, 'beta') && 'beta' || 'snapshot') }}
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -66,7 +63,6 @@ jobs:
           CURSEFORGE_SLUG: ${{ vars.CURSEFORGE_SLUG }}
           CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-          RELEASE_TYPE: ${{ env.TYPE }}
         run: npx semantic-release
 
       - name: "🧪 Run Dev Build"
