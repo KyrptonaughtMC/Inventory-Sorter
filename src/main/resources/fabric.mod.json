@@ -1,41 +1,47 @@
 {
   "schemaVersion": 1,
-  "id": "inventorysorter",
-  "version": "1.9.1-1.21.4",
-  "name": "Inventory Sorter",
-  "description": "Quickly and easily sort inventories",
+  "id": "${id}",
+  "version": "${version}",
+  "name": "${name}",
+  "description": "${description}",
   "authors": [
+    "meza",
     "kyrptonaught"
   ],
   "contact": {
     "homepage": "https://www.curseforge.com/minecraft/mc-mods/inventory-sorting",
-    "sources": "https://github.com/kyrptonaught/Inventory-Sorter"
+    "sources": "https://github.com/KyrptonaughtMC/Inventory-Sorter"
   },
   "license": "MIT",
-  "icon": "assets/inventorysorter/icon.png",
+  "icon": "assets/${id}/icon.png",
   "environment": "*",
   "mixins": [
     {
-      "config": "net.kyrptonaught.inventorysorter.json",
+      "config": "net.kyrptonaught.${id}.json",
       "environment": "*"
     }
   ],
   "entrypoints": {
     "main": [
-      "net.kyrptonaught.inventorysorter.InventorySorterMod"
+      "net.kyrptonaught.${id}.InventorySorterMod"
     ],
     "client": [
-      "net.kyrptonaught.inventorysorter.client.InventorySorterModClient"
+      "net.kyrptonaught.${id}.client.InventorySorterModClient"
     ],
     "fabric-gametest" : [
-      "net.kyrptonaught.inventorysorter.e2e.SortingTests"
+      "net.kyrptonaught.${id}.e2e.SortingTests"
     ],
     "modmenu": [
-      "net.kyrptonaught.inventorysorter.client.modmenu.ModMenuIntegration"
+      "net.kyrptonaught.${id}.client.modmenu.ModMenuIntegration"
     ]
   },
   "depends": {
     "fabricloader": ">=0.12.5",
-    "fabric-api": "*"
+    "fabric-api": "*",
+    "cloth-config": ">=${clothVersion}",
+    "minecraft": ">=${minecraftVersion}"
+  },
+  "recommends": {
+    "modmenu": ">=${modmenuVersion}"
   }
 }

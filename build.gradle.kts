@@ -6,6 +6,7 @@ plugins {
 }
 
 modSettings {
+
     clientOptions {
         darkBackground = true
         musicVolume = 0.0
@@ -14,6 +15,8 @@ modSettings {
 
     variableReplacements = mapOf(
         "schema" to "\$schema",
+        "clothVersion" to mod.prop("cloth_version"),
+        "modmenuVersion" to mod.prop("modmenu_version")
     )
 }
 
