@@ -1,8 +1,8 @@
 package net.kyrptonaught.inventorysorter.mixin;
 
 import net.kyrptonaught.inventorysorter.InventoryHelper;
-import net.kyrptonaught.inventorysorter.interfaces.InvSorterPlayer;
 import net.kyrptonaught.inventorysorter.interfaces.SortableContainer;
+import net.kyrptonaught.inventorysorter.network.SortSettings;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
@@ -17,6 +17,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import static net.kyrptonaught.inventorysorter.InventorySorterMod.SORT_SETTINGS;
 
 @Mixin(ScreenHandler.class)
 public abstract class MixinContainer implements SortableContainer {
@@ -42,19 +44,17 @@ public abstract class MixinContainer implements SortableContainer {
 
     @Inject(method = "onSlotClick", at = @At("HEAD"), cancellable = true)
     public void sortOnDoubleClickEmpty(int slotIndex, int button, SlotActionType actionType, PlayerEntity player, CallbackInfo ci) {
-        if (!player.getWorld().isClient && player instanceof InvSorterPlayer) {
-            if ((((InvSorterPlayer) player).getDoubleClickSort() && button == 0 && actionType.equals(SlotActionType.PICKUP_ALL)) ||
-                    (((InvSorterPlayer) player).getMiddleClick() && button == 2 && actionType.equals(SlotActionType.CLONE)))
+        if (!player.getWorld().isClient) {
+            SortSettings settings = player.getAttachedOrCreate(SORT_SETTINGS);
+
+            if (settings.enableDoubleClick() && button == 0 && actionType.equals(SlotActionType.PICKUP_ALL) ||
+                    (settings.enableMiddleClick() && button == 2 && actionType.equals(SlotActionType.CLONE)))
                 if (cursorStack.isEmpty())
                     if (slotIndex >= 0 && slotIndex < this.slots.size() && this.slots.get(slotIndex).getStack().isEmpty()) {
-
-
-
-
                         InventoryHelper.sortInventory(
                                 player,
                                 slots.get(slotIndex).inventory instanceof PlayerInventory,
-                                ((InvSorterPlayer) player).getSortType()
+                                settings.sortType()
                         );
                         ci.cancel();
                     }
