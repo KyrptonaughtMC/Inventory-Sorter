@@ -74,7 +74,7 @@ public class SortButtonWidget extends TexturedButtonWidget {
         context.getMatrices().push();
         context.getMatrices().scale(.5f, .5f, 1);
         context.getMatrices().translate(getX(), getY(), 0);
-        Identifier identifier = TEXTURES.get(true, isSelected() || isHovered());
+        Identifier identifier = TEXTURES.get(true, isHovered());
         context.drawTexture(RenderLayer::getGuiTextured, identifier, getX(), getY(), 0, 0, 20, 18, 20, 18);
         this.renderTooltip(context, mouseX, mouseY);
         context.getMatrices().pop();
