@@ -13,7 +13,9 @@ config/inventorysorter.json
 ```
 
 
-This file controls all mod behavior for the player, including sorting logic, input methods, and visual settings. If the client mod is present, this file is always the source of truth. The server does not override or influence any configuration values.
+This file controls all mod behavior for the player, including sorting logic, input methods, 
+and visual settings. If the client mod is present, this file is always the source of truth.
+The server cannot override or influence these values when the client mod is present.
 
 Settings can be edited in-game using the configuration menu, accessible through [Mod Menu][mod-menu] if installed.
 
@@ -22,7 +24,18 @@ Settings can be edited in-game using the configuration menu, accessible through 
 
 If a player connects using a vanilla client (without the mod installed), the server falls back to a configuration attached to their player entity. This allows server operators to define basic behavior such as enabled sorting methods or default sort type for unmodded players.
 
-This configuration is only used when no client mod is present.
+This fallback configuration is only used when the connecting player does not have the mod installed
+
+### Server-Side Configuration
+
+When running on a dedicated server, only the following fields in `config/inventorysorter.json` are used:
+
+- `preventSortForScreens`
+- `hideButtonsForScreens`
+- `customCompatibilityListDownloadUrl`
+
+All other values are ignored.
+This allows server owners to enforce compatibility or gameplay balancing overrides.
 
 ### Compatibility List
 
@@ -197,10 +210,6 @@ net.minecraft.client.gui.screen.ingame.BeaconScreen
 ```
 
 Use this to remove the sort button from specific containers without disabling sorting entirely.
-
----
-
-Here’s the final entry:
 
 ---
 
