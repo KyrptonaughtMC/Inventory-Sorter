@@ -21,8 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static net.kyrptonaught.inventorysorter.InventorySorterMod.compatibility;
-import static net.kyrptonaught.inventorysorter.InventorySorterMod.getConfig;
+import static net.kyrptonaught.inventorysorter.InventorySorterMod.*;
 
 public class ConfigScreen {
 

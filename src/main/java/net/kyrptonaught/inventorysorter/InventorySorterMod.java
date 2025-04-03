@@ -1,10 +1,12 @@
 package net.kyrptonaught.inventorysorter;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
+import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.kyrptonaught.inventorysorter.commands.CommandRegistry;
 import net.kyrptonaught.inventorysorter.compat.Compatibility;
@@ -13,13 +15,13 @@ import net.kyrptonaught.inventorysorter.compat.sources.LocalLoader;
 import net.kyrptonaught.inventorysorter.compat.sources.OfficialListLoader;
 import net.kyrptonaught.inventorysorter.config.Config;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
-import net.kyrptonaught.inventorysorter.interfaces.InvSorterPlayer;
 import net.kyrptonaught.inventorysorter.network.InventorySortPacket;
 import net.kyrptonaught.inventorysorter.network.SortSettings;
 import net.kyrptonaught.inventorysorter.network.SyncBlacklistPacket;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +45,18 @@ public class InventorySorterMod implements ModInitializer {
         return CONFIG;
     }
 
+    @SuppressWarnings("UnstableApiUsage")
+    public static final AttachmentType<SortSettings> SORT_SETTINGS = AttachmentRegistry.create(
+            Identifier.of(MOD_ID, "sort_settings"),
+            builder -> builder
+                    .initializer(() -> new SortSettings(true, true, SortCases.SortType.NAME))
+                    .persistent(SortSettings.NBT_CODEC)
+                    .copyOnDeath()
+//                    .syncWith(SortSettings.CODEC, AttachmentSyncPredicate.targetOnly())
+    );
+
     @Override
+    @SuppressWarnings("UnstableApiUsage")
     public void onInitialize() {
         CommandRegistrationCallback.EVENT.register(CommandRegistry::register);
 
@@ -60,20 +73,18 @@ public class InventorySorterMod implements ModInitializer {
             });
         });
 
-        ServerPlayerEvents.COPY_FROM.register((oldPlayer, newPlayer, alive) -> {
-            if (oldPlayer instanceof InvSorterPlayer) {
-                ((InvSorterPlayer) newPlayer).setSortType(((InvSorterPlayer) oldPlayer).getSortType());
-                ((InvSorterPlayer) newPlayer).setMiddleClick(((InvSorterPlayer) oldPlayer).getMiddleClick());
+        ServerPlayConnectionEvents.JOIN.register((handler, server, client) -> {
+            ServerPlayerEntity player = handler.getPlayer();
+            if (!player.hasAttached(SORT_SETTINGS)) {
+                player.setAttached(
+                        SORT_SETTINGS,
+                        new SortSettings(true, true, SortCases.SortType.NAME)
+                );
             }
         });
 
         ServerPlayNetworking.registerGlobalReceiver(SortSettings.ID, (payload, context) -> {
-            ServerPlayerEntity player = context.player();
-            player.getServer().execute(() -> {
-                ((InvSorterPlayer) player).setMiddleClick(payload.enableMiddleClick());
-                ((InvSorterPlayer) player).setDoubleClickSort(payload.enableDoubleClick());
-                ((InvSorterPlayer) player).setSortType(payload.sortType());
-            });
+            context.player().setAttached(SORT_SETTINGS, payload);
         });
     }
 }
