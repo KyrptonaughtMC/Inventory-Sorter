@@ -16,6 +16,5 @@ public class CommandRegistry {
         SortMeCommand.register(dispatcher, rootCommand);
         SortTypeCommand.register(dispatcher, rootCommand);
         DownloadCompatibilityListCommand.register(dispatcher, rootCommand);
-        CompatibilityCommands.register(dispatcher, rootCommand);
     }
 }

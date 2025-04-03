@@ -148,21 +148,26 @@ public class InventoryHelper {
     }
 
     public static boolean shouldDisplayButtons(PlayerEntity player) {
-        if (player.currentScreenHandler == null || !player.currentScreenHandler.canUse(player) || player.currentScreenHandler instanceof PlayerScreenHandler) {
-            return true;
+
+        if (player.currentScreenHandler == null || !player.currentScreenHandler.canUse(player)) {
+            return false;
         }
 
         ScreenHandlerType<?> type = ((ScreenHandlerTypeAccessor) player.currentScreenHandler).gettype();
         if (type == null) {
-            return true;
+            return false;
         }
 
         Identifier id = Registries.SCREEN_HANDLER.getId(type);
         if (id == null) {
+            return false;
+        }
+
+        if (player.currentScreenHandler instanceof PlayerScreenHandler || compatibility.shouldShowSortButton(id)) {
             return true;
         }
 
-        return compatibility.shouldShowSortButton(id);
+        return false;
     }
 
     public static boolean canSortInventory(PlayerEntity player) {
