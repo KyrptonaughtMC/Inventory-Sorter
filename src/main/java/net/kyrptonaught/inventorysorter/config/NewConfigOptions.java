@@ -34,7 +34,6 @@ public class NewConfigOptions extends CompatConfig {
     public boolean enableMiddleClickSort = true;
     public boolean enableDoubleClickSort = true;
     public boolean sortHighlightedItem = true;
-    public boolean enableDebugMode = false;
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final String CONFIG_FILE = MOD_ID + ".json";
@@ -82,7 +81,6 @@ public class NewConfigOptions extends CompatConfig {
         newOptions.enableMiddleClickSort = oldOptions.middleClick;
         newOptions.enableDoubleClickSort = oldOptions.doubleClickSort;
         newOptions.sortHighlightedItem = oldOptions.sortMouseHighlighted;
-        newOptions.enableDebugMode = oldOptions.debugMode;
 
         if (oldOptions.keybinding != null) {
             // @TODO come up with something for this

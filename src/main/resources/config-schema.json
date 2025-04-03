@@ -10,7 +10,6 @@
     "enableMiddleClickSort": { "type": "boolean", "default": true },
     "enableDoubleClickSort": { "type": "boolean", "default": true },
     "sortHighlightedItem": { "type": "boolean", "default": true },
-    "enableDebugMode": { "type": "boolean", "default": false },
     "customCompatibilityListDownloadUrl": { "type": "string" },
     "preventSortForScreens": {
       "type": "array",
