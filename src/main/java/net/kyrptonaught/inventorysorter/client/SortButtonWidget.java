@@ -19,6 +19,7 @@ import net.minecraft.client.gui.screen.ButtonTextures;
 import net.minecraft.client.gui.widget.ScrollableWidget;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.toast.SystemToast;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.MutableText;
@@ -30,6 +31,7 @@ import org.lwjgl.glfw.GLFW;
 import java.util.ArrayList;
 import java.util.List;
 
+import static net.kyrptonaught.inventorysorter.InventorySorterMod.compatibility;
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.getConfig;
 
 @Environment(EnvType.CLIENT)
@@ -46,42 +48,21 @@ public class SortButtonWidget extends TexturedButtonWidget {
 
     @Override
     public void onPress() {
-        if (GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), GLFW.GLFW_KEY_LEFT_CONTROL) == 1) {
-            if (InventoryHelper.canSortInventory(MinecraftClient.getInstance().player)) {
-                String screenID = Registries.SCREEN_HANDLER.getId(MinecraftClient.getInstance().player.currentScreenHandler.getType()).toString();
-                System.out.println("Add the line below to config/inventorysorter.json to blacklist this inventory");
-                System.out.println(screenID);
-
-                MutableText MODID = Text.literal("[" + InventorySorterMod.MOD_ID + "]: ").formatted(Formatting.BLUE);
-                MutableText autoDNS = (Text.translatable("key.inventorysorter.sortbtn.clickhere"))
-                        .formatted(Formatting.UNDERLINE, Formatting.WHITE)
-                        .styled(
-                                (style) -> style.withClickEvent(
-                                        /*? if <1.21.5 {*/
-                                        /*new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/invsort preventSort " + screenID)
-                                        *//*?} else {*/
-                                        new ClickEvent.RunCommand("/invsort preventSort " + screenID)
-                                        /*?}*/
-                                )
-                        );
-
-                MutableText autoDND = (Text.translatable("key.inventorysorter.sortbtn.clickhere"))
-                        .formatted(Formatting.UNDERLINE, Formatting.WHITE)
-                        .styled(
-                                (style) -> style.withClickEvent(
-                                        /*? if <1.21.5 {*/
-                                        /*new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/invsort hideButton " + screenID)
-                                        *//*?} else {*/
-                                        new ClickEvent.RunCommand("/invsort hideButton " + screenID)
-                                        /*?}*/
-                                )
-                        );
-                MinecraftClient.getInstance().player.sendMessage(MODID.copyContentOnly().append(autoDNS).append(Text.translatable("key.inventorysorter.sortbtn.dnsadd").formatted(Formatting.WHITE)), false);
-                MinecraftClient.getInstance().player.sendMessage(MODID.copyContentOnly().append(autoDND).append(Text.translatable("key.inventorysorter.sortbtn.dndadd").formatted(Formatting.WHITE)), false);
-            } else
-                MinecraftClient.getInstance().player.sendMessage(Text.literal("[" + InventorySorterMod.MOD_ID + "]: ").append(Text.translatable("key.inventorysorter.sortbtn.error")), false);
-        } else
+        MinecraftClient instance = MinecraftClient.getInstance();
+        if (GLFW.glfwGetKey(instance.getWindow().getHandle(), GLFW.GLFW_KEY_LEFT_CONTROL) == 1) {
+            if (InventoryHelper.canSortInventory(instance.player)) {
+                String screenID = Registries.SCREEN_HANDLER.getId(instance.player.currentScreenHandler.getType()).toString();
+                getConfig().disableButtonForScreen(screenID);
+                compatibility.addShouldHideSortButton(screenID);
+                getConfig().save();
+                compatibility.reload();
+                SystemToast.add(instance.getToastManager(), SystemToast.Type.PERIODIC_NOTIFICATION,
+                        Text.of("Button hidden from screen"),
+                        Text.of(screenID));
+            }
+        } else {
             InventorySortPacket.sendSortPacket(playerInv);
+        }
     }
 
     @Override
