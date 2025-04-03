@@ -46,10 +46,10 @@ public class SortButtonWidget extends TexturedButtonWidget {
 
     @Override
     public void onPress() {
-        if (getConfig().enableDebugMode && GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), GLFW.GLFW_KEY_LEFT_CONTROL) == 1) {
+        if (GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), GLFW.GLFW_KEY_LEFT_CONTROL) == 1) {
             if (InventoryHelper.canSortInventory(MinecraftClient.getInstance().player)) {
                 String screenID = Registries.SCREEN_HANDLER.getId(MinecraftClient.getInstance().player.currentScreenHandler.getType()).toString();
-                System.out.println("Add the line below to config/inventorysorter/blacklist.json5 to blacklist this inventory");
+                System.out.println("Add the line below to config/inventorysorter.json to blacklist this inventory");
                 System.out.println(screenID);
 
                 MutableText MODID = Text.literal("[" + InventorySorterMod.MOD_ID + "]: ").formatted(Formatting.BLUE);
@@ -58,9 +58,9 @@ public class SortButtonWidget extends TexturedButtonWidget {
                         .styled(
                                 (style) -> style.withClickEvent(
                                         /*? if <1.21.5 {*/
-                                        /*new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/invsort blacklist doNotSort " + screenID)
+                                        /*new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/invsort preventSort " + screenID)
                                         *//*?} else {*/
-                                        new ClickEvent.RunCommand("/invsort blacklist doNotSort " + screenID)
+                                        new ClickEvent.RunCommand("/invsort preventSort " + screenID)
                                         /*?}*/
                                 )
                         );
@@ -70,9 +70,9 @@ public class SortButtonWidget extends TexturedButtonWidget {
                         .styled(
                                 (style) -> style.withClickEvent(
                                         /*? if <1.21.5 {*/
-                                        /*new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/invsort blacklist doNotDisplay " + screenID)
+                                        /*new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/invsort hideButton " + screenID)
                                         *//*?} else {*/
-                                        new ClickEvent.RunCommand("/invsort blacklist doNotDisplay " + screenID)
+                                        new ClickEvent.RunCommand("/invsort hideButton " + screenID)
                                         /*?}*/
                                 )
                         );
