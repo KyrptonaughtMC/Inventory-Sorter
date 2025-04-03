@@ -4,11 +4,16 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
+import net.kyrptonaught.inventorysorter.network.SortSettings;
 import net.kyrptonaught.inventorysorter.network.SyncBlacklistPacket;
-import net.kyrptonaught.inventorysorter.network.SyncInvSortSettingsPacket;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
+
+import static net.kyrptonaught.inventorysorter.InventorySorterMod.getConfig;
 
 public class InventorySorterModClient implements ClientModInitializer {
 
@@ -31,6 +36,7 @@ public class InventorySorterModClient implements ClientModInitializer {
         KeyBindingHelper.registerKeyBinding(sortButton);
         KeyBindingHelper.registerKeyBinding(configButton);
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> syncConfig());
+
         SyncBlacklistPacket.registerReceiveBlackList();
 
         ClientTickEvents.END_CLIENT_TICK.register((client) -> {
@@ -38,10 +44,22 @@ public class InventorySorterModClient implements ClientModInitializer {
                 client.setScreen(ConfigScreen.getConfigeScreen(null));
             }
         });
+
+        ClientPlayNetworking.registerGlobalReceiver(SortSettings.ID, (payload, context) -> {
+            NewConfigOptions currentConfig = getConfig();
+            currentConfig.enableMiddleClickSort = payload.enableMiddleClick();
+            currentConfig.enableDoubleClickSort = payload.enableDoubleClick();
+            currentConfig.sortType = payload.sortType();
+            currentConfig.save();
+        });
     }
 
     public static void syncConfig() {
-        SyncInvSortSettingsPacket.registerSyncOnPlayerJoin();
+        ClientPlayNetworking.send(new SortSettings(
+                getConfig().enableMiddleClickSort,
+                getConfig().enableDoubleClickSort,
+                getConfig().sortType
+        ));
     }
 
     public static boolean isKeybindPressed(int pressedKeyCode, int scanCode, InputUtil.Type type) {
