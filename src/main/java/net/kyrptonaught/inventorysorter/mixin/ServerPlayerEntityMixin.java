@@ -1,8 +1,10 @@
 package net.kyrptonaught.inventorysorter.mixin;
 
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.kyrptonaught.inventorysorter.InventorySorterMod;
 import net.kyrptonaught.inventorysorter.SortCases;
 import net.kyrptonaught.inventorysorter.interfaces.InvSorterPlayer;
+import net.kyrptonaught.inventorysorter.network.SortSettings;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -48,6 +50,15 @@ public class ServerPlayerEntityMixin implements InvSorterPlayer {
     @Override
     public void setDoubleClickSort(boolean doubleClick) {
         this.doubleClick = doubleClick;
+    }
+
+    @Override
+    public void syncSettings(ServerPlayerEntity player) {
+        ServerPlayNetworking.send(player, new SortSettings(
+                getMiddleClick(),
+                getDoubleClickSort(),
+                getSortType())
+        );
     }
 
     @Inject(method = "writeCustomDataToNbt", at = @At("TAIL"))

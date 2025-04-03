@@ -6,6 +6,7 @@ import com.mojang.brigadier.context.CommandContext;
 import net.kyrptonaught.inventorysorter.interfaces.InvSorterPlayer;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 
 public class MiddleClickSortCommand {
@@ -26,16 +27,23 @@ public class MiddleClickSortCommand {
     }
 
     public static int turnOff(CommandContext<ServerCommandSource> commandContext) {
-        if (commandContext.getSource().getPlayer() == null) return 0;
-        ((InvSorterPlayer) commandContext.getSource().getPlayer()).setMiddleClick(false);
+        ServerPlayerEntity player = commandContext.getSource().getPlayer();
+        InvSorterPlayer sortPlayer = (InvSorterPlayer) player;
+        if (player == null) return 0;
+        sortPlayer.setMiddleClick(false);
+        sortPlayer.syncSettings(player);
         // @TODO instead of appending, use proper translation with placeholders
         commandContext.getSource().sendFeedback(() -> Text.of(FEEDBACK_MESSAGE.copy().append(OFF_MESSAGE).getString()), false);
         return 1;
     }
 
     public static int turnOn(CommandContext<ServerCommandSource> commandContext) {
-        if (commandContext.getSource().getPlayer() == null) return 0;
-        ((InvSorterPlayer) commandContext.getSource().getPlayer()).setMiddleClick(true);
+        ServerPlayerEntity player = commandContext.getSource().getPlayer();
+        InvSorterPlayer sortPlayer = (InvSorterPlayer) player;
+
+        if (player == null) return 0;
+        sortPlayer.setMiddleClick(true);
+        sortPlayer.syncSettings(player);
         // @TODO instead of appending, use proper translation with placeholders
         commandContext.getSource().sendFeedback(() -> Text.of(FEEDBACK_MESSAGE.copy().append(ON_MESSAGE).getString()), false);
         return 1;
