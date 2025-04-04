@@ -1,11 +1,11 @@
 package net.kyrptonaught.inventorysorter.mixin;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.kyrptonaught.inventorysorter.InventoryHelper;
-import net.kyrptonaught.inventorysorter.interfaces.SortableContainer;
 import net.kyrptonaught.inventorysorter.network.SortSettings;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
@@ -21,26 +21,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.SORT_SETTINGS;
 
 @Mixin(ScreenHandler.class)
-public abstract class MixinContainer implements SortableContainer {
+public abstract class MixinContainer {
     @Shadow
     @Final
     public DefaultedList<Slot> slots;
 
     @Shadow
     private ItemStack cursorStack;
-
-
-    @Override
-    public Inventory getInventory() {
-        if (!hasSlots()) return null;
-        return this.slots.get(0).inventory;
-    }
-
-    @Override
-    public boolean hasSlots() {
-        return this.slots.size() > 0;
-    }
-
 
     @Inject(method = "onSlotClick", at = @At("HEAD"), cancellable = true)
     public void sortOnDoubleClickEmpty(int slotIndex, int button, SlotActionType actionType, PlayerEntity player, CallbackInfo ci) {

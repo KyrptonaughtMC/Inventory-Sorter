@@ -90,6 +90,7 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
     @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
     private void invsort$mouseClicked(double x, double y, int button, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
         if (client == null || client.player == null) {
+            callbackInfoReturnable.setReturnValue(true);
             return;
         }
 
@@ -106,10 +107,10 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
                     }
                 }
             }
-
             InventorySortPacket.sendSortPacket(shouldSortPlayerInventory);
             callbackInfoReturnable.setReturnValue(true);
         }
+
     }
 
     @Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
