@@ -49,7 +49,7 @@ public class InventorySorterMod implements ModInitializer {
     public static final AttachmentType<SortSettings> SORT_SETTINGS = AttachmentRegistry.create(
             Identifier.of(MOD_ID, "sort_settings"),
             builder -> builder
-                    .initializer(() -> new SortSettings(true, true, SortCases.SortType.NAME))
+                    .initializer(() -> SortSettings.DEFAULT)
                     .persistent(SortSettings.NBT_CODEC)
                     .copyOnDeath()
 //                    .syncWith(SortSettings.CODEC, AttachmentSyncPredicate.targetOnly())
@@ -76,10 +76,7 @@ public class InventorySorterMod implements ModInitializer {
         ServerPlayConnectionEvents.JOIN.register((handler, server, client) -> {
             ServerPlayerEntity player = handler.getPlayer();
             if (!player.hasAttached(SORT_SETTINGS)) {
-                player.setAttached(
-                        SORT_SETTINGS,
-                        new SortSettings(true, true, SortCases.SortType.NAME)
-                );
+                player.setAttached(SORT_SETTINGS, SortSettings.DEFAULT);
             }
         });
 

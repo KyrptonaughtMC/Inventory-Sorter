@@ -8,6 +8,7 @@ import net.kyrptonaught.inventorysorter.client.InventorySorterModClient;
 import net.kyrptonaught.inventorysorter.client.SortButtonWidget;
 import net.kyrptonaught.inventorysorter.client.SortableContainerScreen;
 import net.kyrptonaught.inventorysorter.network.InventorySortPacket;
+import net.kyrptonaught.inventorysorter.network.SortSettings;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -93,12 +94,13 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
         }
 
         if (InventorySorterModClient.isKeybindPressed(button, 0, InputUtil.Type.MOUSE)) {
+            SortSettings settings = client.player.getAttachedOrCreate(InventorySorterMod.SORT_SETTINGS);
             boolean canSortInventory = InventoryHelper.canSortInventory(client.player);
-            boolean shouldSortPlayerInventory = getConfig().sortPlayerInventory;
+            boolean shouldSortPlayerInventory = settings.sortPlayerInventory();
             boolean isContainerInventory = (focusedSlot != null) && (!(focusedSlot.inventory instanceof PlayerInventory));
 
             if (canSortInventory) {
-                if (getConfig().sortHighlightedItem) {
+                if (settings.sortHighlightedItem()) {
                     if (isContainerInventory) {
                         shouldSortPlayerInventory = false;
                     }
@@ -116,7 +118,8 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
             return;
         if (InventorySorterModClient.isKeybindPressed(keycode, scancode, InputUtil.Type.KEYSYM)) {
             boolean playerOnlyInv = !InventoryHelper.canSortInventory(client.player);
-            if (!playerOnlyInv && getConfig().sortHighlightedItem) {
+            SortSettings settings = client.player.getAttachedOrCreate(InventorySorterMod.SORT_SETTINGS);
+            if (!playerOnlyInv && settings.sortHighlightedItem()) {
                 if (focusedSlot != null)
                     playerOnlyInv = focusedSlot.inventory instanceof PlayerInventory;
             }

@@ -55,11 +55,7 @@ public class InventorySorterModClient implements ClientModInitializer {
     }
 
     public static void syncConfig() {
-        ClientPlayNetworking.send(new SortSettings(
-                getConfig().enableMiddleClickSort,
-                getConfig().enableDoubleClickSort,
-                getConfig().sortType
-        ));
+        ClientPlayNetworking.send(SortSettings.fromConfig(getConfig()));
     }
 
     public static boolean isKeybindPressed(int pressedKeyCode, int scanCode, InputUtil.Type type) {
