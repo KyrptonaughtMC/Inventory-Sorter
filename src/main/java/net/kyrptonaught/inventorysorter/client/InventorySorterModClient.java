@@ -5,8 +5,8 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
+import net.kyrptonaught.inventorysorter.network.PlayerSortPrevention;
 import net.kyrptonaught.inventorysorter.network.SortSettings;
 import net.kyrptonaught.inventorysorter.network.SyncBlacklistPacket;
 import net.minecraft.client.option.KeyBinding;
@@ -35,6 +35,7 @@ public class InventorySorterModClient implements ClientModInitializer {
     public void onInitializeClient() {
         KeyBindingHelper.registerKeyBinding(sortButton);
         KeyBindingHelper.registerKeyBinding(configButton);
+
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> syncConfig());
 
         SyncBlacklistPacket.registerReceiveBlackList();
@@ -55,7 +56,10 @@ public class InventorySorterModClient implements ClientModInitializer {
     }
 
     public static void syncConfig() {
-        ClientPlayNetworking.send(SortSettings.fromConfig(getConfig()));
+        NewConfigOptions config = getConfig();
+
+        ClientPlayNetworking.send(SortSettings.fromConfig(config));
+        ClientPlayNetworking.send(PlayerSortPrevention.fromConfig(config));
     }
 
     public static boolean isKeybindPressed(int pressedKeyCode, int scanCode, InputUtil.Type type) {

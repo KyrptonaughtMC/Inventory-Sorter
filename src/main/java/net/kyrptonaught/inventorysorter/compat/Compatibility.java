@@ -36,8 +36,20 @@ public class Compatibility {
         return !shouldHideSortButtons.contains(inventoryIdentifier);
     }
 
-    public boolean canSort(Identifier inventoryIdentifier) {
-        return !shouldPreventSort.contains(inventoryIdentifier);
+    public boolean isSortAllowed(Identifier inventoryIdentifier) {
+        return isSortAllowed(inventoryIdentifier, Set.of());
+    }
+
+    public boolean isSortAllowed(Identifier inventoryIdentifier, Set<String> playerSortPrevention ) {
+        if (shouldPreventSort.contains(inventoryIdentifier)) {
+            return false;
+        }
+
+        if (playerSortPrevention.contains(inventoryIdentifier.toString())) {
+            return false;
+        }
+
+        return true;
     }
 
     public Set<Identifier> getShouldHideSortButtons() {

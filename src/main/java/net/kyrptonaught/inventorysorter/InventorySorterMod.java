@@ -16,6 +16,7 @@ import net.kyrptonaught.inventorysorter.compat.sources.OfficialListLoader;
 import net.kyrptonaught.inventorysorter.config.Config;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.kyrptonaught.inventorysorter.network.InventorySortPacket;
+import net.kyrptonaught.inventorysorter.network.PlayerSortPrevention;
 import net.kyrptonaught.inventorysorter.network.SortSettings;
 import net.kyrptonaught.inventorysorter.network.SyncBlacklistPacket;
 import net.minecraft.item.ItemGroup;
@@ -52,7 +53,15 @@ public class InventorySorterMod implements ModInitializer {
                     .initializer(() -> SortSettings.DEFAULT)
                     .persistent(SortSettings.NBT_CODEC)
                     .copyOnDeath()
-//                    .syncWith(SortSettings.CODEC, AttachmentSyncPredicate.targetOnly())
+    );
+
+    @SuppressWarnings("UnstableApiUsage")
+    public static final AttachmentType<PlayerSortPrevention> PLAYER_SORT_PREVENTION = AttachmentRegistry.create(
+            Identifier.of(MOD_ID, "player_sort_prevention"),
+            builder -> builder
+                    .initializer(() -> PlayerSortPrevention.DEFAULT)
+                    .persistent(PlayerSortPrevention.NBT_CODEC)
+                    .copyOnDeath()
     );
 
     @Override
@@ -60,6 +69,7 @@ public class InventorySorterMod implements ModInitializer {
     public void onInitialize() {
         CommandRegistrationCallback.EVENT.register(CommandRegistry::register);
 
+        PayloadTypeRegistry.playC2S().register(PlayerSortPrevention.ID, PlayerSortPrevention.CODEC);
         PayloadTypeRegistry.playC2S().register(SortSettings.ID, SortSettings.CODEC);
         PayloadTypeRegistry.playS2C().register(SortSettings.ID, SortSettings.CODEC);
 
@@ -78,10 +88,18 @@ public class InventorySorterMod implements ModInitializer {
             if (!player.hasAttached(SORT_SETTINGS)) {
                 player.setAttached(SORT_SETTINGS, SortSettings.DEFAULT);
             }
+
+            if (!player.hasAttached(PLAYER_SORT_PREVENTION)) {
+                player.setAttached(PLAYER_SORT_PREVENTION, PlayerSortPrevention.DEFAULT);
+            }
         });
 
         ServerPlayNetworking.registerGlobalReceiver(SortSettings.ID, (payload, context) -> {
             context.player().setAttached(SORT_SETTINGS, payload);
+        });
+
+        ServerPlayNetworking.registerGlobalReceiver(PlayerSortPrevention.ID, (payload, context) -> {
+            context.player().setAttached(PLAYER_SORT_PREVENTION, payload);
         });
     }
 }

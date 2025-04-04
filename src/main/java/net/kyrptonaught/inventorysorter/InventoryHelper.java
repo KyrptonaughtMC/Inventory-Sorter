@@ -1,6 +1,6 @@
 package net.kyrptonaught.inventorysorter;
 
-import net.kyrptonaught.inventorysorter.mixin.ScreenHandlerTypeAccessor;
+import net.kyrptonaught.inventorysorter.network.PlayerSortPrevention;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.HopperBlockEntity;
@@ -12,19 +12,17 @@ import net.minecraft.registry.Registries;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.GameMode;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.OptionalInt;
 
-import static net.kyrptonaught.inventorysorter.InventorySorterMod.LOGGER;
+import static net.kyrptonaught.inventorysorter.InventorySorterMod.PLAYER_SORT_PREVENTION;
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.compatibility;
 
 public class InventoryHelper {
@@ -160,25 +158,21 @@ public class InventoryHelper {
             return false;
         }
 
-        if(player.currentScreenHandler instanceof PlayerScreenHandler) {
+        if (player.currentScreenHandler instanceof PlayerScreenHandler) {
             return true;
         }
 
-        ScreenHandlerType<?> type = ((ScreenHandlerTypeAccessor) player.currentScreenHandler).gettype();
-        if (type == null) {
+        try {
+            Identifier id = Registries.SCREEN_HANDLER.getId(player.currentScreenHandler.getType());
+
+            if (id == null) {
+                return false;
+            }
+            return compatibility.shouldShowSortButton(id);
+
+        } catch (UnsupportedOperationException e) {
             return false;
         }
-
-        Identifier id = Registries.SCREEN_HANDLER.getId(type);
-        if (id == null) {
-            return false;
-        }
-
-        if (compatibility.shouldShowSortButton(id)) {
-            return true;
-        }
-
-        return false;
     }
 
     public static boolean canSortInventory(PlayerEntity player) {
@@ -192,24 +186,26 @@ public class InventoryHelper {
         if (screenHandler == null || !screenHandler.canUse(player)) {
             return false;
         }
-        ScreenHandlerType<?> type = ((ScreenHandlerTypeAccessor) screenHandler).gettype();
-        if (type == null) {
-            return false;
-        }
-        Identifier id = Registries.SCREEN_HANDLER.getId(type);
-        if (id == null) {
-            return false;
-        }
-
         if (player.isSpectator()) {
             return false;
         }
 
-        return isSortableContainer(screenHandler, id);
+        try {
+            Identifier id = Registries.SCREEN_HANDLER.getId(screenHandler.getType());
+
+            if (id == null) {
+                return false;
+            }
+            return isSortableContainer(player, screenHandler, id);
+
+        } catch (UnsupportedOperationException e) {
+            return false;
+        }
     }
 
-    private static boolean isSortableContainer(ScreenHandler screenHandler, Identifier screenID) {
-        if (!compatibility.canSort(screenID)) {
+    private static boolean isSortableContainer(PlayerEntity player, ScreenHandler screenHandler, Identifier screenID) {
+        PlayerSortPrevention playerSortPrevention = player.getAttachedOrCreate(PLAYER_SORT_PREVENTION);
+        if (!compatibility.isSortAllowed(screenID, playerSortPrevention.preventSortForScreens())) {
             return false;
         }
 
