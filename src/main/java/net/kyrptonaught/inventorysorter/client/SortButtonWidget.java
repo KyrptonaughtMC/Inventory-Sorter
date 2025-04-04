@@ -14,17 +14,12 @@ import net.minecraft.client.MinecraftClient;
 /*import net.minecraft.client.gl.ShaderProgramKeys;
 *//*?}*/
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.ButtonTextures;
-import net.minecraft.client.gui.widget.ScrollableWidget;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.registry.Registries;
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 
@@ -56,6 +51,7 @@ public class SortButtonWidget extends TexturedButtonWidget {
                 compatibility.addShouldHideSortButton(screenID);
                 getConfig().save();
                 compatibility.reload();
+                InventorySorterModClient.syncConfig();
                 SystemToast.add(instance.getToastManager(), SystemToast.Type.PERIODIC_NOTIFICATION,
                         Text.of("Button hidden from screen"),
                         Text.of(screenID));
