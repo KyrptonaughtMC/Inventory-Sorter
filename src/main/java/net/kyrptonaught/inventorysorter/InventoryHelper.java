@@ -61,13 +61,16 @@ public class InventoryHelper {
                     // actually sort inv
                     sortInventory(inventory, 0, inventory.size(), sortType);
                     player.closeHandledScreen();
+                    screenHandler.onClosed(player);
                     return Text.translatable("key.inventorysorter.sorting.sorted");
                 } else {
                     player.closeHandledScreen();
+                    screenHandler.onClosed(player);
                     return Text.translatable("key.inventorysorter.sorting.notsortable");
                 }
             } catch (Exception ex) {
                 player.closeHandledScreen();
+                screenHandler.onClosed(player);
                 return Text.translatable("key.inventorysorter.sorting.failed");
             }
         }
