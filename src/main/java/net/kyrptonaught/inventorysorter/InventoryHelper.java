@@ -1,6 +1,5 @@
 package net.kyrptonaught.inventorysorter;
 
-import net.kyrptonaught.inventorysorter.interfaces.SortableContainer;
 import net.kyrptonaught.inventorysorter.mixin.ScreenHandlerTypeAccessor;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -80,13 +79,18 @@ public class InventoryHelper {
             sortInventory(player.getInventory(), 9, 27, sortType);
             return true;
         } else if (canSortInventory(player)) {
-            Inventory inv = ((SortableContainer) player.currentScreenHandler).getInventory();
+            Inventory inv = getInventory(player.currentScreenHandler);
             if (inv != null) {
                 sortInventory(inv, 0, inv.size(), sortType);
                 return true;
             }
         }
         return false;
+    }
+
+    public static Inventory getInventory(ScreenHandler screenHandler) {
+        if (screenHandler.slots.isEmpty()) return null;
+        return screenHandler.slots.getFirst().inventory;
     }
 
     static void sortInventory(Inventory inv, int startSlot, int invSize, SortCases.SortType sortType) {
@@ -153,6 +157,10 @@ public class InventoryHelper {
             return false;
         }
 
+        if(player.currentScreenHandler instanceof PlayerScreenHandler) {
+            return true;
+        }
+
         ScreenHandlerType<?> type = ((ScreenHandlerTypeAccessor) player.currentScreenHandler).gettype();
         if (type == null) {
             return false;
@@ -163,7 +171,7 @@ public class InventoryHelper {
             return false;
         }
 
-        if (player.currentScreenHandler instanceof PlayerScreenHandler || compatibility.shouldShowSortButton(id)) {
+        if (compatibility.shouldShowSortButton(id)) {
             return true;
         }
 
@@ -201,10 +209,8 @@ public class InventoryHelper {
         if (!compatibility.canSort(screenID)) {
             return false;
         }
-        if (!((SortableContainer) screenHandler).hasSlots()) {
-            return false;
-        }
 
+        // This seems to exist to prevent the sorting of non-storage-type containers
         int numSlots = screenHandler.slots.size();
         if (numSlots <= 36) {
             return false;
