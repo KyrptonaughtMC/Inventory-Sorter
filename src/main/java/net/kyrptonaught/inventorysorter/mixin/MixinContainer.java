@@ -51,11 +51,21 @@ public abstract class MixinContainer implements SortableContainer {
                     (settings.enableMiddleClick() && button == 2 && actionType.equals(SlotActionType.CLONE)))
                 if (cursorStack.isEmpty())
                     if (slotIndex >= 0 && slotIndex < this.slots.size() && this.slots.get(slotIndex).getStack().isEmpty()) {
+                        boolean isPlayerInventory = slots.get(slotIndex).inventory instanceof PlayerInventory;
                         InventoryHelper.sortInventory(
                                 player,
-                                slots.get(slotIndex).inventory instanceof PlayerInventory,
+                                isPlayerInventory,
                                 settings.sortType()
                         );
+
+                        if (!isPlayerInventory && settings.sortPlayerInventory()) {
+                            InventoryHelper.sortInventory(
+                                    player,
+                                    true,
+                                    settings.sortType()
+                            );
+                        }
+
                         ci.cancel();
                     }
         }
