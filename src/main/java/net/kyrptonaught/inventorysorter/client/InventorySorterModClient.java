@@ -57,8 +57,6 @@ public class InventorySorterModClient implements ClientModInitializer {
             compatibility.reload();
         });
 
-        SyncBlacklistPacket.registerReceiveBlackList();
-
         ClientTickEvents.END_CLIENT_TICK.register((client) -> {
             if (sortButton.wasPressed()) {
                 client.setScreen(ConfigScreen.getConfigeScreen(null));
