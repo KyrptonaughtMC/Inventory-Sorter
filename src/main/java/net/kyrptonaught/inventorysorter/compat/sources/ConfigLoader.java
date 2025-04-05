@@ -1,7 +1,6 @@
 package net.kyrptonaught.inventorysorter.compat.sources;
 
 import net.kyrptonaught.inventorysorter.compat.config.CompatConfig;
-import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.minecraft.util.Identifier;
 
 import java.net.URI;

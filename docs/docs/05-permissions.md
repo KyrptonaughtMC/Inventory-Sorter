@@ -27,6 +27,7 @@ The default **permission level is 0**, which means that all players can use them
 | `inventorysorter.command.nosort`                   | `/invsort nosort add/remove/list`          |
 | `inventorysorter.command.middleclicksort`          | `/invsort middleClickSort on/off`          |
 | `inventorysorter.command.doubleclicksort`          | `/invsort doubleClickSort on/off`          |
+| `inventorysorter.command.reload`                   | `/invsort reload`                          |
 
 
 ### Admin Permissions
@@ -38,6 +39,7 @@ The default **permission level is 2**, which means that only server operators ca
 | Permission Node                                   | Command                            |
 |---------------------------------------------------|------------------------------------|
 | `inventorysorter.command.admin`                   | `/invsort admin *`                 |
+| `inventorysorter.command.admin.reload`            | `/invsort admin reload`            |
 | `inventorysorter.command.admin.nosort`            | `/invsort admin nosort *`          |
 | `inventorysorter.command.admin.nosort.add`        | `/invsort admin nosort add`        |
 | `inventorysorter.command.admin.nosort.remove`     | `/invsort admin nosort remove`     |
