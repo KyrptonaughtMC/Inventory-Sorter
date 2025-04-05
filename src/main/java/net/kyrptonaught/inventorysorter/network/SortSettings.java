@@ -16,7 +16,6 @@ import static net.kyrptonaught.inventorysorter.InventorySorterMod.MOD_ID;
 public record SortSettings(
         boolean sortHighlightedItem,
         boolean sortPlayerInventory,
-        boolean enableMiddleClick,
         boolean enableDoubleClick,
         SortCases.SortType sortType
 ) implements CustomPayload {
@@ -26,12 +25,10 @@ public record SortSettings(
                     (value, buf) -> {
                         buf.writeBoolean(value.sortHighlightedItem());
                         buf.writeBoolean(value.sortPlayerInventory());
-                        buf.writeBoolean(value.enableMiddleClick());
                         buf.writeBoolean(value.enableDoubleClick());
                         buf.writeEnumConstant(value.sortType());
                     },
                     buf -> new SortSettings(
-                            buf.readBoolean(),
                             buf.readBoolean(),
                             buf.readBoolean(),
                             buf.readBoolean(),
@@ -42,7 +39,6 @@ public record SortSettings(
     public static final Codec<SortSettings> NBT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.BOOL.fieldOf("sortHighlightedItem").forGetter(SortSettings::sortHighlightedItem),
             Codec.BOOL.fieldOf("sortPlayerInventory").forGetter(SortSettings::sortPlayerInventory),
-            Codec.BOOL.fieldOf("enableMiddleClick").forGetter(SortSettings::enableMiddleClick),
             Codec.BOOL.fieldOf("enableDoubleClick").forGetter(SortSettings::enableDoubleClick),
             Codec.STRING.xmap(SortCases.SortType::valueOf, SortCases.SortType::name)
                     .fieldOf("sortType").forGetter(SortSettings::sortType)
@@ -50,38 +46,33 @@ public record SortSettings(
 
     public static final CustomPayload.Id<SortSettings> ID = new CustomPayload.Id<>(Identifier.of(MOD_ID, "sync_settings_packet"));
 
-    public static final SortSettings DEFAULT = new SortSettings(true, false, true, true, SortCases.SortType.NAME);
+    public static final SortSettings DEFAULT = new SortSettings(true, false, true, SortCases.SortType.NAME);
 
     @Override
     public Id<? extends CustomPayload> getId() {
         return ID;
     }
 
-    public SortSettings withMiddleClick(boolean enabled) {
-        return new SortSettings(this.sortHighlightedItem(), this.sortPlayerInventory(), enabled, this.enableDoubleClick(), this.sortType());
-    }
-
     public SortSettings withDoubleClick(boolean enabled) {
-        return new SortSettings(this.sortHighlightedItem(), this.sortPlayerInventory(), this.enableMiddleClick(), enabled, this.sortType());
+        return new SortSettings(this.sortHighlightedItem(), this.sortPlayerInventory(), enabled, this.sortType());
     }
 
     public SortSettings withSortType(SortCases.SortType sortType) {
-        return new SortSettings(this.sortHighlightedItem(), this.sortPlayerInventory(), this.enableMiddleClick(), this.enableDoubleClick(), sortType);
+        return new SortSettings(this.sortHighlightedItem(), this.sortPlayerInventory(), this.enableDoubleClick(), sortType);
     }
 
     public SortSettings withSortPlayerInventory(boolean enabled) {
-        return new SortSettings(this.sortHighlightedItem(), enabled, this.enableMiddleClick(), this.enableDoubleClick(), this.sortType());
+        return new SortSettings(this.sortHighlightedItem(), enabled, this.enableDoubleClick(), this.sortType());
     }
 
     public SortSettings withSortHighlightedInventory(boolean enabled) {
-        return new SortSettings(enabled, this.sortPlayerInventory(), this.enableMiddleClick(), this.enableDoubleClick(), this.sortType());
+        return new SortSettings(enabled, this.sortPlayerInventory(), this.enableDoubleClick(), this.sortType());
     }
 
     public static SortSettings fromConfig(NewConfigOptions config) {
         return new SortSettings(
                 config.sortHighlightedItem,
                 config.sortPlayerInventory,
-                config.enableMiddleClickSort,
                 config.enableDoubleClickSort,
                 config.sortType
         );

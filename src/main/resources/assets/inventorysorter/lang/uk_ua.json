@@ -5,7 +5,6 @@
   "key.inventorysorter.config.category.logic": "Авто",
   "key.inventorysorter.config.category.activation": "Активація",
   "key.inventorysorter.config.displaysort": "Відображати кнопку в інвентарі",
-  "key.inventorysorter.config.middleclick": "Натискання колесом по слоту, щоб відсортувати інвентар",
   "key.inventorysorter.config.doubleclick": "Подвійний клік по слоту, щоб відсортувати інвентар",
   "key.inventorysorter.config.seperatebtn": "Завжди відображати кнопку в інвентарі гравця",
   "key.inventorysorter.config.sortplayer": "Сортувати інвентар гравця",

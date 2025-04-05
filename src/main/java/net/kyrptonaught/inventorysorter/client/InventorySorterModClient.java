@@ -65,7 +65,6 @@ public class InventorySorterModClient implements ClientModInitializer {
 
         ClientPlayNetworking.registerGlobalReceiver(SortSettings.ID, (payload, context) -> {
             NewConfigOptions currentConfig = getConfig();
-            currentConfig.enableMiddleClickSort = payload.enableMiddleClick();
             currentConfig.enableDoubleClickSort = payload.enableDoubleClick();
             currentConfig.sortType = payload.sortType();
             currentConfig.save();

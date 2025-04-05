@@ -23,7 +23,6 @@ public class NewConfigOptions extends CompatConfig {
     public boolean separateButton = true;
     public boolean sortPlayerInventory = false;
     public SortCases.SortType sortType = SortCases.SortType.NAME;
-    public boolean enableMiddleClickSort = true;
     public boolean enableDoubleClickSort = true;
     public boolean sortHighlightedItem = true;
 
@@ -62,7 +61,6 @@ public class NewConfigOptions extends CompatConfig {
         newOptions.separateButton = oldOptions.seperateBtn;
         newOptions.sortPlayerInventory = oldOptions.sortPlayer;
         newOptions.sortType = oldOptions.sortType;
-        newOptions.enableMiddleClickSort = oldOptions.middleClick;
         newOptions.enableDoubleClickSort = oldOptions.doubleClickSort;
         newOptions.sortHighlightedItem = oldOptions.sortMouseHighlighted;
 

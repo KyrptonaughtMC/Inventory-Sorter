@@ -1,7 +1,5 @@
 package net.kyrptonaught.inventorysorter.mixin;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.kyrptonaught.inventorysorter.InventoryHelper;
 import net.kyrptonaught.inventorysorter.network.SortSettings;
 import net.minecraft.entity.player.PlayerEntity;
@@ -34,8 +32,7 @@ public abstract class MixinContainer {
         if (!player.getWorld().isClient) {
             SortSettings settings = player.getAttachedOrCreate(SORT_SETTINGS);
 
-            if (settings.enableDoubleClick() && button == 0 && actionType.equals(SlotActionType.PICKUP_ALL) ||
-                    (settings.enableMiddleClick() && button == 2 && actionType.equals(SlotActionType.CLONE)))
+            if (settings.enableDoubleClick() && button == 0 && actionType.equals(SlotActionType.PICKUP_ALL))
                 if (cursorStack.isEmpty())
                     if (slotIndex >= 0 && slotIndex < this.slots.size() && this.slots.get(slotIndex).getStack().isEmpty()) {
                         boolean isPlayerInventory = slots.get(slotIndex).inventory instanceof PlayerInventory;
