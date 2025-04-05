@@ -12,8 +12,7 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 
-import static net.kyrptonaught.inventorysorter.InventorySorterMod.compatibility;
-import static net.kyrptonaught.inventorysorter.InventorySorterMod.getConfig;
+import static net.kyrptonaught.inventorysorter.InventorySorterMod.*;
 
 public class AdminCommands {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher, LiteralArgumentBuilder<ServerCommandSource> rootCommand) {
@@ -27,18 +26,18 @@ public class AdminCommands {
                     permission, but they can't access the other commands.
                  */
                 .requires(CommandPermission.hasAny(
-                                "admin.nosort",
-                                "admin.nosort.add",
-                                "admin.nosort.remove",
-                                "admin.nosort.list",
-                                "admin.hidebutton",
-                                "admin.hidebutton.add",
-                                "admin.hidebutton.remove",
-                                "admin.hidebutton.list"
-                        )
-                        .or(CommandPermission.require("admin", 2))
+                                        "admin.reload",
+                                        "admin.nosort",
+                                        "admin.nosort.add",
+                                        "admin.nosort.remove",
+                                        "admin.nosort.list",
+                                        "admin.hidebutton",
+                                        "admin.hidebutton.add",
+                                        "admin.hidebutton.remove",
+                                        "admin.hidebutton.list"
+                                )
+                                .or(CommandPermission.require("admin", 2))
                 );
-
 
         dispatcher.register(rootCommand.then(admin.then(
                 CommandManager.literal("nosort")
@@ -81,6 +80,12 @@ public class AdminCommands {
                                 .requires(CommandPermission.require("admin.hidebutton.list", 2))
                                 .executes(AdminCommands::hidebuttonList))
         )));
+
+        dispatcher.register(rootCommand.then(admin.then(
+                CommandManager.literal("reload")
+                        .requires(CommandPermission.require("admin.reload", 2))
+                        .executes(AdminCommands::reload))
+        ));
 
     }
 
@@ -176,6 +181,12 @@ public class AdminCommands {
             sb.append(screen).append(", ");
         }
         commandContext.getSource().sendFeedback(() -> Text.of(sb.toString()), false);
+        return 1;
+    }
+
+    public static int reload(CommandContext<ServerCommandSource> commandContext) {
+        reloadConfig();
+        commandContext.getSource().sendFeedback(() -> Text.of("Configuration reloaded"), false);
         return 1;
     }
 }

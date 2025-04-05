@@ -7,7 +7,11 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 
 public class CommandRegistry {
-    public static void register(CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess commandRegistryAccess, CommandManager.RegistrationEnvironment registrationEnvironment) {
+    public static void register(
+            CommandDispatcher<ServerCommandSource> dispatcher,
+            CommandRegistryAccess commandRegistryAccess,
+            CommandManager.RegistrationEnvironment registrationEnvironment
+    ) {
         LiteralArgumentBuilder<ServerCommandSource> rootCommand = CommandManager.literal("invsort");
 
         SortCommand.register(dispatcher, rootCommand);
@@ -19,6 +23,10 @@ public class CommandRegistry {
         SortTypeCommand.register(dispatcher, rootCommand);
         DownloadCompatibilityListCommand.register(dispatcher, rootCommand);
         NoSortCommand.register(dispatcher, rootCommand);
-        AdminCommands.register(dispatcher, rootCommand);
+        ReloadCommand.register(dispatcher, rootCommand);
+
+        if(registrationEnvironment.dedicated) {
+            AdminCommands.register(dispatcher, rootCommand);
+        }
     }
 }
