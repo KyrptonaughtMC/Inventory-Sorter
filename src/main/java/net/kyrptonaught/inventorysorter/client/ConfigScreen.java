@@ -126,12 +126,6 @@ public class ConfigScreen {
                         .build());
 
         screenBuilder.getOrCreateCategory(Text.translatable("key.inventorysorter.config.category.activation"))
-                .addEntry(entryBuilder.startBooleanToggle(Text.translatable("key.inventorysorter.config.middleclick"), options.enableMiddleClickSort)
-                        .setDefaultValue(true)
-                        .setYesNoTextSupplier(b -> b ? on() : off())
-                        .setTooltip(Text.translatable("key.inventorysorter.config.middleclick.tooltip"))
-                        .setSaveConsumer(val -> options.enableMiddleClickSort = val)
-                        .build())
                 .addEntry(entryBuilder.startBooleanToggle(Text.translatable("key.inventorysorter.config.doubleclick"), options.enableDoubleClickSort)
                         .setDefaultValue(true)
                         .setYesNoTextSupplier(b -> b ? on() : off())

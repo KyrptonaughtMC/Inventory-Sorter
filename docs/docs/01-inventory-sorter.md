@@ -11,7 +11,9 @@ It is designed to run server-side first. This allows it to work even with vanill
 
 ## Server-side-first design
 
-Unlike most sorting mods, Inventory Sorter performs sorting on the server. The client sends a request, and the server applies the sort. This avoids simulating manual item movement from the client.
+Unlike most sorting mods, Inventory Sorter performs sorting on the server. 
+The client sends a request, and the server applies the sort. 
+This avoids simulating manual item movement from the client.
 
 This approach enables:
 

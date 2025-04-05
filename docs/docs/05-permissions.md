@@ -25,7 +25,6 @@ The default **permission level is 0**, which means that all players can use them
 | `inventorysorter.command.sortplayerinventory`      | `/invsort sortPlayerInventory on/off`      |
 | `inventorysorter.command.sorthighlightedinventory` | `/invsort sortHighlightedInventory on/off` |
 | `inventorysorter.command.nosort`                   | `/invsort nosort add/remove/list`          |
-| `inventorysorter.command.middleclicksort`          | `/invsort middleClickSort on/off`          |
 | `inventorysorter.command.doubleclicksort`          | `/invsort doubleClickSort on/off`          |
 | `inventorysorter.command.reload`                   | `/invsort reload`                          |
 | `inventorysorter.command.screenid`                 | `/invsort screenID`                        |

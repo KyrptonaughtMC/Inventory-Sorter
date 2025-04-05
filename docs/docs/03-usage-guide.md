@@ -20,12 +20,12 @@ By default, this key is unbound. You can assign a key from the Controls menu in 
 
 The keybind is only available when the client mod is installed and keybind support is enabled in the configuration.
 
-### Middle-Click and Double-Click
+### Double-Click
 
-You can sort an inventory by middle-clicking or double-clicking on an **empty slot**. 
+You can sort an inventory by double-clicking on an **empty slot**. 
 This works even with vanilla clients, as long as the server has Inventory Sorter installed.
 
-Middle-click and double-click sorting work in any inventory, including modded containers.
+Double-click sorting work in any inventory, including modded containers.
 
 ### Commands
 
@@ -43,7 +43,6 @@ They are always available as long as the server has Inventory Sorter installed.
 |-------------------|---------------------|---------------------------|---------------------------|
 | Sort Button       | Yes                 | No                        | Yes                       |
 | Keybind           | Yes                 | No                        | Yes                       |
-| Middle-Click      | No                  | Yes                       | Yes                       |
 | Double-Click      | No                  | Yes                       | Yes                       |
 | `/invsort sort`   | No                  | Yes                       | No                        |
 | `/invsort sortme` | No                  | Yes                       | No                        |

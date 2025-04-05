@@ -15,7 +15,6 @@ public class CommandRegistry {
         LiteralArgumentBuilder<ServerCommandSource> rootCommand = CommandManager.literal("invsort");
 
         SortCommand.register(dispatcher, rootCommand);
-        MiddleClickSortCommand.register(dispatcher, rootCommand);
         DoubleClickSortCommand.register(dispatcher, rootCommand);
         SortPlayerInventoryCommand.register(dispatcher, rootCommand);
         SortHighlightedInventoryCommand.register(dispatcher, rootCommand);

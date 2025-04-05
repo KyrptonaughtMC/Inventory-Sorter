@@ -7,7 +7,6 @@
   "key.inventorysorter.config.category.activation": "触发",
   "key.inventorysorter.config.category.denylist": "黑名单",
   "key.inventorysorter.config.displaysort": "在库存中显示按钮",
-  "key.inventorysorter.config.middleclick": "中键点击物品槽排序",
   "key.inventorysorter.config.doubleclick": "双击物品槽排序",
   "key.inventorysorter.config.seperatebtn": "玩家背包总是显示按钮",
   "key.inventorysorter.config.sortplayer": "同时排序玩家背包",
@@ -33,7 +32,6 @@
   "key.inventorysorter.sorting.error": "无法排序库存",
 
   "key.inventorysorter.cmd.updatesortingtype": "已更新排序类型：",
-  "key.inventorysorter.cmd.middleClickSort": "设置中键点击排序：",
   "key.inventorysorter.cmd.doubleClickSort": "设置双击排序：",
   "key.inventorysorter.cmd.addblacklist": "已添加到黑名单：",
   "key.inventorysorter.cmd.invalidscreen": "界面 ID 无效",

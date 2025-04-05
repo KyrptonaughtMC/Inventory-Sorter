@@ -26,7 +26,8 @@ If you want to add client-side features like keybinds, configuration menus, or s
 - Install [Cloth Config][cloth-config] (required for config menus)
 - (Optional) Install [Mod Menu][mod-menu] for easier in-game access to settings
 
-If the server already has Inventory Sorter installed, you’ll get additional functionality by installing it client-side too.
+If the server already has Inventory Sorter installed, you’ll get additional functionality by installing it client-side too,
+but it’s **not required**.
 
 ### Single-Player Installation
 
@@ -50,7 +51,7 @@ Active development and support focus on **1.21.4+**. Bugfixes or new features wi
 Once installed:
 
 1. Launch the game and open any inventory. Your player inventory works fine.
-2. Try middle-clicking or double-clicking on an empty slot.
+2. Try double-clicking on an empty slot.
 3. If Inventory Sorter is installed correctly, the inventory will instantly re-arrange.
 
 This works even with vanilla clients when connected to a properly configured server.

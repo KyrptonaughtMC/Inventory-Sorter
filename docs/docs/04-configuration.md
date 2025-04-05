@@ -103,7 +103,7 @@ Controls whether sorting actions (such as the sort button or keybind) apply to y
 When **On (`true`)**, using the sort function will sort your player inventory, even if you have a chest, furnace, or other screen open.  
 When **Off (`false`)**, sorting actions will target only the currently opened container.
 
-This setting is especially useful when combined with the sort keybind or middle-click sorting.
+This setting is especially useful when combined with the sort keybind or button.
 
 ---
 
@@ -132,7 +132,7 @@ The current sort type is shown in the tooltip when hovering over the sort button
 **Config file key:** `sortHighlightedItem`  
 **Default:** `true` (On)
 
-Determines which inventory is sorted when using the keybind, middle-click, or double-click.
+Determines which inventory is sorted when using the keybind or double-click.
 
 When **On (`true`)**, sorting only affects the inventory currently under the mouse cursor. 
 This allows precise control over which inventory is sorted.
@@ -144,21 +144,6 @@ If both this setting and `sortPlayerInventory` are enabled:
 - Your player inventory will only be sorted if your mouse is over it
 
 This setting does not affect sorting triggered by the sort button.
-
----
-
-
-### `enableMiddleClickSort`
-**GUI label:** *Enable middle-click sorting*  
-**Config file key:** `enableMiddleClickSort`  
-**Default:** `true` (On)
-
-Allows you to sort an inventory by middle-clicking an **empty slot** inside it.
-
-When **On (`true`)**, middle-clicking an empty slot will trigger a sort for the hovered inventory.  
-When **Off (`false`)**, middle-clicks are ignored by Inventory Sorter.
-
-This method works with both modded and vanilla clients, as long as the server has the mod installed. Requires the cursor to be over an empty slot within the inventory area.
 
 ---
 
@@ -181,7 +166,7 @@ This method works with both modded and vanilla clients, as long as the server ha
 **Config file key:** `preventSortForScreens`  
 **Default:** `[]` (empty list)
 
-Specifies a list of screen class names where sorting should be completely disabled. This applies to all sorting methods: sort button, keybind, middle-click, double-click, and commands.
+Specifies a list of screen class names where sorting should be completely disabled. This applies to all sorting methods: sort button, keybind, double-click, and commands.
 
 Each entry must be a fully qualified screen class name, such as:
 
@@ -201,7 +186,7 @@ This setting is useful for preventing unexpected behavior in containers that don
 
 Specifies a list of screen class names where the sort button should be hidden.
 
-This does **not** disable sorting itself. Other methods such as keybinds, middle-click, double-click, and commands will still work unless also blocked by `preventSortForScreens`.
+This does **not** disable sorting itself. Other methods such as keybinds, double-click, and commands will still work unless also blocked by `preventSortForScreens`.
 
 Each entry must be a fully qualified screen class name, such as:
 
