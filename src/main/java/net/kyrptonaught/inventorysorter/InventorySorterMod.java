@@ -15,10 +15,7 @@ import net.kyrptonaught.inventorysorter.compat.sources.LocalLoader;
 import net.kyrptonaught.inventorysorter.compat.sources.OfficialListLoader;
 import net.kyrptonaught.inventorysorter.config.Config;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
-import net.kyrptonaught.inventorysorter.network.InventorySortPacket;
-import net.kyrptonaught.inventorysorter.network.PlayerSortPrevention;
-import net.kyrptonaught.inventorysorter.network.SortSettings;
-import net.kyrptonaught.inventorysorter.network.SyncBlacklistPacket;
+import net.kyrptonaught.inventorysorter.network.*;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -64,11 +61,25 @@ public class InventorySorterMod implements ModInitializer {
                     .copyOnDeath()
     );
 
+    /**
+     * This attachment is used to tell if the user has used a modded client before. Helps us with figuring
+     * out if we need to send configuration to the client or accept the client's settings on the server instead.
+     */
+    @SuppressWarnings("UnstableApiUsage")
+    public static final AttachmentType<ClientSync> CLIENT_SYNC = AttachmentRegistry.create(
+            Identifier.of(MOD_ID, "client_sync"),
+            builder -> builder
+                    .initializer(() -> ClientSync.DEFAULT)
+                    .persistent(ClientSync.NBT_CODEC)
+                    .copyOnDeath()
+    );
+
     @Override
     @SuppressWarnings("UnstableApiUsage")
     public void onInitialize() {
         CommandRegistrationCallback.EVENT.register(CommandRegistry::register);
 
+        PayloadTypeRegistry.playC2S().register(ClientSync.ID, ClientSync.CODEC);
         PayloadTypeRegistry.playC2S().register(PlayerSortPrevention.ID, PlayerSortPrevention.CODEC);
         PayloadTypeRegistry.playS2C().register(PlayerSortPrevention.ID, PlayerSortPrevention.CODEC);
         PayloadTypeRegistry.playC2S().register(SortSettings.ID, SortSettings.CODEC);
@@ -94,8 +105,28 @@ public class InventorySorterMod implements ModInitializer {
                 player.setAttached(PLAYER_SORT_PREVENTION, PlayerSortPrevention.DEFAULT);
             }
 
-            player.getAttached(PLAYER_SORT_PREVENTION).sync(player);
-            LOGGER.info("Syncing sort prevention for player FROM SERVER {}", player.getName().getString());
+            if (!player.hasAttached(CLIENT_SYNC)) {
+                player.setAttached(CLIENT_SYNC, ClientSync.DEFAULT);
+            }
+
+            if (!player.getAttached(CLIENT_SYNC).seenClient()) {
+                /*
+                  If we haven't seen the client MOD before, we need to send the config we have for the player.
+                  This is for the case when a player hasn't used the mod on the client before but has settings stored
+                  for them on the server.
+
+                  When the client connects for the first time, we send them the config we have for them.
+                 */
+                PlayerSortPrevention sortPrevention = player.getAttached(PLAYER_SORT_PREVENTION);
+                if (sortPrevention != PlayerSortPrevention.DEFAULT) {
+                    sortPrevention.sync(player);
+                }
+
+                SortSettings sortSettings = player.getAttached(SORT_SETTINGS);
+                if (sortSettings != SortSettings.DEFAULT) {
+                    sortSettings.sync(player);
+                }
+            }
         });
 
         ServerPlayNetworking.registerGlobalReceiver(SortSettings.ID, (payload, context) -> {
@@ -103,8 +134,11 @@ public class InventorySorterMod implements ModInitializer {
         });
 
         ServerPlayNetworking.registerGlobalReceiver(PlayerSortPrevention.ID, (payload, context) -> {
-            LOGGER.info("Syncing sort prevention for player FROM CLIENT (ON SERVER) {}", context.player().getName().getString());
             context.player().setAttached(PLAYER_SORT_PREVENTION, payload);
+        });
+
+        ServerPlayNetworking.registerGlobalReceiver(ClientSync.ID, (payload, context) -> {
+            context.player().setAttached(CLIENT_SYNC, new ClientSync(true));
         });
     }
 }
