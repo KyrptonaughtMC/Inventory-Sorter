@@ -2,11 +2,13 @@ package net.kyrptonaught.inventorysorter.network;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.kyrptonaught.inventorysorter.compat.config.CompatConfig;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
@@ -47,5 +49,9 @@ public record PlayerSortPrevention(
     @Override
     public Id<? extends CustomPayload> getId() {
         return ID;
+    }
+
+    public void sync(ServerPlayerEntity player) {
+        ServerPlayNetworking.send(player, this);
     }
 }

@@ -13,7 +13,7 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
 
-import static net.kyrptonaught.inventorysorter.InventorySorterMod.getConfig;
+import static net.kyrptonaught.inventorysorter.InventorySorterMod.*;
 
 public class InventorySorterModClient implements ClientModInitializer {
 
@@ -52,6 +52,15 @@ public class InventorySorterModClient implements ClientModInitializer {
             currentConfig.enableDoubleClickSort = payload.enableDoubleClick();
             currentConfig.sortType = payload.sortType();
             currentConfig.save();
+        });
+
+        ClientPlayNetworking.registerGlobalReceiver(PlayerSortPrevention.ID, (payload, context) -> {
+            LOGGER.info("Received sort prevention packet");
+            NewConfigOptions currentConfig = getConfig();
+            currentConfig.preventSortForScreens.retainAll(payload.preventSortForScreens());
+            payload.preventSortForScreens().forEach(currentConfig::disableSortForScreen);
+            currentConfig.save();
+            compatibility.reload();
         });
     }
 
