@@ -13,6 +13,7 @@ import net.kyrptonaught.inventorysorter.compat.Compatibility;
 import net.kyrptonaught.inventorysorter.compat.sources.ConfigLoader;
 import net.kyrptonaught.inventorysorter.compat.sources.LocalLoader;
 import net.kyrptonaught.inventorysorter.compat.sources.OfficialListLoader;
+import net.kyrptonaught.inventorysorter.compat.sources.RemoteConfigLoader;
 import net.kyrptonaught.inventorysorter.config.Config;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.kyrptonaught.inventorysorter.network.*;
@@ -36,7 +37,8 @@ public class InventorySorterMod implements ModInitializer {
             new ArrayList<>(List.of(
                     new LocalLoader(),
                     new OfficialListLoader(),
-                    new ConfigLoader(CONFIG)
+                    new ConfigLoader(InventorySorterMod::getConfig),
+                    new RemoteConfigLoader(() -> InventorySorterMod.getConfig().customCompatibilityListDownloadUrl)
             ))
     );
 

@@ -1,6 +1,5 @@
 package net.kyrptonaught.inventorysorter.client;
 
-import me.shedaniel.autoconfig.annotation.ConfigEntry;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
@@ -11,15 +10,13 @@ import net.kyrptonaught.inventorysorter.SortCases;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.*;
 
@@ -73,7 +70,6 @@ public class ConfigScreen {
     }
 
 
-
     public static Screen getConfigeScreen(Screen parent) {
         NewConfigOptions options = getConfig();
 
@@ -85,7 +81,7 @@ public class ConfigScreen {
 
         screenBuilder.setSavingRunnable(() -> {
             getConfig().save();
-            compatibility.reload();
+            reloadConfig();
             if (MinecraftClient.getInstance().player != null)
                 InventorySorterModClient.syncConfig();
         });
@@ -144,6 +140,24 @@ public class ConfigScreen {
                         .build());
 
         ConfigCategory compatCategory = screenBuilder.getOrCreateCategory(Text.translatable("key.inventorysorter.config.category.compat"));
+
+        FullWidthStringListEntry stringListEntry = new FullWidthStringListEntry(
+                Text.translatable("key.inventorysorter.config.compat.remoteurl"),
+                options.customCompatibilityListDownloadUrl,
+                Text.translatable("key.inventorysorter.config.compat.remoteurl.reset"),
+                () -> "",
+                () -> Optional.of(new MutableText[]{Text.translatable("key.inventorysorter.config.compat.remoteurl.tooltip")}),
+                false
+        );
+
+        compatCategory.addEntry(
+                entryBuilder.startSubCategory(
+                                Text.translatable("key.inventorysorter.config.compat.remoteurl"), List.of(stringListEntry))
+                        .setExpanded(true)
+                        .build()
+        );
+
+
         List<SubCategoryListEntry> compatEntries = buildCompatEditor(entryBuilder, options);
         for (SubCategoryListEntry entry : compatEntries) {
             compatCategory.addEntry(entry);

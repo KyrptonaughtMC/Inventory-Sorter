@@ -10,15 +10,7 @@ import net.minecraft.client.util.InputUtil;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-
-import org.everit.json.schema.Schema;
-import org.everit.json.schema.ValidationException;
-import org.everit.json.schema.loader.SchemaLoader;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-
-import java.io.InputStream;
-import java.net.URL;
+import java.io.Reader;
 import java.nio.file.Path;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.LOGGER;
@@ -37,7 +29,6 @@ public class NewConfigOptions extends CompatConfig {
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final String CONFIG_FILE = MOD_ID + ".json";
-    private static final String CLIENT_SCHEMA = "config-schema.json";
 
     public void save() {
         Path filePath = ConfigPathResolver.getConfigPath(CONFIG_FILE);
@@ -51,24 +42,17 @@ public class NewConfigOptions extends CompatConfig {
 
     public static NewConfigOptions load() throws IOException {
         Path filePath = ConfigPathResolver.getConfigPath(CONFIG_FILE);
-        URL url = NewConfigOptions.class.getClassLoader().getResource(CLIENT_SCHEMA);
 
-        try(InputStream inputStream = url.openStream()) {
+        try (Reader configReader = new FileReader(filePath.toFile())) {
             LOGGER.debug("Validating config file...");
-            JSONObject schema = new JSONObject(new JSONTokener(inputStream));
-            Schema schemaValidator = SchemaLoader.load(schema);
-            schemaValidator.validate(new JSONObject(new JSONTokener(new FileReader(filePath.toFile()))));
+            SchemaValidator.isValidJsonObject(configReader, SchemaValidator.CONFIG_SCHEMA, filePath.toString());
             LOGGER.debug("Config file is valid.");
-        } catch (ValidationException e) {
+
+            return GSON.fromJson(new FileReader(filePath.toFile()), NewConfigOptions.class);
+        } catch (Exception e) {
             LOGGER.error("There's an error in the config file inventorysorter.json:");
-            LOGGER.error(e.getErrorMessage());
-            e.getCausingExceptions().stream()
-                    .map(ValidationException::getMessage)
-                    .forEach(LOGGER::error);
             throw new RuntimeException(e);
         }
-
-        return GSON.fromJson(new FileReader(filePath.toFile()), NewConfigOptions.class);
     }
 
     public static NewConfigOptions convertOldToNew(OldConfigOptions oldOptions) {
