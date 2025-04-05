@@ -62,15 +62,6 @@ public class InventorySorterMod implements ModInitializer {
                     .copyOnDeath()
     );
 
-    @SuppressWarnings("UnstableApiUsage")
-    public static final AttachmentType<HideButton> HIDE_BUTTON = AttachmentRegistry.create(
-            Identifier.of(MOD_ID, "hide_button"),
-            builder -> builder
-                    .initializer(() -> HideButton.DEFAULT)
-                    .persistent(HideButton.NBT_CODEC)
-                    .copyOnDeath()
-    );
-
     /**
      * This attachment is used to tell if the user has used a modded client before. Helps us with figuring
      * out if we need to send configuration to the client or accept the client's settings on the server instead.

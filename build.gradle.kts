@@ -16,7 +16,8 @@ modSettings {
     variableReplacements = mapOf(
         "schema" to "\$schema",
         "clothVersion" to mod.prop("cloth_version"),
-        "modmenuVersion" to mod.prop("modmenu_version")
+        "modmenuVersion" to mod.prop("modmenu_version"),
+        "fabricPermissionsApiVersion" to mod.prop("fabric_permissions_api_version")
     )
 }
 
@@ -29,6 +30,10 @@ dependencies {
     modImplementation("com.github.erosb:everit-json-schema:1.14.4")
     include("com.github.erosb:everit-json-schema:1.14.4")
     include("org.json:json:20231013")
+
+    modImplementation("me.lucko:fabric-permissions-api:${mod.prop("fabric_permissions_api_version")}")
+    include("me.lucko:fabric-permissions-api:${mod.prop("fabric_permissions_api_version")}")
+
     modApi("com.terraformersmc:modmenu:${mod.prop("modmenu_version")}")
     modApi("me.shedaniel.cloth:cloth-config-fabric:${mod.prop("cloth_version")}") {
         exclude(group = "net.fabricmc.fabric-api")

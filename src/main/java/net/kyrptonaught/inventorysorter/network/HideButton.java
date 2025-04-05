@@ -1,17 +1,15 @@
 package net.kyrptonaught.inventorysorter.network;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.kyrptonaught.inventorysorter.compat.config.CompatConfig;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -34,14 +32,6 @@ public record HideButton(
                     )
             );
 
-    public static final Codec<HideButton> NBT_CODEC =
-            RecordCodecBuilder.create(instance -> instance.group(
-                    Codec.STRING.listOf()
-                            .xmap(list -> (Set<String>) new HashSet<>(list), ArrayList::new)
-                            .fieldOf("hideButtonForScreens")
-                            .forGetter(HideButton::hideButtonForScreens)
-            ).apply(instance, HideButton::new));
-
     public static HideButton fromConfig(CompatConfig config) {
         return new HideButton(new HashSet<>(config.hideButtonsForScreens));
     }
@@ -53,5 +43,9 @@ public record HideButton(
 
     public void sync(ServerPlayerEntity player) {
         ServerPlayNetworking.send(player, this);
+    }
+
+    public void sync(MinecraftServer server) {
+        server.getPlayerManager().getPlayerList().forEach(this::sync);
     }
 }
