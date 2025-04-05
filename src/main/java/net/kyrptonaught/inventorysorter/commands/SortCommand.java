@@ -22,6 +22,10 @@ public class SortCommand {
 
     public static int run(CommandContext<ServerCommandSource> commandContext) {
         ServerPlayerEntity player = commandContext.getSource().getPlayer();
+        if (player == null) {
+            commandContext.getSource().sendFeedback(() -> Text.translatable("key.inventorysorter.cmd.player-required"), false);
+            return 0;
+        }
         SortSettings settings = player.getAttachedOrCreate(SORT_SETTINGS);
 
         Text feedBack = InventoryHelper.sortTargetedBlock(player, settings.sortType());

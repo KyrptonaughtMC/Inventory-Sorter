@@ -32,7 +32,10 @@ public class SortHighlightedInventoryCommand {
 
     public static int turnOff(CommandContext<ServerCommandSource> commandContext) {
         ServerPlayerEntity player = commandContext.getSource().getPlayer();
-        if (player == null) return 0;
+        if (player == null) {
+            commandContext.getSource().sendFeedback(() -> Text.translatable("key.inventorysorter.cmd.player-required"), false);
+            return 0;
+        }
 
         SortSettings settings = player.getAttachedOrCreate(SORT_SETTINGS).withSortHighlightedInventory(false);
         player.setAttached(SORT_SETTINGS, settings);
@@ -46,7 +49,10 @@ public class SortHighlightedInventoryCommand {
 
     public static int turnOn(CommandContext<ServerCommandSource> commandContext) {
         ServerPlayerEntity player = commandContext.getSource().getPlayer();
-        if (player == null) return 0;
+        if (player == null) {
+            commandContext.getSource().sendFeedback(() -> Text.translatable("key.inventorysorter.cmd.player-required"), false);
+            return 0;
+        }
 
         SortSettings settings = player.getAttachedOrCreate(SORT_SETTINGS).withSortHighlightedInventory(true);
         player.setAttached(SORT_SETTINGS, settings);

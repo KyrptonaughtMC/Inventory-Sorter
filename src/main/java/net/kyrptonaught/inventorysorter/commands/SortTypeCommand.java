@@ -27,7 +27,10 @@ public class SortTypeCommand {
 
     public static int run(CommandContext<ServerCommandSource> commandContext, SortCases.SortType sortType) {
         ServerPlayerEntity player = commandContext.getSource().getPlayer();
-        if (player == null) return 0;
+        if (player == null) {
+            commandContext.getSource().sendFeedback(() -> Text.translatable("key.inventorysorter.cmd.player-required"), false);
+            return 0;
+        }
 
         SortSettings settings = player.getAttachedOrCreate(SORT_SETTINGS).withSortType(sortType);
         player.setAttached(SORT_SETTINGS, settings);

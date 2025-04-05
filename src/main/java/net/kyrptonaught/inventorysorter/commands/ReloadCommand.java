@@ -7,6 +7,7 @@ import net.kyrptonaught.inventorysorter.network.ReloadConfigPacket;
 import net.kyrptonaught.inventorysorter.permissions.CommandPermission;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 
 public class ReloadCommand {
@@ -17,7 +18,12 @@ public class ReloadCommand {
     }
 
     public static int run(CommandContext<ServerCommandSource> commandContext) {
-        new ReloadConfigPacket().fire(commandContext.getSource().getPlayer());
+        ServerPlayerEntity player = commandContext.getSource().getPlayer();
+        if (player == null) {
+            commandContext.getSource().sendFeedback(() -> Text.translatable("key.inventorysorter.cmd.player-required"), false);
+            return 0;
+        }
+        new ReloadConfigPacket().fire(player);
         commandContext.getSource().sendFeedback(() -> Text.of("Configuration reloaded"), false);
         return 1;
     }
