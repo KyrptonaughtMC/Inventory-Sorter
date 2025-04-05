@@ -5,18 +5,20 @@ import net.kyrptonaught.inventorysorter.compat.sources.CompatibilityLoader;
 import net.minecraft.util.Identifier;
 
 import java.io.Reader;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class Compatibility {
     Set<Identifier> shouldHideSortButtons = new HashSet<>();
     Set<Identifier> shouldPreventSort = new HashSet<>();
-    List<CompatibilityLoader> loaders = List.of();
+    List<CompatibilityLoader> loaders = new ArrayList<>();
 
-    public Compatibility(List<CompatibilityLoader> loaders) {
+    public Compatibility(ArrayList<CompatibilityLoader> loaders) {
         this.loaders = loaders;
         this.load();
+    }
+
+    public void addLoader(CompatibilityLoader loader) {
+        this.loaders.add(loader);
     }
 
     public void load() {
