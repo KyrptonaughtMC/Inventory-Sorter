@@ -91,6 +91,8 @@ public class InventorySorterModClient implements ClientModInitializer {
           this is how we sync that to the client and keep it separate from the player's config.
          */
         ClientPlayNetworking.registerGlobalReceiver(HideButton.ID, (payload, context) -> {
+            LOGGER.info("Received hide button packet");
+            LOGGER.info("Hiding button for screens: " + payload.hideButtonForScreens());
             serverConfig.hideButtonsForScreens = payload.hideButtonForScreens().stream().toList();
             compatibility.reload();
         });

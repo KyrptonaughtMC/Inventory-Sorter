@@ -4,6 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.kyrptonaught.inventorysorter.network.SortSettings;
+import net.kyrptonaught.inventorysorter.permissions.CommandPermission;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -20,6 +21,7 @@ public class SortPlayerInventoryCommand {
 
         dispatcher.register(rootCommand
                 .then(CommandManager.literal("sortPlayerInventory")
+                        .requires(CommandPermission.require("sortplayerinventory", 0))
                         .then(CommandManager.literal(ON_MESSAGE)
                                 .executes(SortPlayerInventoryCommand::turnOn)
                         )

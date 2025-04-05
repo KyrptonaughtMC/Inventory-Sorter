@@ -5,6 +5,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.kyrptonaught.inventorysorter.SortCases;
 import net.kyrptonaught.inventorysorter.network.SortSettings;
+import net.kyrptonaught.inventorysorter.permissions.CommandPermission;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -17,6 +18,7 @@ public class SortTypeCommand {
         for (SortCases.SortType sortType : SortCases.SortType.values()) {
             dispatcher.register(rootCommand
                     .then(CommandManager.literal("sortType")
+                            .requires(CommandPermission.require("sorttype", 0))
                             .then(CommandManager.literal(sortType.name())
                                     .executes(context -> SortTypeCommand.run(context, sortType))))
             );
