@@ -32,7 +32,10 @@ public class MiddleClickSortCommand {
 
     public static int turnOff(CommandContext<ServerCommandSource> commandContext) {
         ServerPlayerEntity player = commandContext.getSource().getPlayer();
-        if (player == null) return 0;
+        if (player == null) {
+            commandContext.getSource().sendFeedback(() -> Text.translatable("key.inventorysorter.cmd.player-required"), false);
+            return 0;
+        }
 
         SortSettings settings = player.getAttachedOrCreate(SORT_SETTINGS).withMiddleClick(false);
         player.setAttached(SORT_SETTINGS, settings);
@@ -46,7 +49,10 @@ public class MiddleClickSortCommand {
 
     public static int turnOn(CommandContext<ServerCommandSource> commandContext) {
         ServerPlayerEntity player = commandContext.getSource().getPlayer();
-        if (player == null) return 0;
+        if (player == null) {
+            commandContext.getSource().sendFeedback(() -> Text.translatable("key.inventorysorter.cmd.player-required"), false);
+            return 0;
+        };
 
         SortSettings settings = player.getAttachedOrCreate(SORT_SETTINGS).withMiddleClick(true);
         player.setAttached(SORT_SETTINGS, settings);

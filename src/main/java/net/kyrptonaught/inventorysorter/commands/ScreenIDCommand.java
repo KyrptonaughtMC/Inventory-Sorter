@@ -10,6 +10,7 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.HoverEvent;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -25,7 +26,7 @@ public class ScreenIDCommand {
         ServerPlayerEntity player = commandContext.getSource().getPlayer();
 
         if (player == null) {
-            commandContext.getSource().sendFeedback(() -> Text.of("This command can only be run by a player, looking at a container block."), false);
+            commandContext.getSource().sendFeedback(() -> Text.translatable("key.inventorysorter.cmd.player-required"), false);
             return 0;
         }
 
@@ -36,12 +37,25 @@ public class ScreenIDCommand {
             return 0;
         }
 
-        Text copyableText = Text.literal("Click to copy: [").append(screenID.toString()).append("]")
+        MutableText feedbackText = Text.literal("Click to copy: [").append(screenID.toString()).append("]");
+
+        /*? if >=1.21.5 {*/
+        Text copyableText = feedbackText
                 .styled(style -> style
                         .withColor(Formatting.GREEN)
                         .withClickEvent(new ClickEvent.CopyToClipboard(screenID.toString()))
                         .withHoverEvent(new HoverEvent.ShowText(Text.of("Click to copy")))
                 );
+        /*?} else {*/
+
+        /*Text copyableText = feedbackText
+                .styled(style -> style
+                        .withColor(Formatting.GREEN)
+                        .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, screenID.toString()))
+                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.of("Click to copy")))
+                );
+        *//*?}*/
+
 
         commandContext.getSource().sendFeedback(() -> copyableText, false);
         return 1;

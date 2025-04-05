@@ -49,6 +49,7 @@
   "key.inventorysorter.cmd.doubleClickSort": "Set Double click slot to sort to ",
   "key.inventorysorter.cmd.addblacklist": "Added to blacklist: ",
   "key.inventorysorter.cmd.invalidscreen": "Screen ID not valid",
+  "key.inventorysorter.cmd.player-required": "This command can only be run by a player.",
   "key.inventorysorter.sorttype.name": "Name",
   "key.inventorysorter.sorttype.category": "Category",
   "key.inventorysorter.sorttype.mod": "Mod",
