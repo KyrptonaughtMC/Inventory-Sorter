@@ -17,33 +17,33 @@ import java.util.Set;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.MOD_ID;
 
-public record PlayerSortPrevention(
-        Set<String> preventSortForScreens
+public record HideButton(
+        Set<String> hideButtonForScreens
 ) implements CustomPayload {
 
-    public static final CustomPayload.Id<PlayerSortPrevention> ID = new CustomPayload.Id<>(Identifier.of(MOD_ID, "sync_sort_prevention_packet"));
-    public static final PlayerSortPrevention DEFAULT = new PlayerSortPrevention(Set.of());
+    public static final Id<HideButton> ID = new Id<>(Identifier.of(MOD_ID, "sync_hide_button_packet"));
+    public static final HideButton DEFAULT = new HideButton(Set.of());
 
-    public static final PacketCodec<RegistryByteBuf, PlayerSortPrevention> CODEC =
+    public static final PacketCodec<RegistryByteBuf, HideButton> CODEC =
             PacketCodec.of(
                     (value, buf) -> {
-                        buf.writeCollection(value.preventSortForScreens(), PacketByteBuf::writeString);
+                        buf.writeCollection(value.hideButtonForScreens(), PacketByteBuf::writeString);
                     },
-                    buf -> new PlayerSortPrevention(
+                    buf -> new HideButton(
                             buf.readCollection(HashSet::new, PacketByteBuf::readString)
                     )
             );
 
-    public static final Codec<PlayerSortPrevention> NBT_CODEC =
+    public static final Codec<HideButton> NBT_CODEC =
             RecordCodecBuilder.create(instance -> instance.group(
                     Codec.STRING.listOf()
                             .xmap(list -> (Set<String>) new HashSet<>(list), ArrayList::new)
                             .fieldOf("hideButtonForScreens")
-                            .forGetter(PlayerSortPrevention::preventSortForScreens)
-            ).apply(instance, PlayerSortPrevention::new));
+                            .forGetter(HideButton::hideButtonForScreens)
+            ).apply(instance, HideButton::new));
 
-    public static PlayerSortPrevention fromConfig(CompatConfig config) {
-        return new PlayerSortPrevention(new HashSet<>(config.preventSortForScreens));
+    public static HideButton fromConfig(CompatConfig config) {
+        return new HideButton(new HashSet<>(config.hideButtonsForScreens));
     }
 
     @Override

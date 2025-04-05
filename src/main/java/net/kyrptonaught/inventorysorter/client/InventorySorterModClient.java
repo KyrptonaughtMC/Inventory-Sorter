@@ -5,11 +5,10 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.kyrptonaught.inventorysorter.compat.config.CompatConfig;
+import net.kyrptonaught.inventorysorter.compat.sources.ConfigLoader;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
-import net.kyrptonaught.inventorysorter.network.ClientSync;
-import net.kyrptonaught.inventorysorter.network.PlayerSortPrevention;
-import net.kyrptonaught.inventorysorter.network.SortSettings;
-import net.kyrptonaught.inventorysorter.network.SyncBlacklistPacket;
+import net.kyrptonaught.inventorysorter.network.*;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
@@ -17,6 +16,8 @@ import org.lwjgl.glfw.GLFW;
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.*;
 
 public class InventorySorterModClient implements ClientModInitializer {
+
+    private CompatConfig serverConfig = new CompatConfig();
 
     public static final KeyBinding sortButton = new KeyBinding(
             "inventorysorter.keybinds.sort",
@@ -37,9 +38,23 @@ public class InventorySorterModClient implements ClientModInitializer {
         KeyBindingHelper.registerKeyBinding(sortButton);
         KeyBindingHelper.registerKeyBinding(configButton);
 
+        /*
+          This is to attach server defined configs to the compatibility layer on the client only
+         */
+        compatibility.addLoader(new ConfigLoader(serverConfig));
+
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
             ClientPlayNetworking.send(new ClientSync(true));
             syncConfig();
+        });
+
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
+            /*
+              This is to clear the server defined configs when the client disconnects from a server.
+              This is to prevent configs from one server from being used on another server.
+             */
+            serverConfig = new CompatConfig();
+            compatibility.reload();
         });
 
         SyncBlacklistPacket.registerReceiveBlackList();
@@ -58,12 +73,25 @@ public class InventorySorterModClient implements ClientModInitializer {
             currentConfig.save();
         });
 
+        /*
+          This happens when the client connects to a server for the first time.
+          It's to sync the server's config to the client if the user has added any sort
+          preventions for themselves.
+         */
         ClientPlayNetworking.registerGlobalReceiver(PlayerSortPrevention.ID, (payload, context) -> {
-            LOGGER.info("Received sort prevention packet");
             NewConfigOptions currentConfig = getConfig();
             currentConfig.preventSortForScreens.retainAll(payload.preventSortForScreens());
             payload.preventSortForScreens().forEach(currentConfig::disableSortForScreen);
             currentConfig.save();
+            compatibility.reload();
+        });
+
+        /*
+          If the server owners have defined any screens that should have the sort button hidden,
+          this is how we sync that to the client and keep it separate from the player's config.
+         */
+        ClientPlayNetworking.registerGlobalReceiver(HideButton.ID, (payload, context) -> {
+            serverConfig.hideButtonsForScreens = payload.hideButtonForScreens().stream().toList();
             compatibility.reload();
         });
     }

@@ -1,5 +1,6 @@
 package net.kyrptonaught.inventorysorter.compat.sources;
 
+import net.kyrptonaught.inventorysorter.compat.config.CompatConfig;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.minecraft.util.Identifier;
 
@@ -13,10 +14,10 @@ import static net.kyrptonaught.inventorysorter.InventorySorterMod.LOGGER;
 import static net.kyrptonaught.inventorysorter.compat.sources.OnlineData.RemoteConfigData;
 
 public class ConfigLoader implements CompatibilityLoader {
-    private final NewConfigOptions config;
+    private final CompatConfig config;
     private RemoteConfigData remoteData = new RemoteConfigData();
 
-    public ConfigLoader(NewConfigOptions config) {
+    public ConfigLoader(CompatConfig config) {
         this.config = config;
         if (this.config.customCompatibilityListDownloadUrl != null && !this.config.customCompatibilityListDownloadUrl.isEmpty()) {
             try {

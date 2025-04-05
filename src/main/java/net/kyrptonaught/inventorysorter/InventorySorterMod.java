@@ -23,6 +23,7 @@ import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -32,11 +33,11 @@ public class InventorySorterMod implements ModInitializer {
 
     private static final NewConfigOptions CONFIG = Config.load();
     public static final Compatibility compatibility = new Compatibility(
-            List.of(
+            new ArrayList<>(List.of(
                     new LocalLoader(),
                     new OfficialListLoader(),
                     new ConfigLoader(CONFIG)
-            )
+            ))
     );
 
     public static NewConfigOptions getConfig() {
@@ -61,6 +62,15 @@ public class InventorySorterMod implements ModInitializer {
                     .copyOnDeath()
     );
 
+    @SuppressWarnings("UnstableApiUsage")
+    public static final AttachmentType<HideButton> HIDE_BUTTON = AttachmentRegistry.create(
+            Identifier.of(MOD_ID, "hide_button"),
+            builder -> builder
+                    .initializer(() -> HideButton.DEFAULT)
+                    .persistent(HideButton.NBT_CODEC)
+                    .copyOnDeath()
+    );
+
     /**
      * This attachment is used to tell if the user has used a modded client before. Helps us with figuring
      * out if we need to send configuration to the client or accept the client's settings on the server instead.
@@ -80,6 +90,10 @@ public class InventorySorterMod implements ModInitializer {
         CommandRegistrationCallback.EVENT.register(CommandRegistry::register);
 
         PayloadTypeRegistry.playC2S().register(ClientSync.ID, ClientSync.CODEC);
+
+
+        PayloadTypeRegistry.playS2C().register(HideButton.ID, HideButton.CODEC);
+
         PayloadTypeRegistry.playC2S().register(PlayerSortPrevention.ID, PlayerSortPrevention.CODEC);
         PayloadTypeRegistry.playS2C().register(PlayerSortPrevention.ID, PlayerSortPrevention.CODEC);
         PayloadTypeRegistry.playC2S().register(SortSettings.ID, SortSettings.CODEC);
@@ -127,6 +141,8 @@ public class InventorySorterMod implements ModInitializer {
                     sortSettings.sync(player);
                 }
             }
+
+            HideButton.fromConfig(getConfig()).sync(player);
         });
 
         ServerPlayNetworking.registerGlobalReceiver(SortSettings.ID, (payload, context) -> {
