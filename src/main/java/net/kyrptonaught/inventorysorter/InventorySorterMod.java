@@ -96,6 +96,7 @@ public class InventorySorterMod implements ModInitializer {
 
         PayloadTypeRegistry.playC2S().register(PlayerSortPrevention.ID, PlayerSortPrevention.CODEC);
         PayloadTypeRegistry.playS2C().register(PlayerSortPrevention.ID, PlayerSortPrevention.CODEC);
+
         PayloadTypeRegistry.playC2S().register(SortSettings.ID, SortSettings.CODEC);
         PayloadTypeRegistry.playS2C().register(SortSettings.ID, SortSettings.CODEC);
 

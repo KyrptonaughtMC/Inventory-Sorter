@@ -38,7 +38,7 @@ public record PlayerSortPrevention(
             RecordCodecBuilder.create(instance -> instance.group(
                     Codec.STRING.listOf()
                             .xmap(list -> (Set<String>) new HashSet<>(list), ArrayList::new)
-                            .fieldOf("hideButtonForScreens")
+                            .fieldOf("preventSortForScreens")
                             .forGetter(PlayerSortPrevention::preventSortForScreens)
             ).apply(instance, PlayerSortPrevention::new));
 
