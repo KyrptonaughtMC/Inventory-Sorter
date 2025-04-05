@@ -98,7 +98,6 @@ public class InventorySorterMod implements ModInitializer {
         PayloadTypeRegistry.playS2C().register(SortSettings.ID, SortSettings.CODEC);
 
         InventorySortPacket.registerReceivePacket();
-        SyncBlacklistPacket.registerSyncOnPlayerJoin();
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             var context = new ItemGroup.DisplayContext(server.getSaveProperties().getEnabledFeatures(), false, server.getRegistryManager());
