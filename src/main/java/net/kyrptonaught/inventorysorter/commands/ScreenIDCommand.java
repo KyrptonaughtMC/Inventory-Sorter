@@ -1,0 +1,49 @@
+package net.kyrptonaught.inventorysorter.commands;
+
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
+import net.kyrptonaught.inventorysorter.InventoryHelper;
+import net.kyrptonaught.inventorysorter.permissions.CommandPermission;
+import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.ClickEvent;
+import net.minecraft.text.HoverEvent;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
+
+public class ScreenIDCommand {
+    public static void register(CommandDispatcher<ServerCommandSource> dispatcher, LiteralArgumentBuilder<ServerCommandSource> rootCommand) {
+        dispatcher.register(rootCommand.then(CommandManager.literal("screenID")
+                .requires(CommandPermission.require("screenid", 0))
+                .executes(ScreenIDCommand::run)));
+    }
+
+    public static int run(CommandContext<ServerCommandSource> commandContext) {
+        ServerPlayerEntity player = commandContext.getSource().getPlayer();
+
+        if (player == null) {
+            commandContext.getSource().sendFeedback(() -> Text.of("This command can only be run by a player, looking at a container block."), false);
+            return 0;
+        }
+
+        Identifier screenID = InventoryHelper.withTargetedScreenHandler(player, InventoryHelper.ScreenContext::screenId);
+
+        if (screenID == null) {
+            commandContext.getSource().sendFeedback(() -> Text.of("No compatible container targeted."), false);
+            return 0;
+        }
+
+        Text copyableText = Text.literal("Click to copy: [").append(screenID.toString()).append("]")
+                .styled(style -> style
+                        .withColor(Formatting.GREEN)
+                        .withClickEvent(new ClickEvent.CopyToClipboard(screenID.toString()))
+                        .withHoverEvent(new HoverEvent.ShowText(Text.of("Click to copy")))
+                );
+
+        commandContext.getSource().sendFeedback(() -> copyableText, false);
+        return 1;
+    }
+}

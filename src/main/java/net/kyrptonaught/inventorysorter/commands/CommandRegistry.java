@@ -24,6 +24,7 @@ public class CommandRegistry {
         DownloadCompatibilityListCommand.register(dispatcher, rootCommand);
         NoSortCommand.register(dispatcher, rootCommand);
         ReloadCommand.register(dispatcher, rootCommand);
+        ScreenIDCommand.register(dispatcher, rootCommand);
 
         if(registrationEnvironment.dedicated) {
             AdminCommands.register(dispatcher, rootCommand);
