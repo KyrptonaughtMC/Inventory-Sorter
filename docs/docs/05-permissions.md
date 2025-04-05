@@ -49,3 +49,7 @@ The default **permission level is 2**, which means that only server operators ca
 | `inventorysorter.command.admin.hidebutton.add`    | `/invsort admin hidebutton add`    |
 | `inventorysorter.command.admin.hidebutton.remove` | `/invsort admin hidebutton remove` |
 | `inventorysorter.command.admin.hidebutton.list`   | `/invsort admin hidebutton list`   |
+| `inventorysorter.command.admin.remote`            | `/invsort admin remote *`          |
+| `inventorysorter.command.admin.remote.set`        | `/invsort admin remote set [url]`  |
+| `inventorysorter.command.admin.remote.clear`      | `/invsort admin remote clear`      |
+| `inventorysorter.command.admin.remote.show`       | `/invsort admin remote show`       |

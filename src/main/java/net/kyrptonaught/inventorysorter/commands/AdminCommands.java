@@ -1,6 +1,7 @@
 package net.kyrptonaught.inventorysorter.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.kyrptonaught.inventorysorter.InventoryHelper;
@@ -34,7 +35,12 @@ public class AdminCommands {
                                         "admin.hidebutton",
                                         "admin.hidebutton.add",
                                         "admin.hidebutton.remove",
-                                        "admin.hidebutton.list"
+                                        "admin.hidebutton.list",
+                                        "admin.remote",
+                                        "admin.remote.set",
+                                        "admin.remote.clear",
+                                        "admin.remote.show"
+
                                 )
                                 .or(CommandPermission.require("admin", 2))
                 );
@@ -86,6 +92,28 @@ public class AdminCommands {
                         .requires(CommandPermission.require("admin.reload", 2))
                         .executes(AdminCommands::reload))
         ));
+
+        dispatcher.register(rootCommand.then(admin.then(
+                CommandManager.literal("remote")
+                        .then(CommandManager.literal("set")
+                                .then(CommandManager.argument("url", StringArgumentType.string())
+                                        .requires(CommandPermission.require("admin.remote.set", 2))
+                                        .executes(AdminCommands::remoteSet))
+                        ))));
+
+        dispatcher.register(rootCommand.then(admin.then(
+                CommandManager.literal("remote")
+                        .then(CommandManager.literal("clear")
+                                .requires(CommandPermission.require("admin.remote.clear", 2))
+                                .executes(AdminCommands::remoteClear))
+        )));
+
+        dispatcher.register(rootCommand.then(admin.then(
+                CommandManager.literal("remote")
+                        .then(CommandManager.literal("show")
+                                .requires(CommandPermission.require("admin.remote.show", 2))
+                                .executes(AdminCommands::remoteShow))
+        )));
 
     }
 
@@ -197,6 +225,31 @@ public class AdminCommands {
             sb.append(screen).append(", ");
         }
         commandContext.getSource().sendFeedback(() -> Text.of(sb.toString()), false);
+        return 1;
+    }
+
+    public static int remoteSet(CommandContext<ServerCommandSource> commandContext) {
+        String url = StringArgumentType.getString(commandContext, "url");
+        NewConfigOptions config = getConfig();
+        config.customCompatibilityListDownloadUrl = url;
+        config.save();
+        reloadConfig();
+        commandContext.getSource().sendFeedback(() -> Text.of("Remote inventory set"), false);
+        return 1;
+    }
+
+    public static int remoteClear(CommandContext<ServerCommandSource> commandContext) {
+        NewConfigOptions config = getConfig();
+        config.customCompatibilityListDownloadUrl = "";
+        config.save();
+        reloadConfig();
+        commandContext.getSource().sendFeedback(() -> Text.of("Remote inventory cleared"), false);
+        return 1;
+    }
+
+    public static int remoteShow(CommandContext<ServerCommandSource> commandContext) {
+        NewConfigOptions config = getConfig();
+        commandContext.getSource().sendFeedback(() -> Text.of("Remote inventory: " + config.customCompatibilityListDownloadUrl), false);
         return 1;
     }
 

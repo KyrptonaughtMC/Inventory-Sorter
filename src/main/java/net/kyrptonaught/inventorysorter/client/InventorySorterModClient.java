@@ -41,7 +41,7 @@ public class InventorySorterModClient implements ClientModInitializer {
         /*
           This is to attach server defined configs to the compatibility layer on the client only
          */
-        compatibility.addLoader(new ConfigLoader(serverConfig));
+        compatibility.addLoader(new ConfigLoader(() -> serverConfig));
 
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
             ClientPlayNetworking.send(new ClientSync(true));

@@ -3,53 +3,39 @@ package net.kyrptonaught.inventorysorter.compat.sources;
 import net.kyrptonaught.inventorysorter.compat.config.CompatConfig;
 import net.minecraft.util.Identifier;
 
-import java.net.URI;
-import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static net.kyrptonaught.inventorysorter.InventorySorterMod.LOGGER;
-import static net.kyrptonaught.inventorysorter.compat.sources.OnlineData.RemoteConfigData;
-
 public class ConfigLoader implements CompatibilityLoader {
-    private final CompatConfig config;
-    private RemoteConfigData remoteData = new RemoteConfigData();
+    private final Supplier<CompatConfig> config;
+    private Set<Identifier> preventSort = new HashSet<>();
+    private Set<Identifier> shouldHideSortButtons = new HashSet<>();
 
-    public ConfigLoader(CompatConfig config) {
+    public ConfigLoader(Supplier<CompatConfig> config) {
         this.config = config;
-        if (this.config.customCompatibilityListDownloadUrl != null && !this.config.customCompatibilityListDownloadUrl.isEmpty()) {
-            try {
-                URL url = URI.create(this.config.customCompatibilityListDownloadUrl).toURL();
-                this.remoteData = RemoteConfigData.downloadFrom(url);
-            } catch (Exception e) {
-                LOGGER.error("Not a valid URL in the config file: {}", this.config.customCompatibilityListDownloadUrl);
-            }
-        }
     }
+
 
     @Override
     public Set<Identifier> getPreventSort() {
-        Set<Identifier> preventSort = new HashSet<>();
+        preventSort.clear();
 
-        if (config.preventSortForScreens != null) {
-            preventSort.addAll(config.preventSortForScreens.stream().map(Identifier::of).collect(Collectors.toSet()));
+        if (config.get().preventSortForScreens != null) {
+            preventSort.addAll(config.get().preventSortForScreens.stream().map(Identifier::of).collect(Collectors.toSet()));
         }
-
-        preventSort.addAll(remoteData.preventSortForScreens.stream().map(Identifier::of).collect(Collectors.toSet()));
 
         return preventSort;
     }
 
     @Override
     public Set<Identifier> getShouldHideSortButtons() {
-        Set<Identifier> shouldHideSortButtons = new HashSet<>();
+        shouldHideSortButtons.clear();
 
-        if (config.hideButtonsForScreens != null) {
-            shouldHideSortButtons.addAll(config.hideButtonsForScreens.stream().map(Identifier::of).collect(Collectors.toSet()));
+        if (config.get().hideButtonsForScreens != null) {
+            shouldHideSortButtons.addAll(config.get().hideButtonsForScreens.stream().map(Identifier::of).collect(Collectors.toSet()));
         }
-
-        shouldHideSortButtons.addAll(remoteData.hideButtonsForScreens.stream().map(Identifier::of).collect(Collectors.toSet()));
 
         return shouldHideSortButtons;
     }
