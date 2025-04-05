@@ -15,27 +15,39 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.OptionalInt;
+import java.util.function.Function;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.PLAYER_SORT_PREVENTION;
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.compatibility;
 
 public class InventoryHelper {
 
-    public static Text sortBlock(World world, BlockPos blockPos, ServerPlayerEntity player, SortCases.SortType sortType) {
+    public static final double MAX_LOOKUP_DISTANCE = 6.0D;
+
+    public record ScreenContext(ScreenHandler handler, Identifier screenId, Inventory inventory) {}
+
+    public static <T> T withTargetedScreenHandler(ServerPlayerEntity player, Function<ScreenContext, T> action) {
+        HitResult hit = player.raycast(MAX_LOOKUP_DISTANCE, 1.0F, false);
+        if (!(hit instanceof BlockHitResult blockHit)) return null;
+
+        BlockPos blockPos = blockHit.getBlockPos();
+        World world = player.getWorld();
+        BlockState blockState = world.getBlockState(blockPos);
+
         // Inventory to sort
         Inventory inventory = null;
         // Screen to open and check
         NamedScreenHandlerFactory namedScreenHandlerFactory = null;
 
-        BlockState blockState = world.getBlockState(blockPos);
 
-        // check that block has block entity
         if (blockState.hasBlockEntity()) {
             BlockEntity blockEntity = world.getBlockEntity(blockPos);
             inventory = HopperBlockEntity.getInventoryAt(world, blockPos);
@@ -45,34 +57,46 @@ public class InventoryHelper {
         }
         // fail if either is not present
         if (inventory == null || namedScreenHandlerFactory == null) {
-            return Text.translatable("key.inventorysorter.sorting.invalid");
+            return null;
         }
 
-        // open screen to perform validation
         OptionalInt syncId = player.openHandledScreen(namedScreenHandlerFactory);
-        if (syncId.isPresent()) {
-            // get screenHandler from syncId
-            ScreenHandler screenHandler = namedScreenHandlerFactory.createMenu(syncId.getAsInt(), player.getInventory(), player);
-            try {
-                // check if inventory is sortable
-                if (canSortInventory(player, screenHandler)) {
-                    // actually sort inv
-                    sortInventory(inventory, 0, inventory.size(), sortType);
-                    player.closeHandledScreen();
-                    screenHandler.onClosed(player);
-                    return Text.translatable("key.inventorysorter.sorting.sorted");
-                } else {
-                    player.closeHandledScreen();
-                    screenHandler.onClosed(player);
-                    return Text.translatable("key.inventorysorter.sorting.notsortable");
-                }
-            } catch (Exception ex) {
-                player.closeHandledScreen();
-                screenHandler.onClosed(player);
-                return Text.translatable("key.inventorysorter.sorting.failed");
-            }
+        if (syncId.isEmpty()) return null;
+
+        ScreenHandler screenHandler = namedScreenHandlerFactory.createMenu(syncId.getAsInt(), player.getInventory(), player);
+
+        try {
+            Identifier id = Registries.SCREEN_HANDLER.getId(screenHandler.getType());
+            if (id == null) return null;
+
+            return action.apply(new ScreenContext(screenHandler, id, inventory));
+        } catch (Exception e) {
+            return null;
+        } finally {
+            player.closeHandledScreen();
+            screenHandler.onClosed(player);
         }
-        return Text.translatable("key.inventorysorter.sorting.error");
+    }
+
+
+    public static Text sortTargetedBlock(ServerPlayerEntity player, SortCases.SortType sortType) {
+
+        Boolean result = withTargetedScreenHandler(player, (context) -> {
+            if (canSortInventory(player, context.handler)) {
+                sortInventory(context.inventory, 0, context.inventory.size(), sortType);
+                return true;
+            }
+            return false;
+        });
+
+        if (result == null) {
+            return Text.translatable("key.inventorysorter.sorting.error");
+        }
+        if (result) {
+            return Text.translatable("key.inventorysorter.sorting.sorted");
+        }
+
+        return Text.translatable("key.inventorysorter.sorting.notsortable");
     }
 
     public static boolean sortInventory(PlayerEntity player, boolean shouldSortPlayerInventory, SortCases.SortType sortType) {

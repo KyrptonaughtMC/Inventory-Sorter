@@ -9,8 +9,6 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.HitResult;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.SORT_SETTINGS;
 
@@ -22,15 +20,9 @@ public class SortCommand {
     public static int run(CommandContext<ServerCommandSource> commandContext) {
         ServerPlayerEntity player = commandContext.getSource().getPlayer();
         SortSettings settings = player.getAttachedOrCreate(SORT_SETTINGS);
-        HitResult hit = player.raycast(6, 1, false);
-        if (hit instanceof BlockHitResult) {
-            Text feedBack = InventoryHelper.sortBlock(
-                    player.getWorld(),
-                    ((BlockHitResult) hit).getBlockPos(), player,
-                    settings.sortType()
-            );
-            commandContext.getSource().sendFeedback(() -> Text.of(feedBack.getString()), false);
-        }
+
+        Text feedBack = InventoryHelper.sortTargetedBlock(player, settings.sortType());
+        commandContext.getSource().sendFeedback(() -> Text.of(feedBack.getString()), false);
         return 1;
     }
 }

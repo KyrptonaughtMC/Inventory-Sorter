@@ -70,6 +70,7 @@ public class InventorySorterMod implements ModInitializer {
         CommandRegistrationCallback.EVENT.register(CommandRegistry::register);
 
         PayloadTypeRegistry.playC2S().register(PlayerSortPrevention.ID, PlayerSortPrevention.CODEC);
+        PayloadTypeRegistry.playS2C().register(PlayerSortPrevention.ID, PlayerSortPrevention.CODEC);
         PayloadTypeRegistry.playC2S().register(SortSettings.ID, SortSettings.CODEC);
         PayloadTypeRegistry.playS2C().register(SortSettings.ID, SortSettings.CODEC);
 
@@ -92,6 +93,9 @@ public class InventorySorterMod implements ModInitializer {
             if (!player.hasAttached(PLAYER_SORT_PREVENTION)) {
                 player.setAttached(PLAYER_SORT_PREVENTION, PlayerSortPrevention.DEFAULT);
             }
+
+            player.getAttached(PLAYER_SORT_PREVENTION).sync(player);
+            LOGGER.info("Syncing sort prevention for player FROM SERVER {}", player.getName().getString());
         });
 
         ServerPlayNetworking.registerGlobalReceiver(SortSettings.ID, (payload, context) -> {
@@ -99,6 +103,7 @@ public class InventorySorterMod implements ModInitializer {
         });
 
         ServerPlayNetworking.registerGlobalReceiver(PlayerSortPrevention.ID, (payload, context) -> {
+            LOGGER.info("Syncing sort prevention for player FROM CLIENT (ON SERVER) {}", context.player().getName().getString());
             context.player().setAttached(PLAYER_SORT_PREVENTION, payload);
         });
     }
