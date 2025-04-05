@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
+import net.kyrptonaught.inventorysorter.network.ClientSync;
 import net.kyrptonaught.inventorysorter.network.PlayerSortPrevention;
 import net.kyrptonaught.inventorysorter.network.SortSettings;
 import net.kyrptonaught.inventorysorter.network.SyncBlacklistPacket;
@@ -36,7 +37,10 @@ public class InventorySorterModClient implements ClientModInitializer {
         KeyBindingHelper.registerKeyBinding(sortButton);
         KeyBindingHelper.registerKeyBinding(configButton);
 
-        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> syncConfig());
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
+            ClientPlayNetworking.send(new ClientSync(true));
+            syncConfig();
+        });
 
         SyncBlacklistPacket.registerReceiveBlackList();
 
