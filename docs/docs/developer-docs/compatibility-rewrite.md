@@ -11,7 +11,7 @@ The current compatibility system is fully client-controlled and only affects UI 
 
 ---
 
-### Phase 1: Cleanup (Client-Only Authority)
+### Phase 1: Cleanup (Client-Only Authority) - DONE
 
 - Remove server-side compatibility logic
 - Drop the `/invsort` command-based config mutation for compat lists
@@ -21,7 +21,7 @@ The current compatibility system is fully client-controlled and only affects UI 
 
 ---
 
-### Phase 2: Design Unified Compat System
+### Phase 2: Design Unified Compat System - DONE
 
 #### Key Questions
 
@@ -36,18 +36,18 @@ The current compatibility system is fully client-controlled and only affects UI 
     - Tags: `#nosort`, `#nosortbutton`
     - Could integrate with Minecraft’s `DataComponent` or Fabric API
 
-2. **Server-Side Enforcement**
+2. **Server-Side Enforcement** - DONE
     - Optional: server checks container compatibility before executing sort
     - Server may send a list of disallowed screens or tags
     - Sorting fails gracefully with a message:  
       _“Sorting is disabled for this container.”_
 
-3. **Pack-Level Overrides**
+3. **Pack-Level Overrides** - DONE
     - External JSON compatibility lists
     - Layered merge priority: Mod defaults < Pack config < Player overrides
     - Configurable sync model: server pushes list, client respects and merges
 
-4. **Player-Level Config**
+4. **Player-Level Config** - DONE
     - GUI tools to block sorting on specific screens (already started)
     - Stored locally, applied only on client
     - Overrides any upstream compat if explicitly set
