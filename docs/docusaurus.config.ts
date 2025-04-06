@@ -9,7 +9,7 @@ const config: Config = {
     title: 'Inventory Sorter - Sorts your Minecraft inventories with the click of a button!',
     titleDelimiter: '–',
     favicon: 'img/brush_button.png',
-    url: 'https://invsort.meza.gg',
+    url: 'https://inventorysorter.meza.gg',
     baseUrl: '/',
     trailingSlash: false,
 
@@ -37,7 +37,7 @@ const config: Config = {
             tagName: 'link',
             attributes: {
                 rel: 'canonical',
-                href: 'https://invsort.meza.gg',
+                href: 'https://inventorysorter.meza.gg',
             }
         },
         {
@@ -52,7 +52,7 @@ const config: Config = {
                 "description": "Inventory Sorter - Sorts your Minecraft inventories with the click of a button!",
                 "applicationCategory": "DeveloperTool",
                 "operatingSystem": "Cross-platform",
-                "url": "https://invsort.meza.gg/",
+                "url": "https://inventorysorter.meza.gg/",
                 "author": {
                     "@type": "Person",
                     "name": "Meza"
@@ -67,12 +67,12 @@ const config: Config = {
             {name: 'og:title', content: 'Inventory Sorter Mod for Minecraft'},
             {name: 'og:description', content: 'Powerful and flexible inventory sorting for Minecraft. Works on both vanilla and modded clients with minimal configuration.'},
             {name: 'og:type', content: 'website'},
-            {name: 'og:url', content: 'https://invsort.meza.gg'},
-            {name: 'og:image', content: 'https://invsort.meza.gg/img/brush_button.png'},
+            {name: 'og:url', content: 'https://inventorysorter.meza.gg'},
+            {name: 'og:image', content: 'https://inventorysorter.meza.gg/img/brush_button.png'},
             {name: 'twitter:card', content: 'summary_large_image'},
             {name: 'twitter:site', content: '@houseofmeza'},
             {name: 'twitter:creator', content: '@houseofmeza'},
-            {name: 'twitter:image', content: 'https://invsort.meza.gg/img/brush_button.png'},
+            {name: 'twitter:image', content: 'https://inventorysorter.meza.gg/img/brush_button.png'},
             {name: 'twitter:title', content: 'Inventory Sorter Mod for Minecraft'},
             {name: 'twitter:description', content: 'Sort any inventory in Minecraft with ease. Supports buttons, keybinds, and server-configurable rules.'},
         ],
@@ -139,7 +139,7 @@ const config: Config = {
                         },
                         {
                             label: "Main Website",
-                            href: "https://invsort.meza.gg/",
+                            href: "https://inventorysorter.meza.gg/",
                         },
                         {
                             label: "GitHub",
