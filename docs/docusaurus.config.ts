@@ -13,8 +13,6 @@ const config: Config = {
     baseUrl: '/',
     trailingSlash: false,
 
-    /* Your site config here */
-
     i18n: {
         defaultLocale: "en",
         locales: ["en"],
@@ -64,19 +62,19 @@ const config: Config = {
     ],
     themeConfig: {
         metadata: [
-            {name: 'description', content: 'Inventory Sorter is a Gradle plugin that streamlines multi-loader, multi-version Minecraft mod development. Build Fabric, Forge, and NeoForge mods in a single codebase and simplify releases to Modrinth and CurseForge.'},
-            {name: 'keywords', content: 'Minecraft modding, Gradle plugin, Fabric mod, Forge mod, NeoForge, multi-loader modding, Stonecutter, Architectury, Modrinth, CurseForge'},
-            {name: 'og:title', content: 'Inventory Sorter – Simplify Multi-Loader, Multi-Version Minecraft Mod Development'},
-            {name: 'og:description', content: 'Inventory Sorter is a Gradle plugin that streamlines multi-loader, multi-version Minecraft mod development. Build Fabric, Forge, and NeoForge mods in a single codebase and simplify releases to Modrinth and CurseForge.'},
+            {name: 'description', content: 'Inventory Sorter is a lightweight Minecraft mod that adds intuitive, customizable inventory sorting for both modded and vanilla clients. Supports buttons, keybinds, double-click sorting, and server control.'},
+            {name: 'keywords', content: 'Minecraft mod, inventory sorting, Fabric mod, Forge mod, server-side, client-side, keybind sorting, Minecraft QoL mod, inventory management, double-click sort, modded Minecraft, sort items'},
+            {name: 'og:title', content: 'Inventory Sorter Mod for Minecraft'},
+            {name: 'og:description', content: 'Powerful and flexible inventory sorting for Minecraft. Works on both vanilla and modded clients with minimal configuration.'},
             {name: 'og:type', content: 'website'},
             {name: 'og:url', content: 'https://invsort.meza.gg'},
-            {name: 'og:image', content: 'https://invsort.meza.gg/img/Inventory Sorter@0.5x.png'},
+            {name: 'og:image', content: 'https://invsort.meza.gg/img/brush_button.png'},
             {name: 'twitter:card', content: 'summary_large_image'},
             {name: 'twitter:site', content: '@houseofmeza'},
             {name: 'twitter:creator', content: '@houseofmeza'},
-            {name: 'twitter:image', content: 'https://invsort.meza.gg/img/Inventory Sorter@0.5x.png'},
-            {name: 'twitter:title', content: 'Inventory Sorter – Simplify Multi-Loader, Multi-Version Minecraft Mod Development'},
-            {name: 'twitter:description', content: 'Inventory Sorter is a Gradle plugin that streamlines multi-loader, multi-version Minecraft mod development. Build Fabric, Forge, and NeoForge mods in a single codebase and simplify releases to Modrinth and CurseForge.'}
+            {name: 'twitter:image', content: 'https://invsort.meza.gg/img/brush_button.png'},
+            {name: 'twitter:title', content: 'Inventory Sorter Mod for Minecraft'},
+            {name: 'twitter:description', content: 'Sort any inventory in Minecraft with ease. Supports buttons, keybinds, and server-configurable rules.'},
         ],
         announcementBar: {
             isCloseable: true,
@@ -100,7 +98,7 @@ const config: Config = {
                     position: 'right',
                     className: 'github-link',
                     'aria-label': 'GitHub repository',
-                    href: 'https://github.com/meza/Inventory Sorter'
+                    href: 'https://github.com/KyrptonaughtMC/Inventory-Sorter'
                 }
             ]
         },
@@ -143,7 +141,7 @@ const config: Config = {
                     ],
                 },
             ],
-            copyright: `Copyright © 2025, under the GPL-3.0 license. Built with Docusaurus.`,
+            copyright: `Copyright © 2025, under the MIT license.<br/>Built with Docusaurus.`,
         },
         prism: {
             theme: lightTheme,
