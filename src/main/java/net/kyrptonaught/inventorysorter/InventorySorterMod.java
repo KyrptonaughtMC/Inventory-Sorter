@@ -10,10 +10,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.kyrptonaught.inventorysorter.commands.CommandRegistry;
 import net.kyrptonaught.inventorysorter.compat.Compatibility;
-import net.kyrptonaught.inventorysorter.compat.sources.ConfigLoader;
-import net.kyrptonaught.inventorysorter.compat.sources.LocalLoader;
-import net.kyrptonaught.inventorysorter.compat.sources.OfficialListLoader;
-import net.kyrptonaught.inventorysorter.compat.sources.RemoteConfigLoader;
+import net.kyrptonaught.inventorysorter.compat.sources.*;
 import net.kyrptonaught.inventorysorter.config.Config;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.kyrptonaught.inventorysorter.network.*;
@@ -35,6 +32,7 @@ public class InventorySorterMod implements ModInitializer {
     private static NewConfigOptions CONFIG = Config.load();
     public static final Compatibility compatibility = new Compatibility(
             new ArrayList<>(List.of(
+                    new PredefinedLoader(),
                     new LocalLoader(),
                     new OfficialListLoader(),
                     new ConfigLoader(InventorySorterMod::getConfig),
