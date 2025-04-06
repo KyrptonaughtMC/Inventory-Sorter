@@ -54,9 +54,11 @@ public class InventoryHelper {
             namedScreenHandlerFactory = blockState.createScreenHandlerFactory(world, blockPos);
             if (namedScreenHandlerFactory == null && blockEntity instanceof NamedScreenHandlerFactory)
                 namedScreenHandlerFactory = (NamedScreenHandlerFactory) blockEntity;
+        } else {
+            namedScreenHandlerFactory = blockState.createScreenHandlerFactory(world, blockPos);
         }
         // fail if either is not present
-        if (inventory == null || namedScreenHandlerFactory == null) {
+        if (namedScreenHandlerFactory == null) {
             return null;
         }
 
@@ -82,6 +84,9 @@ public class InventoryHelper {
     public static Text sortTargetedBlock(ServerPlayerEntity player, SortCases.SortType sortType) {
 
         Boolean result = withTargetedScreenHandler(player, (context) -> {
+            if (context.inventory == null) {
+                return false;
+            }
             if (canSortInventory(player, context.handler)) {
                 sortInventory(context.inventory, 0, context.inventory.size(), sortType);
                 return true;
