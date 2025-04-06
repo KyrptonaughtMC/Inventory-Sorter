@@ -13,13 +13,19 @@ import net.minecraft.client.MinecraftClient;
 /*? if <1.21.5 {*/
 /*import net.minecraft.client.gl.ShaderProgramKeys;
 *//*?}*/
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.ScreenRect;
 import net.minecraft.client.gui.screen.ButtonTextures;
+import net.minecraft.client.gui.tooltip.TooltipPositioner;
+import net.minecraft.client.gui.tooltip.WidgetTooltipPositioner;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.registry.Registries;
+import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 
@@ -35,6 +41,7 @@ public class SortButtonWidget extends TexturedButtonWidget {
             Identifier.of(InventorySorterMod.MOD_ID, "textures/gui/button_unfocused.png"),
             Identifier.of(InventorySorterMod.MOD_ID, "textures/gui/button_focused.png"));
     private final boolean playerInv;
+    private final TooltipPositioner widgetTooltipPositioner = new WidgetTooltipPositioner(ScreenRect.empty());
 
     public SortButtonWidget(int int_1, int int_2, boolean playerInv) {
         super(int_1, int_2, 10, 9, TEXTURES, null, Text.literal(""));
@@ -72,12 +79,16 @@ public class SortButtonWidget extends TexturedButtonWidget {
         context.getMatrices().translate(getX(), getY(), 0);
         Identifier identifier = TEXTURES.get(true, isHovered());
         context.drawTexture(RenderLayer::getGuiTextured, identifier, getX(), getY(), 0, 0, 20, 18, 20, 18);
-        this.renderTooltip(context, mouseX, mouseY);
         context.getMatrices().pop();
+        this.renderTooltip(context);
     }
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+        if (GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), GLFW.GLFW_KEY_LEFT_CONTROL) == 1) {
+            return false;
+        }
+
         int current = getConfig().sortType.ordinal();
         if (verticalAmount > 0) {
             current++;
@@ -95,15 +106,29 @@ public class SortButtonWidget extends TexturedButtonWidget {
     }
 
 
-    public void renderTooltip(DrawContext context, int mouseX, int mouseY) {
+    public void renderTooltip(DrawContext context) {
         if (getConfig().showTooltips && this.isHovered()) {
-            List<Text> lines = new ArrayList<>();
-            lines.add(Text.translatable("key.inventorysorter.sortbtn.sort").append(Text.translatable(getConfig().sortType.getTranslationKey())));
-            if (GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), GLFW.GLFW_KEY_LEFT_CONTROL) == 1) {
-                lines.add(Text.translatable("key.inventorysorter.sortbtn.debug"));
-                lines.add(Text.translatable("key.inventorysorter.sortbtn.debug2"));
+            MinecraftClient instance = MinecraftClient.getInstance();
+            TextRenderer textRenderer = instance.textRenderer;
+
+            List<OrderedText> lines = new ArrayList<>();
+
+            if (GLFW.glfwGetKey(instance.getWindow().getHandle(), GLFW.GLFW_KEY_LEFT_CONTROL) == 1) {
+                lines.add(Text.of("Click to hide button").asOrderedText());
+            } else {
+
+                lines.add(Text.translatable("key.inventorysorter.sortbtn.sort").append(Text.translatable(getConfig().sortType.getTranslationKey()).formatted(Formatting.BOLD)).asOrderedText());
+                lines.add(Text.translatable("key.inventorysorter.sortbtn.debug").formatted(Formatting.DARK_GRAY).asOrderedText());
+                lines.add(Text.translatable("key.inventorysorter.sortbtn.debug2").formatted(Formatting.DARK_GRAY).asOrderedText());
+
             }
-            context.drawTooltip(MinecraftClient.getInstance().textRenderer, lines, getX(), getY());
+
+            context.drawTooltip(
+                    textRenderer,
+                    lines,
+                    widgetTooltipPositioner,
+                    getX(), getY()
+            );
         }
     }
 }
