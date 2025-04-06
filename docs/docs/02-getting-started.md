@@ -15,7 +15,7 @@ If you are running a Fabric-based Minecraft server:
 - Install [Fabric API][fabric-api]
 - Install [Inventory Sorter][inventory-sorter]
 
-No additional configuration is needed. The mod will automatically handle sort requests from clients.
+No additional configuration is needed. The mod automatically handles sort requests from clients.
 
 ### Client Installation
 
@@ -26,25 +26,23 @@ If you want to add client-side features like keybinds, configuration menus, or s
 - Install [Cloth Config][cloth-config] (required for config menus)
 - (Optional) Install [Mod Menu][mod-menu] for easier in-game access to settings
 
-If the server already has Inventory Sorter installed, you’ll get additional functionality by installing it client-side too,
-but it’s **not required**.
+:::tip
+If you're only joining a server, and it has Inventory Sorter installed, you don't *need* it client-side, but installing it adds GUI buttons and keybinds for sorting, which most players prefer.
+:::
 
 ### Single-Player Installation
 
-Single-player behaves like a local server, so both server-side and client-side mods are required.
+Single-player runs an integrated server under the hood, so you only need to install the **client-side mods**.
 
-Install the following:
+Follow the same steps as in [Client Installation](#client-installation):
 
-- [Fabric API][fabric-api]
-- [Inventory Sorter][inventory-sorter]
-- [Cloth Config][cloth-config]
-- (Optional) [Mod Menu][mod-menu]
 
 ## Supported Versions
 
 Inventory Sorter supports Minecraft versions from **1.14.2** onward.
 
-Active development and support focus on **1.21.4+**. Bugfixes or new features will only be released for these newer versions.
+Active development and support focus on **1.21.4+**.
+Only Minecraft 1.21.4+ will receive bugfixes or new features.
 
 ## Quick Start
 
