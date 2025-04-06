@@ -3,6 +3,8 @@
 Inventory Sorter includes built-in support for [fabric-permissions-api](https://github.com/lucko/fabric-permissions-api).  
 If no permissions manager (like [LuckPerms](https://modrinth.com/plugin/luckperms)) is present, all permission checks fall back to vanilla op levels.
 
+**You do not need to install fabric-permissions-api or LuckPerms to use the mod.**
+
 :::info
 If you have never used permissions before, check the LuckPerms wiki for a full guide on what they are 
 and how to use them: [LuckPerms Wiki](https://luckperms.net/wiki/Usage)
