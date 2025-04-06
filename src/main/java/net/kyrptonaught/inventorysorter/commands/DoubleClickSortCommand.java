@@ -22,6 +22,7 @@ public class DoubleClickSortCommand {
         dispatcher.register(rootCommand
                 .then(CommandManager.literal("doubleClickSort")
                         .requires(CommandPermission.require("doubleclicksort", 0))
+                        .executes(DoubleClickSortCommand::showState)
                         .then(CommandManager.literal(ON_MESSAGE)
                                 .executes(DoubleClickSortCommand::turnOn)
                         )
@@ -61,6 +62,20 @@ public class DoubleClickSortCommand {
 
         // @TODO instead of appending, use proper translation with placeholders
         commandContext.getSource().sendFeedback(() -> Text.of(FEEDBACK_MESSAGE.copy().append(ON_MESSAGE).getString()), false);
+        return 1;
+    }
+
+    public static int showState(CommandContext<ServerCommandSource> commandContext) {
+        ServerPlayerEntity player = commandContext.getSource().getPlayer();
+        if (player == null) {
+            commandContext.getSource().sendFeedback(() -> Text.translatable("key.inventorysorter.cmd.player-required"), false);
+            return 0;
+        }
+
+        SortSettings settings = player.getAttachedOrCreate(SORT_SETTINGS);
+        String state = settings.enableDoubleClick() ? ON_MESSAGE : OFF_MESSAGE;
+
+        commandContext.getSource().sendFeedback(() -> Text.of(Text.of("Double-click sort is ").copy().append(state).getString()), false);
         return 1;
     }
 }
