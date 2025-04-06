@@ -4,6 +4,7 @@ import net.kyrptonaught.inventorysorter.network.PlayerSortPrevention;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.HopperBlockEntity;
+import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
@@ -188,6 +189,10 @@ public class InventoryHelper {
         }
 
         if (player.currentScreenHandler instanceof PlayerScreenHandler) {
+            return true;
+        }
+
+        if (player.currentScreenHandler instanceof CreativeInventoryScreen.CreativeScreenHandler) {
             return true;
         }
 
