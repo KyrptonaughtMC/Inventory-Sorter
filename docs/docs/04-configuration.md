@@ -155,8 +155,10 @@ Available options:
 - `"ID"` – Sorts by internal item ID.
 
 :::info
-Regardless of the selected method, **Name** is always used as a secondary sort to maintain consistent ordering within groups.
+Regardless of the selected sort type, item **Name** is always used as a secondary sort.
+This ensures consistent ordering within grouped or categorized sections.
 :::
+
 
 ---
 
