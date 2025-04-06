@@ -7,10 +7,7 @@ import net.kyrptonaught.inventorysorter.client.InventorySorterModClient;
 import net.kyrptonaught.inventorysorter.compat.config.CompatConfig;
 import net.minecraft.client.util.InputUtil;
 
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Reader;
+import java.io.*;
 import java.nio.file.Path;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.LOGGER;
@@ -48,6 +45,8 @@ public class NewConfigOptions extends CompatConfig {
             LOGGER.debug("Config file is valid.");
 
             return GSON.fromJson(new FileReader(filePath.toFile()), NewConfigOptions.class);
+        } catch (FileNotFoundException e) {
+            return new NewConfigOptions();
         } catch (Exception e) {
             LOGGER.error("There's an error in the config file inventorysorter.json:");
             throw new RuntimeException(e);
