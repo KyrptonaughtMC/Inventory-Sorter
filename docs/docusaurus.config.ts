@@ -95,10 +95,17 @@ const config: Config = {
             },
             items:[
                 {
+                    label: '❤️ Sponsor',
+                    position: 'right',
+                    href: 'https://github.com/sponsors/meza',
+                    target: '_blank'
+                },
+                {
                     position: 'right',
                     className: 'github-link',
                     'aria-label': 'GitHub repository',
-                    href: 'https://github.com/KyrptonaughtMC/Inventory-Sorter'
+                    href: 'https://github.com/KyrptonaughtMC/Inventory-Sorter',
+                    target: '_blank'
                 }
             ]
         },
