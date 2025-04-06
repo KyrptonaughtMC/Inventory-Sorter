@@ -1,129 +1,93 @@
 # Configuration
 
-Inventory Sorter's configuration is stored in multiple places depending on how the mod is installed and used.
-
-## Configuration Sources
-
-### Client Configuration
-
-When the client mod is installed, configuration is loaded from:
+Inventory Sorter's configuration settings are stored in:
 
 ```
 config/inventorysorter.json
 ```
 
+The same file is used on both client and server, but the interpretation of its values differs.
 
-This file controls all mod behavior for the player, including sorting logic, input methods, 
-and visual settings. If the client mod is present, this file is always the source of truth.
-The server cannot override or influence these values when the client mod is present.
+## Client Configuration
 
-Settings can be edited in-game using the configuration menu, accessible through [Mod Menu][mod-menu] if installed.
+When the mod is installed on the client, this file stores **user preferences** such as:
 
+- Whether to show the sort button
+- Which inventory should be sorted
+- Tooltip visibility
+- Preferred sorting method
 
-### Server-Side Player Configuration
+These preferences affect only the player who owns the client. 
+They are editable in-game using the configuration menu (see [Usage Guide](/usage-guide#config-menu)) or by editing the JSON file directly.
 
-If a player connects using a vanilla client (without the mod installed), the server falls back to a configuration attached to their player entity. This allows server operators to define basic behavior such as enabled sorting methods or default sort type for unmodded players.
+:::warning
+Client preferences cannot override server-defined rules.
+:::
 
-This fallback configuration is only used when the connecting player does not have the mod installed
+## Server Configuration
 
-### Server-Side Configuration
+When the mod is installed on the server, the same file is used to define **compatibility constraints** that apply to all players.
 
-When running on a dedicated server, only the following fields in `config/inventorysorter.json` are used:
-
-- `preventSortForScreens`
-- `hideButtonsForScreens`
-- `customCompatibilityListDownloadUrl`
-
-All other values are ignored.
-This allows server owners to enforce compatibility or gameplay balancing overrides.
-
-### Compatibility List
-
-Compatibility entries can be loaded from an external source using the command:
+The server only uses these keys:
 
 ```
-/invsort downloadCompatibilityList [URL]
+"customCompatibilityListDownloadUrl": "",
+"preventSortForScreens": [],
+"hideButtonsForScreens": []
 ```
 
-This stores the URL in the client config. On every game startup, the compatibility list is fetched again and merged into the current configuration. These lists can define screens where sorting should be disabled or the sort button hidden.
+These define global rules for all players, regardless of whether they have the client mod installed.
 
-If the list cannot be fetched, no fallback is used.
+Server rules take precedence over player preferences and are enforced unconditionally.
 
----
+Please refer to the [Admin Guide](/admin-guide) for more details on server configuration.
+
+## Default config file
+
+Below is a complete version of the default configuration. This is the file you will find in `config/inventorysorter.json` after installing the mod.
+
+```json
+{
+  "showSortButton": true,
+  "showTooltips": true,
+  "separateButton": true,
+  "sortPlayerInventory": false,
+  "sortType": "NAME",
+  "enableDoubleClickSort": true,
+  "sortHighlightedItem": true,
+  "customCompatibilityListDownloadUrl": "",
+  "preventSortForScreens": [],
+  "hideButtonsForScreens": []
+}
+```
+
+The following sections describe each key in detail.
+
+
+## Config Keys
 
 ### `showSortButton`
 **GUI label:** *Display button in inventory*  
 **Config file key:** `showSortButton`  
 **Default:** `true` (On)
 
-Controls whether sort buttons are visible in any inventory screen.
+Controls whether a sort button is displayed in compatible inventory screens.
+This affects only the button’s visibility, not whether sorting can happen.
 
-When **On (`true`)**, a sort button is displayed in compatible inventory screens.  
-When **Off (`false`)**, no sort buttons are shown. Sorting is still available through mouse interactions, keybinds, or commands.
-
-This setting only affects button visibility. It does not disable sorting itself.
+When **On (`true`)**, the sort button(s) appear(s) in any inventory that supports it.  
+When **Off (`false`)**, the button(s) is hidden entirely, but sorting is still available via other methods (keybind, double-click, or command).
 
 ---
 
 ### `showTooltips`
-**GUI label:** *Show tooltip when hovering sort button*  
+**GUI label:** *Display Sort Button Tooltip*  
 **Config file key:** `showTooltips`  
 **Default:** `true` (On)
 
-Controls whether a tooltip appears when you hover over a sort button.
+Controls whether a tooltip is shown when hovering over the sort button.
 
-When **On (`true`)**, hovering the sort button will display a tooltip showing the current sort type.  
-When **Off (`false`)**, the tooltip will not appear.
-
-This setting only affects the sort button's tooltip. It does not affect sorting behavior.
-
----
-
-### `separateButton`
-**GUI label:** *Always display button in player inventory*  
-**Config file key:** `separateButton`  
-**Default:** `true` (On)
-
-Controls whether the sort button is shown separately for both the container and the player inventory.
-
-When **On (`true`)**, two buttons are displayed: one for the container (e.g. chest) and one for your inventory.  
-When **Off (`false`)**, only a single button is shown, typically for the container you opened.
-
-This helps reduce visual clutter in dual-inventory screens like chests or crafting tables.
-
----
-
-### `sortPlayerInventory`
-**GUI label:** *Sort player inventory while another inventory is open*  
-**Config file key:** `sortPlayerInventory`  
-**Default:** `false` (Off)
-
-Controls whether sorting actions (such as the sort button or keybind) apply to your player inventory even when another container is open.
-
-When **On (`true`)**, using the sort function will sort your player inventory, even if you have a chest, furnace, or other screen open.  
-When **Off (`false`)**, sorting actions will target only the currently opened container.
-
-This setting is especially useful when combined with the sort keybind or button.
-
----
-
-### `sortType`
-**GUI label:** *Sorting method*  
-**Config file key:** `sortType`  
-**Default:** `"NAME"`
-
-Controls how items are grouped and ordered when sorting an inventory. This setting applies to all sorting methods.
-
-Available options:
-
-- `"NAME"` – Sorts items alphabetically by their display name.
-- `"CATEGORY"` – Sorts items by their creative tab category (as defined by Minecraft), then alphabetically within each category.
-- `"MOD"` – Sorts items by the mod that added them, then by name.
-- `"ID"` – Sorts items by their internal registry ID, which is mostly useful for debugging or technical ordering.
-
-Regardless of the selected method, item names are always used as a secondary sort for consistency within each group.
-
-The current sort type is shown in the tooltip when hovering over the sort button.
+When **On (`true`)**, hovering the sort button displays the current sort type.  
+When **Off (`false`)**, no tooltip is shown.
 
 ---
 
@@ -132,94 +96,173 @@ The current sort type is shown in the tooltip when hovering over the sort button
 **Config file key:** `sortHighlightedItem`  
 **Default:** `true` (On)
 
-Determines which inventory is sorted when using the keybind or double-click.
+Controls which inventory is affected by the keybind or double-click.
+This does not affect sorting via the sort button, which always targets its assigned inventory.
 
-When **On (`true`)**, sorting only affects the inventory currently under the mouse cursor. 
-This allows precise control over which inventory is sorted.
-
-When **Off (`false`)**, sorting applies to **both** the opened container (if one exists) and your player inventory.
+When **On (`true`)**, sorting only affects the inventory under your mouse cursor.  
+When **Off (`false`)**, sorting applies to both the container and the player inventory.
 
 If both this setting and `sortPlayerInventory` are enabled:
-- The mod will only sort the inventory under your cursor
-- Your player inventory will only be sorted if your mouse is over it
+- Only the inventory under the mouse is sorted.
+- If the mouse is not over an inventory area, the keybind will sort both the player inventory and the open container.
 
-This setting does not affect sorting triggered by the sort button.
+---
+
+### `sortPlayerInventory`
+**GUI label:** *Sort player inventory while another inventory is open*  
+**Config file key:** `sortPlayerInventory`  
+**Default:** `true` (On)
+
+Controls whether your player inventory is included when sorting another container.
+
+When **On (`true`)**, sorting actions apply to both the open container and your player inventory (unless overridden by other settings).  
+When **Off (`false`)**, sorting applies only to the container you sorted.
+
+This setting works in combination with `sortHighlightedItem`.
+
+If both this setting and `sortHighlightedItem` are enabled:
+- Only the inventory under the mouse is sorted.
+- If the mouse is not over an inventory area, the keybind will sort both the player inventory and the open container.
+
+---
+
+### `separateButton`
+**GUI label:** *Always display button in player inventory*  
+**Config file key:** `separateButton`  
+**Default:** `false` (Off)
+
+Determines whether a second sort button is shown next to the player inventory in dual-inventory screens (like chests or crafting tables).
+This setting is useful if you want finer control over which inventory to sort using the button.
+
+When **On (`true`)**, two buttons are shown—one for the open container, and one for your own inventory.  
+When **Off (`false`)**, only a single button appears, usually for the open container.
+
+This is particularly useful when you have the `sortPlayerInventory` setting enabled, as you will only need the one button to sort both inventories.
+
+---
+
+### `sortType`
+**GUI label:** *Sorting method*  
+**Config file key:** `sortType`  
+**Default:** `"NAME"`
+
+Determines how items are ordered when sorted. This setting affects all sorting methods (button, keybind, double-click, commands).
+
+Available options:
+- `"NAME"` – Sorts items alphabetically by name.
+- `"CATEGORY"` – Groups by creative tab, then sorts by name.
+- `"MOD"` – Groups by the mod that added the item, then sorts by name.
+- `"ID"` – Sorts by internal item ID.
+
+:::info
+Regardless of the selected method, **Name** is always used as a secondary sort to maintain consistent ordering within groups.
+:::
 
 ---
 
 ### `enableDoubleClickSort`
-**GUI label:** *Enable double-click sorting*  
+**GUI label:** *Double click slot to sort inventory*  
 **Config file key:** `enableDoubleClickSort`  
 **Default:** `true` (On)
 
-Allows you to sort an inventory by double-clicking an **empty slot** inside it.
+Allows sorting an inventory by double-clicking an **empty slot** inside it.<br/>
+This method works for all players as long as the server has the mod installed.
 
-When **On (`true`)**, double-clicking an empty slot will trigger a sort for the hovered inventory.  
-When **Off (`false`)**, double-clicks are ignored by Inventory Sorter.
-
-This method works with both modded and vanilla clients, as long as the server has the mod installed. Requires the cursor to be over an empty slot within the inventory area.
+When **On (`true`)**, double-clicking an empty slot triggers sorting for that inventory.  
+When **Off (`false`)**, double-clicking does nothing.
 
 ---
 
 
 ### `preventSortForScreens`
+**GUI section:** *Compatibility*  
 **Config file key:** `preventSortForScreens`  
 **Default:** `[]` (empty list)
 
-Specifies a list of screen class names where sorting should be completely disabled. This applies to all sorting methods: sort button, keybind, double-click, and commands.
+Defines a list of screen identifiers where **all sorting is disabled**, including button, keybind, double-click, and commands.
 
-Each entry must be a fully qualified screen class name, such as:
+This setting is enforced by the server and applies to all players.  
+Client-defined entries only affect the local player.
+
+Each entry must be a screen ID, such as:
 
 ```
-net.minecraft.client.gui.screen.ingame.EnchantmentScreen
+minecraft:generic_9x3
 ```
 
-If the current screen matches an entry in the list, Inventory Sorter will not perform any sorting.
+Can be managed with the command: `/invsort nosort add/remove/list` while looking at a container you want to add or remove.
 
-This setting is useful for preventing unexpected behavior in containers that don’t support sorting properly.
+The screens added to the nosort list show up in the GUI in the Compatibility Config screen.
 
 ---
 
 ### `hideButtonsForScreens`
+**GUI section:** *Compatibility*  
 **Config file key:** `hideButtonsForScreens`  
 **Default:** `[]` (empty list)
 
-Specifies a list of screen class names where the sort button should be hidden.
+Defines a list of screens where the sort button should not be shown.
 
-This does **not** disable sorting itself. Other methods such as keybinds, double-click, and commands will still work unless also blocked by `preventSortForScreens`.
+This setting is respected only by clients that have the mod installed.  
+Server-defined entries override client preferences and force hiding for all players.
 
-Each entry must be a fully qualified screen class name, such as:
+Sorting by keybind, double-click, or command remains functional, this only affects the button’s visibility.
 
-```
-net.minecraft.client.gui.screen.ingame.BeaconScreen
-```
+You can hide the button for a specific screen by `CTRL+clicking` the button while looking at that screen. 
+Check the [Usage Guide](/usage-guide#ctrlclick-to-hide) for more details.
 
-Use this to remove the sort button from specific containers without disabling sorting entirely.
+The screens with hidden buttons show up in the GUI in the Compatibility Config screen.
+
+---
+
+:::tip
+For both the `preventSortForScreens` and `hideButtonsForScreens` settings, you can use the `/invsort screenid` command to
+get the screen ID of the container you are looking at. This is useful if you're editing the config file manually and want to
+ensure you have the correct screen ID.
+:::
 
 ---
 
 ### `customCompatibilityListDownloadUrl`
+**GUI section:** *Compatibility*  
 **Config file key:** `customCompatibilityListDownloadUrl`  
 **Default:** `""` (empty string)
 
-Specifies a URL from which to download an external compatibility list. This list may include values for `preventSortForScreens` and `hideButtonsForScreens`.
+Specifies a remote URL to fetch a shared compatibility config.
 
-When this setting is set:
+When set, the file is fetched on startup and **merged in memory** with the rest of the config.  
+It is not saved to disk.
 
-- The compatibility list is downloaded automatically on game startup
-- Its contents are merged with the local config before any sorting occurs
-- The file must follow the expected JSON schema
+This allows server operators or groups of players to share consistent compatibility setups across machines.
 
-This allows server owners or modpack developers to distribute compatibility rules without requiring users 
-to manually configure them. The value is set automatically when a player runs:
+Manage via:
 
-```
-/invsort downloadCompatibilityList [URL]
-```
+- `/invsort remote set [url]`
+- `/invsort remote clear`
+- `/invsort remote show`
 
-If the download fails, the currently set configuration is used.
+:::info
+To learn more about how to set up a remote config, check the [Admin Guide](/admin-guide).
+:::
 
 ---
 
+## Editing the Config File Manually
 
-[mod-menu]: https://modrinth.com/mod/modmenu
+The configuration file is a standard JSON file.
+This means you can edit it with any text editor, but be careful to follow the JSON syntax rules.
+- Use double quotes (`"`) for keys and string values.
+- Use commas (`,`) to separate key-value pairs.
+- Do not use trailing commas after the last item in an object or array. 
+
+Make sure to use valid JSON syntax, or the mod may fail to load. 
+:::tip
+If you are not familiar with JSON, consider using the in-game configuration menu or commands instead. 
+The in-game menu provides a user-friendly interface or the commands provide convenience for modifying settings without 
+needing to edit the file directly. 
+:::
+
+If you make a mistake while editing the file, the mod may not load correctly. In that case, you can delete the file and let the mod regenerate it with default settings.
+
+You can validate your JSON file using online tools like [JSONLint](https://jsonlint.com/) or [JSON Formatter & Validator](https://jsonformatter.curiousconcept.com/).
+
