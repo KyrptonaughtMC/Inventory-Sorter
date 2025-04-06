@@ -8,7 +8,7 @@ const darkTheme = themes.oceanicNext;
 const config: Config = {
     title: 'Inventory Sorter - Sorts your Minecraft inventories with the click of a button!',
     titleDelimiter: '–',
-    favicon: 'img/icon.png',
+    favicon: 'img/brush_button.png',
     url: 'https://invsort.meza.gg',
     baseUrl: '/',
     trailingSlash: false,
@@ -100,7 +100,7 @@ const config: Config = {
             title: "Inventory Sorter",
             logo: {
                 alt: "Inventory Sorter Logo",
-                src: "img/icon.png",
+                src: "img/brush_button.png",
             },
             items:[
                 {
@@ -115,7 +115,8 @@ const config: Config = {
             style: "dark",
             logo: {
                 alt: "Inventory Sorter Logo",
-                src: "img/icon.png",
+                src: "img/brush_button.png",
+                width: 80,
             },
             links: [
                 {
