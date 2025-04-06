@@ -32,7 +32,8 @@ public class PredefinedLoader implements CompatibilityLoader{
     @Override
     public Set<Identifier> getShouldHideSortButtons() {
         return Set.of(
-                Objects.requireNonNull(Registries.SCREEN_HANDLER.getId(ScreenHandlerType.BEACON))
+                Objects.requireNonNull(Registries.SCREEN_HANDLER.getId(ScreenHandlerType.BEACON)),
+                Objects.requireNonNull(Registries.SCREEN_HANDLER.getId(ScreenHandlerType.LOOM))
         );
     }
 }
