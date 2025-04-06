@@ -17,6 +17,7 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.ScreenRect;
 import net.minecraft.client.gui.screen.ButtonTextures;
+import net.minecraft.client.gui.tooltip.HoveredTooltipPositioner;
 import net.minecraft.client.gui.tooltip.TooltipPositioner;
 import net.minecraft.client.gui.tooltip.WidgetTooltipPositioner;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
@@ -41,7 +42,7 @@ public class SortButtonWidget extends TexturedButtonWidget {
             Identifier.of(InventorySorterMod.MOD_ID, "textures/gui/button_unfocused.png"),
             Identifier.of(InventorySorterMod.MOD_ID, "textures/gui/button_focused.png"));
     private final boolean playerInv;
-    private final TooltipPositioner widgetTooltipPositioner = new WidgetTooltipPositioner(ScreenRect.empty());
+    private final TooltipPositioner widgetTooltipPositioner = HoveredTooltipPositioner.INSTANCE;
 
     public SortButtonWidget(int int_1, int int_2, boolean playerInv) {
         super(int_1, int_2, 10, 9, TEXTURES, null, Text.literal(""));
@@ -80,7 +81,7 @@ public class SortButtonWidget extends TexturedButtonWidget {
         Identifier identifier = TEXTURES.get(true, isHovered());
         context.drawTexture(RenderLayer::getGuiTextured, identifier, getX(), getY(), 0, 0, 20, 18, 20, 18);
         context.getMatrices().pop();
-        this.renderTooltip(context);
+        this.renderTooltip(context, mouseX, mouseY);
     }
 
     @Override
@@ -106,7 +107,7 @@ public class SortButtonWidget extends TexturedButtonWidget {
     }
 
 
-    public void renderTooltip(DrawContext context) {
+    public void renderTooltip(DrawContext context, int mouseX, int mouseY) {
         if (getConfig().showTooltips && this.isHovered()) {
             MinecraftClient instance = MinecraftClient.getInstance();
             TextRenderer textRenderer = instance.textRenderer;
@@ -127,7 +128,7 @@ public class SortButtonWidget extends TexturedButtonWidget {
                     textRenderer,
                     lines,
                     widgetTooltipPositioner,
-                    getX(), getY()
+                    mouseX, mouseY
             );
         }
     }
