@@ -33,15 +33,14 @@ You can control where sorting is enabled, customize how it behaves, and hide UI 
 
 All configuration options are documented at:
 
-[https://inventory-sorter.meza.gg](https://inventory-sorter.meza.gg)
+[https://inventorysorter.meza.gg](https://inventorysorter.meza.gg)
 
 ## Before and After
-
 Before  
-<img src="https://raw.githubusercontent.com/kyrptonaught/Inventory-Sorter/master/before.png" alt="Before" width="450" height="253" />
+<img src="https://raw.githubusercontent.com/KyrptonaughtMC/Inventory-Sorter/main/before.png" alt="Before" width="450" height="253" />
 
 After  
-<img src="https://raw.githubusercontent.com/kyrptonaught/Inventory-Sorter/master/after.png" alt="After" width="450" height="253" />
+<img src="https://raw.githubusercontent.com/KyrptonaughtMC/Inventory-Sorter/main/after.png" alt="After" width="450" height="253" />
 
 ## Dependencies
 
