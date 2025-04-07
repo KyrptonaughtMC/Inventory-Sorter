@@ -6,7 +6,7 @@
   "inventorysorter.config.category.logic": "Logique",
   "inventorysorter.config.category.activation": "Activation",
   "key.inventorysorter.config.category.denylist": "Liste noire",
-  "key.inventorysorter.config.displaysort": "Affichage du bouton dans l'inventaire",
+  "inventorysorter.config.showSortButton": "Affichage du bouton dans l'inventaire",
   "key.inventorysorter.config.doubleclick": "Double clic pour trier l'inventaire",
   "key.inventorysorter.config.seperatebtn": "Toujour afficher le bouton pour l'inventaire du joueur",
   "key.inventorysorter.config.sortplayer": "Trier tri aussi l'inventaire du joueur",
