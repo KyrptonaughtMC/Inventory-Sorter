@@ -136,17 +136,17 @@ public class ConfigScreen {
         ConfigCategory compatCategory = screenBuilder.getOrCreateCategory(Text.translatable("inventorysorter.config.category.compat"));
 
         FullWidthStringListEntry stringListEntry = new FullWidthStringListEntry(
-                Text.translatable("key.inventorysorter.config.compat.remoteurl"),
+                Text.translatable("inventorysorter.config.compat.remoteUrl"),
                 options.customCompatibilityListDownloadUrl,
-                Text.translatable("key.inventorysorter.config.compat.remoteurl.reset"),
+                Text.translatable("inventorysorter.config.compat.remoteUrl.reset"),
                 () -> "",
-                () -> Optional.of(new MutableText[]{Text.translatable("key.inventorysorter.config.compat.remoteurl.tooltip")}),
+                () -> Optional.of(new MutableText[]{Text.translatable("inventorysorter.config.compat.remoteUrl.tooltip")}),
                 false
         );
 
         compatCategory.addEntry(
                 entryBuilder.startSubCategory(
-                                Text.translatable("key.inventorysorter.config.compat.remoteurl"), List.of(stringListEntry))
+                                Text.translatable("inventorysorter.config.compat.remoteUrl"), List.of(stringListEntry))
                         .setExpanded(true)
                         .build()
         );
