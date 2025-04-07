@@ -20,8 +20,11 @@
   "inventorysorter.config.showSortButton": "Display Sort Button",
   "inventorysorter.config.showSortButton.tooltip": "Enable the Sort Button in Inventories",
 
-  "key.inventorysorter.config.doubleclick": "Double click slot to sort inventory",
-  "key.inventorysorter.config.doubleclick.tooltip": "Double click slot to sort inventories",
+  "inventorysorter.config.doubleClickSort": "Double-Click to Sort",
+  "inventorysorter.config.doubleClickSort.tooltip": "Double-Click an Empty Slot to Sort",
+  "inventorysorter.cmd.doubleClickSort.set": "Changed Double-Click Sort to %1$s",
+  "inventorysorter.cmd.doubleClickSort.get": "Double-Click Sort is currently %1$s",
+
   "key.inventorysorter.config.seperatebtn": "Always display button in player inventory",
   "key.inventorysorter.config.seperatebtn.tooltip": "Enable second 'Sort' button in player inventory",
   "key.inventorysorter.config.sortplayer": "Sort player inventory",
@@ -50,8 +53,6 @@
   "key.inventorysorter.sorting.failed": "Sorting inventory failed",
   "key.inventorysorter.sorting.error": "Could not sort inventory",
   "key.inventorysorter.cmd.updatesortingtype": "Updated Sorting Type",
-  "inventorysorter.cmd.doubleclick.set": "Changed Double click slot to sort to %1$s",
-  "inventorysorter.cmd.doubleclick.get": "Double click slot to sort is currently %1$s",
   "key.inventorysorter.cmd.addblacklist": "Added to blacklist: ",
   "key.inventorysorter.cmd.invalidscreen": "Screen ID not valid",
   "key.inventorysorter.cmd.player-required": "This command can only be run by a player.",

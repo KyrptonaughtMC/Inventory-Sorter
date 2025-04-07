@@ -7,7 +7,7 @@
   "inventorysorter.config.category.activation": "Активация",
   "key.inventorysorter.config.category.denylist": "Чёрный список",
   "inventorysorter.config.showSortButton": "Отображать кнопку в инвентаре",
-  "key.inventorysorter.config.doubleclick": "Двойной клик по слоту, чтобы отсортировать инвентарь",
+  "inventorysorter.config.doubleClickSort": "Двойной клик по слоту, чтобы отсортировать инвентарь",
   "key.inventorysorter.config.seperatebtn": "Всегда отображать кнопку в инвентаре игрока",
   "key.inventorysorter.config.sortplayer": "Сортировать инвентарь игрока",
   "key.inventorysorter.config.sorttype": "Метод сортировки",
@@ -32,7 +32,7 @@
   "key.inventorysorter.sorting.error": "Ошибка отсортировки инвентаря",
 
   "key.inventorysorter.cmd.updatesortingtype": "Обновлённый тип сортировки",
-  "inventorysorter.cmd.doubleclick.set": "Установить слот двойной клик, чтобы сортировать %1$s",
+  "inventorysorter.cmd.doubleClickSort.set": "Установить слот двойной клик, чтобы сортировать %1$s",
   "key.inventorysorter.cmd.addblacklist": "Добавлено в чёрный список: ",
   "key.inventorysorter.cmd.invalidscreen": "Неверный идентификатор экрана",
 

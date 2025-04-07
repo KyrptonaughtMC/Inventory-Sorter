@@ -7,7 +7,7 @@
   "inventorysorter.config.category.activation": "Activation",
   "key.inventorysorter.config.category.denylist": "Liste noire",
   "inventorysorter.config.showSortButton": "Affichage du bouton dans l'inventaire",
-  "key.inventorysorter.config.doubleclick": "Double clic pour trier l'inventaire",
+  "inventorysorter.config.doubleClickSort": "Double clic pour trier l'inventaire",
   "key.inventorysorter.config.seperatebtn": "Toujour afficher le bouton pour l'inventaire du joueur",
   "key.inventorysorter.config.sortplayer": "Trier tri aussi l'inventaire du joueur",
   "key.inventorysorter.config.sorttype": "Méthode de tri",
@@ -32,7 +32,7 @@
   "key.inventorysorter.sorting.error": "Impossible de trier l'inventaire",
 
   "key.inventorysorter.cmd.updatesortingtype": "Type de tri mis à jour",
-  "inventorysorter.cmd.doubleclick.set": "Définir le tri du double clic sur %1$s",
+  "inventorysorter.cmd.doubleClickSort.set": "Définir le tri du double clic sur %1$s",
   "key.inventorysorter.cmd.addblacklist": "Ajouté à la liste noire: ",
   "key.inventorysorter.cmd.invalidscreen": "ID d'écran non valide",
 
