@@ -40,11 +40,6 @@
   "inventorysorter.config.sortHovered": "Only Sort the Inventory Under the Mouse",
   "inventorysorter.config.sortHovered.tooltip": "Only Sort the Inventory Under the Mouse",
 
-  "key.inventorysorter.config.showdebug": "Show Debug text",
-  "key.inventorysorter.config.debugtooltip": "The tooltip when hovering over a sort button \nwill list instruction to blacklist that inv",
-  "key.inventorysorter.config.denylistURL": "External Deny List URL",
-  "key.inventorysorter.config.downloadListButton": "Download List",
-  "key.inventorysorter.config.downloadListButton.tooltip": "Download the deny list and set it for your client",
   "key.inventorysorter.config.hidesort": "Hide Both Sort Buttons",
   "key.inventorysorter.config.nosort": "Only show player inv sort",
   "key.inventorysorter.config.hidetooltip": "Neither the opened inventory, nor your player inventory \nwill be sortable when this inventory is opened",
