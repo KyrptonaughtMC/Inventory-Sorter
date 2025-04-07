@@ -20,7 +20,6 @@
 
   "key.inventorysorter.cmd.updatesortingtype": "Type de tri mis à jour",
   "inventorysorter.cmd.doubleClickSort.set": "Définir le tri du double clic sur %1$s",
-  "key.inventorysorter.cmd.invalidscreen": "ID d'écran non valide",
 
   "key.inventorysorter.sorttype.name": "Nom",
   "key.inventorysorter.sorttype.category": "Catégorie",

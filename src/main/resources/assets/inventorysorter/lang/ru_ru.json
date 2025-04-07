@@ -20,7 +20,6 @@
 
   "key.inventorysorter.cmd.updatesortingtype": "Обновлённый тип сортировки",
   "inventorysorter.cmd.doubleClickSort.set": "Установить слот двойной клик, чтобы сортировать %1$s",
-  "key.inventorysorter.cmd.invalidscreen": "Неверный идентификатор экрана",
 
   "key.inventorysorter.sorttype.name": "Имя",
   "key.inventorysorter.sorttype.category": "Категория",
