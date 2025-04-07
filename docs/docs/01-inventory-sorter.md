@@ -17,7 +17,7 @@ This avoids simulating manual item movement from the client.
 
 This approach enables:
 
-- Sorting with unmodded clients (via commands, middle click, or double click)
+- Sorting with unmodded clients (via commands or double click)
 - Cleaner networking in multiplayer
 - Simplified deployment for modpacks and server operators
 
