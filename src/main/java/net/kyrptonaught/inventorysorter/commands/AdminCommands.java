@@ -124,7 +124,7 @@ public class AdminCommands {
             return 0;
         }
 
-        InventoryHelper.withTargetedScreenHandler(player, context -> {
+        Boolean success = InventoryHelper.withTargetedScreenHandler(player, context -> {
             NewConfigOptions config = getConfig();
             config.disableSortForScreen(context.screenId().toString());
             config.save();
@@ -132,7 +132,12 @@ public class AdminCommands {
             return true;
         });
 
-        commandContext.getSource().sendFeedback(() -> Text.of("Screen added"), false);
+        if (Boolean.FALSE.equals(success)) {
+            commandContext.getSource().sendFeedback(() -> Text.translatable("inventorysorter.cmd.nosort.add.fail"), false);
+            return 0;
+        }
+
+        commandContext.getSource().sendFeedback(() -> Text.translatable("inventorysorter.cmd.nosort.add.success"), false);
         return 1;
     }
 
@@ -143,7 +148,7 @@ public class AdminCommands {
             return 0;
         }
 
-        InventoryHelper.withTargetedScreenHandler(player, context -> {
+        Boolean success = InventoryHelper.withTargetedScreenHandler(player, context -> {
             NewConfigOptions config = getConfig();
             config.enableSortForScreen(context.screenId().toString());
             config.save();
@@ -151,18 +156,22 @@ public class AdminCommands {
             return true;
         });
 
-        commandContext.getSource().sendFeedback(() -> Text.of("Screen removed"), false);
+        if (Boolean.FALSE.equals(success)) {
+            commandContext.getSource().sendFeedback(() -> Text.translatable("inventorysorter.cmd.nosort.remove.fail"), false);
+            return 0;
+        }
+
+        commandContext.getSource().sendFeedback(() -> Text.translatable("inventorysorter.cmd.nosort.remove.success"), false);
         return 1;
     }
 
     public static int nosortList(CommandContext<ServerCommandSource> commandContext) {
         NewConfigOptions config = getConfig();
 
-        StringBuilder sb = new StringBuilder("Prevented screens: ");
-        for (String screen : config.preventSortForScreens) {
-            sb.append(screen).append(", ");
-        }
-        commandContext.getSource().sendFeedback(() -> Text.of(sb.toString()), false);
+        commandContext.getSource().sendFeedback(() -> Text.translatable(
+                "inventorysorter.cmd.nosort.list",
+                String.join(",", config.preventSortForScreens)
+        ), false);
         return 1;
 
     }
