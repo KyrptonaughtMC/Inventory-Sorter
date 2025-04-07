@@ -4,7 +4,7 @@
   "inventorysorter.config.category.display": "Відображати",
   "inventorysorter.config.category.logic": "Авто",
   "inventorysorter.config.category.activation": "Активація",
-  "key.inventorysorter.config.displaysort": "Відображати кнопку в інвентарі",
+  "inventorysorter.config.showSortButton": "Відображати кнопку в інвентарі",
   "key.inventorysorter.config.doubleclick": "Подвійний клік по слоту, щоб відсортувати інвентар",
   "key.inventorysorter.config.seperatebtn": "Завжди відображати кнопку в інвентарі гравця",
   "key.inventorysorter.config.sortplayer": "Сортувати інвентар гравця",
