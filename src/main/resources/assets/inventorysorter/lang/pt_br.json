@@ -4,7 +4,7 @@
   "inventorysorter.config.category.display": "Exibir",
   "inventorysorter.config.category.logic": "Logica",
   "inventorysorter.config.sortButton": "Botão de exibição no inventário",
-  "key.inventorysorter.config.seperatebtn": "Sempre mostrar botão para jogadores inv",
+  "inventorysorter.config.separateButton": "Sempre mostrar botão para jogadores inv",
   "key.inventorysorter.config.sortplayer": "Ordenar também ordena jogadores inv",
   "key.inventorysorter.config.sorttype": "Ordenar método",
   "key.inventorysorter.config.displaytooltip": "Exibir dica do botão de ordenação "

@@ -8,7 +8,7 @@
   "key.inventorysorter.config.category.denylist": "Чёрный список",
   "inventorysorter.config.sortButton": "Отображать кнопку в инвентаре",
   "inventorysorter.config.doubleClickSort": "Двойной клик по слоту, чтобы отсортировать инвентарь",
-  "key.inventorysorter.config.seperatebtn": "Всегда отображать кнопку в инвентаре игрока",
+  "inventorysorter.config.separateButton": "Всегда отображать кнопку в инвентаре игрока",
   "key.inventorysorter.config.sortplayer": "Сортировать инвентарь игрока",
   "key.inventorysorter.config.sorttype": "Метод сортировки",
   "key.inventorysorter.config.displaytooltip": "Отображать подсказку кнопки сортировки",
