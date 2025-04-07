@@ -107,20 +107,21 @@ public class InventorySorterMod implements ModInitializer {
         });
 
         ServerPlayConnectionEvents.JOIN.register((handler, server, client) -> {
-            ServerPlayerEntity player = handler.getPlayer();
-            if (!player.hasAttached(SORT_SETTINGS)) {
-                player.setAttached(SORT_SETTINGS, SortSettings.DEFAULT);
-            }
+            if (client.isDedicated()) {
+                ServerPlayerEntity player = handler.getPlayer();
+                if (!player.hasAttached(SORT_SETTINGS)) {
+                    player.setAttached(SORT_SETTINGS, SortSettings.DEFAULT);
+                }
 
-            if (!player.hasAttached(PLAYER_SORT_PREVENTION)) {
-                player.setAttached(PLAYER_SORT_PREVENTION, PlayerSortPrevention.DEFAULT);
-            }
+                if (!player.hasAttached(PLAYER_SORT_PREVENTION)) {
+                    player.setAttached(PLAYER_SORT_PREVENTION, PlayerSortPrevention.DEFAULT);
+                }
 
-            if (!player.hasAttached(CLIENT_SYNC)) {
-                player.setAttached(CLIENT_SYNC, ClientSync.DEFAULT);
-            }
+                if (!player.hasAttached(CLIENT_SYNC)) {
+                    player.setAttached(CLIENT_SYNC, ClientSync.DEFAULT);
+                }
 
-            if (!player.getAttached(CLIENT_SYNC).seenClient()) {
+                if (!player.getAttached(CLIENT_SYNC).seenClient()) {
                 /*
                   If we haven't seen the client MOD before, we need to send the config we have for the player.
                   This is for the case when a player hasn't used the mod on the client before but has settings stored
@@ -128,18 +129,18 @@ public class InventorySorterMod implements ModInitializer {
 
                   When the client connects for the first time, we send them the config we have for them.
                  */
-                PlayerSortPrevention sortPrevention = player.getAttached(PLAYER_SORT_PREVENTION);
-                if (sortPrevention != PlayerSortPrevention.DEFAULT) {
-                    sortPrevention.sync(player);
-                }
+                    PlayerSortPrevention sortPrevention = player.getAttached(PLAYER_SORT_PREVENTION);
+                    if (sortPrevention != PlayerSortPrevention.DEFAULT) {
+                        sortPrevention.sync(player);
+                    }
 
-                SortSettings sortSettings = player.getAttached(SORT_SETTINGS);
-                if (sortSettings != SortSettings.DEFAULT) {
-                    sortSettings.sync(player);
+                    SortSettings sortSettings = player.getAttached(SORT_SETTINGS);
+                    if (sortSettings != SortSettings.DEFAULT) {
+                        sortSettings.sync(player);
+                    }
                 }
+                HideButton.fromConfig(getConfig()).sync(player);
             }
-
-            HideButton.fromConfig(getConfig()).sync(player);
         });
 
         ServerPlayNetworking.registerGlobalReceiver(SortSettings.ID, (payload, context) -> {
