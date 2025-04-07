@@ -82,7 +82,7 @@ public class InventoryHelper {
     }
 
 
-    public static Text sortTargetedBlock(ServerPlayerEntity player, SortCases.SortType sortType) {
+    public static Text sortTargetedBlock(ServerPlayerEntity player, SortType sortType) {
 
         Boolean result = withTargetedScreenHandler(player, (context) -> {
             if (context.inventory == null) {
@@ -105,7 +105,7 @@ public class InventoryHelper {
         return Text.translatable("inventorysorter.cmd.sort.notsortable");
     }
 
-    public static boolean sortInventory(PlayerEntity player, boolean shouldSortPlayerInventory, SortCases.SortType sortType) {
+    public static boolean sortInventory(PlayerEntity player, boolean shouldSortPlayerInventory, SortType sortType) {
         if (shouldSortPlayerInventory) {
             sortInventory(player.getInventory(), 9, 27, sortType);
             return true;
@@ -124,7 +124,7 @@ public class InventoryHelper {
         return screenHandler.slots.getFirst().inventory;
     }
 
-    static void sortInventory(Inventory inv, int startSlot, int invSize, SortCases.SortType sortType) {
+    static void sortInventory(Inventory inv, int startSlot, int invSize, SortType sortType) {
         List<ItemStack> stacks = new ArrayList<>();
         for (int i = 0; i < invSize; i++) {
             addStackWithMerge(stacks, inv.getStack(startSlot + i));

@@ -7,7 +7,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.kyrptonaught.inventorysorter.InventoryHelper;
 import net.kyrptonaught.inventorysorter.InventorySorterMod;
-import net.kyrptonaught.inventorysorter.SortCases;
+import net.kyrptonaught.inventorysorter.SortType;
 import net.kyrptonaught.inventorysorter.network.InventorySortPacket;
 import net.minecraft.client.MinecraftClient;
 /*? if <1.21.5 {*/
@@ -15,11 +15,9 @@ import net.minecraft.client.MinecraftClient;
 *//*?}*/
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.ScreenRect;
 import net.minecraft.client.gui.screen.ButtonTextures;
 import net.minecraft.client.gui.tooltip.HoveredTooltipPositioner;
 import net.minecraft.client.gui.tooltip.TooltipPositioner;
-import net.minecraft.client.gui.tooltip.WidgetTooltipPositioner;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.toast.SystemToast;
@@ -93,14 +91,14 @@ public class SortButtonWidget extends TexturedButtonWidget {
         int current = getConfig().sortType.ordinal();
         if (verticalAmount > 0) {
             current++;
-            if (current >= SortCases.SortType.values().length)
+            if (current >= SortType.values().length)
                 current = 0;
         } else {
             current--;
             if (current < 0)
-                current = SortCases.SortType.values().length - 1;
+                current = SortType.values().length - 1;
         }
-        getConfig().sortType = SortCases.SortType.values()[current];
+        getConfig().sortType = SortType.values()[current];
         getConfig().save();
         InventorySorterModClient.syncConfig();
         return true;

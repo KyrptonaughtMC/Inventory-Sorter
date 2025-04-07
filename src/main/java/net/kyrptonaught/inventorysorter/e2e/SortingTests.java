@@ -3,7 +3,7 @@ package net.kyrptonaught.inventorysorter.e2e;
 import com.mojang.authlib.GameProfile;
 import it.unimi.dsi.fastutil.booleans.Boolean2ObjectFunction;
 import net.kyrptonaught.inventorysorter.InventoryHelper;
-import net.kyrptonaught.inventorysorter.SortCases;
+import net.kyrptonaught.inventorysorter.SortType;
 import net.minecraft.component.ComponentChanges;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.BlockStateComponent;
@@ -45,7 +45,7 @@ public class SortingTests {
                 6, new ItemStack(Items.DIAMOND, 32)
         ));
 
-        InventoryHelper.sortInventory(scenario.player(), false, SortCases.SortType.NAME);
+        InventoryHelper.sortInventory(scenario.player(), false, SortType.NAME);
 
         assertContents(ctx, scenario, Map.of(0, new ItemStack(Items.DIAMOND, 64)));
 
@@ -60,7 +60,7 @@ public class SortingTests {
                 6, new ItemStack(Items.DIAMOND, 33)
         ));
 
-        InventoryHelper.sortInventory(scenario.player(), false, SortCases.SortType.NAME);
+        InventoryHelper.sortInventory(scenario.player(), false, SortType.NAME);
 
         assertContents(ctx, scenario, Map.of(
                 0, new ItemStack(Items.DIAMOND, 64),
@@ -80,7 +80,7 @@ public class SortingTests {
         ServerPlayerEntity player = scenario.player();
         player.changeGameMode(GameMode.SPECTATOR);
 
-        InventoryHelper.sortInventory(player, false, SortCases.SortType.NAME);
+        InventoryHelper.sortInventory(player, false, SortType.NAME);
 
         assertContents(ctx, scenario, Map.of(
                 5, new ItemStack(Items.DIAMOND, 32),
@@ -107,7 +107,7 @@ public class SortingTests {
                 Map.entry(11, new ItemStack(Items.HANGING_ROOTS, 51))
         ));
 
-        InventoryHelper.sortInventory(scenario.player(), false, SortCases.SortType.NAME);
+        InventoryHelper.sortInventory(scenario.player(), false, SortType.NAME);
 
         assertContents(ctx, scenario, Map.ofEntries(
                 Map.entry(0, new ItemStack(Items.ACACIA_LEAVES, 12)),
@@ -142,7 +142,7 @@ public class SortingTests {
                 1, new ItemStack(Items.EGG, 16)
         ));
 
-        InventoryHelper.sortInventory(scenario.player(), false, SortCases.SortType.NAME);
+        InventoryHelper.sortInventory(scenario.player(), false, SortType.NAME);
 
         assertContents(ctx, scenario, Map.of(
                 0, new ItemStack(Items.EGG, 99),
@@ -174,7 +174,7 @@ public class SortingTests {
                 1, omelette
         ));
 
-        InventoryHelper.sortInventory(scenario.player(), false, SortCases.SortType.NAME);
+        InventoryHelper.sortInventory(scenario.player(), false, SortType.NAME);
 
         assertContents(ctx, scenario, Map.of(
                 0, new ItemStack(Items.EGG, 16),
@@ -196,7 +196,7 @@ public class SortingTests {
                 5, new ItemStack(Items.WOODEN_PICKAXE, 1)
         ));
 
-        InventoryHelper.sortInventory(scenario.player(), false, SortCases.SortType.NAME);
+        InventoryHelper.sortInventory(scenario.player(), false, SortType.NAME);
 
         assertContents(ctx, scenario, Map.of(
                 0, new ItemStack(Items.DIAMOND_PICKAXE, 1),
@@ -241,7 +241,7 @@ public class SortingTests {
                 1, diamondPickNotDamaged
         ));
 
-        InventoryHelper.sortInventory(scenario.player(), false, SortCases.SortType.NAME);
+        InventoryHelper.sortInventory(scenario.player(), false, SortType.NAME);
 
         assertContents(ctx, scenario, Map.of(
                 0, diamondPickNotDamaged,
@@ -284,7 +284,7 @@ public class SortingTests {
                 5, new ItemStack(RegistryEntry.of(Items.PLAYER_HEAD), 33, kyrptonaughtHead)
         ));
 
-        InventoryHelper.sortInventory(scenario.player(), false, SortCases.SortType.NAME);
+        InventoryHelper.sortInventory(scenario.player(), false, SortType.NAME);
 
         assertContents(ctx, scenario, Map.of(
                 0, new ItemStack(RegistryEntry.of(Items.PLAYER_HEAD), 1, houseofmezaHead),
@@ -340,7 +340,7 @@ public class SortingTests {
                 24, sharpnessBook
         ));
 
-        InventoryHelper.sortInventory(scenario.player(), false, SortCases.SortType.NAME);
+        InventoryHelper.sortInventory(scenario.player(), false, SortType.NAME);
 
         assertContents(ctx, scenario, Map.of(
                 0, fortune1Book,
@@ -379,7 +379,7 @@ public class SortingTests {
                 Map.entry(9, spawnEggStack)
         ));
 
-        InventoryHelper.sortInventory(scenario.player(), false, SortCases.SortType.CATEGORY);
+        InventoryHelper.sortInventory(scenario.player(), false, SortType.CATEGORY);
 
         assertContents(ctx, scenario, Map.ofEntries(
                 Map.entry(0, new ItemStack(Items.OAK_PLANKS, 4)),
@@ -418,7 +418,7 @@ public class SortingTests {
                 25, new ItemStack(RegistryEntry.of(Items.OMINOUS_BOTTLE), 11, potionLevel.apply(4))
         ));
 
-        InventoryHelper.sortInventory(scenario.player(), false, SortCases.SortType.NAME);
+        InventoryHelper.sortInventory(scenario.player(), false, SortType.NAME);
 
         assertContents(ctx, scenario, Map.of(
                 0, new ItemStack(RegistryEntry.of(Items.OMINOUS_BOTTLE), 64, potionLevel.apply(1)),
@@ -448,7 +448,7 @@ public class SortingTests {
                 3, new ItemStack(RegistryEntry.of(Items.VAULT), 12, setOminous.apply(true))
         ));
 
-        InventoryHelper.sortInventory(scenario.player(), false, SortCases.SortType.NAME);
+        InventoryHelper.sortInventory(scenario.player(), false, SortType.NAME);
 
         assertContents(ctx, scenario, Map.of(
                 0, new ItemStack(RegistryEntry.of(Items.VAULT), 34, setOminous.apply(false)),
