@@ -192,12 +192,12 @@ public class AdminCommands {
         });
 
         if (Boolean.FALSE.equals(success)) {
-            commandContext.getSource().sendFeedback(() -> Text.of("Invalid target container"), false);
+            commandContext.getSource().sendFeedback(() -> Text.translatable("inventorysorter.cmd.hideButton.add.fail"), false);
             return 0;
         }
 
         HideButton.fromConfig(getConfig()).sync(commandContext.getSource().getServer());
-        commandContext.getSource().sendFeedback(() -> Text.of("Button hidden"), false);
+        commandContext.getSource().sendFeedback(() -> Text.translatable("inventorysorter.cmd.hideButton.add.success"), false);
         return 1;
     }
 
@@ -217,23 +217,23 @@ public class AdminCommands {
         });
 
         if (Boolean.FALSE.equals(success)) {
-            commandContext.getSource().sendFeedback(() -> Text.of("Invalid target container"), false);
+            commandContext.getSource().sendFeedback(() -> Text.translatable("inventorysorter.cmd.hideButton.remove.fail"), false);
             return 0;
         }
 
         HideButton.fromConfig(getConfig()).sync(commandContext.getSource().getServer());
-        commandContext.getSource().sendFeedback(() -> Text.of("Button removed"), false);
+        commandContext.getSource().sendFeedback(() -> Text.translatable("inventorysorter.cmd.hideButton.remove.success"), false);
         return 1;
     }
 
     public static int hidebuttonList(CommandContext<ServerCommandSource> commandContext) {
         NewConfigOptions config = getConfig();
 
-        StringBuilder sb = new StringBuilder("Hidden buttons: ");
-        for (String screen : config.hideButtonsForScreens) {
-            sb.append(screen).append(", ");
-        }
-        commandContext.getSource().sendFeedback(() -> Text.of(sb.toString()), false);
+        commandContext.getSource().sendFeedback(() -> Text.translatable(
+                "inventorysorter.cmd.hideButton.list",
+                String.join(",", config.hideButtonsForScreens)
+        ), false);
+
         return 1;
     }
 

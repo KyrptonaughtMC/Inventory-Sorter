@@ -51,6 +51,12 @@
   "inventorysorter.cmd.nosort.remove.fail": "Failed to remove container from the not sortable list",
   "inventorysorter.cmd.nosort.list": "Sorting is prevented for the following containers: %1$s",
 
+  "inventorysorter.cmd.hideButton.add.success": "Sort Button is now hidden",
+  "inventorysorter.cmd.hideButton.add.fail": "This container cannot be added to the hide button list",
+  "inventorysorter.cmd.hideButton.remove.success": "Sort Button is Now Visible for the Container",
+  "inventorysorter.cmd.hideButton.remove.fail": "Failed to remove container from the hide button list",
+  "inventorysorter.cmd.hideButton.list": "Sort Buttons are Hidden for: %1$s",
+
   "inventorysorter.cmd.sort.sorted": "Sorted ✅",
   "inventorysorter.cmd.sort.notsortable": "This Container Cannot be Sorted",
   "inventorysorter.cmd.sort.error": "Sorting Failed, Please Check the Logs or Report a Bug",
