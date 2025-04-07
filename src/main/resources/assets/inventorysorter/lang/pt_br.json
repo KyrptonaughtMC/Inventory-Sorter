@@ -1,6 +1,6 @@
 {
-  "key.categories.inventorysorter": "Ordenação do inventário",
-  "key.inventorysorter.sort": "Ordenar inventário",
+  "inventorysorter.key.category": "Ordenação do inventário",
+  "inventorysorter.key.sort": "Ordenar inventário",
   "key.inventorysorter.config.category.display": "Exibir",
   "key.inventorysorter.config.category.logic": "Logica",
   "key.inventorysorter.config.displaysort": "Botão de exibição no inventário",

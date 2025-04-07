@@ -1,7 +1,7 @@
 {
-  "key.inventorysorter.config": "Configuration d'Inventory Sorting",
-  "key.categories.inventorysorter": "Inventory Sorting",
-  "key.inventorysorter.sort": "Trier l'inventaire",
+  "inventorysorter.config.screen.title": "Configuration d'Inventory Sorter",
+  "inventorysorter.key.category": "Inventory Sorter",
+  "inventorysorter.key.sort": "Trier l'inventaire",
   "key.inventorysorter.config.category.display": "Affichage",
   "key.inventorysorter.config.category.logic": "Logique",
   "key.inventorysorter.config.category.activation": "Activation",
@@ -32,7 +32,7 @@
   "key.inventorysorter.sorting.error": "Impossible de trier l'inventaire",
 
   "key.inventorysorter.cmd.updatesortingtype": "Type de tri mis à jour",
-  "key.inventorysorter.cmd.doubleClickSort": "Définir le tri du double clic sur ",
+  "inventorysorter.cmd.doubleclick.set": "Définir le tri du double clic sur %1$s",
   "key.inventorysorter.cmd.addblacklist": "Ajouté à la liste noire: ",
   "key.inventorysorter.cmd.invalidscreen": "ID d'écran non valide",
 

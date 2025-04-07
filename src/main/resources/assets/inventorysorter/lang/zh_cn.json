@@ -1,7 +1,7 @@
 {
-  "key.inventorysorter.config": "库存排序配置",
-  "key.categories.inventorysorter": "库存排序",
-  "key.inventorysorter.sort": "排序库存",
+  "inventorysorter.config.screen.title": "库存排序配置",
+  "inventorysorter.key.category": "库存排序",
+  "inventorysorter.key.sort": "排序库存",
   "key.inventorysorter.config.category.display": "显示",
   "key.inventorysorter.config.category.logic": "逻辑",
   "key.inventorysorter.config.category.activation": "触发",
@@ -32,7 +32,7 @@
   "key.inventorysorter.sorting.error": "无法排序库存",
 
   "key.inventorysorter.cmd.updatesortingtype": "已更新排序类型：",
-  "key.inventorysorter.cmd.doubleClickSort": "设置双击排序：",
+  "inventorysorter.cmd.doubleclick.set": "设置双击排序：",
   "key.inventorysorter.cmd.addblacklist": "已添加到黑名单：",
   "key.inventorysorter.cmd.invalidscreen": "界面 ID 无效",
 

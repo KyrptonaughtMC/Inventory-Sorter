@@ -13,20 +13,17 @@ import net.minecraft.text.Text;
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.SORT_SETTINGS;
 
 public class DoubleClickSortCommand {
-    private static final Text FEEDBACK_MESSAGE = Text.translatable("key.inventorysorter.cmd.doubleClickSort");
-    private static final String ON_MESSAGE = "On";
-    private static final String OFF_MESSAGE = "Off";
-
+    private static final String SET_KET = "inventorysorter.cmd.doubleclick.set";
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher, LiteralArgumentBuilder<ServerCommandSource> rootCommand) {
 
         dispatcher.register(rootCommand
                 .then(CommandManager.literal("doubleClickSort")
                         .requires(CommandPermission.require("doubleclicksort", 0))
                         .executes(DoubleClickSortCommand::showState)
-                        .then(CommandManager.literal(ON_MESSAGE)
+                        .then(CommandManager.literal("On")
                                 .executes(DoubleClickSortCommand::turnOn)
                         )
-                        .then(CommandManager.literal(OFF_MESSAGE)
+                        .then(CommandManager.literal("Off")
                                 .executes(DoubleClickSortCommand::turnOff)
                         )));
     }
@@ -34,7 +31,7 @@ public class DoubleClickSortCommand {
     public static int turnOff(CommandContext<ServerCommandSource> commandContext) {
         ServerPlayerEntity player = commandContext.getSource().getPlayer();
         if (player == null) {
-            commandContext.getSource().sendFeedback(() -> Text.translatable("key.inventorysorter.cmd.player-required"), false);
+            commandContext.getSource().sendFeedback(CommandTranslations::playerRequired, false);
             return 0;
         }
 
@@ -43,15 +40,14 @@ public class DoubleClickSortCommand {
 
         settings.sync(player);
 
-        // @TODO instead of appending, use proper translation with placeholders
-        commandContext.getSource().sendFeedback(() -> Text.of(FEEDBACK_MESSAGE.copy().append(OFF_MESSAGE).getString()), false);
+        commandContext.getSource().sendFeedback(() -> CommandTranslations.getOffMessage(SET_KET), false);
         return 1;
     }
 
     public static int turnOn(CommandContext<ServerCommandSource> commandContext) {
         ServerPlayerEntity player = commandContext.getSource().getPlayer();
         if (player == null) {
-            commandContext.getSource().sendFeedback(() -> Text.translatable("key.inventorysorter.cmd.player-required"), false);
+            commandContext.getSource().sendFeedback(CommandTranslations::playerRequired, false);
             return 0;
         }
 
@@ -60,22 +56,20 @@ public class DoubleClickSortCommand {
 
         settings.sync(player);
 
-        // @TODO instead of appending, use proper translation with placeholders
-        commandContext.getSource().sendFeedback(() -> Text.of(FEEDBACK_MESSAGE.copy().append(ON_MESSAGE).getString()), false);
+        commandContext.getSource().sendFeedback(() -> CommandTranslations.getOnMessage(SET_KET), false);
         return 1;
     }
 
     public static int showState(CommandContext<ServerCommandSource> commandContext) {
         ServerPlayerEntity player = commandContext.getSource().getPlayer();
         if (player == null) {
-            commandContext.getSource().sendFeedback(() -> Text.translatable("key.inventorysorter.cmd.player-required"), false);
+            commandContext.getSource().sendFeedback(CommandTranslations::playerRequired, false);
             return 0;
         }
 
         SortSettings settings = player.getAttachedOrCreate(SORT_SETTINGS);
-        String state = settings.enableDoubleClick() ? ON_MESSAGE : OFF_MESSAGE;
 
-        commandContext.getSource().sendFeedback(() -> Text.of(Text.of("Double-click sort is ").copy().append(state).getString()), false);
+        commandContext.getSource().sendFeedback(() -> CommandTranslations.getFeedbackMessageForState("inventorysorter.cmd.doubleclick.get", settings.enableDoubleClick()), false);
         return 1;
     }
 }
