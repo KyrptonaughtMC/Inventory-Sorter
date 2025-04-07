@@ -12,7 +12,7 @@
   "inventorysorter.config.sortPlayerInventory": "Сортировать инвентарь игрока",
   "inventorysorter.config.sortType": "Метод сортировки",
   "inventorysorter.config.showTooltip": "Отображать подсказку кнопки сортировки",
-  "key.inventorysorter.config.sortmousehighlighted": "Сортировка инвентаря при наведении курсора мыши",
+  "inventorysorter.config.sortHovered": "Сортировка инвентаря при наведении курсора мыши",
   "key.inventorysorter.config.showdebug": "Показывать отладочный текст",
   "key.inventorysorter.config.debugtooltip": "Всплывающая подсказка при наведении курсора на кнопку сортировки\nбудет содержать инструкцию по внесению этого инвентаря в чёрный список",
   "key.inventorysorter.config.denylistURL": "URL-адрес внешнего чёрного списка",

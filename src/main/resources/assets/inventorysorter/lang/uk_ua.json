@@ -10,5 +10,5 @@
   "inventorysorter.config.sortPlayerInventory": "Сортувати інвентар гравця",
   "inventorysorter.config.sortType": "Метод сортування",
   "inventorysorter.config.showTooltip": "Відображати підказку кнопки сортування",
-  "key.inventorysorter.config.sortmousehighlighted": "Сортування інвентарю при наведенні курсору миші"
+  "inventorysorter.config.sortHovered": "Сортування інвентарю при наведенні курсору миші"
 }

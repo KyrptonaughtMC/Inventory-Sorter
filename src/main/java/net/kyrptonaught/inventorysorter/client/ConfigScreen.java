@@ -118,10 +118,10 @@ public class ConfigScreen {
                         .setTooltip(Text.translatable("inventorysorter.config.sortPlayerInventory.tooltip"))
                         .setSaveConsumer(val -> options.sortPlayerInventory = val)
                         .build())
-                .addEntry(entryBuilder.startBooleanToggle(Text.translatable("key.inventorysorter.config.sortmousehighlighted"), options.sortHighlightedItem)
+                .addEntry(entryBuilder.startBooleanToggle(Text.translatable("inventorysorter.config.sortHovered"), options.sortHighlightedItem)
                         .setDefaultValue(true)
                         .setYesNoTextSupplier(b -> b ? on() : off())
-                        .setTooltip(Text.translatable("key.inventorysorter.config.sortmousehighlighted.tooltip"))
+                        .setTooltip(Text.translatable("inventorysorter.config.sortHovered.tooltip"))
                         .setSaveConsumer(val -> options.sortHighlightedItem = val)
                         .build());
 
