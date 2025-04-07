@@ -7,7 +7,7 @@
   "inventorysorter.config.sortButton": "Відображати кнопку в інвентарі",
   "inventorysorter.config.doubleClickSort": "Подвійний клік по слоту, щоб відсортувати інвентар",
   "inventorysorter.config.separateButton": "Завжди відображати кнопку в інвентарі гравця",
-  "key.inventorysorter.config.sortplayer": "Сортувати інвентар гравця",
+  "inventorysorter.config.sortPlayerInventory": "Сортувати інвентар гравця",
   "key.inventorysorter.config.sorttype": "Метод сортування",
   "key.inventorysorter.config.displaytooltip": "Відображати підказку кнопки сортування",
   "key.inventorysorter.config.sortmousehighlighted": "Сортування інвентарю при наведенні курсору миші"
