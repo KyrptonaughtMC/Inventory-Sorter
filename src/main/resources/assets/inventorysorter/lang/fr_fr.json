@@ -26,10 +26,7 @@
   "inventorysorter.sorttype.mod": "Mod",
   "inventorysorter.sorttype.id": "Id",
 
-  "key.inventorysorter.sortbtn.sort": "Trier par: ",
-  "key.inventorysorter.sortbtn.debug": "Cliquez tout en maintenant CTRL",
-  "key.inventorysorter.sortbtn.debug2": "pour mettre cet inventaire sur liste noire",
-
-  "key.inventorysorter.sortbtn.clickhere": "Cliquez ici",
-  "key.inventorysorter.sortbtn.error": "Écran non blacklistable ou écran déjà blacklisté"
+  "inventorysorter.sortButton.tooltip.sortType": "Trier par: %1$s",
+  "inventorysorter.sortButton.tooltip.help.sortType": "Cliquez tout en maintenant CTRL",
+  "inventorysorter.sortButton.tooltip.help.hide": "pour mettre cet inventaire sur liste noire"
 }
