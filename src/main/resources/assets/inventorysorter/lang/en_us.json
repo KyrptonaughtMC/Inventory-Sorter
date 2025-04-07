@@ -49,7 +49,6 @@
   "inventorysorter.cmd.sort.error": "Sorting Failed, Please Check the Logs or Report a Bug",
 
   "key.inventorysorter.cmd.updatesortingtype": "Updated Sorting Type",
-  "key.inventorysorter.cmd.invalidscreen": "Screen ID not valid",
   "key.inventorysorter.cmd.player-required": "This command can only be run by a player.",
   "key.inventorysorter.sorttype.name": "Name",
   "key.inventorysorter.sorttype.category": "Category",

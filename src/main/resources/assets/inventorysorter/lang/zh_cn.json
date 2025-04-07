@@ -20,7 +20,6 @@
 
   "key.inventorysorter.cmd.updatesortingtype": "已更新排序类型：",
   "inventorysorter.cmd.doubleClickSort.set": "设置双击排序：",
-  "key.inventorysorter.cmd.invalidscreen": "界面 ID 无效",
 
   "key.inventorysorter.sorttype.name": "名称",
   "key.inventorysorter.sorttype.category": "分类",
