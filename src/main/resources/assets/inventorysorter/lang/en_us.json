@@ -22,7 +22,7 @@
   "inventorysorter.config.compat.preventSort.tooltip": "Prevent Sorting of %1$s",
 
   "inventorysorter.config.sortButton": "Display Sort Button",
-  "inventorysorter.config.sortButton.tooltip": "Enable the Sort Button in Inventories",
+  "inventorysorter.config.sortButton.tooltip": "Turning this off will disable the sort button in all inventories",
 
   "inventorysorter.config.doubleClickSort": "Double-Click to Sort",
   "inventorysorter.config.doubleClickSort.tooltip": "Double-Click an Empty Slot to Sort",
@@ -33,7 +33,7 @@
   "inventorysorter.config.separateButton.tooltip": "Display a Separate Sort Button in the Player Inventory",
 
   "inventorysorter.config.sortPlayerInventory": "Sort Player Inventory",
-  "inventorysorter.config.sortPlayerInventory.tooltip": "Sorting a Remote Inventory Also Sorts the Player's Inventory",
+  "inventorysorter.config.sortPlayerInventory.tooltip": "Helpful when you want to sort the player inventory separately from the container",
   "inventorysorter.cmd.sortPlayerInventory.set": "Sort Player Inventory is now %1$s",
   "inventorysorter.cmd.sortPlayerInventory.get": "Sort Player Inventory is currently %1$s",
 
@@ -43,7 +43,7 @@
   "inventorysorter.config.showTooltip.tooltip": "The Tooltip Shows the Sorting Type When Hovering Over the Sort Button",
 
   "inventorysorter.config.sortHovered": "Only Sort the Inventory Under the Mouse",
-  "inventorysorter.config.sortHovered.tooltip": "Only Sort the Inventory Under the Mouse",
+  "inventorysorter.config.sortHovered.tooltip": "Only Sort the Inventory Under the Mouse when using the keybind or double-click sort",
   "inventorysorter.cmd.sortHovered.set": "Only Sort the Inventory Under the Mouse is now %1$s",
   "inventorysorter.cmd.sortHovered.get": "Only Sort the Inventory Under the Mouse is currently %1$s",
 
