@@ -5,7 +5,6 @@
   "inventorysorter.config.category.display": "显示",
   "inventorysorter.config.category.logic": "逻辑",
   "inventorysorter.config.category.activation": "触发",
-  "key.inventorysorter.config.category.denylist": "黑名单",
   "inventorysorter.config.sortButton": "在库存中显示按钮",
   "inventorysorter.config.doubleClickSort": "双击物品槽排序",
   "inventorysorter.config.separateButton": "玩家背包总是显示按钮",
