@@ -25,8 +25,9 @@
   "inventorysorter.cmd.doubleClickSort.set": "Changed Double-Click Sort to %1$s",
   "inventorysorter.cmd.doubleClickSort.get": "Double-Click Sort is currently %1$s",
 
-  "key.inventorysorter.config.seperatebtn": "Always display button in player inventory",
-  "key.inventorysorter.config.seperatebtn.tooltip": "Enable second 'Sort' button in player inventory",
+  "inventorysorter.config.separateButton": "Separate Sort Button in Player Inventory",
+  "inventorysorter.config.separateButton.tooltip": "Display a Separate Sort Button in the Player Inventory",
+
   "key.inventorysorter.config.sortplayer": "Sort player inventory",
   "key.inventorysorter.config.sortplayer.tooltip": "Sorting a remote inventory also sorts the player's inventory",
   "key.inventorysorter.config.sorttype": "Sorting method",
