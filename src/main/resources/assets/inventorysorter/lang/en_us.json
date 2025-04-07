@@ -42,6 +42,8 @@
 
   "inventorysorter.config.sortHovered": "Only Sort the Inventory Under the Mouse",
   "inventorysorter.config.sortHovered.tooltip": "Only Sort the Inventory Under the Mouse",
+  "inventorysorter.cmd.sortHovered.set": "Only Sort the Inventory Under the Mouse is now %1$s",
+  "inventorysorter.cmd.sortHovered.get": "Only Sort the Inventory Under the Mouse is currently %1$s",
 
   "inventorysorter.cmd.player-required": "This command can only be run by a player",
 

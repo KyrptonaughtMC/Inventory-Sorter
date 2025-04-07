@@ -8,12 +8,12 @@ import net.kyrptonaught.inventorysorter.permissions.CommandPermission;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.SORT_SETTINGS;
 
 public class DoubleClickSortCommand {
-    private static final String SET_KET = "inventorysorter.cmd.doubleclick.set";
+    private static final String SET_KEY = "inventorysorter.cmd.doubleClickSort.set";
+    private static final String GET_KEY = "inventorysorter.cmd.doubleClickSort.get";
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher, LiteralArgumentBuilder<ServerCommandSource> rootCommand) {
 
         dispatcher.register(rootCommand
@@ -40,7 +40,7 @@ public class DoubleClickSortCommand {
 
         settings.sync(player);
 
-        commandContext.getSource().sendFeedback(() -> CommandTranslations.getOffMessage(SET_KET), false);
+        commandContext.getSource().sendFeedback(() -> CommandTranslations.getOffMessage(SET_KEY), false);
         return 1;
     }
 
@@ -56,7 +56,7 @@ public class DoubleClickSortCommand {
 
         settings.sync(player);
 
-        commandContext.getSource().sendFeedback(() -> CommandTranslations.getOnMessage(SET_KET), false);
+        commandContext.getSource().sendFeedback(() -> CommandTranslations.getOnMessage(SET_KEY), false);
         return 1;
     }
 
@@ -69,7 +69,7 @@ public class DoubleClickSortCommand {
 
         SortSettings settings = player.getAttachedOrCreate(SORT_SETTINGS);
 
-        commandContext.getSource().sendFeedback(() -> CommandTranslations.getFeedbackMessageForState("inventorysorter.cmd.doubleclick.get", settings.enableDoubleClick()), false);
+        commandContext.getSource().sendFeedback(() -> CommandTranslations.getFeedbackMessageForState(GET_KEY, settings.enableDoubleClick()), false);
         return 1;
     }
 }

@@ -13,19 +13,19 @@ import net.minecraft.text.Text;
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.SORT_SETTINGS;
 
 public class SortHighlightedInventoryCommand {
-    private static final Text FEEDBACK_MESSAGE = Text.translatable("key.inventorysorter.cmd.highlightedInventorySort");
-    private static final String ON_MESSAGE = "On";
-    private static final String OFF_MESSAGE = "Off";
+    private static final String SET_KEY = "inventorysorter.cmd.sortHovered.set";
+    private static final String GET_KEY = "inventorysorter.cmd.sortHovered.get";
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher, LiteralArgumentBuilder<ServerCommandSource> rootCommand) {
 
         dispatcher.register(rootCommand
                 .then(CommandManager.literal("sortHighlightedInventory")
                         .requires(CommandPermission.require("sorthighlightedinventory", 0))
-                        .then(CommandManager.literal(ON_MESSAGE)
+                        .executes(SortHighlightedInventoryCommand::showState)
+                        .then(CommandManager.literal("On")
                                 .executes(SortHighlightedInventoryCommand::turnOn)
                         )
-                        .then(CommandManager.literal(OFF_MESSAGE)
+                        .then(CommandManager.literal("Off")
                                 .executes(SortHighlightedInventoryCommand::turnOff)
                         )));
     }
@@ -42,8 +42,7 @@ public class SortHighlightedInventoryCommand {
 
         settings.sync(player);
 
-        // @TODO instead of appending, use proper translation with placeholders
-        commandContext.getSource().sendFeedback(() -> Text.of(FEEDBACK_MESSAGE.copy().append(OFF_MESSAGE).getString()), false);
+        commandContext.getSource().sendFeedback(() -> CommandTranslations.getOffMessage(SET_KEY), false);
         return 1;
     }
 
@@ -59,8 +58,20 @@ public class SortHighlightedInventoryCommand {
 
         settings.sync(player);
 
-        // @TODO instead of appending, use proper translation with placeholders
-        commandContext.getSource().sendFeedback(() -> Text.of(FEEDBACK_MESSAGE.copy().append(ON_MESSAGE).getString()), false);
+        commandContext.getSource().sendFeedback(() -> CommandTranslations.getOnMessage(SET_KEY), false);
+        return 1;
+    }
+
+    public static int showState(CommandContext<ServerCommandSource> commandContext) {
+        ServerPlayerEntity player = commandContext.getSource().getPlayer();
+        if (player == null) {
+            commandContext.getSource().sendFeedback(CommandTranslations::playerRequired, false);
+            return 0;
+        }
+
+        SortSettings settings = player.getAttachedOrCreate(SORT_SETTINGS);
+
+        commandContext.getSource().sendFeedback(() -> CommandTranslations.getFeedbackMessageForState(GET_KEY, settings.sortHighlightedItem()), false);
         return 1;
     }
 }
