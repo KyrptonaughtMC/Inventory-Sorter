@@ -34,6 +34,8 @@
 
   "inventorysorter.config.sortPlayerInventory": "Sort Player Inventory",
   "inventorysorter.config.sortPlayerInventory.tooltip": "Sorting a Remote Inventory Also Sorts the Player's Inventory",
+  "inventorysorter.cmd.sortPlayerInventory.set": "Sort Player Inventory is now %1$s",
+  "inventorysorter.cmd.sortPlayerInventory.get": "Sort Player Inventory is currently %1$s",
 
   "inventorysorter.config.sortType": "Sort Type to Use",
 
