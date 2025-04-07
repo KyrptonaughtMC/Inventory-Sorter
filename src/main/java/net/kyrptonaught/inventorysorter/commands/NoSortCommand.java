@@ -45,13 +45,13 @@ public class NoSortCommand {
         });
 
         if (Boolean.FALSE.equals(success)) {
-            commandContext.getSource().sendFeedback(() -> Text.of("No compatible container targeted."), false);
+            commandContext.getSource().sendFeedback(() -> Text.translatable("inventorysorter.cmd.nosort.add.fail"), false);
             return 0;
         }
 
         playerSortPrevention.sync(player);
 
-        commandContext.getSource().sendFeedback(() -> Text.of("Screen added"), false);
+        commandContext.getSource().sendFeedback(() -> Text.translatable("inventorysorter.cmd.nosort.add.success"), false);
         return 1;
     }
 
@@ -70,13 +70,12 @@ public class NoSortCommand {
         });
 
         if (Boolean.FALSE.equals(success)) {
-            commandContext.getSource().sendFeedback(() -> Text.of("No compatible container targeted."), false);
+            commandContext.getSource().sendFeedback(() -> Text.translatable("inventorysorter.cmd.nosort.remove.fail"), false);
             return 0;
         }
 
         playerSortPrevention.sync(player);
-
-        commandContext.getSource().sendFeedback(() -> Text.of("Screen removed"), false);
+        commandContext.getSource().sendFeedback(() -> Text.translatable("inventorysorter.cmd.nosort.remove.success"), false);
         return 1;
     }
 
@@ -88,11 +87,11 @@ public class NoSortCommand {
         }
         PlayerSortPrevention playerSortPrevention = player.getAttachedOrCreate(PLAYER_SORT_PREVENTION);
 
-        StringBuilder sb = new StringBuilder("Prevented screens: ");
-        for (String screen : playerSortPrevention.preventSortForScreens()) {
-            sb.append(screen).append(", ");
-        }
-        commandContext.getSource().sendFeedback(() -> Text.of(sb.toString()), false);
+        commandContext.getSource().sendFeedback(() -> Text.translatable(
+                "inventorysorter.cmd.nosort.list",
+                String.join(",", playerSortPrevention.preventSortForScreens())
+        ), false);
+
         return 1;
     }
 }

@@ -45,6 +45,12 @@
 
   "inventorysorter.cmd.player-required": "This command can only be run by a player",
 
+  "inventorysorter.cmd.nosort.add.success": "Container is now not sortable",
+  "inventorysorter.cmd.nosort.add.fail": "This container cannot be added to the not sortable list",
+  "inventorysorter.cmd.nosort.remove.success": "Container is now sortable",
+  "inventorysorter.cmd.nosort.remove.fail": "Failed to remove container from the not sortable list",
+  "inventorysorter.cmd.nosort.list": "Sorting is prevented for the following containers: %1$s",
+
   "inventorysorter.cmd.sort.sorted": "Sorted ✅",
   "inventorysorter.cmd.sort.notsortable": "This Container Cannot be Sorted",
   "inventorysorter.cmd.sort.error": "Sorting Failed, Please Check the Logs or Report a Bug",
