@@ -28,8 +28,7 @@ public class SortCommand {
         }
         SortSettings settings = player.getAttachedOrCreate(SORT_SETTINGS);
 
-        Text feedBack = InventoryHelper.sortTargetedBlock(player, settings.sortType());
-        commandContext.getSource().sendFeedback(() -> Text.of(feedBack.getString()), false);
+        commandContext.getSource().sendFeedback(() -> InventoryHelper.sortTargetedBlock(player, settings.sortType()), false);
         return 1;
     }
 }
