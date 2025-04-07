@@ -25,6 +25,6 @@ public class CommandTranslations {
     }
 
     public static Text playerRequired() {
-        return Text.translatable("key.inventorysorter.cmd.player-required");
+        return Text.translatable("inventorysorter.cmd.player-required");
     }
 }

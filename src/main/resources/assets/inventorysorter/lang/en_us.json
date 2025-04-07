@@ -44,12 +44,14 @@
   "inventorysorter.config.sortHovered": "Only Sort the Inventory Under the Mouse",
   "inventorysorter.config.sortHovered.tooltip": "Only Sort the Inventory Under the Mouse",
 
+  "inventorysorter.cmd.player-required": "This command can only be run by a player",
+
   "inventorysorter.cmd.sort.sorted": "Sorted ✅",
   "inventorysorter.cmd.sort.notsortable": "This Container Cannot be Sorted",
   "inventorysorter.cmd.sort.error": "Sorting Failed, Please Check the Logs or Report a Bug",
 
   "key.inventorysorter.cmd.updatesortingtype": "Updated Sorting Type",
-  "key.inventorysorter.cmd.player-required": "This command can only be run by a player.",
+
   "key.inventorysorter.sorttype.name": "Name",
   "key.inventorysorter.sorttype.category": "Category",
   "key.inventorysorter.sorttype.mod": "Mod",
