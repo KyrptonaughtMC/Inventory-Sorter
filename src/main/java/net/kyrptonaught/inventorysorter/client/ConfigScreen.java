@@ -126,10 +126,10 @@ public class ConfigScreen {
                         .build());
 
         screenBuilder.getOrCreateCategory(Text.translatable("inventorysorter.config.category.activation"))
-                .addEntry(entryBuilder.startBooleanToggle(Text.translatable("key.inventorysorter.config.doubleclick"), options.enableDoubleClickSort)
+                .addEntry(entryBuilder.startBooleanToggle(Text.translatable("inventorysorter.config.doubleClickSort"), options.enableDoubleClickSort)
                         .setDefaultValue(true)
                         .setYesNoTextSupplier(b -> b ? on() : off())
-                        .setTooltip(Text.translatable("key.inventorysorter.config.doubleclick.tooltip"))
+                        .setTooltip(Text.translatable("inventorysorter.config.doubleClickSort.tooltip"))
                         .setSaveConsumer(val -> options.enableDoubleClickSort = val)
                         .build());
 
