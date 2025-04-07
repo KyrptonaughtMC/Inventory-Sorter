@@ -17,7 +17,8 @@ modSettings {
         "schema" to "\$schema",
         "clothVersion" to mod.prop("cloth_version"),
         "modmenuVersion" to mod.prop("modmenu_version"),
-        "fabricPermissionsApiVersion" to mod.prop("fabric_permissions_api_version")
+        "fabricPermissionsApiVersion" to mod.prop("fabric_permissions_api_version"),
+        "s" to "\$s"
     )
 }
 

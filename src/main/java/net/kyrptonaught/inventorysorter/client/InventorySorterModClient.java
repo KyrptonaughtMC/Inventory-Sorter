@@ -20,17 +20,17 @@ public class InventorySorterModClient implements ClientModInitializer {
     private CompatConfig serverConfig = new CompatConfig();
 
     public static final KeyBinding sortButton = new KeyBinding(
-            "inventorysorter.keybinds.sort",
+            "inventorysorter.key.sort",
             InputUtil.Type.KEYSYM,
             GLFW.GLFW_KEY_P,
-            "key.categories.inventorysorter"
+            "inventorysorter.key.category"
     );
 
     public static final KeyBinding configButton = new KeyBinding(
-            "inventorysorter.keybinds.config",
+            "inventorysorter.key.config",
             InputUtil.Type.KEYSYM,
             GLFW.GLFW_KEY_P,
-            "key.categories.inventorysorter"
+            "inventorysorter.key.category"
     );
 
     @Override

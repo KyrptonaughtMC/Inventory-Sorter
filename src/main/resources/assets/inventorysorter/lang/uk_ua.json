@@ -1,6 +1,6 @@
 {
-  "key.categories.inventorysorter": "Inventory Sorting",
-  "key.inventorysorter.sort": "Сортувати інвентар",
+  "inventorysorter.key.category": "Inventory Sorter",
+  "inventorysorter.key.sort": "Сортувати інвентар",
   "key.inventorysorter.config.category.display": "Відображати",
   "key.inventorysorter.config.category.logic": "Авто",
   "key.inventorysorter.config.category.activation": "Активація",

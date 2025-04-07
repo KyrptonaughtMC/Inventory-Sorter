@@ -1,7 +1,7 @@
 {
-  "key.inventorysorter.config": "Настройки сортировки инвентаря",
-  "key.categories.inventorysorter": "Сортировка инвентаря",
-  "key.inventorysorter.sort": "Сортировать инвентарь",
+  "inventorysorter.config.screen.title": "Настройки сортировки инвентаря",
+  "inventorysorter.key.category": "Сортировка инвентаря",
+  "inventorysorter.key.sort": "Сортировать инвентарь",
   "key.inventorysorter.config.category.display": "Отображать",
   "key.inventorysorter.config.category.logic": "Авто",
   "key.inventorysorter.config.category.activation": "Активация",
@@ -32,7 +32,7 @@
   "key.inventorysorter.sorting.error": "Ошибка отсортировки инвентаря",
 
   "key.inventorysorter.cmd.updatesortingtype": "Обновлённый тип сортировки",
-  "key.inventorysorter.cmd.doubleClickSort": "Установить слот двойной клик, чтобы сортировать ",
+  "inventorysorter.cmd.doubleclick.set": "Установить слот двойной клик, чтобы сортировать %1$s",
   "key.inventorysorter.cmd.addblacklist": "Добавлено в чёрный список: ",
   "key.inventorysorter.cmd.invalidscreen": "Неверный идентификатор экрана",
 

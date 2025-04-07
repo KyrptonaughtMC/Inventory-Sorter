@@ -23,11 +23,11 @@ import static net.kyrptonaught.inventorysorter.InventorySorterMod.*;
 public class ConfigScreen {
 
     private static Text on() {
-        return Text.translatable("key.inventorysorter.config.enabled").formatted(Formatting.GREEN);
+        return Text.translatable("inventorysorter.toggle.enabled").formatted(Formatting.GREEN);
     }
 
     private static Text off() {
-        return Text.translatable("key.inventorysorter.config.disabled").formatted(Formatting.RED);
+        return Text.translatable("inventorysorter.toggle.disabled").formatted(Formatting.RED);
     }
 
     private static List<SubCategoryListEntry> buildCompatEditor(ConfigEntryBuilder builder, NewConfigOptions config) {
@@ -76,7 +76,7 @@ public class ConfigScreen {
         ConfigBuilder screenBuilder = ConfigBuilder.create()
                 .setParentScreen(parent)
                 .setDefaultBackgroundTexture(Identifier.of("minecraft", "textures/block/dirt.png"))
-                .setTitle(Text.translatable("key.inventorysorter.config"));
+                .setTitle(Text.translatable("inventorysorter.config.screen.title"));
         ConfigEntryBuilder entryBuilder = screenBuilder.entryBuilder();
 
         screenBuilder.setSavingRunnable(() -> {
