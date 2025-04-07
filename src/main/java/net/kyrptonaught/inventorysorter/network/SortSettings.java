@@ -3,7 +3,7 @@ package net.kyrptonaught.inventorysorter.network;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.kyrptonaught.inventorysorter.SortCases;
+import net.kyrptonaught.inventorysorter.SortType;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
@@ -17,7 +17,7 @@ public record SortSettings(
         boolean sortHighlightedItem,
         boolean sortPlayerInventory,
         boolean enableDoubleClick,
-        SortCases.SortType sortType
+        SortType sortType
 ) implements CustomPayload {
 
     public static final PacketCodec<RegistryByteBuf, SortSettings> CODEC =
@@ -32,7 +32,7 @@ public record SortSettings(
                             buf.readBoolean(),
                             buf.readBoolean(),
                             buf.readBoolean(),
-                            buf.readEnumConstant(SortCases.SortType.class)
+                            buf.readEnumConstant(SortType.class)
                     )
             );
 
@@ -40,13 +40,13 @@ public record SortSettings(
             Codec.BOOL.fieldOf("sortHighlightedItem").forGetter(SortSettings::sortHighlightedItem),
             Codec.BOOL.fieldOf("sortPlayerInventory").forGetter(SortSettings::sortPlayerInventory),
             Codec.BOOL.fieldOf("enableDoubleClick").forGetter(SortSettings::enableDoubleClick),
-            Codec.STRING.xmap(SortCases.SortType::valueOf, SortCases.SortType::name)
+            Codec.STRING.xmap(SortType::valueOf, SortType::name)
                     .fieldOf("sortType").forGetter(SortSettings::sortType)
     ).apply(instance, SortSettings::new));
 
     public static final CustomPayload.Id<SortSettings> ID = new CustomPayload.Id<>(Identifier.of(MOD_ID, "sync_settings_packet"));
 
-    public static final SortSettings DEFAULT = new SortSettings(true, false, true, SortCases.SortType.NAME);
+    public static final SortSettings DEFAULT = new SortSettings(true, false, true, SortType.NAME);
 
     @Override
     public Id<? extends CustomPayload> getId() {
@@ -57,7 +57,7 @@ public record SortSettings(
         return new SortSettings(this.sortHighlightedItem(), this.sortPlayerInventory(), enabled, this.sortType());
     }
 
-    public SortSettings withSortType(SortCases.SortType sortType) {
+    public SortSettings withSortType(SortType sortType) {
         return new SortSettings(this.sortHighlightedItem(), this.sortPlayerInventory(), this.enableDoubleClick(), sortType);
     }
 

@@ -3,7 +3,7 @@ package net.kyrptonaught.inventorysorter.config;
 import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Jankson;
 import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.JsonObject;
 import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.api.SyntaxError;
-import net.kyrptonaught.inventorysorter.SortCases;
+import net.kyrptonaught.inventorysorter.SortType;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -17,7 +17,7 @@ public class OldConfigOptions {
     public boolean displayTooltip = true;
     public boolean seperateBtn = true;
     public boolean sortPlayer = false;
-    public SortCases.SortType sortType = SortCases.SortType.NAME;
+    public SortType sortType = SortType.NAME;
     public String keybinding;
     public boolean middleClick = true;
     public boolean doubleClickSort = true;

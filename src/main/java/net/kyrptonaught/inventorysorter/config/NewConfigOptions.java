@@ -2,7 +2,7 @@ package net.kyrptonaught.inventorysorter.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import net.kyrptonaught.inventorysorter.SortCases;
+import net.kyrptonaught.inventorysorter.SortType;
 import net.kyrptonaught.inventorysorter.client.InventorySorterModClient;
 import net.kyrptonaught.inventorysorter.compat.config.CompatConfig;
 import net.minecraft.client.util.InputUtil;
@@ -19,7 +19,7 @@ public class NewConfigOptions extends CompatConfig {
     public boolean showTooltips = true;
     public boolean separateButton = true;
     public boolean sortPlayerInventory = false;
-    public SortCases.SortType sortType = SortCases.SortType.NAME;
+    public SortType sortType = SortType.NAME;
     public boolean enableDoubleClickSort = true;
     public boolean sortHighlightedItem = true;
 

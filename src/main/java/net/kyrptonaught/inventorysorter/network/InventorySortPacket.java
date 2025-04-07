@@ -6,7 +6,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.kyrptonaught.inventorysorter.InventoryHelper;
-import net.kyrptonaught.inventorysorter.SortCases;
+import net.kyrptonaught.inventorysorter.SortType;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
@@ -27,7 +27,7 @@ public record InventorySortPacket(boolean shouldSortPlayerInventory, int sortTyp
     public static void registerReceivePacket() {
         PayloadTypeRegistry.playC2S().register(InventorySortPacket.ID, InventorySortPacket.CODEC);
         ServerPlayNetworking.registerGlobalReceiver(InventorySortPacket.ID, ((payload, context) -> {
-            SortCases.SortType sortType = SortCases.SortType.values()[payload.sortType];
+            SortType sortType = SortType.values()[payload.sortType];
             ServerPlayerEntity player = context.player();
             player.getServer().execute(() -> InventoryHelper.sortInventory(player, payload.shouldSortPlayerInventory, sortType));
         }));

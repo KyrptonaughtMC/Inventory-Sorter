@@ -122,11 +122,4 @@ public class SortCases {
         return stack.getName().getString() + " " + enchantmentsComponent.getSize() + " " + enchantNames;
     }
 
-    public enum SortType {
-        NAME, CATEGORY, MOD, ID;
-
-        public String getTranslationKey() {
-            return InventorySorterMod.MOD_ID + ".sorttype." + this.toString().toLowerCase();
-        }
-    }
 }

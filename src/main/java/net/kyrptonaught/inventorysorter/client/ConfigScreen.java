@@ -6,8 +6,7 @@ import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import me.shedaniel.clothconfig2.gui.entries.BooleanListEntry;
 import me.shedaniel.clothconfig2.gui.entries.SubCategoryListEntry;
 import me.shedaniel.clothconfig2.impl.builders.SubCategoryBuilder;
-import net.kyrptonaught.inventorysorter.SortCases;
-import net.kyrptonaught.inventorysorter.commands.CommandTranslations;
+import net.kyrptonaught.inventorysorter.SortType;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -119,9 +118,9 @@ public class ConfigScreen {
                         .build());
 
         screenBuilder.getOrCreateCategory(Text.translatable("inventorysorter.config.category.logic"))
-                .addEntry(entryBuilder.startEnumSelector(Text.translatable("inventorysorter.config.sortType"), SortCases.SortType.class, options.sortType)
-                        .setEnumNameProvider((sortType) -> Text.translatable(((SortCases.SortType) sortType).getTranslationKey()))
-                        .setDefaultValue(SortCases.SortType.NAME)
+                .addEntry(entryBuilder.startEnumSelector(Text.translatable("inventorysorter.config.sortType"), SortType.class, options.sortType)
+                        .setEnumNameProvider((sortType) -> Text.translatable(((SortType) sortType).getTranslationKey()))
+                        .setDefaultValue(SortType.NAME)
                         .setSaveConsumer(val -> options.sortType = val)
                         .build())
                 .addEntry(entryBuilder.startBooleanToggle(Text.translatable("inventorysorter.config.sortPlayerInventory"), options.sortPlayerInventory)
