@@ -63,6 +63,10 @@
 
   "inventorysorter.cmd.reload.success": "Configuration Reloaded",
 
+  "inventorysorter.cmd.screenid.fail": "Targeted container doesn't have a compatible screen",
+  "inventorysorter.cmd.screenid.success": "Click to copy [%1$s] to clipboard",
+  "inventorysorter.cmd.screenid.copy.hover": "Click to Copy",
+
   "inventorysorter.cmd.sort.sorted": "Sorted ✅",
   "inventorysorter.cmd.sort.notsortable": "This Container Cannot be Sorted",
   "inventorysorter.cmd.sort.error": "Sorting Failed, Please Check the Logs or Report a Bug",
