@@ -264,7 +264,7 @@ public class AdminCommands {
 
     public static int reload(CommandContext<ServerCommandSource> commandContext) {
         reloadConfig();
-        commandContext.getSource().sendFeedback(() -> Text.of("Configuration reloaded"), false);
+        commandContext.getSource().sendFeedback(() -> Text.translatable("inventorysorter.cmd.reload.success"), false);
         return 1;
     }
 }
