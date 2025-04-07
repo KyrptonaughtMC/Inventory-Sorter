@@ -17,8 +17,8 @@
   "inventorysorter.config.compat.remoteUrl.reset": "Clear Remote URL",
   "inventorysorter.config.compat.remoteUrl.tooltip": "The url to a remote config file, which will be downloaded and used for compatibility",
 
-  "inventorysorter.config.showSortButton": "Display Sort Button",
-  "inventorysorter.config.showSortButton.tooltip": "Enable the Sort Button in Inventories",
+  "inventorysorter.config.sortButton": "Display Sort Button",
+  "inventorysorter.config.sortButton.tooltip": "Enable the Sort Button in Inventories",
 
   "inventorysorter.config.doubleClickSort": "Double-Click to Sort",
   "inventorysorter.config.doubleClickSort.tooltip": "Double-Click an Empty Slot to Sort",
