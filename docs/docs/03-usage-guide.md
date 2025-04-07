@@ -94,8 +94,6 @@ You can sort an inventory by double-clicking on an **empty slot**.
 This works even with vanilla clients, as long as the server has [Inventory Sorter installed][server-installation]
 and the double-click sorting feature is enabled in the [Configuration][configuration].
 
-Yes, we should absolutely include `/invsort doubleClickSort on|off` in the **Double-Click** section. That’s a key part of how players can toggle that behavior without editing configs, especially for vanilla clients.
-
 ### Enabling or Disabling Double-Click Sorting
 
 If you're using a vanilla client, or want to change the setting without using the 
