@@ -115,7 +115,6 @@ public class SortButtonWidget extends TexturedButtonWidget {
             if (GLFW.glfwGetKey(instance.getWindow().getHandle(), GLFW.GLFW_KEY_LEFT_CONTROL) == 1) {
                 lines.add(Text.of("Click to hide button").asOrderedText());
             } else {
-
                 lines.add(Text.translatable("inventorysorter.sortButton.tooltip.sortType", Text.translatable(getConfig().sortType.getTranslationKey()).formatted(Formatting.BOLD)).asOrderedText());
                 lines.add(Text.translatable("inventorysorter.sortButton.tooltip.help.sortType").formatted(Formatting.DARK_GRAY).asOrderedText());
                 lines.add(Text.translatable("inventorysorter.sortButton.tooltip.help.hide").formatted(Formatting.DARK_GRAY).asOrderedText());
