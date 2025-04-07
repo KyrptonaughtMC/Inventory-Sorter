@@ -14,11 +14,9 @@
   "inventorysorter.config.showTooltip": "Afficher l'info-bulle du bouton de tri",
   "inventorysorter.config.sortHovered": "Trie l'inventaire survolé par la souris",
 
-  "key.inventorysorter.sorting.invalid": "Ne pas consulter un inventaire valide",
-  "key.inventorysorter.sorting.sorted": "Inventaire trié",
-  "key.inventorysorter.sorting.notsortable": "Cet inventaire n'est pas triable",
-  "key.inventorysorter.sorting.failed": "Échec du tri de l'inventaire",
-  "key.inventorysorter.sorting.error": "Impossible de trier l'inventaire",
+  "inventorysorter.cmd.sort.sorted": "Inventaire trié",
+  "inventorysorter.cmd.sort.notsortable": "Cet inventaire n'est pas triable",
+  "inventorysorter.cmd.sort.error": "Impossible de trier l'inventaire",
 
   "key.inventorysorter.cmd.updatesortingtype": "Type de tri mis à jour",
   "inventorysorter.cmd.doubleClickSort.set": "Définir le tri du double clic sur %1$s",

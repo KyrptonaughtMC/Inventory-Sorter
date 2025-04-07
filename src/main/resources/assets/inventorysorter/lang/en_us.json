@@ -44,11 +44,10 @@
   "inventorysorter.config.sortHovered": "Only Sort the Inventory Under the Mouse",
   "inventorysorter.config.sortHovered.tooltip": "Only Sort the Inventory Under the Mouse",
 
-  "key.inventorysorter.sorting.invalid": "Not looking at a valid inventory",
-  "key.inventorysorter.sorting.sorted": "Sorted inventory",
-  "key.inventorysorter.sorting.notsortable": "This inventory is not sortable",
-  "key.inventorysorter.sorting.failed": "Sorting inventory failed",
-  "key.inventorysorter.sorting.error": "Could not sort inventory",
+  "inventorysorter.cmd.sort.sorted": "Sorted ✅",
+  "inventorysorter.cmd.sort.notsortable": "This Container Cannot be Sorted",
+  "inventorysorter.cmd.sort.error": "Sorting Failed, Please Check the Logs or Report a Bug",
+
   "key.inventorysorter.cmd.updatesortingtype": "Updated Sorting Type",
   "key.inventorysorter.cmd.invalidscreen": "Screen ID not valid",
   "key.inventorysorter.cmd.player-required": "This command can only be run by a player.",

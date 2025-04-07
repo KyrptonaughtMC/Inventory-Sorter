@@ -14,11 +14,9 @@
   "inventorysorter.config.showTooltip": "Отображать подсказку кнопки сортировки",
   "inventorysorter.config.sortHovered": "Сортировка инвентаря при наведении курсора мыши",
 
-  "key.inventorysorter.sorting.invalid": "Просматривается недействительный инвентарь",
-  "key.inventorysorter.sorting.sorted": "Отсортированный инвентарь",
-  "key.inventorysorter.sorting.notsortable": "Этот инвентарь не поддается сортировке",
-  "key.inventorysorter.sorting.failed": "Не удалось отсортировать инвентарь",
-  "key.inventorysorter.sorting.error": "Ошибка отсортировки инвентаря",
+  "inventorysorter.cmd.sort.sorted": "Отсортированный инвентарь",
+  "inventorysorter.cmd.sort.notsortable": "Этот инвентарь не поддается сортировке",
+  "inventorysorter.cmd.sort.error": "Ошибка отсортировки инвентаря",
 
   "key.inventorysorter.cmd.updatesortingtype": "Обновлённый тип сортировки",
   "inventorysorter.cmd.doubleClickSort.set": "Установить слот двойной клик, чтобы сортировать %1$s",

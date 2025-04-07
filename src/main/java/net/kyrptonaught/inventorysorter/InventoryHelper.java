@@ -96,13 +96,13 @@ public class InventoryHelper {
         });
 
         if (result == null) {
-            return Text.translatable("key.inventorysorter.sorting.error");
+            return Text.translatable("inventorysorter.cmd.sort.error");
         }
         if (result) {
-            return Text.translatable("key.inventorysorter.sorting.sorted");
+            return Text.translatable("inventorysorter.cmd.sort.sorted");
         }
 
-        return Text.translatable("key.inventorysorter.sorting.notsortable");
+        return Text.translatable("inventorysorter.cmd.sort.notsortable");
     }
 
     public static boolean sortInventory(PlayerEntity player, boolean shouldSortPlayerInventory, SortCases.SortType sortType) {
