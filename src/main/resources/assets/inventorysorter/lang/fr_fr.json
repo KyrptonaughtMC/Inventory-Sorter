@@ -14,13 +14,6 @@
   "inventorysorter.config.showTooltip": "Afficher l'info-bulle du bouton de tri",
   "inventorysorter.config.sortHovered": "Trie l'inventaire survolé par la souris",
 
-  "key.inventorysorter.config.nosort": "Afficher uniquement le tri de l'inv du joueur",
-  "key.inventorysorter.config.hidetooltip": "Ni l'inventaire ouvert, ni votre inventaire de joueur \nne pourront être triés lorsque cet inventaire sera ouvert",
-  "key.inventorysorter.config.nosorttooltip": "Le bouton de tri d'inventaire ouvert ne sera pas visible, \nseulement le joueur lorsque cet inventaire est ouvert",
-  "key.inventorysorter.toast.pass": "Téléchargé avec succès",
-  "key.inventorysorter.toast.error": "Erreur de téléchargement",
-  "key.inventorysorter.toast.error2": "Voir les logs pour plus d'informations",
-
   "key.inventorysorter.sorting.invalid": "Ne pas consulter un inventaire valide",
   "key.inventorysorter.sorting.sorted": "Inventaire trié",
   "key.inventorysorter.sorting.notsortable": "Cet inventaire n'est pas triable",
@@ -29,7 +22,6 @@
 
   "key.inventorysorter.cmd.updatesortingtype": "Type de tri mis à jour",
   "inventorysorter.cmd.doubleClickSort.set": "Définir le tri du double clic sur %1$s",
-  "key.inventorysorter.cmd.addblacklist": "Ajouté à la liste noire: ",
   "key.inventorysorter.cmd.invalidscreen": "ID d'écran non valide",
 
   "key.inventorysorter.sorttype.name": "Nom",
@@ -42,7 +34,5 @@
   "key.inventorysorter.sortbtn.debug2": "pour mettre cet inventaire sur liste noire",
 
   "key.inventorysorter.sortbtn.clickhere": "Cliquez ici",
-  "key.inventorysorter.sortbtn.dnsadd": " pour l'ajouter automatiquement à la liste 'Inventaire à ne pas trier'",
-  "key.inventorysorter.sortbtn.dndadd": " pour l'ajouter automatiquement à la liste 'Masquer les boutons de tri'",
   "key.inventorysorter.sortbtn.error": "Écran non blacklistable ou écran déjà blacklisté"
 }

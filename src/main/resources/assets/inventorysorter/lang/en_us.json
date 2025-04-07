@@ -16,6 +16,10 @@
   "inventorysorter.config.compat.remoteUrl": "Remote compatibility config url",
   "inventorysorter.config.compat.remoteUrl.reset": "Clear Remote URL",
   "inventorysorter.config.compat.remoteUrl.tooltip": "The url to a remote config file, which will be downloaded and used for compatibility",
+  "inventorysorter.config.compat.hideButton": "Hide Sort Button",
+  "inventorysorter.config.compat.hideButton.tooltip": "Hide the Sort Button in %1$s",
+  "inventorysorter.config.compat.preventSort": "Prevent Sort",
+  "inventorysorter.config.compat.preventSort.tooltip": "Prevent Sorting of %1$s",
 
   "inventorysorter.config.sortButton": "Display Sort Button",
   "inventorysorter.config.sortButton.tooltip": "Enable the Sort Button in Inventories",
@@ -40,19 +44,12 @@
   "inventorysorter.config.sortHovered": "Only Sort the Inventory Under the Mouse",
   "inventorysorter.config.sortHovered.tooltip": "Only Sort the Inventory Under the Mouse",
 
-  "key.inventorysorter.config.nosort": "Only show player inv sort",
-  "key.inventorysorter.config.hidetooltip": "Neither the opened inventory, nor your player inventory \nwill be sortable when this inventory is opened",
-  "key.inventorysorter.config.nosorttooltip": "The opened inventory's sort button will not be visible, \nonly the player's when this inventory is opened",
-  "key.inventorysorter.toast.pass": "Successfully Downloaded",
-  "key.inventorysorter.toast.error": "Download Error",
-  "key.inventorysorter.toast.error2": "See logs for more info",
   "key.inventorysorter.sorting.invalid": "Not looking at a valid inventory",
   "key.inventorysorter.sorting.sorted": "Sorted inventory",
   "key.inventorysorter.sorting.notsortable": "This inventory is not sortable",
   "key.inventorysorter.sorting.failed": "Sorting inventory failed",
   "key.inventorysorter.sorting.error": "Could not sort inventory",
   "key.inventorysorter.cmd.updatesortingtype": "Updated Sorting Type",
-  "key.inventorysorter.cmd.addblacklist": "Added to blacklist: ",
   "key.inventorysorter.cmd.invalidscreen": "Screen ID not valid",
   "key.inventorysorter.cmd.player-required": "This command can only be run by a player.",
   "key.inventorysorter.sorttype.name": "Name",
@@ -63,7 +60,5 @@
   "key.inventorysorter.sortbtn.debug": "Scroll to change sorting method",
   "key.inventorysorter.sortbtn.debug2": "Click while holding CTRL to hide button",
   "key.inventorysorter.sortbtn.clickhere": "Click Here",
-  "key.inventorysorter.sortbtn.dnsadd": " to automatically add to the Do Not Sort Inv list",
-  "key.inventorysorter.sortbtn.dndadd": " to automatically add to the Hide Sort Buttons list",
   "key.inventorysorter.sortbtn.error": "Un-deniable screen, or screen is already denied"
 }
