@@ -1,19 +1,19 @@
 {
   "inventorysorter.key.category": "Inventory Sorter",
-  "inventorysorter.key.sort": "Sort Inventory",
-  "inventorysorter.key.config": "Open Config",
+  "inventorysorter.key.sort": "Sort",
+  "inventorysorter.key.config": "Open Settings",
 
   "inventorysorter.toggle.enabled": "On",
   "inventorysorter.toggle.disabled": "Off",
 
-  "inventorysorter.config.screen.title": "Inventory Sorter Config",
+  "inventorysorter.config.screen.title": "Inventory Sorter Settings",
   "inventorysorter.config.category.display": "Display",
   "inventorysorter.config.category.logic": "Logic",
   "inventorysorter.config.category.activation": "Activation",
   "inventorysorter.config.category.compat": "Compatibility",
 
-  "inventorysorter.config.compat.heading": "Remote Compatibility Config",
-  "inventorysorter.config.compat.remoteUrl": "Remote compatibility config url",
+  "inventorysorter.config.compat.heading": "Remote Compatibility Configuration",
+  "inventorysorter.config.compat.remoteUrl": "Remote Compatibility Configuration URL",
   "inventorysorter.config.compat.remoteUrl.reset": "Clear Remote URL",
   "inventorysorter.config.compat.remoteUrl.tooltip": "The url to a remote config file, which will be downloaded and used for compatibility",
   "inventorysorter.config.compat.hideButton": "Hide Sort Button",
@@ -25,12 +25,12 @@
   "inventorysorter.config.sortButton.tooltip": "Turning this off will disable the sort button in all inventories",
 
   "inventorysorter.config.doubleClickSort": "Double-Click to Sort",
-  "inventorysorter.config.doubleClickSort.tooltip": "Double-Click an Empty Slot to Sort",
-  "inventorysorter.cmd.doubleClickSort.set": "Changed Double-Click Sort to %1$s",
-  "inventorysorter.cmd.doubleClickSort.get": "Double-Click Sort is currently %1$s",
+  "inventorysorter.config.doubleClickSort.tooltip": "Double-Click an empty slot to sort",
+  "inventorysorter.cmd.doubleClickSort.set": "Changed Double-Click sort to %1$s",
+  "inventorysorter.cmd.doubleClickSort.get": "Double-Click sort is currently %1$s",
 
   "inventorysorter.config.separateButton": "Separate Sort Button in Player Inventory",
-  "inventorysorter.config.separateButton.tooltip": "Display a Separate Sort Button in the Player Inventory",
+  "inventorysorter.config.separateButton.tooltip": "Display a separate sort button in the player's inventory",
 
   "inventorysorter.config.sortPlayerInventory": "Sort Player Inventory",
   "inventorysorter.config.sortPlayerInventory.tooltip": "Helpful when you want to sort the player inventory separately from the container",
@@ -40,12 +40,12 @@
   "inventorysorter.config.sortType": "Sort Type to Use",
 
   "inventorysorter.config.showTooltip": "Display Sort Button Tooltip",
-  "inventorysorter.config.showTooltip.tooltip": "The Tooltip Shows the Sorting Type When Hovering Over the Sort Button",
+  "inventorysorter.config.showTooltip.tooltip": "The tooltip shows the sort type when hovering over the sort button",
 
   "inventorysorter.config.sortHovered": "Only Sort the Inventory Under the Mouse",
-  "inventorysorter.config.sortHovered.tooltip": "Only Sort the Inventory Under the Mouse when using the keybind or double-click sort",
-  "inventorysorter.cmd.sortHovered.set": "Only Sort the Inventory Under the Mouse is now %1$s",
-  "inventorysorter.cmd.sortHovered.get": "Only Sort the Inventory Under the Mouse is currently %1$s",
+  "inventorysorter.config.sortHovered.tooltip": "Only sort the inventory under the mouse when using the keybind or double-click sort",
+  "inventorysorter.cmd.sortHovered.set": "Only sort the inventory under the mouse is now %1$s",
+  "inventorysorter.cmd.sortHovered.get": "Only sort the inventory under the mouse is currently %1$s",
 
   "inventorysorter.cmd.player-required": "This command can only be run by a player",
 
@@ -57,25 +57,25 @@
 
   "inventorysorter.cmd.hideButton.add.success": "Sort Button is now hidden",
   "inventorysorter.cmd.hideButton.add.fail": "This container cannot be added to the hide button list",
-  "inventorysorter.cmd.hideButton.remove.success": "Sort Button is Now Visible for the Container",
+  "inventorysorter.cmd.hideButton.remove.success": "Sort Button is now visible for the container",
   "inventorysorter.cmd.hideButton.remove.fail": "Failed to remove container from the hide button list",
-  "inventorysorter.cmd.hideButton.list": "Sort Buttons are Hidden for: %1$s",
+  "inventorysorter.cmd.hideButton.list": "Sort Buttons are hidden for: %1$s",
 
-  "inventorysorter.cmd.remote.set.success": "Remote Config is now set to: %1$s",
-  "inventorysorter.cmd.remote.clear.success": "Remote Config URL Cleared",
-  "inventorysorter.cmd.remote.show": "Remote config url is: %1$s",
+  "inventorysorter.cmd.remote.set.success": "Remote configuration is now set to: %1$s",
+  "inventorysorter.cmd.remote.clear.success": "Remote configuration URL has been cleared",
+  "inventorysorter.cmd.remote.show": "Current remote configuration URL: %s",
 
-  "inventorysorter.cmd.reload.success": "Configuration Reloaded",
+  "inventorysorter.cmd.reload.success": "Configuration reloaded",
 
   "inventorysorter.cmd.screenid.fail": "Targeted container doesn't have a compatible screen",
   "inventorysorter.cmd.screenid.success": "Click to copy [%1$s] to clipboard",
   "inventorysorter.cmd.screenid.copy.hover": "Click to Copy",
 
   "inventorysorter.cmd.sort.sorted": "Sorted ✅",
-  "inventorysorter.cmd.sort.notsortable": "This Container Cannot be Sorted",
-  "inventorysorter.cmd.sort.error": "Sorting Failed, Please Check the Logs or Report a Bug",
+  "inventorysorter.cmd.sort.notsortable": "This container cannot be sorted",
+  "inventorysorter.cmd.sort.error": "Sorting failed, please check the logs or report a bug",
 
-  "inventorysorter.cmd.sorttype.success": "Updated the Sort Type to %1$s",
+  "inventorysorter.cmd.sorttype.success": "Updated the sort type to %1$s",
 
   "inventorysorter.sorttype.name": "Name",
   "inventorysorter.sorttype.category": "Category",
@@ -85,7 +85,7 @@
   "inventorysorter.sortButton.tooltip.sortType": "Sort by: %1$s",
   "inventorysorter.sortButton.tooltip.help.sortType": "Scroll to change sorting method",
   "inventorysorter.sortButton.tooltip.help.hide": "Click while holding CTRL to hide button",
-  "inventorysorter.sortButton.tooltip.hide": "Click to Hide This Button",
+  "inventorysorter.sortButton.tooltip.hide": "Click to hide this button",
   "inventorysorter.sortButton.toast.hide.success.title": "Sort Button hidden",
   "inventorysorter.sortButton.toast.hide.success.description": "Screen: %1$s"
 }
