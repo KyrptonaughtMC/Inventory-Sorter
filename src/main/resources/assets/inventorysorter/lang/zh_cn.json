@@ -13,7 +13,6 @@
   "inventorysorter.config.sortType": "排序方式",
   "inventorysorter.config.showTooltip": "显示排序按钮气泡提示",
   "inventorysorter.config.sortHovered": "排序鼠标指向的库存",
-  "key.inventorysorter.config.hidesort": "隐藏所有排序按钮",
   "key.inventorysorter.config.nosort": "仅显示玩家背包按钮",
   "key.inventorysorter.config.hidetooltip": "打开此库存时，无法排序此库存本身\n和玩家背包",
   "key.inventorysorter.config.nosorttooltip": "打开此库存时，不显示排序按钮，\n仅玩家背包显示按钮",

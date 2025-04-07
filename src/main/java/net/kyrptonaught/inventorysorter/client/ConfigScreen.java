@@ -7,6 +7,7 @@ import me.shedaniel.clothconfig2.gui.entries.BooleanListEntry;
 import me.shedaniel.clothconfig2.gui.entries.SubCategoryListEntry;
 import me.shedaniel.clothconfig2.impl.builders.SubCategoryBuilder;
 import net.kyrptonaught.inventorysorter.SortCases;
+import net.kyrptonaught.inventorysorter.commands.CommandTranslations;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -30,6 +31,10 @@ public class ConfigScreen {
         return Text.translatable("inventorysorter.toggle.disabled").formatted(Formatting.RED);
     }
 
+    private static Text toggleState(boolean state) {
+        return state ? on() : off();
+    }
+
     private static List<SubCategoryListEntry> buildCompatEditor(ConfigEntryBuilder builder, NewConfigOptions config) {
         Set<String> allScreens = new HashSet<>();
         allScreens.addAll(config.hideButtonsForScreens);
@@ -42,7 +47,8 @@ public class ConfigScreen {
             boolean prevent = config.preventSortForScreens.contains(screenId);
 
             @NotNull BooleanListEntry hideToggle = builder
-                    .startBooleanToggle(Text.literal("Hide Button"), hide)
+                    .startBooleanToggle(Text.translatable("inventorysorter.config.sortButton"), hide)
+                    .setYesNoTextSupplier(ConfigScreen::toggleState)
                     .setDefaultValue(false)
                     .setSaveConsumer(newValue -> {
                         if (newValue) config.disableButtonForScreen(screenId);
@@ -89,19 +95,19 @@ public class ConfigScreen {
         screenBuilder.getOrCreateCategory(Text.translatable("inventorysorter.config.category.display"))
                 .addEntry(entryBuilder.startBooleanToggle(Text.translatable("inventorysorter.config.sortButton"), options.showSortButton)
                         .setDefaultValue(true)
-                        .setYesNoTextSupplier(b -> b ? on() : off())
+                        .setYesNoTextSupplier(ConfigScreen::toggleState)
                         .setTooltip(Text.translatable("inventorysorter.config.sortButton.tooltip"))
                         .setSaveConsumer(b -> options.showSortButton = b)
                         .build())
                 .addEntry(entryBuilder.startBooleanToggle(Text.translatable("inventorysorter.config.separateButton"), options.separateButton)
                         .setDefaultValue(true)
-                        .setYesNoTextSupplier(b -> b ? on() : off())
+                        .setYesNoTextSupplier(ConfigScreen::toggleState)
                         .setTooltip(Text.translatable("inventorysorter.config.separateButton.tooltip"))
                         .setSaveConsumer(b -> options.separateButton = b)
                         .build())
                 .addEntry(entryBuilder.startBooleanToggle(Text.translatable("inventorysorter.config.showTooltip"), options.showTooltips)
                         .setDefaultValue(true)
-                        .setYesNoTextSupplier(b -> b ? on() : off())
+                        .setYesNoTextSupplier(ConfigScreen::toggleState)
                         .setTooltip(Text.translatable("inventorysorter.config.showTooltip.tooltip"))
                         .setSaveConsumer(b -> options.showTooltips = b)
                         .build());
@@ -114,13 +120,13 @@ public class ConfigScreen {
                         .build())
                 .addEntry(entryBuilder.startBooleanToggle(Text.translatable("inventorysorter.config.sortPlayerInventory"), options.sortPlayerInventory)
                         .setDefaultValue(false)
-                        .setYesNoTextSupplier(b -> b ? on() : off())
+                        .setYesNoTextSupplier(ConfigScreen::toggleState)
                         .setTooltip(Text.translatable("inventorysorter.config.sortPlayerInventory.tooltip"))
                         .setSaveConsumer(val -> options.sortPlayerInventory = val)
                         .build())
                 .addEntry(entryBuilder.startBooleanToggle(Text.translatable("inventorysorter.config.sortHovered"), options.sortHighlightedItem)
                         .setDefaultValue(true)
-                        .setYesNoTextSupplier(b -> b ? on() : off())
+                        .setYesNoTextSupplier(ConfigScreen::toggleState)
                         .setTooltip(Text.translatable("inventorysorter.config.sortHovered.tooltip"))
                         .setSaveConsumer(val -> options.sortHighlightedItem = val)
                         .build());
@@ -128,7 +134,7 @@ public class ConfigScreen {
         screenBuilder.getOrCreateCategory(Text.translatable("inventorysorter.config.category.activation"))
                 .addEntry(entryBuilder.startBooleanToggle(Text.translatable("inventorysorter.config.doubleClickSort"), options.enableDoubleClickSort)
                         .setDefaultValue(true)
-                        .setYesNoTextSupplier(b -> b ? on() : off())
+                        .setYesNoTextSupplier(ConfigScreen::toggleState)
                         .setTooltip(Text.translatable("inventorysorter.config.doubleClickSort.tooltip"))
                         .setSaveConsumer(val -> options.enableDoubleClickSort = val)
                         .build());

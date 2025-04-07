@@ -40,7 +40,6 @@
   "inventorysorter.config.sortHovered": "Only Sort the Inventory Under the Mouse",
   "inventorysorter.config.sortHovered.tooltip": "Only Sort the Inventory Under the Mouse",
 
-  "key.inventorysorter.config.hidesort": "Hide Both Sort Buttons",
   "key.inventorysorter.config.nosort": "Only show player inv sort",
   "key.inventorysorter.config.hidetooltip": "Neither the opened inventory, nor your player inventory \nwill be sortable when this inventory is opened",
   "key.inventorysorter.config.nosorttooltip": "The opened inventory's sort button will not be visible, \nonly the player's when this inventory is opened",
