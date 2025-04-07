@@ -120,8 +120,8 @@ public class ConfigScreen {
 
         screenBuilder.getOrCreateCategory(Text.translatable("inventorysorter.config.category.logic"))
                 .addEntry(entryBuilder.startEnumSelector(Text.translatable("inventorysorter.config.sortType"), SortCases.SortType.class, options.sortType)
+                        .setEnumNameProvider((sortType) -> Text.translatable(((SortCases.SortType) sortType).getTranslationKey()))
                         .setDefaultValue(SortCases.SortType.NAME)
-                        .setTooltip(Text.translatable("inventorysorter.config.sortType.tooltip"))
                         .setSaveConsumer(val -> options.sortType = val)
                         .build())
                 .addEntry(entryBuilder.startBooleanToggle(Text.translatable("inventorysorter.config.sortPlayerInventory"), options.sortPlayerInventory)

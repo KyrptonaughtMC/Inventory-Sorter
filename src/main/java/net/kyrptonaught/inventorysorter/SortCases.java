@@ -126,7 +126,7 @@ public class SortCases {
         NAME, CATEGORY, MOD, ID;
 
         public String getTranslationKey() {
-            return "key." + InventorySorterMod.MOD_ID + ".sorttype." + this.toString().toLowerCase();
+            return InventorySorterMod.MOD_ID + ".sorttype." + this.toString().toLowerCase();
         }
     }
 }

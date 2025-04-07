@@ -36,8 +36,8 @@ public class SortTypeCommand {
         player.setAttached(SORT_SETTINGS, settings);
 
         settings.sync(player);
-        Text feedBack = Text.translatable("key.inventorysorter.cmd.updatesortingtype");
-        commandContext.getSource().sendFeedback(() -> Text.of(feedBack.getString()), false);
+
+        commandContext.getSource().sendFeedback(() -> Text.translatable("inventorysorter.cmd.sorttype.success", Text.translatable(sortType.getTranslationKey())), false);
         return 1;
     }
 }

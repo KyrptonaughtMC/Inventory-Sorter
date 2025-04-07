@@ -18,13 +18,13 @@
   "inventorysorter.cmd.sort.notsortable": "Этот инвентарь не поддается сортировке",
   "inventorysorter.cmd.sort.error": "Ошибка отсортировки инвентаря",
 
-  "key.inventorysorter.cmd.updatesortingtype": "Обновлённый тип сортировки",
+  "inventorysorter.cmd.sorttype.success": "Обновлённый тип сортировки",
   "inventorysorter.cmd.doubleClickSort.set": "Установить слот двойной клик, чтобы сортировать %1$s",
 
-  "key.inventorysorter.sorttype.name": "Имя",
-  "key.inventorysorter.sorttype.category": "Категория",
-  "key.inventorysorter.sorttype.mod": "Мод",
-  "key.inventorysorter.sorttype.id": "Идентификатор",
+  "inventorysorter.sorttype.name": "Имя",
+  "inventorysorter.sorttype.category": "Категория",
+  "inventorysorter.sorttype.mod": "Мод",
+  "inventorysorter.sorttype.id": "Идентификатор",
 
   "key.inventorysorter.sortbtn.sort": "Сортировка по: ",
   "key.inventorysorter.sortbtn.debug": "Нажмите, удерживая левый Ctrl",

@@ -18,13 +18,13 @@
   "inventorysorter.cmd.sort.notsortable": "此库存不可排序",
   "inventorysorter.cmd.sort.error": "无法排序库存",
 
-  "key.inventorysorter.cmd.updatesortingtype": "已更新排序类型：",
+  "inventorysorter.cmd.sorttype.success": "已更新排序类型：",
   "inventorysorter.cmd.doubleClickSort.set": "设置双击排序：",
 
-  "key.inventorysorter.sorttype.name": "名称",
-  "key.inventorysorter.sorttype.category": "分类",
-  "key.inventorysorter.sorttype.mod": "模组",
-  "key.inventorysorter.sorttype.id": "ID",
+  "inventorysorter.sorttype.name": "名称",
+  "inventorysorter.sorttype.category": "分类",
+  "inventorysorter.sorttype.mod": "模组",
+  "inventorysorter.sorttype.id": "ID",
 
   "key.inventorysorter.sortbtn.sort": "排序方式：",
   "key.inventorysorter.sortbtn.debug": "按住左 Control 并点击",
