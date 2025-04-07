@@ -86,7 +86,7 @@ public class ConfigScreen {
                 InventorySorterModClient.syncConfig();
         });
 
-        screenBuilder.getOrCreateCategory(Text.translatable("key.inventorysorter.config.category.display"))
+        screenBuilder.getOrCreateCategory(Text.translatable("inventorysorter.config.category.display"))
                 .addEntry(entryBuilder.startBooleanToggle(Text.translatable("key.inventorysorter.config.displaysort"), options.showSortButton)
                         .setDefaultValue(true)
                         .setYesNoTextSupplier(b -> b ? on() : off())
@@ -106,7 +106,7 @@ public class ConfigScreen {
                         .setSaveConsumer(b -> options.showTooltips = b)
                         .build());
 
-        screenBuilder.getOrCreateCategory(Text.translatable("key.inventorysorter.config.category.logic"))
+        screenBuilder.getOrCreateCategory(Text.translatable("inventorysorter.config.category.logic"))
                 .addEntry(entryBuilder.startEnumSelector(Text.translatable("key.inventorysorter.config.sorttype"), SortCases.SortType.class, options.sortType)
                         .setDefaultValue(SortCases.SortType.NAME)
                         .setTooltip(Text.translatable("key.inventorysorter.config.sorttype.tooltip"))
@@ -125,7 +125,7 @@ public class ConfigScreen {
                         .setSaveConsumer(val -> options.sortHighlightedItem = val)
                         .build());
 
-        screenBuilder.getOrCreateCategory(Text.translatable("key.inventorysorter.config.category.activation"))
+        screenBuilder.getOrCreateCategory(Text.translatable("inventorysorter.config.category.activation"))
                 .addEntry(entryBuilder.startBooleanToggle(Text.translatable("key.inventorysorter.config.doubleclick"), options.enableDoubleClickSort)
                         .setDefaultValue(true)
                         .setYesNoTextSupplier(b -> b ? on() : off())
@@ -133,7 +133,7 @@ public class ConfigScreen {
                         .setSaveConsumer(val -> options.enableDoubleClickSort = val)
                         .build());
 
-        ConfigCategory compatCategory = screenBuilder.getOrCreateCategory(Text.translatable("key.inventorysorter.config.category.compat"));
+        ConfigCategory compatCategory = screenBuilder.getOrCreateCategory(Text.translatable("inventorysorter.config.category.compat"));
 
         FullWidthStringListEntry stringListEntry = new FullWidthStringListEntry(
                 Text.translatable("key.inventorysorter.config.compat.remoteurl"),
