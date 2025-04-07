@@ -33,7 +33,7 @@ public class NoSortCommand {
     public static int add(CommandContext<ServerCommandSource> commandContext) {
         ServerPlayerEntity player = commandContext.getSource().getPlayer();
         if (player == null) {
-            commandContext.getSource().sendFeedback(() -> Text.translatable("key.inventorysorter.cmd.player-required"), false);
+            commandContext.getSource().sendFeedback(CommandTranslations::playerRequired, false);
             return 0;
         }
         PlayerSortPrevention playerSortPrevention = player.getAttachedOrCreate(PLAYER_SORT_PREVENTION);
@@ -58,7 +58,7 @@ public class NoSortCommand {
     public static int remove(CommandContext<ServerCommandSource> commandContext) {
         ServerPlayerEntity player = commandContext.getSource().getPlayer();
         if (player == null) {
-            commandContext.getSource().sendFeedback(() -> Text.translatable("key.inventorysorter.cmd.player-required"), false);
+            commandContext.getSource().sendFeedback(CommandTranslations::playerRequired, false);
             return 0;
         }
         PlayerSortPrevention playerSortPrevention = player.getAttachedOrCreate(PLAYER_SORT_PREVENTION);
@@ -83,7 +83,7 @@ public class NoSortCommand {
     public static int list(CommandContext<ServerCommandSource> commandContext) {
         ServerPlayerEntity player = commandContext.getSource().getPlayer();
         if (player == null) {
-            commandContext.getSource().sendFeedback(() -> Text.translatable("key.inventorysorter.cmd.player-required"), false);
+            commandContext.getSource().sendFeedback(CommandTranslations::playerRequired, false);
             return 0;
         }
         PlayerSortPrevention playerSortPrevention = player.getAttachedOrCreate(PLAYER_SORT_PREVENTION);

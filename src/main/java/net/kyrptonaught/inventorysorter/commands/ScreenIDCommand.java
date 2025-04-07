@@ -26,7 +26,7 @@ public class ScreenIDCommand {
         ServerPlayerEntity player = commandContext.getSource().getPlayer();
 
         if (player == null) {
-            commandContext.getSource().sendFeedback(() -> Text.translatable("key.inventorysorter.cmd.player-required"), false);
+            commandContext.getSource().sendFeedback(CommandTranslations::playerRequired, false);
             return 0;
         }
 
