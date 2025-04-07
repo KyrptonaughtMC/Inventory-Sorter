@@ -87,10 +87,10 @@ public class ConfigScreen {
         });
 
         screenBuilder.getOrCreateCategory(Text.translatable("inventorysorter.config.category.display"))
-                .addEntry(entryBuilder.startBooleanToggle(Text.translatable("inventorysorter.config.showSortButton"), options.showSortButton)
+                .addEntry(entryBuilder.startBooleanToggle(Text.translatable("inventorysorter.config.sortButton"), options.showSortButton)
                         .setDefaultValue(true)
                         .setYesNoTextSupplier(b -> b ? on() : off())
-                        .setTooltip(Text.translatable("inventorysorter.config.showSortButton.tooltip"))
+                        .setTooltip(Text.translatable("inventorysorter.config.sortButton.tooltip"))
                         .setSaveConsumer(b -> options.showSortButton = b)
                         .build())
                 .addEntry(entryBuilder.startBooleanToggle(Text.translatable("key.inventorysorter.config.seperatebtn"), options.separateButton)

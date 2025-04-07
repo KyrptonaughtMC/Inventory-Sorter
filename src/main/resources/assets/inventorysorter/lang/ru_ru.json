@@ -6,7 +6,7 @@
   "inventorysorter.config.category.logic": "Авто",
   "inventorysorter.config.category.activation": "Активация",
   "key.inventorysorter.config.category.denylist": "Чёрный список",
-  "inventorysorter.config.showSortButton": "Отображать кнопку в инвентаре",
+  "inventorysorter.config.sortButton": "Отображать кнопку в инвентаре",
   "inventorysorter.config.doubleClickSort": "Двойной клик по слоту, чтобы отсортировать инвентарь",
   "key.inventorysorter.config.seperatebtn": "Всегда отображать кнопку в инвентаре игрока",
   "key.inventorysorter.config.sortplayer": "Сортировать инвентарь игрока",
