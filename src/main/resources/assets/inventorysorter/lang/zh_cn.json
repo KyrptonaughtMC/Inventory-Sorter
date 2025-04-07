@@ -10,7 +10,7 @@
   "inventorysorter.config.doubleClickSort": "双击物品槽排序",
   "inventorysorter.config.separateButton": "玩家背包总是显示按钮",
   "inventorysorter.config.sortPlayerInventory": "同时排序玩家背包",
-  "key.inventorysorter.config.sorttype": "排序方式",
+  "inventorysorter.config.sortType": "排序方式",
   "key.inventorysorter.config.displaytooltip": "显示排序按钮气泡提示",
   "key.inventorysorter.config.sortmousehighlighted": "排序鼠标指向的库存",
   "key.inventorysorter.config.showdebug": "显示调试文本",

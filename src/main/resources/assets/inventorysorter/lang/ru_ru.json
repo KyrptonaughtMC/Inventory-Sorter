@@ -10,7 +10,7 @@
   "inventorysorter.config.doubleClickSort": "Двойной клик по слоту, чтобы отсортировать инвентарь",
   "inventorysorter.config.separateButton": "Всегда отображать кнопку в инвентаре игрока",
   "inventorysorter.config.sortPlayerInventory": "Сортировать инвентарь игрока",
-  "key.inventorysorter.config.sorttype": "Метод сортировки",
+  "inventorysorter.config.sortType": "Метод сортировки",
   "key.inventorysorter.config.displaytooltip": "Отображать подсказку кнопки сортировки",
   "key.inventorysorter.config.sortmousehighlighted": "Сортировка инвентаря при наведении курсора мыши",
   "key.inventorysorter.config.showdebug": "Показывать отладочный текст",
