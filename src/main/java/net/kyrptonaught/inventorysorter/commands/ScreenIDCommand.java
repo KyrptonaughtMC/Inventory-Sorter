@@ -33,18 +33,18 @@ public class ScreenIDCommand {
         Identifier screenID = InventoryHelper.withTargetedScreenHandler(player, InventoryHelper.ScreenContext::screenId);
 
         if (screenID == null) {
-            commandContext.getSource().sendFeedback(() -> Text.of("No compatible container targeted."), false);
+            commandContext.getSource().sendFeedback(() -> Text.translatable("inventorysorter.cmd.screenid.fail"), false);
             return 0;
         }
 
-        MutableText feedbackText = Text.literal("Click to copy: [").append(screenID.toString()).append("]");
+        MutableText feedbackText = Text.translatable("inventorysorter.cmd.screenid.success", screenID.toString());
 
         /*? if >=1.21.5 {*/
         Text copyableText = feedbackText
                 .styled(style -> style
                         .withColor(Formatting.GREEN)
                         .withClickEvent(new ClickEvent.CopyToClipboard(screenID.toString()))
-                        .withHoverEvent(new HoverEvent.ShowText(Text.of("Click to copy")))
+                        .withHoverEvent(new HoverEvent.ShowText(Text.translatable("inventorysorter.cmd.screenid.copy.hover")))
                 );
         /*?} else {*/
 
@@ -52,7 +52,7 @@ public class ScreenIDCommand {
                 .styled(style -> style
                         .withColor(Formatting.GREEN)
                         .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, screenID.toString()))
-                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.of("Click to copy")))
+                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("inventorysorter.cmd.screenid.copy.hover")))
                 );
         *//*?}*/
 
