@@ -59,8 +59,8 @@ public class SortButtonWidget extends TexturedButtonWidget {
                 compatibility.reload();
                 InventorySorterModClient.syncConfig();
                 SystemToast.add(instance.getToastManager(), SystemToast.Type.PERIODIC_NOTIFICATION,
-                        Text.of("Button hidden from screen"),
-                        Text.of(screenID));
+                        Text.translatable("inventorysorter.sortButton.toast.hide.success.title"),
+                        Text.translatable("inventorysorter.sortButton.toast.hide.success.description", screenID));
             }
         } else {
             InventorySortPacket.sendSortPacket(playerInv);
@@ -113,7 +113,7 @@ public class SortButtonWidget extends TexturedButtonWidget {
             List<OrderedText> lines = new ArrayList<>();
 
             if (GLFW.glfwGetKey(instance.getWindow().getHandle(), GLFW.GLFW_KEY_LEFT_CONTROL) == 1) {
-                lines.add(Text.of("Click to hide button").asOrderedText());
+                lines.add(Text.translatable("inventorysorter.sortButton.tooltip.hide").asOrderedText());
             } else {
                 lines.add(Text.translatable("inventorysorter.sortButton.tooltip.sortType", Text.translatable(getConfig().sortType.getTranslationKey()).formatted(Formatting.BOLD)).asOrderedText());
                 lines.add(Text.translatable("inventorysorter.sortButton.tooltip.help.sortType").formatted(Formatting.DARK_GRAY).asOrderedText());

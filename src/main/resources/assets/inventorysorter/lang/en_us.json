@@ -58,5 +58,8 @@
 
   "inventorysorter.sortButton.tooltip.sortType": "Sort by: %1$s",
   "inventorysorter.sortButton.tooltip.help.sortType": "Scroll to change sorting method",
-  "inventorysorter.sortButton.tooltip.help.hide": "Click while holding CTRL to hide button"
+  "inventorysorter.sortButton.tooltip.help.hide": "Click while holding CTRL to hide button",
+  "inventorysorter.sortButton.tooltip.hide": "Click to Hide This Button",
+  "inventorysorter.sortButton.toast.hide.success.title": "Sort Button hidden",
+  "inventorysorter.sortButton.toast.hide.success.description": "Screen: %1$s"
 }
