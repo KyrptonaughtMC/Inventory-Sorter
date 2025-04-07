@@ -106,6 +106,16 @@ If both this setting and `sortPlayerInventory` are enabled:
 - Only the inventory under the mouse is sorted.
 - If the mouse is not over an inventory area, the keybind will sort both the player inventory and the open container.
 
+Can be changed with the command:
+```
+/invsort sortHighlightedInventory on|off
+```
+
+And you can check the current value with:
+```
+/invsort sortHighlightedInventory
+```
+
 ---
 
 ### `sortPlayerInventory`
@@ -123,6 +133,16 @@ This setting works in combination with `sortHighlightedItem`.
 If both this setting and `sortHighlightedItem` are enabled:
 - Only the inventory under the mouse is sorted.
 - If the mouse is not over an inventory area, the keybind will sort both the player inventory and the open container.
+
+Can be changed with the command:
+```
+/invsort sortPlayerInventory on|off
+```
+
+And you can check the current value with:
+```
+/invsort sortPlayerInventory
+```
 
 ---
 
@@ -173,6 +193,16 @@ This method works for all players as long as the server has the mod installed.
 When **On (`true`)**, double-clicking an empty slot triggers sorting for that inventory.  
 When **Off (`false`)**, double-clicking does nothing.
 
+Can be changed with the command: 
+```
+/invsort doubleClickSort on|off
+```
+
+And you can check the current value with: 
+```
+/invsort doubleClickSort
+```
+
 ---
 
 
@@ -192,7 +222,18 @@ Each entry must be a screen ID, such as:
 minecraft:generic_9x3
 ```
 
-Can be managed with the command: `/invsort nosort add/remove/list` while looking at a container you want to add or remove.
+Can be managed with the command while looking at a container you want to add or remove.
+
+To add or remove a container:
+```
+/invsort nosort add/remove
+```
+
+To check the current list of screens:
+```
+/invsort nosort list
+```
+
 
 The screens added to the nosort list show up in the GUI in the Compatibility Config screen.
 
