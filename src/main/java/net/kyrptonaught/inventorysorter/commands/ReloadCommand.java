@@ -24,7 +24,7 @@ public class ReloadCommand {
             return 0;
         }
         new ReloadConfigPacket().fire(player);
-        commandContext.getSource().sendFeedback(() -> Text.of("Configuration reloaded"), false);
+        commandContext.getSource().sendFeedback(() -> Text.translatable("inventorysorter.cmd.reload.success"), false);
         return 1;
     }
 }
