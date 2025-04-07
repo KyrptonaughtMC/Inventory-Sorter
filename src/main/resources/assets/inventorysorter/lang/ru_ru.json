@@ -26,10 +26,7 @@
   "inventorysorter.sorttype.mod": "Мод",
   "inventorysorter.sorttype.id": "Идентификатор",
 
-  "key.inventorysorter.sortbtn.sort": "Сортировка по: ",
-  "key.inventorysorter.sortbtn.debug": "Нажмите, удерживая левый Ctrl",
-  "key.inventorysorter.sortbtn.debug2": "чтобы внести этот инвентарь в чёрный список",
-
-  "key.inventorysorter.sortbtn.clickhere": "Кликните сюда",
-  "key.inventorysorter.sortbtn.error": "Экран нельзя добавить в чёрный список, или экран уже занесен в чёрный список"
+  "inventorysorter.sortButton.tooltip.sortType": "Сортировка по: %1$s",
+  "inventorysorter.sortButton.tooltip.help.sortType": "Нажмите, удерживая левый Ctrl",
+  "inventorysorter.sortButton.tooltip.help.hide": "чтобы внести этот инвентарь в чёрный список"
 }

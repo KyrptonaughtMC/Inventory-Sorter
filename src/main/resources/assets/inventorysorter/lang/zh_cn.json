@@ -26,10 +26,7 @@
   "inventorysorter.sorttype.mod": "模组",
   "inventorysorter.sorttype.id": "ID",
 
-  "key.inventorysorter.sortbtn.sort": "排序方式：",
-  "key.inventorysorter.sortbtn.debug": "按住左 Control 并点击",
-  "key.inventorysorter.sortbtn.debug2": "将此库存添加到黑名单",
-
-  "key.inventorysorter.sortbtn.clickhere": "点击这里",
-  "key.inventorysorter.sortbtn.error": "界面无法添加到黑名单，或者已经在黑名单中"
+  "inventorysorter.sortButton.tooltip.sortType": "排序方式：%1$s",
+  "inventorysorter.sortButton.tooltip.help.sortType": "按住左 Control 并点击",
+  "inventorysorter.sortButton.tooltip.help.hide": "将此库存添加到黑名单"
 }

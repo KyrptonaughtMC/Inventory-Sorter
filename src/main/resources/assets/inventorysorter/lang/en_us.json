@@ -56,9 +56,7 @@
   "inventorysorter.sorttype.mod": "Mod",
   "inventorysorter.sorttype.id": "Id",
 
-  "key.inventorysorter.sortbtn.sort": "Sort by: ",
-  "key.inventorysorter.sortbtn.debug": "Scroll to change sorting method",
-  "key.inventorysorter.sortbtn.debug2": "Click while holding CTRL to hide button",
-  "key.inventorysorter.sortbtn.clickhere": "Click Here",
-  "key.inventorysorter.sortbtn.error": "Un-deniable screen, or screen is already denied"
+  "inventorysorter.sortButton.tooltip.sortType": "Sort by: %1$s",
+  "inventorysorter.sortButton.tooltip.help.sortType": "Scroll to change sorting method",
+  "inventorysorter.sortButton.tooltip.help.hide": "Click while holding CTRL to hide button"
 }
