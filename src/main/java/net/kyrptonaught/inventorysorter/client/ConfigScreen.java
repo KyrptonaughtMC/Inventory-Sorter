@@ -43,22 +43,28 @@ public class ConfigScreen {
 
 
         for (String screenId : allScreens) {
-            boolean hide = config.hideButtonsForScreens.contains(screenId);
-            boolean prevent = config.preventSortForScreens.contains(screenId);
+            boolean shouldHide = config.hideButtonsForScreens.contains(screenId);
+            boolean shouldPreventSort = config.preventSortForScreens.contains(screenId);
 
             @NotNull BooleanListEntry hideToggle = builder
-                    .startBooleanToggle(Text.translatable("inventorysorter.config.sortButton"), hide)
+                    .startBooleanToggle(Text.translatable("inventorysorter.config.compat.hideButton"), shouldHide)
                     .setYesNoTextSupplier(ConfigScreen::toggleState)
+                    .setTooltip(Text.translatable("inventorysorter.config.compat.hideButton.tooltip", screenId))
                     .setDefaultValue(false)
-                    .setSaveConsumer(newValue -> {
-                        if (newValue) config.disableButtonForScreen(screenId);
-                        else config.enableButtonForScreen(screenId);
+                    .setSaveConsumer(shouldNowHide -> {
+                        if (shouldNowHide) {
+                            config.disableButtonForScreen(screenId);
+                        } else {
+                            config.enableButtonForScreen(screenId);
+                        }
                     })
                     .build();
 
             @NotNull BooleanListEntry preventToggle = builder
-                    .startBooleanToggle(Text.literal("Prevent Sort"), prevent)
+                    .startBooleanToggle(Text.translatable("inventorysorter.config.compat.preventSort"), shouldPreventSort)
+                    .setYesNoTextSupplier(ConfigScreen::toggleState)
                     .setDefaultValue(false)
+                    .setTooltip(Text.translatable("inventorysorter.config.compat.preventSort.tooltip", screenId))
                     .setSaveConsumer(newValue -> {
                         if (newValue) config.disableSortForScreen(screenId);
                         else config.enableSortForScreen(screenId);
