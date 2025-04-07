@@ -11,10 +11,12 @@
   "inventorysorter.config.category.logic": "Logic",
   "inventorysorter.config.category.activation": "Activation",
   "inventorysorter.config.category.compat": "Compatibility",
-  "key.inventorysorter.config.category.compat.remoteurl": "Remote Compatibility Config",
-  "key.inventorysorter.config.compat.remoteurl.reset": "Clear Remote URL",
-  "key.inventorysorter.config.compat.remoteurl": "Remote compatibility config url",
-  "key.inventorysorter.config.compat.remoteurl.tooltip": "The url to a remote config file, which will be downloaded and used for compatibility",
+
+  "inventorysorter.config.compat.heading": "Remote Compatibility Config",
+  "inventorysorter.config.compat.remoteUrl": "Remote compatibility config url",
+  "inventorysorter.config.compat.remoteUrl.reset": "Clear Remote URL",
+  "inventorysorter.config.compat.remoteUrl.tooltip": "The url to a remote config file, which will be downloaded and used for compatibility",
+
   "key.inventorysorter.config.displaysort": "Display button in inventory",
   "key.inventorysorter.config.displaysort.tooltip": "Enable the 'Sort' button in inventories",
   "key.inventorysorter.config.doubleclick": "Double click slot to sort inventory",
