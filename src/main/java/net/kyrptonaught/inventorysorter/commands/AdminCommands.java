@@ -243,7 +243,7 @@ public class AdminCommands {
         config.customCompatibilityListDownloadUrl = url;
         config.save();
         reloadConfig();
-        commandContext.getSource().sendFeedback(() -> Text.of("Remote inventory set"), false);
+        commandContext.getSource().sendFeedback(() -> Text.translatable("inventorysorter.cmd.remote.set.success", url), false);
         return 1;
     }
 
@@ -252,13 +252,13 @@ public class AdminCommands {
         config.customCompatibilityListDownloadUrl = "";
         config.save();
         reloadConfig();
-        commandContext.getSource().sendFeedback(() -> Text.of("Remote inventory cleared"), false);
+        commandContext.getSource().sendFeedback(() -> Text.translatable("inventorysorter.cmd.remote.clear.success"), false);
         return 1;
     }
 
     public static int remoteShow(CommandContext<ServerCommandSource> commandContext) {
         NewConfigOptions config = getConfig();
-        commandContext.getSource().sendFeedback(() -> Text.of("Remote inventory: " + config.customCompatibilityListDownloadUrl), false);
+        commandContext.getSource().sendFeedback(() -> Text.translatable("inventorysorter.cmd.remote.show", config.customCompatibilityListDownloadUrl), false);
         return 1;
     }
 
