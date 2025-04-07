@@ -14,7 +14,6 @@
   "inventorysorter.config.showTooltip": "Afficher l'info-bulle du bouton de tri",
   "inventorysorter.config.sortHovered": "Trie l'inventaire survolé par la souris",
 
-  "key.inventorysorter.config.hidesort": "Masquer les deux boutons de tri",
   "key.inventorysorter.config.nosort": "Afficher uniquement le tri de l'inv du joueur",
   "key.inventorysorter.config.hidetooltip": "Ni l'inventaire ouvert, ni votre inventaire de joueur \nne pourront être triés lorsque cet inventaire sera ouvert",
   "key.inventorysorter.config.nosorttooltip": "Le bouton de tri d'inventaire ouvert ne sera pas visible, \nseulement le joueur lorsque cet inventaire est ouvert",
