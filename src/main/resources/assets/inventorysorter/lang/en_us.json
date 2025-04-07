@@ -35,8 +35,7 @@
   "inventorysorter.config.sortPlayerInventory": "Sort Player Inventory",
   "inventorysorter.config.sortPlayerInventory.tooltip": "Sorting a Remote Inventory Also Sorts the Player's Inventory",
 
-  "inventorysorter.config.sortType": "Sorting Type",
-  "inventorysorter.config.sortType.tooltip": "Type of the Sorting: NAME, CATEGORY, MOD, ID",
+  "inventorysorter.config.sortType": "Sort Type to Use",
 
   "inventorysorter.config.showTooltip": "Display Sort Button Tooltip",
   "inventorysorter.config.showTooltip.tooltip": "The Tooltip Shows the Sorting Type When Hovering Over the Sort Button",
@@ -50,12 +49,13 @@
   "inventorysorter.cmd.sort.notsortable": "This Container Cannot be Sorted",
   "inventorysorter.cmd.sort.error": "Sorting Failed, Please Check the Logs or Report a Bug",
 
-  "key.inventorysorter.cmd.updatesortingtype": "Updated Sorting Type",
+  "inventorysorter.cmd.sorttype.success": "Updated the Sort Type to %1$s",
 
-  "key.inventorysorter.sorttype.name": "Name",
-  "key.inventorysorter.sorttype.category": "Category",
-  "key.inventorysorter.sorttype.mod": "Mod",
-  "key.inventorysorter.sorttype.id": "Id",
+  "inventorysorter.sorttype.name": "Name",
+  "inventorysorter.sorttype.category": "Category",
+  "inventorysorter.sorttype.mod": "Mod",
+  "inventorysorter.sorttype.id": "Id",
+
   "key.inventorysorter.sortbtn.sort": "Sort by: ",
   "key.inventorysorter.sortbtn.debug": "Scroll to change sorting method",
   "key.inventorysorter.sortbtn.debug2": "Click while holding CTRL to hide button",
