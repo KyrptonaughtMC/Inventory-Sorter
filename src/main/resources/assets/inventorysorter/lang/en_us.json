@@ -31,8 +31,9 @@
   "inventorysorter.config.sortPlayerInventory": "Sort Player Inventory",
   "inventorysorter.config.sortPlayerInventory.tooltip": "Sorting a Remote Inventory Also Sorts the Player's Inventory",
 
-  "key.inventorysorter.config.sorttype": "Sorting method",
-  "key.inventorysorter.config.sorttype.tooltip": "Method of sorting, NAME,CATEGORY,MOD,ID",
+  "inventorysorter.config.sortType": "Sorting Type",
+  "inventorysorter.config.sortType.tooltip": "Type of the Sorting: NAME, CATEGORY, MOD, ID",
+
   "key.inventorysorter.config.displaytooltip": "Display Sort Button Tooltip",
   "key.inventorysorter.config.displaytooltip.tooltip": "Display Sort Button Tooltip",
   "key.inventorysorter.config.sortmousehighlighted": "Sorting sorts mouse hovered inventory",

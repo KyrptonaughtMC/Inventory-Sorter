@@ -10,7 +10,7 @@
   "inventorysorter.config.doubleClickSort": "Double clic pour trier l'inventaire",
   "inventorysorter.config.separateButton": "Toujour afficher le bouton pour l'inventaire du joueur",
   "inventorysorter.config.sortPlayerInventory": "Trier tri aussi l'inventaire du joueur",
-  "key.inventorysorter.config.sorttype": "Méthode de tri",
+  "inventorysorter.config.sortType": "Méthode de tri",
   "key.inventorysorter.config.displaytooltip": "Afficher l'info-bulle du bouton de tri",
   "key.inventorysorter.config.sortmousehighlighted": "Trie l'inventaire survolé par la souris",
   "key.inventorysorter.config.showdebug": "Afficher le texte de debug",
