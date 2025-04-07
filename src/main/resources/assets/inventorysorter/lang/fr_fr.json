@@ -13,10 +13,7 @@
   "inventorysorter.config.sortType": "Méthode de tri",
   "inventorysorter.config.showTooltip": "Afficher l'info-bulle du bouton de tri",
   "inventorysorter.config.sortHovered": "Trie l'inventaire survolé par la souris",
-  "key.inventorysorter.config.showdebug": "Afficher le texte de debug",
-  "key.inventorysorter.config.debugtooltip": "L'info-bulle lors du survol d'un bouton de tri \naffichera les instructions pour mettre cet inv sur liste noire",
-  "key.inventorysorter.config.denylistURL": "URL de la liste noire externe",
-  "key.inventorysorter.config.downloadListButton": "Télécharger la liste",
+
   "key.inventorysorter.config.hidesort": "Masquer les deux boutons de tri",
   "key.inventorysorter.config.nosort": "Afficher uniquement le tri de l'inv du joueur",
   "key.inventorysorter.config.hidetooltip": "Ni l'inventaire ouvert, ni votre inventaire de joueur \nne pourront être triés lorsque cet inventaire sera ouvert",
