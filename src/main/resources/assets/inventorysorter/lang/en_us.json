@@ -34,8 +34,9 @@
   "inventorysorter.config.sortType": "Sorting Type",
   "inventorysorter.config.sortType.tooltip": "Type of the Sorting: NAME, CATEGORY, MOD, ID",
 
-  "key.inventorysorter.config.displaytooltip": "Display Sort Button Tooltip",
-  "key.inventorysorter.config.displaytooltip.tooltip": "Display Sort Button Tooltip",
+  "inventorysorter.config.showTooltip": "Display Sort Button Tooltip",
+  "inventorysorter.config.showTooltip.tooltip": "The Tooltip Shows the Sorting Type When Hovering Over the Sort Button",
+
   "key.inventorysorter.config.sortmousehighlighted": "Sorting sorts mouse hovered inventory",
   "key.inventorysorter.config.sortmousehighlighted.tooltip": "Should sort half of open inv highlighted by mouse",
   "key.inventorysorter.config.showdebug": "Show Debug text",

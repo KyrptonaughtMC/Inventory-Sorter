@@ -11,7 +11,7 @@
   "inventorysorter.config.separateButton": "Всегда отображать кнопку в инвентаре игрока",
   "inventorysorter.config.sortPlayerInventory": "Сортировать инвентарь игрока",
   "inventorysorter.config.sortType": "Метод сортировки",
-  "key.inventorysorter.config.displaytooltip": "Отображать подсказку кнопки сортировки",
+  "inventorysorter.config.showTooltip": "Отображать подсказку кнопки сортировки",
   "key.inventorysorter.config.sortmousehighlighted": "Сортировка инвентаря при наведении курсора мыши",
   "key.inventorysorter.config.showdebug": "Показывать отладочный текст",
   "key.inventorysorter.config.debugtooltip": "Всплывающая подсказка при наведении курсора на кнопку сортировки\nбудет содержать инструкцию по внесению этого инвентаря в чёрный список",

@@ -7,5 +7,5 @@
   "inventorysorter.config.separateButton": "Sempre mostrar botão para jogadores inv",
   "inventorysorter.config.sortPlayerInventory": "Ordenar também ordena jogadores inv",
   "inventorysorter.config.sortType": "Ordenar método",
-  "key.inventorysorter.config.displaytooltip": "Exibir dica do botão de ordenação "
+  "inventorysorter.config.showTooltip": "Exibir dica do botão de ordenação "
 }
