@@ -99,10 +99,10 @@ public class ConfigScreen {
                         .setTooltip(Text.translatable("inventorysorter.config.separateButton.tooltip"))
                         .setSaveConsumer(b -> options.separateButton = b)
                         .build())
-                .addEntry(entryBuilder.startBooleanToggle(Text.translatable("key.inventorysorter.config.displaytooltip"), options.showTooltips)
+                .addEntry(entryBuilder.startBooleanToggle(Text.translatable("inventorysorter.config.showTooltip"), options.showTooltips)
                         .setDefaultValue(true)
                         .setYesNoTextSupplier(b -> b ? on() : off())
-                        .setTooltip(Text.translatable("key.inventorysorter.config.displaytooltip.tooltip"))
+                        .setTooltip(Text.translatable("inventorysorter.config.showTooltip.tooltip"))
                         .setSaveConsumer(b -> options.showTooltips = b)
                         .build());
 
