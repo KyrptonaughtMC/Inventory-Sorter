@@ -14,11 +14,9 @@
   "inventorysorter.config.showTooltip": "显示排序按钮气泡提示",
   "inventorysorter.config.sortHovered": "排序鼠标指向的库存",
 
-  "key.inventorysorter.sorting.invalid": "没有看向有效的库存",
-  "key.inventorysorter.sorting.sorted": "库存已排序",
-  "key.inventorysorter.sorting.notsortable": "此库存不可排序",
-  "key.inventorysorter.sorting.failed": "排序库存失败",
-  "key.inventorysorter.sorting.error": "无法排序库存",
+  "inventorysorter.cmd.sort.sorted": "库存已排序",
+  "inventorysorter.cmd.sort.notsortable": "此库存不可排序",
+  "inventorysorter.cmd.sort.error": "无法排序库存",
 
   "key.inventorysorter.cmd.updatesortingtype": "已更新排序类型：",
   "inventorysorter.cmd.doubleClickSort.set": "设置双击排序：",

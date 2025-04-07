@@ -30,7 +30,7 @@ public class SortMeCommand {
         SortSettings settings = player.getAttachedOrCreate(SORT_SETTINGS);
         InventoryHelper.sortInventory(player, true, settings.sortType());
 
-        Text feedBack = Text.translatable("key.inventorysorter.sorting.sorted");
+        Text feedBack = Text.translatable("inventorysorter.cmd.sort.sorted");
         commandContext.getSource().sendFeedback(() -> Text.of(feedBack.getString()), false);
         return 1;
     }
