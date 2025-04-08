@@ -51,6 +51,12 @@ For client-side configuration and UI features, you’ll need:
 
 The mod functions server-side without any client dependencies.
 
+## Translations
+
+Inventory Sorter is available in multiple languages.
+
+If you want to help translate the mod into your language, please check out the [translation guide](https://inventorysorter.meza.gg/translate).
+
 ## Project Status
 
 Inventory Sorter is actively maintained and safe to use in modpacks and multiplayer environments.
