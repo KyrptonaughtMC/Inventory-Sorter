@@ -1,9 +1,9 @@
 "project_id_env": "CROWDIN_PROJECT_ID"
 "api_token_env": "CROWDIN_PERSONAL_TOKEN"
-"base_path": "src/main/resources"
+"base_path": "src/main/resources/assets/inventorysorter/lang"
 "base_url": "https://api.crowdin.com"
 "preserve_hierarchy": true
 
 "files":
-  - source: /assets/inventorysorter/lang/en_us.json
-    translation: /assets/inventorysorter/lang/%locale_with_underscore%.json
+  - source: /en_us.json
+    translation: /%locale_with_underscore%.json
