@@ -56,6 +56,25 @@ tasks.jar {
 	}
 }
 
+tasks.processResources {
+    doLast {
+        val resourcesDir = project.layout.buildDirectory.dir("resources/main")
+        val srcDir = resourcesDir.get().dir("assets/${mod.id}/lang")
+        val destDir = resourcesDir.get().dir("data/${mod.id}/lang")
+
+        if (srcDir.asFile.exists()) {
+            destDir.asFile.mkdirs()
+            copy {
+                from(srcDir)
+                into(destDir)
+            }
+            logger.info("Copied language files from assets/${mod.id}/lang to data/${mod.id}/lang")
+        } else {
+            logger.error("Source language directory not found: ${srcDir.asFile.absolutePath}")
+        }
+    }
+}
+
 publishMods {
     modrinth {
         if (mod.isFabric) {
