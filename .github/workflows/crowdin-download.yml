@@ -7,9 +7,9 @@ permissions:
   pull-requests: write
 
 on:
+  schedule:
+    - cron: '0 */12 * * *' # Every 12 hours
   workflow_dispatch:
-  push:
-    branches: [ beta ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}

@@ -5,8 +5,8 @@
 "preserve_hierarchy": true
 
 "files":
-  - source: /assets/inventorysorter/lang/en_US.json
+  - source: /assets/inventorysorter/lang/en_us.json
     translation: /assets/inventorysorter/lang/%locale_with_underscore%.json
 
-  - source: /assets/inventorysorter/lang/en_US.json
+  - source: /assets/inventorysorter/lang/en_us.json
     translation: /data/inventorysorter/lang/%locale_with_underscore%.json
