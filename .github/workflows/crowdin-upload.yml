@@ -9,8 +9,8 @@ permissions:
 on:
   workflow_dispatch:
   push:
-    paths:
-      - "src/main/resources/assets/inventorysorter/lang/**"
+#    paths:
+#      - "src/main/resources/assets/inventorysorter/lang/**"
     branches: [ beta ]
 
 jobs:
