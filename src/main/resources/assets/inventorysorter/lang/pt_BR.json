@@ -49,7 +49,7 @@
   "inventorysorter.cmd.hideButton.list": "Sort Buttons are hidden for: %1$s",
   "inventorysorter.cmd.remote.set.success": "Remote configuration is now set to: %1$s",
   "inventorysorter.cmd.remote.clear.success": "Remote configuration URL has been cleared",
-  "inventorysorter.cmd.remote.show": "Current remote configuration URL: %s",
+  "inventorysorter.cmd.remote.show": "Current remote configuration URL: %1$s",
   "inventorysorter.cmd.reload.success": "Configuration reloaded",
   "inventorysorter.cmd.screenid.fail": "Targeted container doesn't have a compatible screen",
   "inventorysorter.cmd.screenid.success": "Click to copy [%1$s] to clipboard",
