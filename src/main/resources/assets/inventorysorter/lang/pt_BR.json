@@ -1,0 +1,11 @@
+{
+  "inventorysorter.key.category": "Ordenação do inventário",
+  "inventorysorter.key.sort": "Ordenar inventário",
+  "inventorysorter.config.category.display": "Exibir",
+  "inventorysorter.config.category.logic": "Logica",
+  "inventorysorter.config.sortButton": "Botão de exibição no inventário",
+  "inventorysorter.config.separateButton": "Sempre mostrar botão para jogadores inv",
+  "inventorysorter.config.sortPlayerInventory": "Ordenar também ordena jogadores inv",
+  "inventorysorter.config.sortType": "Ordenar método",
+  "inventorysorter.config.showTooltip": "Exibir dica do botão de ordenação "
+}

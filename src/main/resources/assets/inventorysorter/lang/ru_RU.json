@@ -1,0 +1,31 @@
+{
+  "inventorysorter.config.screen.title": "Настройки сортировки инвентаря",
+  "inventorysorter.key.category": "Сортировка инвентаря",
+  "inventorysorter.key.sort": "Сортировать инвентарь",
+  "inventorysorter.config.category.display": "Отображать",
+  "inventorysorter.config.category.logic": "Авто",
+  "inventorysorter.config.category.activation": "Активация",
+  "inventorysorter.config.sortButton": "Отображать кнопку в инвентаре",
+  "inventorysorter.config.doubleClickSort": "Двойной клик по слоту, чтобы отсортировать инвентарь",
+  "inventorysorter.config.separateButton": "Всегда отображать кнопку в инвентаре игрока",
+  "inventorysorter.config.sortPlayerInventory": "Сортировать инвентарь игрока",
+  "inventorysorter.config.sortType": "Метод сортировки",
+  "inventorysorter.config.showTooltip": "Отображать подсказку кнопки сортировки",
+  "inventorysorter.config.sortHovered": "Сортировка инвентаря при наведении курсора мыши",
+
+  "inventorysorter.cmd.sort.sorted": "Отсортированный инвентарь",
+  "inventorysorter.cmd.sort.notsortable": "Этот инвентарь не поддается сортировке",
+  "inventorysorter.cmd.sort.error": "Ошибка отсортировки инвентаря",
+
+  "inventorysorter.cmd.sorttype.success": "Обновлённый тип сортировки",
+  "inventorysorter.cmd.doubleClickSort.set": "Установить слот двойной клик, чтобы сортировать %1$s",
+
+  "inventorysorter.sorttype.name": "Имя",
+  "inventorysorter.sorttype.category": "Категория",
+  "inventorysorter.sorttype.mod": "Мод",
+  "inventorysorter.sorttype.id": "Идентификатор",
+
+  "inventorysorter.sortButton.tooltip.sortType": "Сортировка по: %1$s",
+  "inventorysorter.sortButton.tooltip.help.sortType": "Нажмите, удерживая левый Ctrl",
+  "inventorysorter.sortButton.tooltip.help.hide": "чтобы внести этот инвентарь в чёрный список"
+}

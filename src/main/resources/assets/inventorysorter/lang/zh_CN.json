@@ -1,0 +1,31 @@
+{
+  "inventorysorter.config.screen.title": "库存排序配置",
+  "inventorysorter.key.category": "库存排序",
+  "inventorysorter.key.sort": "排序库存",
+  "inventorysorter.config.category.display": "显示",
+  "inventorysorter.config.category.logic": "逻辑",
+  "inventorysorter.config.category.activation": "触发",
+  "inventorysorter.config.sortButton": "在库存中显示按钮",
+  "inventorysorter.config.doubleClickSort": "双击物品槽排序",
+  "inventorysorter.config.separateButton": "玩家背包总是显示按钮",
+  "inventorysorter.config.sortPlayerInventory": "同时排序玩家背包",
+  "inventorysorter.config.sortType": "排序方式",
+  "inventorysorter.config.showTooltip": "显示排序按钮气泡提示",
+  "inventorysorter.config.sortHovered": "排序鼠标指向的库存",
+
+  "inventorysorter.cmd.sort.sorted": "库存已排序",
+  "inventorysorter.cmd.sort.notsortable": "此库存不可排序",
+  "inventorysorter.cmd.sort.error": "无法排序库存",
+
+  "inventorysorter.cmd.sorttype.success": "已更新排序类型：",
+  "inventorysorter.cmd.doubleClickSort.set": "设置双击排序：",
+
+  "inventorysorter.sorttype.name": "名称",
+  "inventorysorter.sorttype.category": "分类",
+  "inventorysorter.sorttype.mod": "模组",
+  "inventorysorter.sorttype.id": "ID",
+
+  "inventorysorter.sortButton.tooltip.sortType": "排序方式：%1$s",
+  "inventorysorter.sortButton.tooltip.help.sortType": "按住左 Control 并点击",
+  "inventorysorter.sortButton.tooltip.help.hide": "将此库存添加到黑名单"
+}

@@ -1,0 +1,14 @@
+{
+  "inventorysorter.key.category": "Inventory Sorter",
+  "inventorysorter.key.sort": "Сортувати інвентар",
+  "inventorysorter.config.category.display": "Відображати",
+  "inventorysorter.config.category.logic": "Авто",
+  "inventorysorter.config.category.activation": "Активація",
+  "inventorysorter.config.sortButton": "Відображати кнопку в інвентарі",
+  "inventorysorter.config.doubleClickSort": "Подвійний клік по слоту, щоб відсортувати інвентар",
+  "inventorysorter.config.separateButton": "Завжди відображати кнопку в інвентарі гравця",
+  "inventorysorter.config.sortPlayerInventory": "Сортувати інвентар гравця",
+  "inventorysorter.config.sortType": "Метод сортування",
+  "inventorysorter.config.showTooltip": "Відображати підказку кнопки сортування",
+  "inventorysorter.config.sortHovered": "Сортування інвентарю при наведенні курсору миші"
+}

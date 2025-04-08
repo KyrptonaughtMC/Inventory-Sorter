@@ -1,0 +1,31 @@
+{
+  "inventorysorter.config.screen.title": "Configuration d'Inventory Sorter",
+  "inventorysorter.key.category": "Inventory Sorter",
+  "inventorysorter.key.sort": "Trier l'inventaire",
+  "inventorysorter.config.category.display": "Affichage",
+  "inventorysorter.config.category.logic": "Logique",
+  "inventorysorter.config.category.activation": "Activation",
+  "inventorysorter.config.sortButton": "Affichage du bouton dans l'inventaire",
+  "inventorysorter.config.doubleClickSort": "Double clic pour trier l'inventaire",
+  "inventorysorter.config.separateButton": "Toujour afficher le bouton pour l'inventaire du joueur",
+  "inventorysorter.config.sortPlayerInventory": "Trier tri aussi l'inventaire du joueur",
+  "inventorysorter.config.sortType": "Méthode de tri",
+  "inventorysorter.config.showTooltip": "Afficher l'info-bulle du bouton de tri",
+  "inventorysorter.config.sortHovered": "Trie l'inventaire survolé par la souris",
+
+  "inventorysorter.cmd.sort.sorted": "Inventaire trié",
+  "inventorysorter.cmd.sort.notsortable": "Cet inventaire n'est pas triable",
+  "inventorysorter.cmd.sort.error": "Impossible de trier l'inventaire",
+
+  "inventorysorter.cmd.sorttype.success": "Type de tri mis à jour",
+  "inventorysorter.cmd.doubleClickSort.set": "Définir le tri du double clic sur %1$s",
+
+  "inventorysorter.sorttype.name": "Nom",
+  "inventorysorter.sorttype.category": "Catégorie",
+  "inventorysorter.sorttype.mod": "Mod",
+  "inventorysorter.sorttype.id": "Id",
+
+  "inventorysorter.sortButton.tooltip.sortType": "Trier par: %1$s",
+  "inventorysorter.sortButton.tooltip.help.sortType": "Cliquez tout en maintenant CTRL",
+  "inventorysorter.sortButton.tooltip.help.hide": "pour mettre cet inventaire sur liste noire"
+}

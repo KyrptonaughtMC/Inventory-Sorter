@@ -67,6 +67,7 @@ tasks.processResources {
             copy {
                 from(srcDir)
                 into(destDir)
+                rename { filename -> filename.lowercase() }
             }
             logger.info("Copied language files from assets/${mod.id}/lang to data/${mod.id}/lang")
         } else {
