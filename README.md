@@ -1,8 +1,8 @@
-# Inventory Sorter
+# Inventory Sorter [![Crowdin](https://badges.crowdin.net/inventory-sorter/localized.svg)](https://crowdin.com/project/inventory-sorter)
+
 
 [![Modrinth](https://img.shields.io/modrinth/dt/inventory-sorting?logo=modrinth&label=Modrinth)](https://modrinth.com/mod/inventory-sorting)
 [![CurseForge](https://img.shields.io/curseforge/dt/325471?logo=curseforge&label=CurseForge)](https://www.curseforge.com/minecraft/mc-mods/inventory-sorting)
-
 
 Inventory Sorter is a lightweight mod that keeps your inventory clean with minimal effort.  
 It’s used by millions of players across Modrinth and CurseForge.

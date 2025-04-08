@@ -3,6 +3,22 @@
 Inventory Sorter supports multiple languages thanks to community contributions.  
 If you'd like to help bring the mod to more players around the world, we’d love your help.
 
+:::info
+**👇 Current Progress**  
+[![Translation Status](https://badges.crowdin.net/inventory-sorter/localized.svg)](https://crowdin.com/project/inventory-sorter)
+
+We're just getting started. Your contributions can make a huge impact.
+
+
+### Translate a little, or a lot.
+
+No coding. No setup. Just hop in, pick your language, and help make things clearer, smoother, and more local-friendly.  
+Every string counts.
+
+👉 [Start Translating on Crowdin](https://crowdin.com/project/inventory-sorter)
+
+:::
+
 ## How to Contribute
 
 We use [Crowdin](https://crowdin.com/project/inventory-sorter) to manage translations.  
