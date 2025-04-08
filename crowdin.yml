@@ -5,5 +5,5 @@
 "preserve_hierarchy": true
 
 "files":
-  - source: /en_us.json
+  - source: /en_US.json
     translation: /%locale_with_underscore%.json
