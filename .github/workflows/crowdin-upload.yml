@@ -7,7 +7,7 @@ permissions:
   pull-requests: write
 
 on:
-  wokflow_dispatch:
+  workflow_dispatch:
   push:
     paths:
       - "src/main/resources/assets/inventorysorter/lang/**"
