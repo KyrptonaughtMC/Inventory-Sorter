@@ -68,6 +68,13 @@ If you're not sure how something should be translated—or want to ask about con
 You can also open a discussion on [Cowdin](https://crowdin.com/project/inventory-sorter/discussions) if you need clarification.
 :::
 
+## More help
+
+Crowdin can be a bit overwhelming at first.  
+Here's an in-depth video guide on how to use Crowdin for Inventory Sorter translations
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/qTEag3J1ebY?si=00gMsNZHvMwVTMRb&amp;start=7752" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ## Thank You!
 
 Inventory Sorter is used by players around the world. Your translations make it more accessible for everyone.
