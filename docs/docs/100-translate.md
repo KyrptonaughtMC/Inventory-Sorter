@@ -65,7 +65,7 @@ There are screenshots of the in-game text in Crowdin to help you understand wher
 
 :::tip
 If you're not sure how something should be translated—or want to ask about context—Crowdin has built-in comment threads per string.  
-You can also open a discussion on [Cowdin](https://crowdin.com/project/inventory-sorter/discussions) if you need clarification.
+You can also open a discussion on [Crowdin](https://crowdin.com/project/inventory-sorter/discussions) if you need clarification.
 :::
 
 ## More help
