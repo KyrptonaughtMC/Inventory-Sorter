@@ -11,7 +11,6 @@ on:
   push:
     paths:
       - "src/main/resources/assets/inventorysorter/lang/en_US.json"
-    branches: [ beta ]
 
 jobs:
   crowdin:

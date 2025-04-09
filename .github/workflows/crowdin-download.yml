@@ -7,6 +7,9 @@ permissions:
   pull-requests: write
 
 on:
+  push:
+    branches:
+      - beta
   schedule:
     - cron: '0 */12 * * *' # Every 12 hours
   workflow_dispatch:
