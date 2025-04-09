@@ -156,5 +156,73 @@ That’s fine. Inventory Sorter handles this safely, you don’t need to separat
 If a feature doesn't seem to work, it may be disabled in the configuration.
 See the [Configuration][configuration] section for more information.
 
+---
+
+## Sorting Behavior Reference
+
+Inventory Sorter offers multiple ways to sort your inventory. The behavior depends on which method you use and how the following settings are configured:
+
+- `sortPlayerInventory`: Whether sorting actions also affect your player inventory.
+- `sortHighlightedItem`: Whether sorting is limited to the inventory under your mouse cursor.
+- `enableDoubleClickSort`: Whether double-clicking an empty slot triggers sorting.
+
+### Sort Button
+
+Sort buttons are displayed next to supported inventories. Each button always sorts the inventory it is visually attached to. The configuration settings determine what additional inventories are affected.
+
+| Button Target       | `sortPlayerInventory` | Sorted Inventories |
+|---------------------|-----------------------|--------------------|
+| Player Inventory    | `true` or `false`     | Player only        |
+| Container Inventory | `false`               | Container only     |
+| Container Inventory | `true`                | Container + Player |
+
+The `sortHighlightedItem` setting has no effect when using sort buttons.
+
+If `separateButton = false`, only one button is shown. When this button belongs to the container, it may sort both inventories depending on the above table.  
+If `separateButton = true`, you will see one button for each inventory.
+
+### Keybind
+
+When using the sort keybind, behavior depends on what inventory (if any) is under your mouse.
+
+| Mouse Over          | `sortPlayerInventory` | `sortHighlightedItem` | Sorted Inventories |
+|---------------------|-----------------------|-----------------------|--------------------|
+| Container Inventory | `false`               | `false`               | Container only     |
+| Container Inventory | `true`                | `false`               | Container + Player |
+| Container Inventory | Any                   | `true`                | Container only     |
+| Player Inventory    | `false`               | `false`               | Container + Player |
+| Player Inventory    | `true`                | `false`               | Container + Player |
+| Player Inventory    | Any                   | `true`                | Player only        |
+| Empty space         | `false`               | `false`               | Container only     |
+| Empty space         | `true`                | `false`               | Container + Player |
+| Empty space         | Any                   | `true`                | Container + Player |
+
+If no container is open and the keybind is used, the player inventory is always sorted.
+
+### Double-Click
+
+Double-clicking on an empty slot will attempt to sort the inventory, but only if `enableDoubleClickSort = true`.
+
+| Mouse Over          | `sortPlayerInventory` | `sortHighlightedItem` | Sorted Inventories         |
+|---------------------|-----------------------|-----------------------|----------------------------|
+| Container Inventory | `false`               | `false`               | Container only             |
+| Container Inventory | `true`                | `false`               | Container + Player         |
+| Container Inventory | Any                   | `true`                | Container only             |
+| Player Inventory    | `false`               | `false`               | Container + Player         |
+| Player Inventory    | `true`                | `false`               | Container + Player         |
+| Player Inventory    | Any                   | `true`                | Player only                |
+
+### Known UX Edge Cases
+
+There are a few common situations where user intent may not match what actually happens.
+
+- If `separateButton = false` and `sortPlayerInventory = true`, pressing the container’s button will also sort the player inventory.
+- If `separateButton = false` and `sortPlayerInventory = false`, there is no visible way to sort the player inventory unless a keybind is pressed.
+- If `enableDoubleClickSort = false`, double-clicking will never trigger sorting, even if `sortHighlightedItem = true`.
+- The sort keybind is always available when the client mod is installed. It acts as a fallback to manually sort the player inventory if no other method is enabled.
+- The `/invsort sort` and `/invsort sortme` commands are always available, regardless of the client mod. They can be used to sort the player inventory or any targeted container.
+
+
+
 [server-installation]: /getting-started#server-installation
 [configuration]: /configuration
