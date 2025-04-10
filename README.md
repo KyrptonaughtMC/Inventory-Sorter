@@ -7,7 +7,7 @@
 Inventory Sorter is a lightweight mod that keeps your inventory clean with minimal effort.  
 It’s used by millions of players across Modrinth and CurseForge.
 
-Designed to run server-side, it works out of the box—even with **vanilla clients**, making it perfect 
+Designed to run server-side, it works out of the box, even with **vanilla clients**, making it perfect 
 for modpacks, multiplayer servers, and anyone who wants frictionless sorting without needing client-side mods.
 
 It also works perfectly in **single-player**, since Minecraft runs an integrated server behind the scenes.
