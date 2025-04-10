@@ -12,7 +12,6 @@
   "inventorysorter.config.category.activation": "Activation",
   "inventorysorter.config.category.compat": "Compatibility",
 
-  "inventorysorter.config.compat.heading": "Remote Compatibility Configuration",
   "inventorysorter.config.compat.remoteUrl": "Remote Compatibility Configuration URL",
   "inventorysorter.config.compat.remoteUrl.reset": "Clear Remote URL",
   "inventorysorter.config.compat.remoteUrl.tooltip": "The url to a remote config file, which will be downloaded and used for compatibility",
