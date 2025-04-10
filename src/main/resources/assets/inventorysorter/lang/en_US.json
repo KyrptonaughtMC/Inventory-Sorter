@@ -5,6 +5,8 @@
 
   "inventorysorter.toggle.enabled": "On",
   "inventorysorter.toggle.disabled": "Off",
+  "inventorysorter.toggle.yes": "Yes",
+  "inventorysorter.toggle.no": "No",
 
   "inventorysorter.config.screen.title": "Inventory Sorter Settings",
   "inventorysorter.config.category.display": "Display",
@@ -15,12 +17,11 @@
   "inventorysorter.config.compat.remoteUrl": "Remote Compatibility Configuration URL",
   "inventorysorter.config.compat.remoteUrl.reset": "Clear Remote URL",
   "inventorysorter.config.compat.remoteUrl.tooltip": "The url to a remote config file, which will be downloaded and used for compatibility",
-  "inventorysorter.config.compat.hideButton": "Hide Sort Button",
-  "inventorysorter.config.compat.hideButton.tooltip": "Hide the Sort Button in %s",
+  "inventorysorter.config.compat.hideButton.tooltip": "Turning this off will disable the sort button in all in %s",
   "inventorysorter.config.compat.preventSort": "Prevent Sort",
   "inventorysorter.config.compat.preventSort.tooltip": "Prevent Sorting of %s",
 
-  "inventorysorter.config.sortButton": "Display Sort Button",
+  "inventorysorter.config.sortButton": "Sort Button",
   "inventorysorter.config.sortButton.tooltip": "Turning this off will disable the sort button in all inventories",
 
   "inventorysorter.config.doubleClickSort": "Double-Click to Sort",
@@ -28,7 +29,7 @@
   "inventorysorter.cmd.doubleClickSort.set": "Changed Double-Click sort to %s",
   "inventorysorter.cmd.doubleClickSort.get": "Double-Click sort is currently %s",
 
-  "inventorysorter.config.separateButton": "Separate Sort Button in Player Inventory",
+  "inventorysorter.config.separateButton": "Sort Button in Player Inventory",
   "inventorysorter.config.separateButton.tooltip": "Display a separate sort button in the player's inventory",
 
   "inventorysorter.config.sortPlayerInventory": "Sort Player Inventory",
@@ -38,13 +39,19 @@
 
   "inventorysorter.config.sortType": "Sort Type to Use",
 
-  "inventorysorter.config.showTooltip": "Display Sort Button Tooltip",
+  "inventorysorter.config.showTooltip": "Sort Button Tooltip",
   "inventorysorter.config.showTooltip.tooltip": "The tooltip shows the sort type when hovering over the sort button",
 
   "inventorysorter.config.sortHovered": "Only Sort the Inventory Under the Mouse",
   "inventorysorter.config.sortHovered.tooltip": "Only sort the inventory under the mouse when using the keybind or double-click sort",
   "inventorysorter.cmd.sortHovered.set": "Only sort the inventory under the mouse is now %s",
   "inventorysorter.cmd.sortHovered.get": "Only sort the inventory under the mouse is currently %s",
+
+  "inventorysorter.config.category.support": "Support",
+  "inventorysorter.config.support.description1": "Thank you for using this mod \uD83E\uDDE1  \nMaintaining it takes time, coffee, and a bit of magic dust.\n\nIf you'd like to support future updates — or just want your name in lights — consider becoming a sponsor.",
+  "inventorysorter.config.support.description2": "Also helps me justify to my lizard doggo plushie why I'm still at the keyboard at 2am.",
+  "inventorysorter.config.support.cta": "Click here to support",
+  "inventorysorter.config.support.list": "Sponsors",
 
   "inventorysorter.cmd.player-required": "This command can only be run by a player",
 

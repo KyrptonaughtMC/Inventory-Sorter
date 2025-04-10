@@ -30,8 +30,20 @@ public class ConfigScreen {
         return Text.translatable("inventorysorter.toggle.disabled").formatted(Formatting.RED);
     }
 
+    private static Text yes() {
+        return Text.translatable("inventorysorter.toggle.yes").formatted(Formatting.GREEN);
+    }
+
+    private static Text no() {
+        return Text.translatable("inventorysorter.toggle.no").formatted(Formatting.RED);
+    }
+
     private static Text toggleState(boolean state) {
         return state ? on() : off();
+    }
+
+    private static Text toggleYesNoState(boolean state) {
+        return state ? yes() : no();
     }
 
     private static List<SubCategoryListEntry> buildCompatEditor(ConfigEntryBuilder builder, NewConfigOptions config) {
@@ -46,10 +58,10 @@ public class ConfigScreen {
             boolean shouldPreventSort = config.preventSortForScreens.contains(screenId);
 
             @NotNull BooleanListEntry hideToggle = builder
-                    .startBooleanToggle(Text.translatable("inventorysorter.config.compat.hideButton"), shouldHide)
+                    .startBooleanToggle(Text.translatable("inventorysorter.config.sortButton"), !shouldHide)
                     .setYesNoTextSupplier(ConfigScreen::toggleState)
                     .setTooltip(Text.translatable("inventorysorter.config.compat.hideButton.tooltip", screenId))
-                    .setDefaultValue(false)
+                    .setDefaultValue(true)
                     .setSaveConsumer(shouldNowHide -> {
                         if (shouldNowHide) {
                             config.disableButtonForScreen(screenId);
@@ -61,7 +73,7 @@ public class ConfigScreen {
 
             @NotNull BooleanListEntry preventToggle = builder
                     .startBooleanToggle(Text.translatable("inventorysorter.config.compat.preventSort"), shouldPreventSort)
-                    .setYesNoTextSupplier(ConfigScreen::toggleState)
+                    .setYesNoTextSupplier(ConfigScreen::toggleYesNoState)
                     .setDefaultValue(false)
                     .setTooltip(Text.translatable("inventorysorter.config.compat.preventSort.tooltip", screenId))
                     .setSaveConsumer(newValue -> {
