@@ -8,6 +8,7 @@
   - source: /en_us.json
     translation: /%locale_with_underscore%.json
     languages_mapping:
+      locale_with_underscore:
         en_US: en_us
         de_DE: de_de
         fr_FR: fr_fr
