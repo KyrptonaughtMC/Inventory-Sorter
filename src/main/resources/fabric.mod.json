@@ -9,8 +9,16 @@
     "kyrptonaught"
   ],
   "contact": {
-    "homepage": "https://www.curseforge.com/minecraft/mc-mods/inventory-sorting",
-    "sources": "https://github.com/KyrptonaughtMC/Inventory-Sorter"
+    "homepage": "https://inventorysorter.meza.gg",
+    "sources": "https://github.com/KyrptonaughtMC/Inventory-Sorter",
+    "issues": "https://github.com/KyrptonaughtMC/Inventory-Sorter/issues"
+  },
+  "custom": {
+    "modmenu": {
+      "links": {
+        "${id}.discord": "https://discord.gg/dvg3tcQCPW"
+      }
+    }
   },
   "license": "MIT",
   "icon": "assets/${id}/icon.png",

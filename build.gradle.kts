@@ -1,5 +1,4 @@
 import gg.meza.stonecraft.mod
-import me.modmuss50.mpp.ReleaseType
 
 plugins {
     id("gg.meza.stonecraft")
@@ -22,8 +21,10 @@ modSettings {
 }
 
 repositories {
+    mavenLocal()
 	maven("https://maven.terraformersmc.com/releases")
     maven("https://maven.shedaniel.me")
+    maven("https://maven.meza.gg/releases")
     maven("https://maven.nucleoid.xyz")
 }
 
@@ -36,6 +37,7 @@ dependencies {
     include("me.lucko:fabric-permissions-api:${mod.prop("fabric_permissions_api_version")}")
 
     include(modImplementation("xyz.nucleoid:server-translations-api:${mod.prop("server_translations_api_version")}")!!)
+    include(modImplementation("gg.meza:supporters-core-fabric:${mod.prop("supporters_core_version")}")!!)
 
     modApi("com.terraformersmc:modmenu:${mod.prop("modmenu_version")}")
     modApi("me.shedaniel.cloth:cloth-config-fabric:${mod.prop("cloth_version")}") {
