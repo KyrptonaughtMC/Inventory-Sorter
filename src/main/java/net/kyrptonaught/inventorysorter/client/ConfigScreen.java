@@ -68,11 +68,11 @@ public class ConfigScreen {
                     .setYesNoTextSupplier(ConfigScreen::toggleState)
                     .setTooltip(Text.translatable("inventorysorter.config.compat.hideButton.tooltip", screenId))
                     .setDefaultValue(true)
-                    .setSaveConsumer(shouldNowHide -> {
-                        if (shouldNowHide) {
-                            config.disableButtonForScreen(screenId);
-                        } else {
+                    .setSaveConsumer(shouldShow -> {
+                        if (shouldShow) {
                             config.enableButtonForScreen(screenId);
+                        } else {
+                            config.disableButtonForScreen(screenId);
                         }
                     })
                     .build();
