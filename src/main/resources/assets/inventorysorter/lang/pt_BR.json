@@ -14,7 +14,7 @@
   "inventorysorter.config.compat.remoteUrl": "Remote Compatibility Configuration URL",
   "inventorysorter.config.compat.remoteUrl.reset": "Clear Remote URL",
   "inventorysorter.config.compat.remoteUrl.tooltip": "The url to a remote config file, which will be downloaded and used for compatibility",
-  "inventorysorter.config.compat.hideButton.tooltip": "Turning this off will disable the sort button in all in %s",
+  "inventorysorter.config.compat.hideButton.tooltip": "Turning this off will disable the sort button in %s",
   "inventorysorter.config.compat.preventSort": "Prevent Sort",
   "inventorysorter.config.compat.preventSort.tooltip": "Prevent Sorting of %s",
   "inventorysorter.config.sortButton": "Sort Button",
