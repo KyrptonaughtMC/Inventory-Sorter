@@ -1,8 +1,8 @@
 package net.kyrptonaught.inventorysorter.client;
 
 /*? if <1.21.5 {*/
-import com.mojang.blaze3d.systems.RenderSystem;
-/*?}*/
+/*import com.mojang.blaze3d.systems.RenderSystem;
+*//*?}*/
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.kyrptonaught.inventorysorter.InventoryHelper;
@@ -11,8 +11,8 @@ import net.kyrptonaught.inventorysorter.SortType;
 import net.kyrptonaught.inventorysorter.network.InventorySortPacket;
 import net.minecraft.client.MinecraftClient;
 /*? if <1.21.5 {*/
-import net.minecraft.client.gl.ShaderProgramKeys;
-/*?}*/
+/*import net.minecraft.client.gl.ShaderProgramKeys;
+*//*?}*/
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ButtonTextures;
@@ -69,10 +69,11 @@ public class SortButtonWidget extends TexturedButtonWidget {
 
     @Override
     public void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+        if (!this.visible) return;
         /*? if <1.21.5 {*/
-        RenderSystem.setShader(ShaderProgramKeys.POSITION);
+        /*RenderSystem.setShader(ShaderProgramKeys.POSITION);
         RenderSystem.enableDepthTest();
-        /*?}*/
+        *//*?}*/
         context.getMatrices().push();
         context.getMatrices().scale(.5f, .5f, 1);
         context.getMatrices().translate(getX(), getY(), 0);

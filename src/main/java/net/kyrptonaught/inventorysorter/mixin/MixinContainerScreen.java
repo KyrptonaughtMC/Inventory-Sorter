@@ -14,6 +14,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.registry.Registries;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
@@ -26,6 +27,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import static net.kyrptonaught.inventorysorter.InventorySorterMod.compatibility;
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.getConfig;
 
 @Environment(EnvType.CLIENT)
@@ -71,7 +73,6 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
             invsort$PlayerSortBtn.mouseScrolled(mouseX, mouseY, verticalAmount, horizontalAmount);
         }
     }
-
 
     @Inject(method = "init", at = @At("TAIL"))
     private void invsort$init(CallbackInfo callbackinfo) {
@@ -131,8 +132,18 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
 
     @Inject(method = "render", at = @At("TAIL"))
     private void invsort$render(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        if (invsort$SortBtn != null)
+        if (invsort$SortBtn != null) {
             invsort$SortBtn.setX(this.x + this.backgroundWidth - 20);
+
+            try {
+                boolean shouldShow = compatibility.shouldShowSortButton(Registries.SCREEN_HANDLER.getId(client.player.currentScreenHandler.getType()));
+                if (!shouldShow) {
+                    invsort$SortBtn.visible = false;
+                }
+            } catch (UnsupportedOperationException e) {
+                InventorySorterMod.LOGGER.debug("Unable to get screen ID for sort button visibility check", e);
+            }
+        }
     }
 
     @Override
