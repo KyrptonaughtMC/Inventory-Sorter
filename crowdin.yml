@@ -5,5 +5,13 @@
 "preserve_hierarchy": true
 
 "files":
-  - source: /en_US.json
+  - source: /en_us.json
     translation: /%locale_with_underscore%.json
+    languages_mapping:
+        en_US: en_us
+        de_DE: de_de
+        fr_FR: fr_fr
+        pt_BR: pt_br
+        ru_RU: ru_ru
+        uk_UA: uk_ua
+        zh_CN: zh_cn

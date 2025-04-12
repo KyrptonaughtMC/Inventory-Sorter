@@ -4,6 +4,7 @@ import gg.meza.SupportersCore;
 
 import gg.meza.supporters.Supporters;
 import gg.meza.supporters.TierEntry;
+import gg.meza.supporters.clothconfig.SupportCategory;
 import gg.meza.supporters.clothconfig.SupporterListEntry;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
@@ -20,15 +21,12 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
-import java.net.URI;
 import java.util.*;
 import java.util.List;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.*;
 
 public class ConfigScreen {
-
-    private static final URI SPONSOR_URL = URI.create("https://ko-fi.com/meza");
 
     private static Text on() {
         return Text.translatable("inventorysorter.toggle.enabled").formatted(Formatting.GREEN);
@@ -98,36 +96,6 @@ public class ConfigScreen {
         }
 
         return entries;
-    }
-
-    private static void renderSupporters(ConfigCategory supportCategory, ConfigEntryBuilder entryBuilder) {
-        List<TierEntry> tiers = SupportersCore.getTiers();
-
-        Text newSupportersText = SupportersCore.getNewSupportersText();
-        if (!newSupportersText.getString().isBlank()) {
-            supportCategory.addEntry(entryBuilder
-                    .startTextDescription(Text.translatable(MOD_ID + ".config.support.newcomers"))
-                    .build());
-            supportCategory.addEntry(new SupporterListEntry(newSupportersText));
-            supportCategory.addEntry(entryBuilder.startTextDescription(Text.literal(" ")).build());
-
-        }
-        if (!tiers.isEmpty()) {
-            supportCategory.addEntry(entryBuilder.startTextDescription(Text.translatable("inventorysorter.config.support.list")).build());
-        }
-        for (TierEntry tier : tiers) {
-            String title = tier.emoji != null ? tier.emoji + " " + tier.name : tier.name;
-
-            SubCategoryBuilder subCategory = entryBuilder.startSubCategory(Text.literal(title))
-                    .setExpanded(true);
-
-            subCategory.add(new SupporterListEntry(Supporters.asRainbowList(tier.members.stream().map(m -> m.name).toList())));
-            supportCategory.addEntry(subCategory.build());
-        }
-
-        if (tiers.isEmpty()) {
-            supportCategory.addEntry(entryBuilder.startTextDescription(Text.translatable(MOD_ID + ".config.support.empty")).build());
-        }
     }
 
     public static Screen getConfigeScreen(Screen parent) {
@@ -217,24 +185,7 @@ public class ConfigScreen {
             compatCategory.addEntry(entry);
         }
 
-        ConfigCategory supportCategory = screenBuilder.getOrCreateCategory(Text.literal("\uD83D\uDC99 ").append(Text.translatable(MOD_ID + ".config.category.support")))
-                .addEntry(entryBuilder.startTextDescription(Text.translatable(MOD_ID + ".config.support.description1").append("\n").append(Text.translatable(MOD_ID + ".config.support.description2"))).build())
-
-                .addEntry(new HeartTextEntry(Text.translatable(MOD_ID + ".config.support.cta")
-                        .styled(style -> style
-                                .withColor(Formatting.AQUA)
-                                .withUnderline(true)
-                                .withBold(true)
-                                /*? if >=1.21.5 {*/
-                                .withClickEvent(new ClickEvent.OpenUrl(SPONSOR_URL))
-                                .withHoverEvent(new HoverEvent.ShowText(Text.translatable(MOD_ID + ".config.support.cta.tooltip")))
-                                /*?} else {*/
-                                /*.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, SPONSOR_URL.toString()))
-                                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable(MOD_ID + ".config.support.cta.tooltip")))
-                                *//*?}*/
-                        )));
-
-        renderSupporters(supportCategory, entryBuilder);
+        SupportCategory.add(screenBuilder, entryBuilder);
 
         return screenBuilder.build();
     }
