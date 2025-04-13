@@ -23,7 +23,7 @@ jobs:
       - name: Update supporters list
         uses: meza/action-patrons@v1.0.6
         with:
-          files-to-update:
+          files-to-update: |
             - README.md
             - docs/docs/01-inventory-sorter.md
 
