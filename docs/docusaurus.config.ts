@@ -8,7 +8,7 @@ const darkTheme = themes.oceanicNext;
 const config: Config = {
     title: 'Inventory Sorter - Sorts your Minecraft inventories with the click of a button!',
     titleDelimiter: '–',
-    favicon: 'img/brush_button.png',
+    favicon: 'img/icon.png',
     url: 'https://inventorysorter.meza.gg',
     baseUrl: '/',
     trailingSlash: false,
@@ -68,11 +68,11 @@ const config: Config = {
             {name: 'og:description', content: 'Powerful and flexible inventory sorting for Minecraft. Works on both vanilla and modded clients with minimal configuration.'},
             {name: 'og:type', content: 'website'},
             {name: 'og:url', content: 'https://inventorysorter.meza.gg'},
-            {name: 'og:image', content: 'https://inventorysorter.meza.gg/img/brush_button.png'},
+            {name: 'og:image', content: 'https://inventorysorter.meza.gg/img/icon.png'},
             {name: 'twitter:card', content: 'summary_large_image'},
             {name: 'twitter:site', content: '@houseofmeza'},
             {name: 'twitter:creator', content: '@houseofmeza'},
-            {name: 'twitter:image', content: 'https://inventorysorter.meza.gg/img/brush_button.png'},
+            {name: 'twitter:image', content: 'https://inventorysorter.meza.gg/img/icon.png'},
             {name: 'twitter:title', content: 'Inventory Sorter Mod for Minecraft'},
             {name: 'twitter:description', content: 'Sort any inventory in Minecraft with ease. Supports buttons, keybinds, and server-configurable rules.'},
         ],
@@ -91,13 +91,13 @@ const config: Config = {
             title: "Inventory Sorter",
             logo: {
                 alt: "Inventory Sorter Logo",
-                src: "img/brush_button.png",
+                src: "img/icon.png",
             },
             items:[
                 {
-                    label: '❤️ Sponsor',
+                    label: '❤️ Become a Supporter',
                     position: 'right',
-                    href: 'https://github.com/sponsors/meza',
+                    href: 'https://ko-fi.com/meza',
                     target: '_blank'
                 },
                 {
@@ -113,7 +113,7 @@ const config: Config = {
             style: "dark",
             logo: {
                 alt: "Inventory Sorter Logo",
-                src: "img/brush_button.png",
+                src: "img/icon.png",
                 width: 80,
             },
             links: [

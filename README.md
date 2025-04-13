@@ -62,3 +62,11 @@ If you want to help translate the mod into your language, please check out the [
 Inventory Sorter is actively maintained and safe to use in modpacks and multiplayer environments.
 Compatibility issues with certain modded inventories can be resolved using the built-in configuration system, 
 described in the documentation.
+
+## Credits
+
+Icon and logo artwork by [Annarooma](https://www.twitch.tv/annarooma).  
+Thank you for the gorgeous design!
+
+<!-- marker:patrons-start -->
+<!-- marker:patrons-end -->

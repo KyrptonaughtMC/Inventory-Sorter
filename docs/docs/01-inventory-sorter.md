@@ -42,3 +42,14 @@ documentation, and long-term support by [Meza](https://github.com/meza).
 
 Ready to install? Check the [Getting Started guide](/getting-started).
 
+## Credits
+
+Icon and logo artwork by [Annarooma](https://www.twitch.tv/annarooma).  
+Thank you for the gorgeous design!
+
+---
+
+Thanks to all the patrons who make this project possible!
+<!-- marker:patrons-start -->
+
+<!-- marker:patrons-end -->
