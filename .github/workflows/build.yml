@@ -45,7 +45,7 @@ jobs:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
 
       - name: "ℹ️ Needs Release?"
-        run: echo "Needs release published? ${{ steps.get-next-version.outputs.new_release_published == 'true' }}"
+        run: echo "Needs release published? ${{ steps.get-next-version.outputs.new-release-published == 'true' }}"
 
       - name: "🔨 Data Gen"
         run: |
@@ -78,7 +78,7 @@ jobs:
         run: npx semantic-release
 
       - name: "🧪 Run Dev Build"
-        if: ${{ steps.get-next-version.outputs.new_release_published != 'true' }}
+        if: ${{ steps.get-next-version.outputs.new-release-published != 'true' }}
         run: ./gradlew chiseledGameTest chiseledBuildAndCollect --stacktrace
 
       - name: "🕵️‍♂️ Collect jars"
