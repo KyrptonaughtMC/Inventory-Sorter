@@ -175,7 +175,7 @@ public class ConfigScreen {
         compatCategory.addEntry(
                 entryBuilder.startSubCategory(
                                 Text.translatable("inventorysorter.config.compat.remoteUrl"), List.of(stringListEntry))
-                        .setExpanded(true)
+                        .setExpanded(false)
                         .build()
         );
 
