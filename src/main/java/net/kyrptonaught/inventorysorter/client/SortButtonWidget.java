@@ -1,24 +1,28 @@
 package net.kyrptonaught.inventorysorter.client;
 
-import com.mojang.blaze3d.systems.RenderSystem;
+/*? if <1.21.5 {*/
+/*import com.mojang.blaze3d.systems.RenderSystem;
+*//*?}*/
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.kyrptonaught.inventorysorter.InventoryHelper;
 import net.kyrptonaught.inventorysorter.InventorySorterMod;
-import net.kyrptonaught.inventorysorter.SortCases;
+import net.kyrptonaught.inventorysorter.SortType;
 import net.kyrptonaught.inventorysorter.network.InventorySortPacket;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.ShaderProgramKeys;
+/*? if <1.21.5 {*/
+/*import net.minecraft.client.gl.ShaderProgramKeys;
+*//*?}*/
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ButtonTextures;
-import net.minecraft.client.gui.tooltip.Tooltip;
+import net.minecraft.client.gui.tooltip.HoveredTooltipPositioner;
+import net.minecraft.client.gui.tooltip.TooltipPositioner;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
-import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.toast.SystemToast;
 import net.minecraft.registry.Registries;
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.MutableText;
+import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -27,12 +31,16 @@ import org.lwjgl.glfw.GLFW;
 import java.util.ArrayList;
 import java.util.List;
 
+import static net.kyrptonaught.inventorysorter.InventorySorterMod.compatibility;
+import static net.kyrptonaught.inventorysorter.InventorySorterMod.getConfig;
+
 @Environment(EnvType.CLIENT)
 public class SortButtonWidget extends TexturedButtonWidget {
     private static final ButtonTextures TEXTURES = new ButtonTextures(
             Identifier.of(InventorySorterMod.MOD_ID, "textures/gui/button_unfocused.png"),
             Identifier.of(InventorySorterMod.MOD_ID, "textures/gui/button_focused.png"));
     private final boolean playerInv;
+    private final TooltipPositioner widgetTooltipPositioner = HoveredTooltipPositioner.INSTANCE;
 
     public SortButtonWidget(int int_1, int int_2, boolean playerInv) {
         super(int_1, int_2, 10, 9, TEXTURES, null, Text.literal(""));
@@ -41,66 +49,85 @@ public class SortButtonWidget extends TexturedButtonWidget {
 
     @Override
     public void onPress() {
-        if (InventorySorterModClient.getConfig().debugMode && GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), GLFW.GLFW_KEY_LEFT_CONTROL) == 1) {
-            if (InventoryHelper.canSortInventory(MinecraftClient.getInstance().player)) {
-                String screenID = Registries.SCREEN_HANDLER.getId(MinecraftClient.getInstance().player.currentScreenHandler.getType()).toString();
-                System.out.println("Add the line below to config/inventorysorter/blacklist.json5 to blacklist this inventory");
-                System.out.println(screenID);
-
-                MutableText MODID = Text.literal("[" + InventorySorterMod.MOD_ID + "]: ").formatted(Formatting.BLUE);
-                MutableText autoDNS = (Text.translatable("key.inventorysorter.sortbtn.clickhere")).formatted(Formatting.UNDERLINE, Formatting.WHITE)
-                        .styled((style) -> style.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/invsort blacklist doNotSort " + screenID)));
-                MutableText autoDND = (Text.translatable("key.inventorysorter.sortbtn.clickhere")).formatted(Formatting.UNDERLINE, Formatting.WHITE)
-                        .styled((style) -> style.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/invsort blacklist doNotDisplay " + screenID)));
-                MinecraftClient.getInstance().player.sendMessage(MODID.copyContentOnly().append(autoDNS).append(Text.translatable("key.inventorysorter.sortbtn.dnsadd").formatted(Formatting.WHITE)), false);
-                MinecraftClient.getInstance().player.sendMessage(MODID.copyContentOnly().append(autoDND).append(Text.translatable("key.inventorysorter.sortbtn.dndadd").formatted(Formatting.WHITE)), false);
-            } else
-                MinecraftClient.getInstance().player.sendMessage(Text.literal("[" + InventorySorterMod.MOD_ID + "]: ").append(Text.translatable("key.inventorysorter.sortbtn.error")), false);
-        } else
+        MinecraftClient instance = MinecraftClient.getInstance();
+        if (GLFW.glfwGetKey(instance.getWindow().getHandle(), GLFW.GLFW_KEY_LEFT_CONTROL) == 1) {
+            if (InventoryHelper.canSortInventory(instance.player)) {
+                String screenID = Registries.SCREEN_HANDLER.getId(instance.player.currentScreenHandler.getType()).toString();
+                getConfig().disableButtonForScreen(screenID);
+                compatibility.addShouldHideSortButton(screenID);
+                getConfig().save();
+                compatibility.reload();
+                InventorySorterModClient.syncConfig();
+                SystemToast.add(instance.getToastManager(), SystemToast.Type.PERIODIC_NOTIFICATION,
+                        Text.translatable("inventorysorter.sortButton.toast.hide.success.title"),
+                        Text.translatable("inventorysorter.sortButton.toast.hide.success.description", screenID));
+            }
+        } else {
             InventorySortPacket.sendSortPacket(playerInv);
+        }
     }
 
     @Override
-    public void renderWidget(DrawContext context, int int_1, int int_2, float float_1) {
-        RenderSystem.setShader(ShaderProgramKeys.POSITION);
+    public void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+        if (!this.visible) return;
+        /*? if <1.21.5 {*/
+        /*RenderSystem.setShader(ShaderProgramKeys.POSITION);
         RenderSystem.enableDepthTest();
+        *//*?}*/
         context.getMatrices().push();
         context.getMatrices().scale(.5f, .5f, 1);
         context.getMatrices().translate(getX(), getY(), 0);
-        Identifier identifier = TEXTURES.get(true, isSelected() || isHovered());
-        context.drawTexture(RenderLayer::getGuiTextured, identifier, getX(), getY(), 0,0,20,18,20, 18);
-        this.renderTooltip(context, int_1, int_2);
+        Identifier identifier = TEXTURES.get(true, isHovered());
+        context.drawTexture(RenderLayer::getGuiTextured, identifier, getX(), getY(), 0, 0, 20, 18, 20, 18);
         context.getMatrices().pop();
+        this.renderTooltip(context, mouseX, mouseY);
     }
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-        int current = InventorySorterModClient.getConfig().sortType.ordinal();
+        if (GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), GLFW.GLFW_KEY_LEFT_CONTROL) == 1) {
+            return false;
+        }
+
+        int current = getConfig().sortType.ordinal();
         if (verticalAmount > 0) {
             current++;
-            if (current >= SortCases.SortType.values().length)
+            if (current >= SortType.values().length)
                 current = 0;
         } else {
             current--;
             if (current < 0)
-                current = SortCases.SortType.values().length - 1;
+                current = SortType.values().length - 1;
         }
-        InventorySorterModClient.getConfig().sortType = SortCases.SortType.values()[current];
-        InventorySorterMod.configManager.save();
+        getConfig().sortType = SortType.values()[current];
+        getConfig().save();
         InventorySorterModClient.syncConfig();
         return true;
     }
 
 
     public void renderTooltip(DrawContext context, int mouseX, int mouseY) {
-        if (InventorySorterModClient.getConfig().displayTooltip && this.isHovered()) {
-            List<Text> lines = new ArrayList<>();
-            lines.add(Text.translatable("key.inventorysorter.sortbtn.sort").append(Text.translatable(InventorySorterModClient.getConfig().sortType.getTranslationKey())));
-            if (GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), GLFW.GLFW_KEY_LEFT_CONTROL) == 1) {
-                lines.add(Text.translatable("key.inventorysorter.sortbtn.debug"));
-                lines.add(Text.translatable("key.inventorysorter.sortbtn.debug2"));
+        if (getConfig().showTooltips && this.isHovered()) {
+            MinecraftClient instance = MinecraftClient.getInstance();
+            TextRenderer textRenderer = instance.textRenderer;
+
+            List<OrderedText> lines = new ArrayList<>();
+
+            if (GLFW.glfwGetKey(instance.getWindow().getHandle(), GLFW.GLFW_KEY_LEFT_CONTROL) == 1) {
+                lines.add(Text.translatable("inventorysorter.sortButton.tooltip.hide").asOrderedText());
+            } else {
+                lines.add(Text.translatable("inventorysorter.sortButton.tooltip.sortType", Text.translatable(getConfig().sortType.getTranslationKey()).formatted(Formatting.BOLD)).asOrderedText());
+                lines.add(Text.translatable("inventorysorter.sortButton.tooltip.help.sortType").formatted(Formatting.DARK_GRAY).asOrderedText());
+                lines.add(Text.translatable("inventorysorter.sortButton.tooltip.help.hide").formatted(Formatting.DARK_GRAY).asOrderedText());
+
             }
-            context.drawTooltip(MinecraftClient.getInstance().textRenderer, lines, getX(), getY());
+
+            context.drawTooltip(
+                    textRenderer,
+                    lines,
+                    widgetTooltipPositioner,
+                    mouseX, mouseY
+            );
         }
     }
 }

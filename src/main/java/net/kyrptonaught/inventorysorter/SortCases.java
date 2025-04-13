@@ -18,7 +18,11 @@ import java.util.stream.IntStream;
 
 public class SortCases {
     static Comparator<ItemStack> getComparator(SortType sortType) {
-        var defaultComparator = Comparator.comparing(SortCases::specialCases);
+        var defaultComparator = Comparator.comparing(SortCases::getSortableName)
+                .thenComparing(SortCases::isOminous)
+                .thenComparing(SortCases::getOminousAmplifier)
+                .thenComparing(ItemStack::getDamage)
+                .thenComparing(ItemStack::getCount, Comparator.reverseOrder());
         switch (sortType) {
             case CATEGORY -> {
                 return Comparator.comparing(SortCases::getGroupIdentifier).thenComparing(defaultComparator);
@@ -27,10 +31,11 @@ public class SortCases {
                 return Comparator.comparing((ItemStack stack) -> Registries.ITEM.getId(stack.getItem()).getNamespace()).thenComparing(defaultComparator);
             }
             case NAME -> {
-                return Comparator.comparing(stack -> {
-                    var name = specialCases(stack);
-                    return stack.getName() + name;
-                });
+                return defaultComparator;
+            }
+            case ID -> {
+                // @TODO: check this
+                return Comparator.comparing((ItemStack stack) -> Registries.ITEM.getId(stack.getItem()).toString()).thenComparing(defaultComparator);
             }
             default -> {
                 return defaultComparator;
@@ -55,36 +60,52 @@ public class SortCases {
         return 99999;
     }
 
-    private static String specialCases(ItemStack stack) {
-        Item item = stack.getItem();
-        ComponentMap component = stack.getComponents();
-
-        if (component != null && component.contains(DataComponentTypes.PROFILE))
-            return playerHeadCase(stack);
-        if (stack.getCount() != stack.getMaxCount())
-            return stackSize(stack);
-        if (stack.isOf(Items.ENCHANTED_BOOK))
-            return enchantedBookNameCase(stack);
-        if (stack.isDamageable())
-            return toolDuribilityCase(stack);
-        return item.toString();
-    }
-
-    private static String playerHeadCase(ItemStack stack) {
-        ProfileComponent profileComponent = stack.getComponents().get(DataComponentTypes.PROFILE);
-        String ownerName = profileComponent.name().isPresent() ? profileComponent.name().get() : stack.getItem().toString();
-
-        // this is duplicated logic, so we should probably refactor
-        String count = "";
-        if (stack.getCount() != stack.getMaxCount()) {
-            count = Integer.toString(stack.getCount());
+    private static int getOminousAmplifier(ItemStack stack) {
+        ComponentMap components = stack.getComponents();
+        if (components.contains(DataComponentTypes.OMINOUS_BOTTLE_AMPLIFIER)) {
+            int i = components.get(DataComponentTypes.OMINOUS_BOTTLE_AMPLIFIER).value() + 1;
+            return i;
         }
 
-        return stack.getItem().toString() + " " + ownerName + count;
+        return 0;
     }
 
-    private static String stackSize(ItemStack stack) {
-        return stack.getItem().toString() + stack.getCount();
+    private static boolean isOminous(ItemStack stack) {
+        ComponentMap components = stack.getComponents();
+        if (!components.contains(DataComponentTypes.BLOCK_STATE)) {
+            return false;
+        }
+
+        String result = components.get(DataComponentTypes.BLOCK_STATE).properties().getOrDefault("ominous", "false");
+        return Boolean.parseBoolean(result);
+    }
+
+    private static String getSortableName(ItemStack stack) {
+        ComponentMap components = stack.getComponents();
+
+        if (components.contains(DataComponentTypes.PROFILE)) {
+            return playerHeadName(stack).toLowerCase();
+        }
+
+        if (stack.isOf(Items.ENCHANTED_BOOK)) {
+            return enchantedBookNameCase(stack).toLowerCase();
+        }
+
+        return stackName(stack).toLowerCase();
+    }
+
+    private static String playerHeadName(ItemStack stack) {
+        ProfileComponent profileComponent = stack.getComponents().get(DataComponentTypes.PROFILE);
+
+        if (profileComponent.name().isPresent()) {
+            return profileComponent.name().get();
+        }
+
+        return stackName(stack);
+    }
+
+    private static String stackName(ItemStack stack) {
+        return stack.getName().getString();
     }
 
     private static String enchantedBookNameCase(ItemStack stack) {
@@ -98,18 +119,7 @@ public class SortCases {
         for (String enchant : names) {
             enchantNames.append(enchant).append(" ");
         }
-        return stack.getItem().toString() + " " + enchantmentsComponent.getSize() + " " + enchantNames;
+        return stack.getName().getString() + " " + enchantmentsComponent.getSize() + " " + enchantNames;
     }
 
-    private static String toolDuribilityCase(ItemStack stack) {
-        return stack.getItem().toString() + stack.getDamage();
-    }
-
-    public enum SortType {
-        NAME, CATEGORY, MOD, ID;
-
-        public String getTranslationKey() {
-            return "key." + InventorySorterMod.MOD_ID + ".sorttype." + this.toString().toLowerCase();
-        }
-    }
 }

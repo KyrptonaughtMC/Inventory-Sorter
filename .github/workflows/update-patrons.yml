@@ -1,0 +1,29 @@
+name: Update Supporters List
+
+on:
+  push:
+  schedule:
+    - cron: '9 0 * * *' # Every day at 00:09 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  BRANCH_NAME: "update/patrons"
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Update supporters list
+        uses: meza/action-patrons@v1.0.6
+        with:
+          files-to-update: |
+            - README.md
+            - docs/docs/01-inventory-sorter.md
+
