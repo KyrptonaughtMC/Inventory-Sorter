@@ -17,6 +17,7 @@ public record SortSettings(
         boolean sortHighlightedItem,
         boolean sortPlayerInventory,
         boolean enableDoubleClick,
+        boolean requireModifierToScroll,
         SortType sortType
 ) implements CustomPayload {
 
@@ -26,9 +27,11 @@ public record SortSettings(
                         buf.writeBoolean(value.sortHighlightedItem());
                         buf.writeBoolean(value.sortPlayerInventory());
                         buf.writeBoolean(value.enableDoubleClick());
+                        buf.writeBoolean(value.requireModifierToScroll());
                         buf.writeEnumConstant(value.sortType());
                     },
                     buf -> new SortSettings(
+                            buf.readBoolean(),
                             buf.readBoolean(),
                             buf.readBoolean(),
                             buf.readBoolean(),
@@ -40,13 +43,14 @@ public record SortSettings(
             Codec.BOOL.fieldOf("sortHighlightedItem").forGetter(SortSettings::sortHighlightedItem),
             Codec.BOOL.fieldOf("sortPlayerInventory").forGetter(SortSettings::sortPlayerInventory),
             Codec.BOOL.fieldOf("enableDoubleClick").forGetter(SortSettings::enableDoubleClick),
+            Codec.BOOL.fieldOf("requireModifierToScroll").forGetter(SortSettings::requireModifierToScroll),
             Codec.STRING.xmap(SortType::valueOf, SortType::name)
                     .fieldOf("sortType").forGetter(SortSettings::sortType)
     ).apply(instance, SortSettings::new));
 
     public static final CustomPayload.Id<SortSettings> ID = new CustomPayload.Id<>(Identifier.of(MOD_ID, "sync_settings_packet"));
 
-    public static final SortSettings DEFAULT = new SortSettings(true, false, true, SortType.NAME);
+    public static final SortSettings DEFAULT = new SortSettings(true, false, true, false, SortType.NAME);
 
     @Override
     public Id<? extends CustomPayload> getId() {
@@ -54,19 +58,19 @@ public record SortSettings(
     }
 
     public SortSettings withDoubleClick(boolean enabled) {
-        return new SortSettings(this.sortHighlightedItem(), this.sortPlayerInventory(), enabled, this.sortType());
+        return new SortSettings(this.sortHighlightedItem(), this.sortPlayerInventory(), enabled, this.requireModifierToScroll(), this.sortType());
     }
 
     public SortSettings withSortType(SortType sortType) {
-        return new SortSettings(this.sortHighlightedItem(), this.sortPlayerInventory(), this.enableDoubleClick(), sortType);
+        return new SortSettings(this.sortHighlightedItem(), this.sortPlayerInventory(), this.enableDoubleClick(), this.requireModifierToScroll(), sortType);
     }
 
     public SortSettings withSortPlayerInventory(boolean enabled) {
-        return new SortSettings(this.sortHighlightedItem(), enabled, this.enableDoubleClick(), this.sortType());
+        return new SortSettings(this.sortHighlightedItem(), enabled, this.enableDoubleClick(), this.requireModifierToScroll(), this.sortType());
     }
 
     public SortSettings withSortHighlightedInventory(boolean enabled) {
-        return new SortSettings(enabled, this.sortPlayerInventory(), this.enableDoubleClick(), this.sortType());
+        return new SortSettings(enabled, this.sortPlayerInventory(), this.enableDoubleClick(), this.requireModifierToScroll(), this.sortType());
     }
 
     public static SortSettings fromConfig(NewConfigOptions config) {
@@ -74,6 +78,7 @@ public record SortSettings(
                 config.sortHighlightedItem,
                 config.sortPlayerInventory,
                 config.enableDoubleClickSort,
+                config.requireModifierToScroll,
                 config.sortType
         );
     }

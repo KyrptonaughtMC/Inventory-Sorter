@@ -3,7 +3,7 @@
   "inventorysorter.key.category": "Inventory Sorter",
   "inventorysorter.key.sort": "Sort",
   "inventorysorter.key.config": "Open Settings",
-  "inventorysorter.key.modifier": "Modifier Key (for hiding)",
+  "inventorysorter.key.modifier": "Modifier Key (for hiding/switching)",
 
   "inventorysorter.toggle.enabled": "On",
   "inventorysorter.toggle.disabled": "Off",
@@ -30,6 +30,9 @@
   "inventorysorter.config.doubleClickSort.tooltip": "Double-Click an empty slot to sort",
   "inventorysorter.cmd.doubleClickSort.set": "Changed Double-Click sort to %s",
   "inventorysorter.cmd.doubleClickSort.get": "Double-Click sort is currently %s",
+
+  "inventorysorter.config.modifierToScroll": "Require holding %s to change sorting method",
+  "inventorysorter.config.modifierToScroll.tooltip": "You must hold %s to change the sorting method when scrolling over the sort button",
 
   "inventorysorter.config.separateButton": "Sort Button in Player Inventory",
   "inventorysorter.config.separateButton.tooltip": "Display a separate sort button in the player's inventory",
@@ -86,6 +89,7 @@
 
   "inventorysorter.sortButton.tooltip.sortType": "Sort by: %s",
   "inventorysorter.sortButton.tooltip.help.sortType": "Scroll to change sorting method",
+  "inventorysorter.sortButton.tooltip.help.sortType.modifier": "Scroll while holding %s to change sorting method",
   "inventorysorter.sortButton.tooltip.help.hide": "Click while holding %s to hide button",
   "inventorysorter.sortButton.tooltip.hide": "Click to hide this button",
   "inventorysorter.sortButton.toast.hide.success.title": "Sort Button hidden",

@@ -9,6 +9,7 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.kyrptonaught.inventorysorter.InventoryHelper;
 import net.kyrptonaught.inventorysorter.InventorySorterMod;
 import net.kyrptonaught.inventorysorter.SortType;
+import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.kyrptonaught.inventorysorter.network.InventorySortPacket;
 import net.minecraft.client.MinecraftClient;
 /*? if <1.21.5 {*/
@@ -55,7 +56,7 @@ public class SortButtonWidget extends TexturedButtonWidget {
     @Override
     public void onPress() {
         MinecraftClient instance = MinecraftClient.getInstance();
-        if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), modifierKey.getCode())) {
+        if (isModifierPressed()) {
             if (InventoryHelper.canSortInventory(instance.player)) {
                 String screenID = Registries.SCREEN_HANDLER.getId(instance.player.currentScreenHandler.getType()).toString();
                 getConfig().disableButtonForScreen(screenID);
@@ -90,11 +91,17 @@ public class SortButtonWidget extends TexturedButtonWidget {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-        if (GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), GLFW.GLFW_KEY_LEFT_CONTROL) == 1) {
+        NewConfigOptions config = getConfig();
+
+        if (config.requireModifierToScroll && !isModifierPressed()) {
             return false;
         }
 
-        int current = getConfig().sortType.ordinal();
+        if (!config.requireModifierToScroll && isModifierPressed()) {
+            return false;
+        }
+
+        int current = config.sortType.ordinal();
         if (verticalAmount > 0) {
             current++;
             if (current >= SortType.values().length)
@@ -104,24 +111,42 @@ public class SortButtonWidget extends TexturedButtonWidget {
             if (current < 0)
                 current = SortType.values().length - 1;
         }
-        getConfig().sortType = SortType.values()[current];
-        getConfig().save();
+        config.sortType = SortType.values()[current];
+        config.save();
         InventorySorterModClient.syncConfig();
         return true;
     }
 
+    private boolean isModifierPressed() {
+        return InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), modifierKey.getCode());
+    }
+
 
     public void renderTooltip(DrawContext context, int mouseX, int mouseY) {
-        if (getConfig().showTooltips && this.isHovered()) {
+        NewConfigOptions config = getConfig();
+        if (config.showTooltips && this.isHovered()) {
             MinecraftClient instance = MinecraftClient.getInstance();
             TextRenderer textRenderer = instance.textRenderer;
 
             List<OrderedText> lines = new ArrayList<>();
-            if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), modifierKey.getCode())) {
+
+            if (!config.requireModifierToScroll && isModifierPressed()) {
                 lines.add(Text.translatable("inventorysorter.sortButton.tooltip.hide").asOrderedText());
-            } else {
+            }
+
+            if  (config.requireModifierToScroll && isModifierPressed()) {
                 lines.add(Text.translatable("inventorysorter.sortButton.tooltip.sortType", Text.translatable(getConfig().sortType.getTranslationKey()).formatted(Formatting.BOLD)).asOrderedText());
-                lines.add(Text.translatable("inventorysorter.sortButton.tooltip.help.sortType").formatted(Formatting.DARK_GRAY).asOrderedText());
+                lines.add(Text.translatable("inventorysorter.sortButton.tooltip.help.sortType").formatted(Formatting.GRAY).asOrderedText());
+                lines.add(Text.translatable("inventorysorter.sortButton.tooltip.hide").formatted(Formatting.GRAY).asOrderedText());
+            }
+
+            if (!isModifierPressed()) {
+                lines.add(Text.translatable("inventorysorter.sortButton.tooltip.sortType", Text.translatable(getConfig().sortType.getTranslationKey()).formatted(Formatting.BOLD)).asOrderedText());
+                if (config.requireModifierToScroll) {
+                    lines.add(Text.translatable("inventorysorter.sortButton.tooltip.help.sortType.modifier", modifierKey.getLocalizedText()).formatted(Formatting.DARK_GRAY).asOrderedText());
+                } else {
+                    lines.add(Text.translatable("inventorysorter.sortButton.tooltip.help.sortType").formatted(Formatting.DARK_GRAY).asOrderedText());
+                }
                 lines.add(Text.translatable("inventorysorter.sortButton.tooltip.help.hide", modifierKey.getLocalizedText()).formatted(Formatting.DARK_GRAY).asOrderedText());
 
             }

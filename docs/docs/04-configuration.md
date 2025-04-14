@@ -205,6 +205,15 @@ And you can check the current value with:
 
 ---
 
+### `requireModifierToScroll`  
+**GUI label:** *Require holding Left Control to change sorting method*  
+**Config file key:** `requireModifierToScroll`  
+**Default:** `false` (Off)  
+
+When **On (`true`)**, you must hold the [modifier key](/usage-guide#modifier-key-for-hidingswitching) while scrolling to change the sorting method.  
+When **Off (`false`)**, scrolling changes the sorting method without needing to hold any keys.
+
+---
 
 ### `preventSortForScreens`
 **GUI section:** *Compatibility*  
