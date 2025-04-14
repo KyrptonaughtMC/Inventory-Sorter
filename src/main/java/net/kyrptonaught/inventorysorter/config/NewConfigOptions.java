@@ -22,7 +22,7 @@ public class NewConfigOptions extends CompatConfig {
     public SortType sortType = SortType.NAME;
     public boolean enableDoubleClickSort = true;
     public boolean sortHighlightedItem = true;
-    public boolean requireModifierToScroll = false;
+    public ScrollBehaviour scrollBehaviour = ScrollBehaviour.FREE;
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final String CONFIG_FILE = MOD_ID + ".json";

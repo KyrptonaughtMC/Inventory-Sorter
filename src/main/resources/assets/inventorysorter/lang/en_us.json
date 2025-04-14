@@ -31,8 +31,13 @@
   "inventorysorter.cmd.doubleClickSort.set": "Changed Double-Click sort to %s",
   "inventorysorter.cmd.doubleClickSort.get": "Double-Click sort is currently %s",
 
-  "inventorysorter.config.modifierToScroll": "Require holding %s to change sorting method",
-  "inventorysorter.config.modifierToScroll.tooltip": "You must hold %s to change the sorting method when scrolling over the sort button",
+  "inventorysorter.config.scrollbehaviour": "Scroll wheel behaviour",
+  "inventorysorter.config.scrollbehaviour.free": "Free",
+  "inventorysorter.config.scrollbehaviour.free.tooltip": "Scrolling over the sort button will change the sorting method",
+  "inventorysorter.config.scrollbehaviour.modifier": "Modifier",
+  "inventorysorter.config.scrollbehaviour.modifier.tooltip": "Scrolling over the sort button will change the sorting method while holding %s",
+  "inventorysorter.config.scrollbehaviour.disabled": "Disabled",
+  "inventorysorter.config.scrollbehaviour.disabled.tooltip": "Scrolling over the sort button will not change the sorting method",
 
   "inventorysorter.config.separateButton": "Sort Button in Player Inventory",
   "inventorysorter.config.separateButton.tooltip": "Display a separate sort button in the player's inventory",

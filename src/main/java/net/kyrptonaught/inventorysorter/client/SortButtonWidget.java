@@ -10,6 +10,7 @@ import net.kyrptonaught.inventorysorter.InventoryHelper;
 import net.kyrptonaught.inventorysorter.InventorySorterMod;
 import net.kyrptonaught.inventorysorter.SortType;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
+import net.kyrptonaught.inventorysorter.config.ScrollBehaviour;
 import net.kyrptonaught.inventorysorter.network.InventorySortPacket;
 import net.minecraft.client.MinecraftClient;
 /*? if <1.21.5 {*/
@@ -29,7 +30,6 @@ import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,12 +92,15 @@ public class SortButtonWidget extends TexturedButtonWidget {
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
         NewConfigOptions config = getConfig();
-
-        if (config.requireModifierToScroll && !isModifierPressed()) {
+        if (config.scrollBehaviour == ScrollBehaviour.DISABLED) {
             return false;
         }
 
-        if (!config.requireModifierToScroll && isModifierPressed()) {
+        if ((config.scrollBehaviour == ScrollBehaviour.MODIFIER) && !isModifierPressed()) {
+            return false;
+        }
+
+        if ((config.scrollBehaviour == ScrollBehaviour.FREE) && isModifierPressed()) {
             return false;
         }
 
@@ -130,11 +133,11 @@ public class SortButtonWidget extends TexturedButtonWidget {
 
             List<OrderedText> lines = new ArrayList<>();
 
-            if (!config.requireModifierToScroll && isModifierPressed()) {
+            if ((config.scrollBehaviour == ScrollBehaviour.FREE || config.scrollBehaviour == ScrollBehaviour.DISABLED) && isModifierPressed()) {
                 lines.add(Text.translatable("inventorysorter.sortButton.tooltip.hide").asOrderedText());
             }
 
-            if  (config.requireModifierToScroll && isModifierPressed()) {
+            if  ((config.scrollBehaviour == ScrollBehaviour.MODIFIER) && isModifierPressed()) {
                 lines.add(Text.translatable("inventorysorter.sortButton.tooltip.sortType", Text.translatable(getConfig().sortType.getTranslationKey()).formatted(Formatting.BOLD)).asOrderedText());
                 lines.add(Text.translatable("inventorysorter.sortButton.tooltip.help.sortType").formatted(Formatting.GRAY).asOrderedText());
                 lines.add(Text.translatable("inventorysorter.sortButton.tooltip.hide").formatted(Formatting.GRAY).asOrderedText());
@@ -142,9 +145,9 @@ public class SortButtonWidget extends TexturedButtonWidget {
 
             if (!isModifierPressed()) {
                 lines.add(Text.translatable("inventorysorter.sortButton.tooltip.sortType", Text.translatable(getConfig().sortType.getTranslationKey()).formatted(Formatting.BOLD)).asOrderedText());
-                if (config.requireModifierToScroll) {
+                if (config.scrollBehaviour == ScrollBehaviour.MODIFIER) {
                     lines.add(Text.translatable("inventorysorter.sortButton.tooltip.help.sortType.modifier", modifierKey.getLocalizedText()).formatted(Formatting.DARK_GRAY).asOrderedText());
-                } else {
+                } else if (config.scrollBehaviour != ScrollBehaviour.DISABLED) {
                     lines.add(Text.translatable("inventorysorter.sortButton.tooltip.help.sortType").formatted(Formatting.DARK_GRAY).asOrderedText());
                 }
                 lines.add(Text.translatable("inventorysorter.sortButton.tooltip.help.hide", modifierKey.getLocalizedText()).formatted(Formatting.DARK_GRAY).asOrderedText());
