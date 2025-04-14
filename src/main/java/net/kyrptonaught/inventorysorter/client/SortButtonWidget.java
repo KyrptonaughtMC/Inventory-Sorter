@@ -5,6 +5,7 @@ package net.kyrptonaught.inventorysorter.client;
 *//*?}*/
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.kyrptonaught.inventorysorter.InventoryHelper;
 import net.kyrptonaught.inventorysorter.InventorySorterMod;
 import net.kyrptonaught.inventorysorter.SortType;
@@ -21,6 +22,7 @@ import net.minecraft.client.gui.tooltip.TooltipPositioner;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.toast.SystemToast;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
@@ -33,6 +35,7 @@ import java.util.List;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.compatibility;
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.getConfig;
+import static net.kyrptonaught.inventorysorter.client.InventorySorterModClient.modifierButton;
 
 @Environment(EnvType.CLIENT)
 public class SortButtonWidget extends TexturedButtonWidget {
@@ -41,16 +44,18 @@ public class SortButtonWidget extends TexturedButtonWidget {
             Identifier.of(InventorySorterMod.MOD_ID, "textures/gui/button_focused.png"));
     private final boolean playerInv;
     private final TooltipPositioner widgetTooltipPositioner = HoveredTooltipPositioner.INSTANCE;
+    private final InputUtil.Key modifierKey;
 
     public SortButtonWidget(int int_1, int int_2, boolean playerInv) {
         super(int_1, int_2, 10, 9, TEXTURES, null, Text.literal(""));
         this.playerInv = playerInv;
+        this.modifierKey = KeyBindingHelper.getBoundKeyOf(modifierButton);
     }
 
     @Override
     public void onPress() {
         MinecraftClient instance = MinecraftClient.getInstance();
-        if (GLFW.glfwGetKey(instance.getWindow().getHandle(), GLFW.GLFW_KEY_LEFT_CONTROL) == 1) {
+        if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), modifierKey.getCode())) {
             if (InventoryHelper.canSortInventory(instance.player)) {
                 String screenID = Registries.SCREEN_HANDLER.getId(instance.player.currentScreenHandler.getType()).toString();
                 getConfig().disableButtonForScreen(screenID);
@@ -112,13 +117,12 @@ public class SortButtonWidget extends TexturedButtonWidget {
             TextRenderer textRenderer = instance.textRenderer;
 
             List<OrderedText> lines = new ArrayList<>();
-
-            if (GLFW.glfwGetKey(instance.getWindow().getHandle(), GLFW.GLFW_KEY_LEFT_CONTROL) == 1) {
+            if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), modifierKey.getCode())) {
                 lines.add(Text.translatable("inventorysorter.sortButton.tooltip.hide").asOrderedText());
             } else {
                 lines.add(Text.translatable("inventorysorter.sortButton.tooltip.sortType", Text.translatable(getConfig().sortType.getTranslationKey()).formatted(Formatting.BOLD)).asOrderedText());
                 lines.add(Text.translatable("inventorysorter.sortButton.tooltip.help.sortType").formatted(Formatting.DARK_GRAY).asOrderedText());
-                lines.add(Text.translatable("inventorysorter.sortButton.tooltip.help.hide").formatted(Formatting.DARK_GRAY).asOrderedText());
+                lines.add(Text.translatable("inventorysorter.sortButton.tooltip.help.hide", modifierKey.getLocalizedText()).formatted(Formatting.DARK_GRAY).asOrderedText());
 
             }
 

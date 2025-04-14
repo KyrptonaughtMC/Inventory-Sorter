@@ -33,10 +33,18 @@ public class InventorySorterModClient implements ClientModInitializer {
             "inventorysorter.key.category"
     );
 
+    public static final KeyBinding modifierButton = new KeyBinding(
+            "inventorysorter.key.modifier",
+            InputUtil.Type.KEYSYM,
+            GLFW.GLFW_KEY_LEFT_CONTROL,
+            "inventorysorter.key.category"
+    );
+
     @Override
     public void onInitializeClient() {
         KeyBindingHelper.registerKeyBinding(sortButton);
         KeyBindingHelper.registerKeyBinding(configButton);
+        KeyBindingHelper.registerKeyBinding(modifierButton);
 
         /*
           This is to attach server defined configs to the compatibility layer on the client only

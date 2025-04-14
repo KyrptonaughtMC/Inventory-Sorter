@@ -72,12 +72,12 @@ Scrolling is disabled while holding `CTRL` to prevent accidental changes when hi
 
 ### CTRL+Click to Hide
 
-Clicking the sort button while holding `CTRL` will hide the button for the current screen.
+Clicking the sort button while holding the **[modifier key](#modifier-key-for-hiding)** (`CTRL` by default) will hide the button for the current screen.
 This is useful if the button overlaps with other UI elements or mods.
 
 To re-enable it, use the GUI configuration menu or manually update the config file.
 
-## Keybind
+## Keybinds
 
 The client mod allows you to trigger sorting using a configurable keybind.
 By default, this key is `P`. You can assign a different key from the Controls menu in Minecraft.
@@ -87,6 +87,23 @@ If you prefer, you can also assign the keybind to a mouse button, like the **Mid
 :::
 
 The keybind is only available when the client mod is installed.
+
+### Keybind Options
+
+There are several keybinds you can configure in Minecraft's controls menu
+
+#### Modifier Key (for hiding)
+
+A key to hold to uncover alternative functionalities of the sort button. 
+- Hide the sort button
+
+#### Sort inventory
+
+Sorts your inventory when inside a container.
+
+#### Open Config 
+
+Opens the Inventory Sorter settings when no container is open.
 
 ## Double-Click
 
@@ -129,9 +146,8 @@ If you have the client mod installed, you can open the configuration screen dire
 
 By default, the **Sort inventory** key (`P`) also opens the config screen when pressed **outside of any container**.
 
-You can change this behavior in Minecraft’s keybind settings:
-- `Sort inventory` sorts your inventory when inside a container.
-- `Open Config` opens the Inventory Sorter settings when no container is open.
+You can change this behavior in Minecraft’s [keybind settings](#open-config-)
+
 
 :::tip
 Minecraft may show a conflict warning if both actions are bound to the same key.
