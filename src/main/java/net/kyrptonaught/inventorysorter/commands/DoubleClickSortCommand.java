@@ -20,10 +20,10 @@ public class DoubleClickSortCommand {
                 .then(CommandManager.literal("doubleClickSort")
                         .requires(CommandPermission.require("doubleclicksort", 0))
                         .executes(DoubleClickSortCommand::showState)
-                        .then(CommandManager.literal("On")
+                        .then(CommandManager.literal("on")
                                 .executes(DoubleClickSortCommand::turnOn)
                         )
-                        .then(CommandManager.literal("Off")
+                        .then(CommandManager.literal("off")
                                 .executes(DoubleClickSortCommand::turnOff)
                         )));
     }

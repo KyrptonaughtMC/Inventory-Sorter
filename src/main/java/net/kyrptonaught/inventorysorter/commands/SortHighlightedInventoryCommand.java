@@ -22,10 +22,10 @@ public class SortHighlightedInventoryCommand {
                 .then(CommandManager.literal("sortHighlightedInventory")
                         .requires(CommandPermission.require("sorthighlightedinventory", 0))
                         .executes(SortHighlightedInventoryCommand::showState)
-                        .then(CommandManager.literal("On")
+                        .then(CommandManager.literal("on")
                                 .executes(SortHighlightedInventoryCommand::turnOn)
                         )
-                        .then(CommandManager.literal("Off")
+                        .then(CommandManager.literal("off")
                                 .executes(SortHighlightedInventoryCommand::turnOff)
                         )));
     }
