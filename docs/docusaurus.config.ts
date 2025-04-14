@@ -1,6 +1,7 @@
 import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 import {themes} from "prism-react-renderer";
+import 'dotenv/config'
 
 const lightTheme = themes.oceanicNext;
 const darkTheme = themes.oceanicNext;
@@ -61,6 +62,13 @@ const config: Config = {
         }
     ],
     themeConfig: {
+        algolia: {
+            appId: process.env.ALGOLIA_APP_ID,
+            apiKey: process.env.ALGOLIA_API_KEY,
+            indexName: 'inventorysorter-meza',
+            insights: true,
+            contextualSearch: true
+        },
         metadata: [
             {name: 'description', content: 'Inventory Sorter is a lightweight Minecraft mod that adds intuitive, customizable inventory sorting for both modded and vanilla clients. Supports buttons, keybinds, double-click sorting, and server control.'},
             {name: 'keywords', content: 'Minecraft mod, inventory sorting, Fabric mod, Forge mod, server-side, client-side, keybind sorting, Minecraft QoL mod, inventory management, double-click sort, modded Minecraft, sort items'},
