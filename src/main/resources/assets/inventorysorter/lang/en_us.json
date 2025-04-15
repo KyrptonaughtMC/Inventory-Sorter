@@ -99,5 +99,4 @@
   "inventorysorter.sortButton.tooltip.hide": "Click to hide this button",
   "inventorysorter.sortButton.toast.hide.success.title": "Sort Button hidden",
   "inventorysorter.sortButton.toast.hide.success.description": "Screen: %s"
-
 }
