@@ -33,6 +33,10 @@ import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.compatibility;
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.getConfig;
@@ -46,6 +50,9 @@ public class SortButtonWidget extends TexturedButtonWidget {
     private final boolean playerInv;
     private final TooltipPositioner widgetTooltipPositioner = HoveredTooltipPositioner.INSTANCE;
     private final InputUtil.Key modifierKey;
+
+    private static final ScheduledExecutorService debounceExecutor = Executors.newSingleThreadScheduledExecutor();
+    private static ScheduledFuture<?> debounceTask;
 
     public SortButtonWidget(int int_1, int int_2, boolean playerInv) {
         super(int_1, int_2, 10, 9, TEXTURES, null, Text.literal(""));
@@ -115,9 +122,18 @@ public class SortButtonWidget extends TexturedButtonWidget {
                 current = SortType.values().length - 1;
         }
         config.sortType = SortType.values()[current];
-        config.save();
-        InventorySorterModClient.syncConfig();
+
+        if (debounceTask != null) {
+            debounceTask.cancel(false);
+        }
+
+        debounceTask = debounceExecutor.schedule(() -> {
+            config.save();
+            InventorySorterModClient.syncConfig();
+        }, 300, TimeUnit.MILLISECONDS);
+
         return true;
+
     }
 
     private boolean isModifierPressed() {
