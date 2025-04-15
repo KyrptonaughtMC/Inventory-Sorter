@@ -90,7 +90,7 @@ public class SortButtonWidget extends TexturedButtonWidget {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double verticalAmount, double horizontalAmount) {
         NewConfigOptions config = getConfig();
         if (config.scrollBehaviour == ScrollBehaviour.DISABLED) {
             return false;
