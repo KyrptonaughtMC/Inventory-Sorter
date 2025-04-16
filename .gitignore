@@ -1,6 +1,8 @@
 # minecraft
 run/
 
+.env
+
 # gradle
 secrets.gradle
 .kotlin/

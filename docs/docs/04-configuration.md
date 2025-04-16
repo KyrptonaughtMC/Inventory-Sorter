@@ -69,38 +69,38 @@ The following sections describe each key in detail.
 ### `showSortButton`
 **GUI label:** *Display button in inventory*  
 **Config file key:** `showSortButton`  
-**Default:** `true` (On)
+**Default:** `true` (on)
 
 Controls whether a sort button is displayed in compatible inventory screens.
 This affects only the button’s visibility, not whether sorting can happen.
 
-When **On (`true`)**, the sort button(s) appear(s) in any inventory that supports it.  
-When **Off (`false`)**, the button(s) is hidden entirely, but sorting is still available via other methods (keybind, double-click, or command).
+When **on (`true`)**, the sort button(s) appear(s) in any inventory that supports it.  
+When **off (`false`)**, the button(s) is hidden entirely, but sorting is still available via other methods (keybind, double-click, or command).
 
 ---
 
 ### `showTooltips`
 **GUI label:** *Display Sort Button Tooltip*  
 **Config file key:** `showTooltips`  
-**Default:** `true` (On)
+**Default:** `true` (on)
 
 Controls whether a tooltip is shown when hovering over the sort button.
 
-When **On (`true`)**, hovering the sort button displays the current sort type.  
-When **Off (`false`)**, no tooltip is shown.
+When **on (`true`)**, hovering the sort button displays the current sort type.  
+When **off (`false`)**, no tooltip is shown.
 
 ---
 
 ### `sortHighlightedItem`
 **GUI label:** *Sorting sorts mouse hovered inventory*  
 **Config file key:** `sortHighlightedItem`  
-**Default:** `true` (On)
+**Default:** `true` (on)
 
 Controls which inventory is affected by the keybind or double-click.
 This does not affect sorting via the sort button, which always targets its assigned inventory.
 
-When **On (`true`)**, sorting only affects the inventory under your mouse cursor.  
-When **Off (`false`)**, sorting applies to both the container and the player inventory.
+When **on (`true`)**, sorting only affects the inventory under your mouse cursor.  
+When **off (`false`)**, sorting applies to both the container and the player inventory.
 
 If both this setting and `sortPlayerInventory` are enabled:
 - Only the inventory under the mouse is sorted.
@@ -121,12 +121,12 @@ And you can check the current value with:
 ### `sortPlayerInventory`
 **GUI label:** *Sort player inventory while another inventory is open*  
 **Config file key:** `sortPlayerInventory`  
-**Default:** `true` (On)
+**Default:** `true` (on)
 
 Controls whether your player inventory is included when sorting another container.
 
-When **On (`true`)**, sorting actions apply to both the open container and your player inventory (unless overridden by other settings).  
-When **Off (`false`)**, sorting applies only to the container you sorted.
+When **on (`true`)**, sorting actions apply to both the open container and your player inventory (unless overridden by other settings).  
+When **off (`false`)**, sorting applies only to the container you sorted.
 
 This setting works in combination with `sortHighlightedItem`.
 
@@ -149,13 +149,13 @@ And you can check the current value with:
 ### `separateButton`
 **GUI label:** *Always display button in player inventory*  
 **Config file key:** `separateButton`  
-**Default:** `false` (Off)
+**Default:** `false` (off)
 
 Determines whether a second sort button is shown next to the player inventory in dual-inventory screens (like chests or crafting tables).
 This setting is useful if you want finer control over which inventory to sort using the button.
 
-When **On (`true`)**, two buttons are shown—one for the open container, and one for your own inventory.  
-When **Off (`false`)**, only a single button appears, usually for the open container.
+When **on (`true`)**, two buttons are shown—one for the open container, and one for your own inventory.  
+When **off (`false`)**, only a single button appears, usually for the open container.
 
 This is particularly useful when you have the `sortPlayerInventory` setting enabled, as you will only need the one button to sort both inventories.
 
@@ -185,13 +185,13 @@ This ensures consistent ordering within grouped or categorized sections.
 ### `enableDoubleClickSort`
 **GUI label:** *Double click slot to sort inventory*  
 **Config file key:** `enableDoubleClickSort`  
-**Default:** `true` (On)
+**Default:** `true` (on)
 
 Allows sorting an inventory by double-clicking an **empty slot** inside it.<br/>
 This method works for all players as long as the server has the mod installed.
 
-When **On (`true`)**, double-clicking an empty slot triggers sorting for that inventory.  
-When **Off (`false`)**, double-clicking does nothing.
+When **on (`true`)**, double-clicking an empty slot triggers sorting for that inventory.  
+When **off (`false`)**, double-clicking does nothing.
 
 Can be changed with the command: 
 ```
@@ -205,6 +205,15 @@ And you can check the current value with:
 
 ---
 
+### `requireModifierToScroll`  
+**GUI label:** *Require holding Left Control to change sorting method*  
+**Config file key:** `requireModifierToScroll`  
+**Default:** `false` (off)  
+
+When **on (`true`)**, you must hold the [modifier key](/usage-guide#modifier-key-for-hidingswitching) while scrolling to change the sorting method.  
+When **off (`false`)**, scrolling changes the sorting method without needing to hold any keys.
+
+---
 
 ### `preventSortForScreens`
 **GUI section:** *Compatibility*  

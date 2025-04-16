@@ -13,9 +13,9 @@ import static net.kyrptonaught.inventorysorter.InventorySorterMod.LOGGER;
 import static net.kyrptonaught.inventorysorter.compat.Compatibility.parseJson;
 
 public class OfficialListLoader implements CompatibilityLoader {
-    private static final String BASE_URL = "https://github.com/KyrptonaughtMC/Inventory-Sorter/refs/heads/main/src/main/resources/data/inventorysorter/";
+    private static final String BASE_URL = "https://raw.githubusercontent.com/KyrptonaughtMC/Inventory-Sorter/refs/heads/main/src/main/resources/data/inventorysorter/";
     private static final String DO_NOT_SORT_FILE = BASE_URL + "do-not-sort.json";
-    private static final String HIDE_SORT_BUTTONS_FILE = BASE_URL + "hide-sort-buttons.json";
+    private static final String HIDE_SORT_BUTTONS_FILE = BASE_URL + "hide-buttons.json";
 
     public Set<Identifier> getPreventSort() {
         return downloadIndividualList(DO_NOT_SORT_FILE);

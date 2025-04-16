@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - "src/main/resources/assets/inventorysorter/lang/en_US.json"
+      - "src/main/resources/assets/inventorysorter/lang/en_us.json"
 
 jobs:
   crowdin:

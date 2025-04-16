@@ -8,8 +8,6 @@ permissions:
 
 on:
   push:
-    branches:
-      - beta
   schedule:
     - cron: '0 */12 * * *' # Every 12 hours
   workflow_dispatch:
@@ -21,6 +19,11 @@ concurrency:
 jobs:
   crowdin:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        lc: [{lc: de, name: German}, {lc: fr, name: French}, {lc: pt-BR, name: Portuguese (br)}, {lc: ru, name: Russian}, {lc: uk, name: Ukrainian}, {lc: zh-CN, name: Chinese}]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -31,16 +34,16 @@ jobs:
           upload_sources: false
           upload_translations: false
           download_translations: true
-          localization_branch_name: l10n/translations
+          localization_branch_name: l10n/${{matrix.lc.lc}}
 
           create_pull_request: true
-          commit_message: 'fix(l10n): New translations'
-          pull_request_title: 'fix(l10n): New Translations'
-          pull_request_body: 'New Crowdin pull request with translations'
+          commit_message: 'fix(l10n): New ${{matrix.lc.name}} translations'
+          pull_request_title: 'fix(l10n): New ${{matrix.lc.name}} translations'
           pull_request_base_branch_name: 'main'
+          download_language: ${{matrix.lc.lc}}
 
 
-          pull_request_labels: 'l10n'
+          pull_request_labels: 'l10n, translation, ${{matrix.lc.name}}'
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}

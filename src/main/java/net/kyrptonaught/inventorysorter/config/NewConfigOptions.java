@@ -22,6 +22,7 @@ public class NewConfigOptions extends CompatConfig {
     public SortType sortType = SortType.NAME;
     public boolean enableDoubleClickSort = true;
     public boolean sortHighlightedItem = true;
+    public ScrollBehaviour scrollBehaviour = ScrollBehaviour.FREE;
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final String CONFIG_FILE = MOD_ID + ".json";
@@ -44,7 +45,14 @@ public class NewConfigOptions extends CompatConfig {
             SchemaValidator.isValidJsonObject(configReader, SchemaValidator.CONFIG_SCHEMA, filePath.toString());
             LOGGER.debug("Config file is valid.");
 
-            return GSON.fromJson(new FileReader(filePath.toFile()), NewConfigOptions.class);
+            NewConfigOptions result = GSON.fromJson(new FileReader(filePath.toFile()), NewConfigOptions.class);
+
+            if (result.customCompatibilityListDownloadUrl.startsWith("https://raw.githubusercontent.com/kyrptonaught")) {
+                LOGGER.info("Old, redundant custom compatibility list URL detected. Fixing it!");
+                result.customCompatibilityListDownloadUrl = "";
+            }
+
+            return result;
         } catch (FileNotFoundException e) {
             return new NewConfigOptions();
         } catch (Exception e) {

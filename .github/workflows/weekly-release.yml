@@ -1,5 +1,8 @@
-name: build
-on: push
+name: Weekly Release
+on:
+    schedule:
+        - cron: '0 14 * * 5'
+    workflow_dispatch:
 
 permissions:
   issues: write
@@ -52,27 +55,15 @@ jobs:
           chmod +x ./scripts/datagen.sh
           ./scripts/datagen.sh
 
-      - name: Fetch latest translations
-        uses: crowdin/github-action@v2
-        with:
-          upload_sources: false
-          upload_translations: false
-          create_pull_request: false
-          push_translations: false
-          download_translations: true
+      - name: "🏗️ Build & Release to GitHub"
+        if: ${{ steps.get-next-version.outputs.new-release-published == 'true' }}
         env:
-          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
-          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
-
-      - name: "🧪 Run Dev Build"
-        if: ${{ steps.get-next-version.outputs.new-release-published != 'true' }}
-        run: ./gradlew chiseledGameTest chiseledBuildAndCollect --stacktrace
-
-      - name: "🕵️‍♂️ Collect jars"
-        uses: actions/upload-artifact@v4
-        with:
-          name: Artifacts
-          path: |
-            build/libs/*.jar
-            build/reports/**/*
-
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          DO_PUBLISH: steps.get-next-version.outputs.new-release-published
+          MODRINTH_ID: ${{ vars.MODRINTH_ID }}
+          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+          CURSEFORGE_ID: ${{ vars.CURSEFORGE_ID }}
+          CURSEFORGE_SLUG: ${{ vars.CURSEFORGE_SLUG }}
+          CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: npx semantic-release

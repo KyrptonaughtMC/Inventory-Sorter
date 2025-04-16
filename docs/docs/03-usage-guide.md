@@ -61,6 +61,13 @@ This can be toggled in the configuration screen or directly in the config file.
 
 ![](/img/usage-guide/player-inventory-button-config.png)
 
+### Hiding the main Sort Button
+
+Clicking the sort button while holding the **[modifier key](#modifier-key-for-hidingswitching)** (`CTRL` by default) will hide the button for the current screen.
+This is useful if the button overlaps with other UI elements or mods.
+
+To re-enable it, use the GUI configuration menu or manually update the config file.
+
 ### Scroll to Change Sort Type
 
 While hovering over the sort button, scrolling the mouse wheel will cycle through the available sorting methods:
@@ -68,16 +75,12 @@ While hovering over the sort button, scrolling the mouse wheel will cycle throug
 
 ![](/img/usage-guide/scroll-type.webp)
 
-Scrolling is disabled while holding `CTRL` to prevent accidental changes when hiding the button.
+By default, you can scroll through the sort types without holding the **[modifier key](#modifier-key-for-hidingswitching)** (`CTRL` by default).
+You can change this in the configuration via the [`requireModifierToScroll`](/configuration/#requiremodifiertoscroll) setting.
 
-### CTRL+Click to Hide
+![](/img/usage-guide/modifier-settings.png)
 
-Clicking the sort button while holding `CTRL` will hide the button for the current screen.
-This is useful if the button overlaps with other UI elements or mods.
-
-To re-enable it, use the GUI configuration menu or manually update the config file.
-
-## Keybind
+## Keybinds
 
 The client mod allows you to trigger sorting using a configurable keybind.
 By default, this key is `P`. You can assign a different key from the Controls menu in Minecraft.
@@ -87,6 +90,33 @@ If you prefer, you can also assign the keybind to a mouse button, like the **Mid
 :::
 
 The keybind is only available when the client mod is installed.
+
+### Keybind Options
+
+If you have the client mod installed, there are several keybinds you can configure in Minecraft's controls menu.
+
+:::tip
+Minecraft may show a conflict warning if both actions are bound to the same key.
+That’s fine. Inventory Sorter handles this safely, you don’t need to separate them.
+:::
+
+
+![](/img/usage-guide/keybinds.png)
+
+#### Modifier Key (for hiding/switching)
+
+A key to hold to uncover alternative functionalities of the sort button. 
+- Hide the sort button
+- Switch between sort types by scrolling.
+
+#### Sort inventory
+
+Sorts your inventory when inside a container.
+
+#### Open Config 
+
+Opens the Inventory Sorter settings when no container is open.  
+By default, the **Sort inventory** key (`P`) also opens the config screen when pressed **outside of any container**.
 
 ## Double-Click
 
@@ -123,24 +153,7 @@ Two commands are available to sort inventories directly:
 Commands work with both modded and vanilla clients.
 They are always available as long as the server has [Inventory Sorter installed][server-installation].
 
-## Config Menu
-
-If you have the client mod installed, you can open the configuration screen directly in-game.
-
-By default, the **Sort inventory** key (`P`) also opens the config screen when pressed **outside of any container**.
-
-You can change this behavior in Minecraft’s keybind settings:
-- `Sort inventory` sorts your inventory when inside a container.
-- `Open Config` opens the Inventory Sorter settings when no container is open.
-
-:::tip
-Minecraft may show a conflict warning if both actions are bound to the same key.
-That’s fine. Inventory Sorter handles this safely, you don’t need to separate them.
-
-![](/img/usage-guide/keybinds.png)
-
-:::
-
+---
 
 ## Feature Availability
 

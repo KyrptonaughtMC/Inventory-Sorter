@@ -36,6 +36,9 @@ jobs:
 
         - name: "📚 Build documentation"
           working-directory: ./docs
+          env:
+            ALGOLIA_API_KEY: ${{ secrets.ALGOLIA_API_KEY }}
+            ALGOLIA_APP_ID: ${{ secrets.ALGOLIA_APP_ID }}
           run: |
             pnpm install --frozen-lockfile && \
             pnpm run build

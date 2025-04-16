@@ -22,10 +22,10 @@ public class SortPlayerInventoryCommand {
                 .then(CommandManager.literal("sortPlayerInventory")
                         .requires(CommandPermission.require("sortplayerinventory", 0))
                         .executes(SortPlayerInventoryCommand::showState)
-                        .then(CommandManager.literal("On")
+                        .then(CommandManager.literal("on")
                                 .executes(SortPlayerInventoryCommand::turnOn)
                         )
-                        .then(CommandManager.literal("Off")
+                        .then(CommandManager.literal("off")
                                 .executes(SortPlayerInventoryCommand::turnOff)
                         )));
     }
