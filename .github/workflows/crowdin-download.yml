@@ -23,7 +23,7 @@ jobs:
       fail-fast: false
       max-parallel: 1
       matrix:
-        lc: [{lc: de, name: german}, {lc: fr, name: french}, {lc: pt-BR, name: portugese (br)}, {lc: ru, name: russian}, {lc: uk, name: ukrainian}, {lc: zh-CN, name: chinese}]
+        lc: [{lc: de, name: German}, {lc: fr, name: French}, {lc: pt-BR, name: Portuguese (br)}, {lc: ru, name: Russian}, {lc: uk, name: Ukrainian}, {lc: zh-CN, name: Chinese}]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
