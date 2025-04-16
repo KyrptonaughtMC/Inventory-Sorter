@@ -6,10 +6,12 @@ import net.minecraft.util.Identifier;
 
 import java.io.Reader;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class Compatibility {
-    Set<Identifier> shouldHideSortButtons = new HashSet<>();
-    Set<Identifier> shouldPreventSort = new HashSet<>();
+    Set<Identifier> shouldHideSortButtons = ConcurrentHashMap.newKeySet();
+    Set<Identifier> shouldPreventSort = ConcurrentHashMap.newKeySet();
     List<CompatibilityLoader> loaders = new ArrayList<>();
 
     public Compatibility(ArrayList<CompatibilityLoader> loaders) {
@@ -23,8 +25,10 @@ public class Compatibility {
 
     public void load() {
         for (CompatibilityLoader loader : loaders) {
-            shouldHideSortButtons.addAll(loader.getShouldHideSortButtons());
-            shouldPreventSort.addAll(loader.getPreventSort());
+            new Thread(() -> {
+                shouldHideSortButtons.addAll(loader.getShouldHideSortButtons());
+                shouldPreventSort.addAll(loader.getPreventSort());
+            }).start();
         }
     }
 
