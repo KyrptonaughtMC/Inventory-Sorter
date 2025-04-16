@@ -5,9 +5,15 @@ import net.kyrptonaught.inventorysorter.compat.sources.CompatibilityLoader;
 import net.minecraft.util.Identifier;
 
 import java.io.Reader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+import static net.kyrptonaught.inventorysorter.InventorySorterMod.LOGGER;
 
 public class Compatibility {
     Set<Identifier> shouldHideSortButtons = ConcurrentHashMap.newKeySet();
@@ -24,11 +30,36 @@ public class Compatibility {
     }
 
     public void load() {
+        List<CompletableFuture<Void>> futures = new ArrayList<>();
+
         for (CompatibilityLoader loader : loaders) {
-            new Thread(() -> {
-                shouldHideSortButtons.addAll(loader.getShouldHideSortButtons());
-                shouldPreventSort.addAll(loader.getPreventSort());
-            }).start();
+            CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+                try {
+                    Set<Identifier> hideButtons = loader.getShouldHideSortButtons();
+                    Set<Identifier> preventSort = loader.getPreventSort();
+
+                    shouldHideSortButtons.addAll(hideButtons);
+                    shouldPreventSort.addAll(preventSort);
+
+                    LOGGER.debug("Successfully loaded compatibility data from {}",
+                            loader.getClass().getSimpleName());
+                } catch (Exception e) {
+                    LOGGER.error("Error loading compatibility data from {}",
+                            loader.getClass().getSimpleName(), e);
+                }
+            });
+
+            futures.add(future);
+        }
+
+        // Time out if the loaders take too long
+        try {
+            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+                    .orTimeout(30, TimeUnit.SECONDS)
+                    .exceptionally(e -> null)
+                    .join();
+        } catch (Exception e) {
+            LOGGER.error("Some loaders did not complete in time", e);
         }
     }
 
@@ -42,11 +73,7 @@ public class Compatibility {
         return !shouldHideSortButtons.contains(inventoryIdentifier);
     }
 
-    public boolean isSortAllowed(Identifier inventoryIdentifier) {
-        return isSortAllowed(inventoryIdentifier, Set.of());
-    }
-
-    public boolean isSortAllowed(Identifier inventoryIdentifier, Set<String> playerSortPrevention ) {
+    public boolean isSortAllowed(Identifier inventoryIdentifier, Set<String> playerSortPrevention) {
         if (shouldPreventSort.contains(inventoryIdentifier)) {
             return false;
         }
@@ -58,20 +85,8 @@ public class Compatibility {
         return true;
     }
 
-    public Set<Identifier> getShouldHideSortButtons() {
-        return shouldHideSortButtons;
-    }
-
-    public Set<Identifier> getPreventSort() {
-        return shouldPreventSort;
-    }
-
-    public boolean addShouldHideSortButton(String identifier) {
-        return shouldHideSortButtons.add(Identifier.of(identifier));
-    }
-
-    public boolean addPreventSort(String identifier) {
-        return shouldPreventSort.add(Identifier.of(identifier));
+    public void addShouldHideSortButton(String identifier) {
+        shouldHideSortButtons.add(Identifier.of(identifier));
     }
 
     public static Set<Identifier> parseJson(Reader fileInputStream) {
