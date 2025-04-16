@@ -31,15 +31,6 @@ public abstract class MixinCreativeInventoryScreen implements SortableContainerS
         }
     }
 
-    @Inject(method = "mouseScrolled", at = @At("HEAD"))
-    public void mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount, CallbackInfoReturnable<Boolean> cir) {
-        SortButtonWidget sortbtn = this.getSortButton();
-
-        if (sortbtn.visible && sortbtn.isMouseOver(mouseX, mouseY)) {
-            sortbtn.mouseScrolled(mouseX, mouseY, verticalAmount, horizontalAmount);
-        }
-    }
-
     @Inject(method = "render", at = @At("TAIL"))
     private void invsort$render(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         if (getConfig().showSortButton) {
