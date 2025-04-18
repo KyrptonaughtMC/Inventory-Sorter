@@ -7,6 +7,13 @@ permissions:
   contents: write
   pull-requests: write
 
+env:
+  TYPE: ${{ endsWith(github.ref_name, 'main') && 'release' || (endsWith(github.ref_name, 'beta') && 'beta' || 'dev') }}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'push' && github.ref_name != 'main' && github.ref_name != 'beta' }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -63,6 +70,19 @@ jobs:
         env:
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+
+      - name: "🏗️ Build & Release to GitHub"
+        if: ${{ steps.get-next-version.outputs.new-release-published == 'true' }}
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          DO_PUBLISH: steps.get-next-version.outputs.new-release-published
+          MODRINTH_ID: ${{ vars.MODRINTH_ID }}
+          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+          CURSEFORGE_ID: ${{ vars.CURSEFORGE_ID }}
+          CURSEFORGE_SLUG: ${{ vars.CURSEFORGE_SLUG }}
+          CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: npx semantic-release
 
       - name: "🧪 Run Dev Build"
         if: ${{ steps.get-next-version.outputs.new-release-published != 'true' }}

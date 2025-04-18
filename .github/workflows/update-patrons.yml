@@ -2,6 +2,8 @@ name: Update Supporters List
 
 on:
   push:
+    branches:
+      - main
   schedule:
     - cron: '9 0 * * *' # Every day at 00:09 UTC
   workflow_dispatch:

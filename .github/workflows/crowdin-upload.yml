@@ -9,6 +9,10 @@ permissions:
 on:
   workflow_dispatch:
   push:
+    branches:
+      - dev
+      - beta
+      - main
     paths:
       - "src/main/resources/assets/inventorysorter/lang/en_us.json"
 
