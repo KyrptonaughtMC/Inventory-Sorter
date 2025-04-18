@@ -10,6 +10,10 @@
   "inventorysorter.toggle.yes": "Yes",
   "inventorysorter.toggle.no": "No",
 
+  "inventorysorter.cmd.translate": "Playing Minecraft in a different language?\nYou can help translate %s!\n\nJust click the link below to get started.\nIt’s super easy and you can do it right in your browser.\nNo need to download anything or set up a special account.",
+  "inventorysorter.cmd.crowdin": "Translate on Crowdin",
+  "inventorysorter.cmd.crowdin.tooltip": "Click to open Crowdin translation page",
+
   "inventorysorter.config.screen.title": "Inventory Sorter Settings",
   "inventorysorter.config.category.display": "Display",
   "inventorysorter.config.category.logic": "Logic",

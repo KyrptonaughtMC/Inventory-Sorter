@@ -23,11 +23,13 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 public class InventorySorterMod implements ModInitializer {
     public static final String MOD_ID = "inventorysorter";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+    public static final String VERSION = "VERSION_REPL";
 
     private static NewConfigOptions CONFIG = Config.load();
     public static final Compatibility compatibility = new Compatibility(
@@ -75,9 +77,15 @@ public class InventorySorterMod implements ModInitializer {
     public static final AttachmentType<ClientSync> CLIENT_SYNC = AttachmentRegistry.create(
             Identifier.of(MOD_ID, "client_sync"),
             builder -> builder
-                    .initializer(() -> ClientSync.DEFAULT)
                     .persistent(ClientSync.NBT_CODEC)
                     .copyOnDeath()
+    );
+
+    @SuppressWarnings("UnstableApiUsage")
+    public static final AttachmentType<LastSeenVersionPacket> LAST_SEEN_VERSION = AttachmentRegistry.create(
+            Identifier.of(MOD_ID, "last_seen_version"),
+            builder -> builder
+                    .persistent(LastSeenVersionPacket.NBT_CODEC)
     );
 
     @Override
@@ -87,6 +95,7 @@ public class InventorySorterMod implements ModInitializer {
 
         PayloadTypeRegistry.playC2S().register(ClientSync.ID, ClientSync.CODEC);
 
+        PayloadTypeRegistry.playS2C().register(LastSeenVersionPacket.ID, LastSeenVersionPacket.CODEC);
 
         PayloadTypeRegistry.playS2C().register(HideButton.ID, HideButton.CODEC);
         PayloadTypeRegistry.playS2C().register(ReloadConfigPacket.ID, ReloadConfigPacket.CODEC);
@@ -107,8 +116,17 @@ public class InventorySorterMod implements ModInitializer {
         });
 
         ServerPlayConnectionEvents.JOIN.register((handler, server, client) -> {
+            ServerPlayerEntity player = handler.getPlayer();
+
+            if(!player.hasAttached(LAST_SEEN_VERSION)) {
+                LastSeenVersionPacket.DEFAULT.send(player);
+            } else {
+                Objects.requireNonNull(player.getAttached(LAST_SEEN_VERSION)).send(player);
+            }
+
+            player.setAttached(LAST_SEEN_VERSION, new LastSeenVersionPacket(VERSION, player.getClientOptions().language().toLowerCase()));
+
             if (client.isDedicated()) {
-                ServerPlayerEntity player = handler.getPlayer();
                 if (!player.hasAttached(SORT_SETTINGS)) {
                     player.setAttached(SORT_SETTINGS, SortSettings.DEFAULT);
                 }
