@@ -47,7 +47,7 @@
     ["semantic-release-discord-notifier", {
       "embedJson": {
         "username": "Inventory Sorter",
-        "avatar_url": "https://cdn.modrinth.com/data/5ibSyLAz/5590c9168b256a538bcc7704f2984b7ee29f9c1b.png",
+        "avatar_url": "https://github.com/KyrptonaughtMC/Inventory-Sorter/blob/main/src/main/resources/assets/inventorysorter/icon.png?raw=true",
         "content": "# :rocket: ${nextRelease.version} just dropped",
         "embeds": [
           {
