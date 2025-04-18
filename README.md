@@ -69,4 +69,7 @@ Icon and logo artwork by [Annarooma](https://www.twitch.tv/annarooma).
 Thank you for the gorgeous design!
 
 <!-- marker:patrons-start -->
+
+Yama
+
 <!-- marker:patrons-end -->
