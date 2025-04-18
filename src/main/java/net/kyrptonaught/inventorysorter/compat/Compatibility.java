@@ -9,9 +9,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.LOGGER;
 
@@ -30,10 +28,9 @@ public class Compatibility {
     }
 
     public void load() {
-        List<CompletableFuture<Void>> futures = new ArrayList<>();
 
         for (CompatibilityLoader loader : loaders) {
-            CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+            new Thread(() -> {
                 try {
                     Set<Identifier> hideButtons = loader.getShouldHideSortButtons();
                     Set<Identifier> preventSort = loader.getPreventSort();
@@ -47,19 +44,7 @@ public class Compatibility {
                     LOGGER.error("Error loading compatibility data from {}",
                             loader.getClass().getSimpleName(), e);
                 }
-            });
-
-            futures.add(future);
-        }
-
-        // Time out if the loaders take too long
-        try {
-            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
-                    .orTimeout(30, TimeUnit.SECONDS)
-                    .exceptionally(e -> null)
-                    .join();
-        } catch (Exception e) {
-            LOGGER.error("Some loaders did not complete in time", e);
+            }).start();
         }
     }
 
