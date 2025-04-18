@@ -37,8 +37,9 @@ jobs:
           localization_branch_name: l10n/${{matrix.lc.lc}}
 
           create_pull_request: true
-          commit_message: 'fix(l10n): New ${{matrix.lc.name}} translations'
-          pull_request_title: 'fix(l10n): New ${{matrix.lc.name}} translations'
+          skip_untranslated_strings: true
+          commit_message: 'fix(l10n): additional ${{matrix.lc.name}} translations'
+          pull_request_title: 'fix(l10n): additional ${{matrix.lc.name}} translations'
           pull_request_base_branch_name: 'main'
           download_language: ${{matrix.lc.lc}}
 
