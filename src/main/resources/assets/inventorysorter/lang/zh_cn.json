@@ -77,5 +77,5 @@
   "inventorysorter.sortButton.tooltip.help.hide": "按住 %s 点击可隐藏按钮",
   "inventorysorter.sortButton.tooltip.hide": "点击隐藏此按钮",
   "inventorysorter.sortButton.toast.hide.success.title": "整理按钮已隐藏",
-  "inventorysorter.sortButton.toast.hide.success.description": "容器：%s"
+  "inventorysorter.sortButton.toast.hide.success.description": "屏幕：%s"
 }
