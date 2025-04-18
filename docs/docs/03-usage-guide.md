@@ -68,6 +68,12 @@ This is useful if the button overlaps with other UI elements or mods.
 
 To re-enable it, use the GUI configuration menu or manually update the config file.
 
+:::tip
+If you’re trying to restore a hidden sort button but aren’t sure which screen it was hidden from, the last inventory 
+you opened will be highlighted in the config menu. This only applies if the inventory was opened within the last 5 minutes, 
+helping you quickly locate and re-enable the button without digging through every entry.
+:::
+
 ### Scroll to Change Sort Type
 
 While hovering over the sort button, scrolling the mouse wheel will cycle through the available sorting methods:

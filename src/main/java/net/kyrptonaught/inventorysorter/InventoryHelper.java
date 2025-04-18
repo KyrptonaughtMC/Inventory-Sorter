@@ -23,6 +23,7 @@ import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.function.Function;
 
@@ -32,6 +33,10 @@ import static net.kyrptonaught.inventorysorter.InventorySorterMod.compatibility;
 public class InventoryHelper {
 
     public static final double MAX_LOOKUP_DISTANCE = 6.0D;
+    private static Identifier lastCheckedId;
+    private static long lastCheckedTimestamp;
+    private static final long TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes in milliseconds
+
 
     public record ScreenContext(ScreenHandler handler, Identifier screenId, Inventory inventory) {}
 
@@ -202,6 +207,7 @@ public class InventoryHelper {
             if (id == null) {
                 return false;
             }
+            setLastChecked(id);
             return compatibility.shouldShowSortButton(id);
 
         } catch (UnsupportedOperationException e) {
@@ -249,5 +255,17 @@ public class InventoryHelper {
             return false;
         }
         return numSlots - 36 >= 9;
+    }
+
+    private static void setLastChecked(Identifier id) {
+        lastCheckedId = id;
+        lastCheckedTimestamp = System.currentTimeMillis();
+    }
+
+    public static Optional<Identifier> getLastCheckedId() {
+        if (lastCheckedId != null && System.currentTimeMillis() - lastCheckedTimestamp > TIMEOUT_MS) {
+            lastCheckedId = null;
+        }
+        return Optional.ofNullable(lastCheckedId);
     }
 }

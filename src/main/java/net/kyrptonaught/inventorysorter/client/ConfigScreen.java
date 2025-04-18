@@ -1,14 +1,16 @@
 package net.kyrptonaught.inventorysorter.client;
 
 import gg.meza.supporters.clothconfig.SupportCategory;
+import me.shedaniel.clothconfig2.api.AbstractConfigListEntry;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
-import me.shedaniel.clothconfig2.gui.entries.BooleanListEntry;
 import me.shedaniel.clothconfig2.gui.entries.SubCategoryListEntry;
 import me.shedaniel.clothconfig2.impl.builders.SubCategoryBuilder;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.kyrptonaught.inventorysorter.InventoryHelper;
 import net.kyrptonaught.inventorysorter.SortType;
+import net.kyrptonaught.inventorysorter.client.clothconfig.ContainerEntry;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.kyrptonaught.inventorysorter.config.ScrollBehaviour;
 import net.minecraft.client.MinecraftClient;
@@ -43,56 +45,42 @@ public class ConfigScreen {
         return Text.translatable("inventorysorter.toggle.no").formatted(Formatting.RED);
     }
 
-    private static Text toggleState(boolean state) {
+    public static Text toggleState(boolean state) {
         return state ? on() : off();
     }
 
-    private static Text toggleYesNoState(boolean state) {
+    public static Text toggleYesNoState(boolean state) {
         return state ? yes() : no();
     }
 
-    private static List<SubCategoryListEntry> buildCompatEditor(ConfigEntryBuilder builder, NewConfigOptions config) {
+    private static List<AbstractConfigListEntry<?>> buildCompatEditor(ConfigEntryBuilder builder, NewConfigOptions config) {
         Set<String> allScreens = new HashSet<>();
         allScreens.addAll(config.hideButtonsForScreens);
         allScreens.addAll(config.preventSortForScreens);
-        List<SubCategoryListEntry> entries = new ArrayList<>();
+        List<AbstractConfigListEntry<?>> entries = new ArrayList<>();
 
-
-        for (String screenId : allScreens) {
-            boolean shouldHide = config.hideButtonsForScreens.contains(screenId);
-            boolean shouldPreventSort = config.preventSortForScreens.contains(screenId);
-
-            @NotNull BooleanListEntry hideToggle = builder
-                    .startBooleanToggle(Text.translatable("inventorysorter.config.sortButton"), !shouldHide)
-                    .setYesNoTextSupplier(ConfigScreen::toggleState)
-                    .setTooltip(Text.translatable("inventorysorter.config.compat.hideButton.tooltip", screenId))
-                    .setDefaultValue(true)
-                    .setSaveConsumer(shouldShow -> {
-                        if (shouldShow) {
-                            config.enableButtonForScreen(screenId);
-                        } else {
-                            config.disableButtonForScreen(screenId);
-                        }
-                    })
-                    .build();
-
-            @NotNull BooleanListEntry preventToggle = builder
-                    .startBooleanToggle(Text.translatable("inventorysorter.config.compat.preventSort"), shouldPreventSort)
-                    .setYesNoTextSupplier(ConfigScreen::toggleYesNoState)
-                    .setDefaultValue(false)
-                    .setTooltip(Text.translatable("inventorysorter.config.compat.preventSort.tooltip", screenId))
-                    .setSaveConsumer(newValue -> {
-                        if (newValue) config.disableSortForScreen(screenId);
-                        else config.enableSortForScreen(screenId);
-                    })
-                    .build();
-
-            SubCategoryBuilder screenRow = builder.startSubCategory(Text.literal(screenId)).setExpanded(false);
-            screenRow.add(hideToggle);
-            screenRow.add(preventToggle);
-
-            entries.add(screenRow.build());
+        if (InventoryHelper.getLastCheckedId().isPresent()) {
+            entries.add(builder.startTextDescription(Text.literal(" ")).build());
+            String screenId = InventoryHelper.getLastCheckedId().get().toString();
+            SubCategoryListEntry lastOpenedRow = ContainerEntry.build(builder, config, screenId, true);
+            SubCategoryBuilder lastOpened = builder.startSubCategory(Text.translatable("inventorysorter.config.compat.lastOpened"))
+                    .setExpanded(true);
+            lastOpened.add(lastOpenedRow);
+            entries.add(lastOpened.build());
+            entries.add(builder.startTextDescription(Text.literal(" ")).build());
         }
+
+        SubCategoryBuilder otherScreens = builder.startSubCategory(Text.translatable("inventorysorter.config.compat.others"))
+                .setExpanded(false);
+        for (String screenId : allScreens) {
+            if (InventoryHelper.getLastCheckedId().isPresent() && InventoryHelper.getLastCheckedId().get().toString().equals(screenId)) {
+                continue;
+            }
+            SubCategoryListEntry screenRow = ContainerEntry.build(builder, config, screenId, false);
+            otherScreens.add(screenRow);
+        }
+
+        entries.add(otherScreens.build());
 
         return entries;
     }
@@ -186,8 +174,8 @@ public class ConfigScreen {
         );
 
 
-        List<SubCategoryListEntry> compatEntries = buildCompatEditor(entryBuilder, options);
-        for (SubCategoryListEntry entry : compatEntries) {
+        List<AbstractConfigListEntry<?>> compatEntries = buildCompatEditor(entryBuilder, options);
+        for (AbstractConfigListEntry<?> entry : compatEntries) {
             compatCategory.addEntry(entry);
         }
 
