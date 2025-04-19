@@ -10,6 +10,8 @@ on:
   push:
     branches:
       - dev
+    paths:
+      - "src/main/resources/assets/inventorysorter/lang/en_us.json"
   schedule:
     - cron: '0 */12 * * *' # Every 12 hours
   workflow_dispatch:
