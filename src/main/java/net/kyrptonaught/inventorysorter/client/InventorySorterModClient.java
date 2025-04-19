@@ -25,8 +25,8 @@ import static net.kyrptonaught.inventorysorter.InventorySorterMod.*;
 public class InventorySorterModClient implements ClientModInitializer {
 
     private CompatConfig serverConfig = new CompatConfig();
-    private boolean serverIsPresent = false;
-    private static final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+    private volatile boolean serverIsPresent = false;
+    private ScheduledExecutorService scheduler;
 
 
     public static final KeyBinding sortButton = new KeyBinding(
@@ -52,6 +52,8 @@ public class InventorySorterModClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        Runtime.getRuntime().addShutdownHook(new Thread(this::shutdownScheduler));
+
         KeyBindingHelper.registerKeyBinding(sortButton);
         KeyBindingHelper.registerKeyBinding(configButton);
         KeyBindingHelper.registerKeyBinding(modifierButton);
@@ -62,6 +64,8 @@ public class InventorySorterModClient implements ClientModInitializer {
         compatibility.addLoader(new ConfigLoader(() -> serverConfig));
 
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
+            scheduler = Executors.newSingleThreadScheduledExecutor();
+
             ClientPlayNetworking.send(new ClientSync(true));
             syncConfig();
 
@@ -87,6 +91,7 @@ public class InventorySorterModClient implements ClientModInitializer {
             serverConfig = new CompatConfig();
             compatibility.reload();
             serverIsPresent = false;
+            shutdownScheduler();
         });
 
         ClientTickEvents.END_CLIENT_TICK.register((client) -> {
@@ -154,5 +159,19 @@ public class InventorySorterModClient implements ClientModInitializer {
             case MOUSE -> sortButton.matchesMouse(pressedKeyCode);
             default -> false;
         };
+    }
+
+    private void shutdownScheduler() {
+        if (scheduler == null || scheduler.isShutdown()) return;
+
+        scheduler.shutdown();
+        try {
+            if (!scheduler.awaitTermination(5, TimeUnit.SECONDS)) {
+                scheduler.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            scheduler.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
     }
 }
