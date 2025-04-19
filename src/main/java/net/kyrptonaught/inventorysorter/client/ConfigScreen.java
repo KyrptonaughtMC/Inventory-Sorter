@@ -19,7 +19,6 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.List;
