@@ -96,6 +96,7 @@ public class InventorySorterMod implements ModInitializer {
         PayloadTypeRegistry.playC2S().register(ClientSync.ID, ClientSync.CODEC);
 
         PayloadTypeRegistry.playS2C().register(LastSeenVersionPacket.ID, LastSeenVersionPacket.CODEC);
+        PayloadTypeRegistry.playS2C().register(ServerPresencePacket.ID, ServerPresencePacket.CODEC);
 
         PayloadTypeRegistry.playS2C().register(HideButton.ID, HideButton.CODEC);
         PayloadTypeRegistry.playS2C().register(ReloadConfigPacket.ID, ReloadConfigPacket.CODEC);
@@ -117,7 +118,7 @@ public class InventorySorterMod implements ModInitializer {
 
         ServerPlayConnectionEvents.JOIN.register((handler, server, client) -> {
             ServerPlayerEntity player = handler.getPlayer();
-
+            ServerPlayNetworking.send(player, new ServerPresencePacket());
             if(!player.hasAttached(LAST_SEEN_VERSION)) {
                 LastSeenVersionPacket.DEFAULT.send(player);
             } else {

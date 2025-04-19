@@ -5,7 +5,6 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.kyrptonaught.inventorysorter.InventorySorterMod;
 import net.kyrptonaught.inventorysorter.compat.config.CompatConfig;
 import net.kyrptonaught.inventorysorter.compat.sources.ConfigLoader;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
@@ -13,13 +12,22 @@ import net.kyrptonaught.inventorysorter.network.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import org.lwjgl.glfw.GLFW;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.*;
 
 public class InventorySorterModClient implements ClientModInitializer {
 
     private CompatConfig serverConfig = new CompatConfig();
+    private volatile boolean serverIsPresent = false;
+    private ScheduledExecutorService scheduler;
+
 
     public static final KeyBinding sortButton = new KeyBinding(
             "inventorysorter.key.sort",
@@ -44,6 +52,8 @@ public class InventorySorterModClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        Runtime.getRuntime().addShutdownHook(new Thread(this::shutdownScheduler));
+
         KeyBindingHelper.registerKeyBinding(sortButton);
         KeyBindingHelper.registerKeyBinding(configButton);
         KeyBindingHelper.registerKeyBinding(modifierButton);
@@ -54,8 +64,23 @@ public class InventorySorterModClient implements ClientModInitializer {
         compatibility.addLoader(new ConfigLoader(() -> serverConfig));
 
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
+            scheduler = Executors.newSingleThreadScheduledExecutor();
+
             ClientPlayNetworking.send(new ClientSync(true));
             syncConfig();
+
+            scheduler.schedule(() -> {
+                if (!serverIsPresent) {
+                    client.execute(() -> {
+                        if (client.player != null) {
+                            client.player.sendMessage(
+                                    Text.literal("[Inventory Sorter] ").styled(style -> style.withBold(true).withColor(Formatting.AQUA))
+                                            .append(Text.translatable("inventorysorter.warning.missing-server").styled(style -> style.withBold(false).withColor(Formatting.YELLOW))
+                                            ), false);
+                        }
+                    });
+                }
+            }, 5, TimeUnit.SECONDS);
         });
 
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
@@ -65,6 +90,8 @@ public class InventorySorterModClient implements ClientModInitializer {
              */
             serverConfig = new CompatConfig();
             compatibility.reload();
+            serverIsPresent = false;
+            shutdownScheduler();
         });
 
         ClientTickEvents.END_CLIENT_TICK.register((client) -> {
@@ -113,6 +140,10 @@ public class InventorySorterModClient implements ClientModInitializer {
             }
             TranslationReminder.notify(client);
         });
+
+        ClientPlayNetworking.registerGlobalReceiver(ServerPresencePacket.ID, (payload, context) -> {
+            serverIsPresent = true;
+        });
     }
 
     public static void syncConfig() {
@@ -128,5 +159,19 @@ public class InventorySorterModClient implements ClientModInitializer {
             case MOUSE -> sortButton.matchesMouse(pressedKeyCode);
             default -> false;
         };
+    }
+
+    private void shutdownScheduler() {
+        if (scheduler == null || scheduler.isShutdown()) return;
+
+        scheduler.shutdown();
+        try {
+            if (!scheduler.awaitTermination(5, TimeUnit.SECONDS)) {
+                scheduler.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            scheduler.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
     }
 }

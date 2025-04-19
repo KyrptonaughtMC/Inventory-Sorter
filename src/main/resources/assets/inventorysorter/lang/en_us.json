@@ -5,6 +5,8 @@
   "inventorysorter.key.config": "Open Settings",
   "inventorysorter.key.modifier": "Modifier Key (for hiding/switching)",
 
+  "inventorysorter.warning.missing-server": "No server-side support detected.\nSorting will NOT work!",
+
   "inventorysorter.toggle.enabled": "On",
   "inventorysorter.toggle.disabled": "Off",
   "inventorysorter.toggle.yes": "Yes",
