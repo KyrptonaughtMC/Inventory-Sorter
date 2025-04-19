@@ -8,6 +8,8 @@
   "inventorysorter.toggle.disabled": "关闭",
   "inventorysorter.toggle.yes": "是",
   "inventorysorter.toggle.no": "否",
+  "inventorysorter.cmd.crowdin": "在 Crowdin 上翻译",
+  "inventorysorter.cmd.crowdin.tooltip": "点击打开 Crowdin 翻译页面",
   "inventorysorter.config.screen.title": "Inventory Sorter 设置",
   "inventorysorter.config.category.display": "显示",
   "inventorysorter.config.category.logic": "逻辑",
