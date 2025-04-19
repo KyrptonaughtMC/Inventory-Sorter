@@ -16,7 +16,8 @@ modSettings {
         "schema" to "\$schema",
         "clothVersion" to mod.prop("cloth_version"),
         "modmenuVersion" to mod.prop("modmenu_version"),
-        "fabricPermissionsApiVersion" to mod.prop("fabric_permissions_api_version")
+        "fabricPermissionsApiVersion" to mod.prop("fabric_permissions_api_version"),
+        "fabricVersion" to mod.prop("fabric_version")
     )
 }
 
@@ -36,11 +37,14 @@ dependencies {
     modImplementation("me.lucko:fabric-permissions-api:${mod.prop("fabric_permissions_api_version")}")
     include("me.lucko:fabric-permissions-api:${mod.prop("fabric_permissions_api_version")}")
 
-    include(modImplementation("xyz.nucleoid:server-translations-api:${mod.prop("server_translations_api_version")}")!!)
-    include(modImplementation("gg.meza:supporters-core-fabric:${mod.prop("supporters_core_version")}")!!)
+    modImplementation("gg.meza:supporters_core-${mod.loader}:${mod.prop("supporters_core_version")}+${stonecutter.current.version}")
+    include("gg.meza:supporters_core-${mod.loader}:${mod.prop("supporters_core_version")}+${stonecutter.current.version}")
+
+    modImplementation("xyz.nucleoid:server-translations-api:${mod.prop("server_translations_api_version")}")
+    include("xyz.nucleoid:server-translations-api:${mod.prop("server_translations_api_version")}")
 
     modApi("com.terraformersmc:modmenu:${mod.prop("modmenu_version")}")
-    modApi("me.shedaniel.cloth:cloth-config-fabric:${mod.prop("cloth_version")}") {
+    modApi("me.shedaniel.cloth:cloth-config-${mod.loader}:${mod.prop("cloth_version")}") {
         exclude(group = "net.fabricmc.fabric-api")
     }
 
