@@ -5,7 +5,6 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.kyrptonaught.inventorysorter.InventorySorterMod;
 import net.kyrptonaught.inventorysorter.compat.config.CompatConfig;
 import net.kyrptonaught.inventorysorter.compat.sources.ConfigLoader;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
@@ -13,13 +12,22 @@ import net.kyrptonaught.inventorysorter.network.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import org.lwjgl.glfw.GLFW;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.*;
 
 public class InventorySorterModClient implements ClientModInitializer {
 
     private CompatConfig serverConfig = new CompatConfig();
+    private boolean serverIsPresent = false;
+    private static final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+
 
     public static final KeyBinding sortButton = new KeyBinding(
             "inventorysorter.key.sort",
@@ -56,6 +64,19 @@ public class InventorySorterModClient implements ClientModInitializer {
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
             ClientPlayNetworking.send(new ClientSync(true));
             syncConfig();
+
+            scheduler.schedule(() -> {
+                if (!serverIsPresent) {
+                    client.execute(() -> {
+                        if (client.player != null) {
+                            client.player.sendMessage(
+                                    Text.literal("[Inventory Sorter] ").styled(style -> style.withBold(true).withColor(Formatting.AQUA))
+                                            .append(Text.translatable("inventorysorter.warning.missing-server").styled(style -> style.withBold(false).withColor(Formatting.YELLOW))
+                                            ), false);
+                        }
+                    });
+                }
+            }, 5, TimeUnit.SECONDS);
         });
 
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
@@ -65,6 +86,7 @@ public class InventorySorterModClient implements ClientModInitializer {
              */
             serverConfig = new CompatConfig();
             compatibility.reload();
+            serverIsPresent = false;
         });
 
         ClientTickEvents.END_CLIENT_TICK.register((client) -> {
@@ -112,6 +134,10 @@ public class InventorySorterModClient implements ClientModInitializer {
                 return;
             }
             TranslationReminder.notify(client);
+        });
+
+        ClientPlayNetworking.registerGlobalReceiver(ServerPresencePacket.ID, (payload, context) -> {
+            serverIsPresent = true;
         });
     }
 
