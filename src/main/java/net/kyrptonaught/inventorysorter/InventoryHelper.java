@@ -94,7 +94,8 @@ public class InventoryHelper {
                 return false;
             }
             if (canSortInventory(player, context.handler)) {
-                sortInventory(context.inventory, 0, context.inventory.size(), sortType);
+                String languageCode = player.getClientOptions().language().toLowerCase();
+                sortInventory(context.inventory, 0, context.inventory.size(), sortType, languageCode);
                 return true;
             }
             return false;
@@ -110,14 +111,15 @@ public class InventoryHelper {
         return Text.translatable("inventorysorter.cmd.sort.notsortable");
     }
 
-    public static boolean sortInventory(PlayerEntity player, boolean shouldSortPlayerInventory, SortType sortType) {
+    public static boolean sortInventory(ServerPlayerEntity player, boolean shouldSortPlayerInventory, SortType sortType) {
+        String languageCode = player.getClientOptions().language().toLowerCase();
         if (shouldSortPlayerInventory) {
-            sortInventory(player.getInventory(), 9, 27, sortType);
+            sortInventory(player.getInventory(), 9, 27, sortType, languageCode);
             return true;
         } else if (canSortInventory(player)) {
             Inventory inv = getInventory(player.currentScreenHandler);
             if (inv != null) {
-                sortInventory(inv, 0, inv.size(), sortType);
+                sortInventory(inv, 0, inv.size(), sortType, languageCode);
                 return true;
             }
         }
@@ -129,13 +131,13 @@ public class InventoryHelper {
         return screenHandler.slots.getFirst().inventory;
     }
 
-    static void sortInventory(Inventory inv, int startSlot, int invSize, SortType sortType) {
+    private static void sortInventory(Inventory inv, int startSlot, int invSize, SortType sortType, String languageCode) {
         List<ItemStack> stacks = new ArrayList<>();
         for (int i = 0; i < invSize; i++) {
             addStackWithMerge(stacks, inv.getStack(startSlot + i));
         }
 
-        stacks.sort(SortCases.getComparator(sortType));
+        stacks.sort(SortCases.getComparator(sortType, languageCode));
         if (stacks.size() == 0) {
             return;
         }
@@ -244,6 +246,7 @@ public class InventoryHelper {
     }
 
     private static boolean isSortableContainer(PlayerEntity player, ScreenHandler screenHandler, Identifier screenID) {
+        @SuppressWarnings("UnstableApiUsage")
         PlayerSortPrevention playerSortPrevention = player.getAttachedOrCreate(PLAYER_SORT_PREVENTION);
         if (!compatibility.isSortAllowed(screenID, playerSortPrevention.preventSortForScreens())) {
             return false;

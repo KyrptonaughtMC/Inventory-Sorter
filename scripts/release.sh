@@ -7,4 +7,4 @@ sed -e "s/0.0-SNAPSHOT/${VERSION}/" -i gradle.properties
 sed -e "s/VERSION_REPL/${VERSION}/" -i src/main/java/net/kyrptonaught/inventorysorter/InventorySorterMod.java
 
 
-./gradlew chiseledGameTest chiseledBuildAndCollect chiseledPublishMods --stacktrace
+./gradlew chiseledTest chiseledGameTest chiseledBuildAndCollect chiseledPublishMods --stacktrace

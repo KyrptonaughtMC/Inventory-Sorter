@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.collection.DefaultedList;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -37,14 +38,14 @@ public abstract class MixinContainer {
                     if (slotIndex >= 0 && slotIndex < this.slots.size() && this.slots.get(slotIndex).getStack().isEmpty()) {
                         boolean isPlayerInventory = slots.get(slotIndex).inventory instanceof PlayerInventory;
                         InventoryHelper.sortInventory(
-                                player,
+                                (ServerPlayerEntity) player,
                                 isPlayerInventory,
                                 settings.sortType()
                         );
 
                         if (!isPlayerInventory && settings.sortPlayerInventory()) {
                             InventoryHelper.sortInventory(
-                                    player,
+                                    (ServerPlayerEntity) player,
                                     true,
                                     settings.sortType()
                             );
