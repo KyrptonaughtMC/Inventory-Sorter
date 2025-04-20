@@ -31,6 +31,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: 'dev'
 
       - name: Synchronize with Crowdin
         uses: crowdin/github-action@v2
