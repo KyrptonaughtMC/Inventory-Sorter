@@ -37,8 +37,8 @@ dependencies {
     modImplementation("me.lucko:fabric-permissions-api:${mod.prop("fabric_permissions_api_version")}")
     include("me.lucko:fabric-permissions-api:${mod.prop("fabric_permissions_api_version")}")
 
-    modImplementation("gg.meza:supporters_core-${mod.loader}:${mod.prop("supporters_core_version")}+${stonecutter.current.version}")
-    include("gg.meza:supporters_core-${mod.loader}:${mod.prop("supporters_core_version")}+${stonecutter.current.version}")
+    modImplementation("gg.meza:supporters_core-${mod.loader}:${mod.prop("supporters_core_version")}")
+    include("gg.meza:supporters_core-${mod.loader}:${mod.prop("supporters_core_version")}")
 
     modImplementation("xyz.nucleoid:server-translations-api:${mod.prop("server_translations_api_version")}")
     include("xyz.nucleoid:server-translations-api:${mod.prop("server_translations_api_version")}")
