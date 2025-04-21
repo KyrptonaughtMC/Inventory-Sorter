@@ -27,9 +27,10 @@ fi
 # Replace placeholder with actual list
 sed -i.bak "s/$PLACEHOLDER/$LANG_LIST/" "$TARGET_FILE"
 
-# Print updated file contents
+# Print replaced list
 
-cat "$TARGET_FILE"
+echo "✅ Replaced locales in $TARGET_FILE with the following list:"
+echo "$LANG_LIST"
 
 echo ""
 echo "----------------------------------------"
