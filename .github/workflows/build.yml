@@ -35,6 +35,9 @@ jobs:
           check-latest: true
           distribution: 'temurin'
 
+      - name: "Patch completed languages"
+        run: ./scripts/patch-completed-langs.sh
+
       - name: "🛂 Setup Gradle"
         uses: gradle/actions/setup-gradle@v4
         with:

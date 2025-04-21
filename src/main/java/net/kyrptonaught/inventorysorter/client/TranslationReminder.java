@@ -9,12 +9,20 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 import java.net.URI;
+import java.util.List;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.MOD_ID;
 
 public class TranslationReminder {
+    private static final List<String> completedLanguages = List.of("KNOWN_LANGUAGES_REPL");
+
     public static void notify(MinecraftClient client) {
         String languageCode = client.getLanguageManager().getLanguage().toLowerCase();
+
+        if (completedLanguages.contains(languageCode)) {
+            return;
+        }
+
         if (languageCode.startsWith("en_")) {
             return;
         }
