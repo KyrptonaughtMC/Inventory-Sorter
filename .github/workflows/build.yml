@@ -37,6 +37,9 @@ jobs:
 
       - name: "Patch completed languages"
         run: ./scripts/patch-completed-langs.sh
+        env:
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
       - name: "🛂 Setup Gradle"
         uses: gradle/actions/setup-gradle@v4
