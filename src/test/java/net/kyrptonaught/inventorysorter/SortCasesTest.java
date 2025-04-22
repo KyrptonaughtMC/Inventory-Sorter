@@ -61,7 +61,7 @@ public class SortCasesTest {
     public static Locale fromMinecraftLocale(String mcLocale) {
         String[] parts = mcLocale.toLowerCase().split("_");
         if (parts.length == 2) {
-            return new Locale(parts[0], parts[1].toUpperCase());
+            return Locale.of(parts[0], parts[1].toUpperCase());
         } else {
             return Locale.getDefault(); // fallback
         }
