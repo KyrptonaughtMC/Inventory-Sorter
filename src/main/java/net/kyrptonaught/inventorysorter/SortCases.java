@@ -10,15 +10,15 @@ import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.entry.RegistryEntry;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.text.Collator;
+import java.util.*;
 import java.util.stream.IntStream;
 
 public class SortCases {
-    static Comparator<ItemStack> getComparator(SortType sortType) {
-        var defaultComparator = Comparator.comparing(SortCases::getSortableName)
+    static Comparator<ItemStack> getComparator(SortType sortType, String language) {
+        Collator collator = Collator.getInstance(fromMinecraftLocale(language));
+
+        var defaultComparator = Comparator.comparing(SortCases::getSortableName, collator)
                 .thenComparing(SortCases::isOminous)
                 .thenComparing(SortCases::getOminousAmplifier)
                 .thenComparing(ItemStack::getDamage)
@@ -120,6 +120,15 @@ public class SortCases {
             enchantNames.append(enchant).append(" ");
         }
         return stack.getName().getString() + " " + enchantmentsComponent.getSize() + " " + enchantNames;
+    }
+
+    private static Locale fromMinecraftLocale(String mcLocale) {
+        String[] parts = mcLocale.toLowerCase().split("_");
+        if (parts.length == 2) {
+            return Locale.of(parts[0], parts[1].toUpperCase());
+        } else {
+            return Locale.getDefault(); // fallback
+        }
     }
 
 }

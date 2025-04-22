@@ -95,8 +95,8 @@ public class InventorySorterModClient implements ClientModInitializer {
         });
 
         ClientTickEvents.END_CLIENT_TICK.register((client) -> {
-            if (sortButton.wasPressed()) {
-                client.setScreen(ConfigScreen.getConfigeScreen(null));
+            if (configButton.wasPressed()) {
+                client.setScreen(ConfigScreen.getConfigScreen(null));
             }
         });
 

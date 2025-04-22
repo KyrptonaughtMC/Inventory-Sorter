@@ -90,44 +90,37 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
 
     @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
     private void invsort$mouseClicked(double x, double y, int button, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
+        // Keybind check for mouse bindings, client only
         if (client == null || client.player == null) {
             callbackInfoReturnable.setReturnValue(true);
             return;
         }
-
         if (InventorySorterModClient.isKeybindPressed(button, 0, InputUtil.Type.MOUSE)) {
-            SortSettings settings = client.player.getAttachedOrCreate(InventorySorterMod.SORT_SETTINGS);
-            boolean canSortInventory = InventoryHelper.canSortInventory(client.player);
-            boolean shouldSortPlayerInventory = settings.sortPlayerInventory();
-            boolean isContainerInventory = (focusedSlot != null) && (!(focusedSlot.inventory instanceof PlayerInventory));
-
-            if (canSortInventory) {
-                if (settings.sortHighlightedItem()) {
-                    if (isContainerInventory) {
-                        shouldSortPlayerInventory = false;
-                    }
-                }
-            }
-            InventorySortPacket.sendSortPacket(shouldSortPlayerInventory);
-            callbackInfoReturnable.setReturnValue(true);
+            sortInventory(callbackInfoReturnable);
         }
 
     }
 
     @Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
     private void invsort$keyPressed(int keycode, int scancode, int modifiers, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
+        // Keybind check for key bindings, client only
         if (client == null || client.player == null)
             return;
         if (InventorySorterModClient.isKeybindPressed(keycode, scancode, InputUtil.Type.KEYSYM)) {
-            boolean playerOnlyInv = !InventoryHelper.canSortInventory(client.player);
-            SortSettings settings = client.player.getAttachedOrCreate(InventorySorterMod.SORT_SETTINGS);
-            if (!playerOnlyInv && settings.sortHighlightedItem()) {
-                if (focusedSlot != null)
-                    playerOnlyInv = focusedSlot.inventory instanceof PlayerInventory;
-            }
-            InventorySortPacket.sendSortPacket(playerOnlyInv);
-            callbackInfoReturnable.setReturnValue(true);
+            sortInventory(callbackInfoReturnable);
         }
+    }
+
+    @Unique
+    private void sortInventory(CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
+        boolean playerOnlyInv = !InventoryHelper.canSortInventory(client.player);
+        SortSettings settings = client.player.getAttachedOrCreate(InventorySorterMod.SORT_SETTINGS);
+        if (!playerOnlyInv && settings.sortHighlightedItem()) {
+            if (focusedSlot != null)
+                playerOnlyInv = focusedSlot.inventory instanceof PlayerInventory;
+        }
+        InventorySortPacket.sendSortPacket(playerOnlyInv);
+        callbackInfoReturnable.setReturnValue(true);
     }
 
     @Inject(method = "render", at = @At("TAIL"))
