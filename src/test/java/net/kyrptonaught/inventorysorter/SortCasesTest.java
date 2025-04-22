@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 
 public class SortCasesTest {
 
@@ -56,14 +55,5 @@ public class SortCasesTest {
                 .build();
 
         return new ItemStack(Items.EGG.getRegistryEntry(), 4, changes);
-    }
-
-    public static Locale fromMinecraftLocale(String mcLocale) {
-        String[] parts = mcLocale.toLowerCase().split("_");
-        if (parts.length == 2) {
-            return Locale.of(parts[0], parts[1].toUpperCase());
-        } else {
-            return Locale.getDefault(); // fallback
-        }
     }
 }
