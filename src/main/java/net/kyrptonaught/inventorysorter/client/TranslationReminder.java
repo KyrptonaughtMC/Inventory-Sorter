@@ -14,6 +14,7 @@ import java.util.List;
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.MOD_ID;
 
 public class TranslationReminder {
+    // replaced at build time by scripts/patch-completed-langs.sh
     private static final List<String> completedLanguages = List.of("KNOWN_LANGUAGES_REPL");
 
     public static void notify(MinecraftClient client) {
