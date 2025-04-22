@@ -17,6 +17,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import static com.mojang.text2speech.Narrator.LOGGER;
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.SORT_SETTINGS;
 
 @Mixin(ScreenHandler.class)
@@ -30,7 +31,14 @@ public abstract class MixinContainer {
 
     @Inject(method = "onSlotClick", at = @At("HEAD"), cancellable = true)
     public void sortOnDoubleClickEmpty(int slotIndex, int button, SlotActionType actionType, PlayerEntity player, CallbackInfo ci) {
+        // Server side only
         if (!player.getWorld().isClient) {
+            if (!(player instanceof ServerPlayerEntity)) {
+                // Heuristics, just to be on the safe side
+                LOGGER.debug("Player is not a ServerPlayerEntity, skipping sort on double click");
+                return;
+            }
+
             SortSettings settings = player.getAttachedOrCreate(SORT_SETTINGS);
 
             if (settings.enableDoubleClick() && button == 0 && actionType.equals(SlotActionType.PICKUP_ALL))
