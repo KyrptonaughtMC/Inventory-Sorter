@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -52,7 +53,7 @@ public class RemoteConfigLoader implements CompatibilityLoader {
 
             if (success) {
                 // re-read since JSONTokener consumes the stream
-                reader = new InputStreamReader(url.openStream());
+                reader = new InputStreamReader(url.openStream(), StandardCharsets.UTF_8);
                 return new Gson().fromJson(reader, CompatConfig.class);
             }
         } catch (Exception e) {

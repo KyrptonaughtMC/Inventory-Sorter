@@ -8,6 +8,7 @@ import net.kyrptonaught.inventorysorter.compat.config.CompatConfig;
 import net.minecraft.client.util.InputUtil;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.LOGGER;
@@ -30,7 +31,7 @@ public class NewConfigOptions extends CompatConfig {
     public void save() {
         Path filePath = ConfigPathResolver.getConfigPath(CONFIG_FILE);
 
-        try (FileWriter writer = new FileWriter(filePath.toFile())) {
+        try (FileWriter writer = new FileWriter(filePath.toFile(), StandardCharsets.UTF_8)) {
             GSON.toJson(this, writer);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -45,7 +46,7 @@ public class NewConfigOptions extends CompatConfig {
             SchemaValidator.isValidJsonObject(configReader, SchemaValidator.CONFIG_SCHEMA, filePath.toString());
             LOGGER.debug("Config file is valid.");
 
-            NewConfigOptions result = GSON.fromJson(new FileReader(filePath.toFile()), NewConfigOptions.class);
+            NewConfigOptions result = GSON.fromJson(new FileReader(filePath.toFile(), StandardCharsets.UTF_8), NewConfigOptions.class);
 
             if (result.customCompatibilityListDownloadUrl.startsWith("https://raw.githubusercontent.com/kyrptonaught")) {
                 LOGGER.info("Old, redundant custom compatibility list URL detected. Fixing it!");
