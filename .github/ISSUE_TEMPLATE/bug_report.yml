@@ -1,0 +1,64 @@
+name: Bug Report
+description: File a bug report
+labels:
+  - bug
+  - triage
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: checkboxes
+    id: updated
+    attributes:
+      label: Have you updated to the latest version?
+      description: You should always make sure to update to the latest version of the mod before reporting a bug. Please check the latest version on [Modrinth](https://modrinth.com/mod/inventory-sorting/versions)
+      options:
+        - label: I swear I have tried it with the latest version!
+          required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear and concise description of what the bug is.
+      placeholder: Tell us what you see!
+      value: "It did a thing!"
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+      description: A description of how you would think the Minecraft Mod Manager should have worked
+      placeholder: I expected it to...
+      value: "I expected it to"
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating System
+      description: Which operating system are you using?
+      options:
+        - Windows
+        - Linux
+        - MacOS
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: What's the filename of the mod you are using?
+      placeholder: "For example: inventorysorter-fabric-2.0.3+mc1.21.5.jar"
+    validations:
+      required: true
+  - type: input
+    id: config
+    attributes:
+      label: Logs
+      description: Please use https://mclo.gs/ to upload your latest.log
+      placeholder: "For example: https://mclo.gs/abc123"
+    validations:
+      required: false
+
+

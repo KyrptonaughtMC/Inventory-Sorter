@@ -1,0 +1,54 @@
+---
+name: Mod Incompatibility
+description: Report a mod incompatibility
+labels:
+  - compatibility
+  - triage
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping to make the mod better.
+  - type: checkboxes
+    id: existing
+    attributes:
+      label: I have checked for similar
+      description: Please make sure to search on the
+        [issues](https://github.com/KyrptonaughtMC/Inventory-Sorter/issues?q=is%3Aissue%20%20label%3Acompatibility%20)
+        page first to see if your issue has already been reported.
+      options:
+        - label: I have searched for my issue and did not find it
+          required: true
+  - type: input
+    id: mod
+    attributes:
+      label: Incompatible Mod
+      description: What is the mod that is causing the incompatibility? Please provide the link to the mod.
+      placeholder: "https://modrinth.com/mod/example-mod"
+    validations:
+      required: true
+  - type: input
+    id: mod_version
+    attributes:
+      label: The mod version
+      description: What is the version of the mod that is causing the incompatibility?
+      placeholder: "2.0.3+fabric-1.21.4"
+    validations:
+      required: true
+  - type: input
+    id: minecraft_version
+    attributes:
+      label: Minecraft Version
+      description: What is the version of Minecraft you are using?
+      placeholder: "1.21.5"
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear description of what the incompatibility is. Please share screenshots if possible.
+      placeholder: Tell us what you see!
+      value: "It did a thing!"
+    validations:
+      required: true
