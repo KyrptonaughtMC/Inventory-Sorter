@@ -5,7 +5,7 @@ package net.kyrptonaught.inventorysorter.client;
 *//*?}*/
 
 /*? if >=1.21.6 {*/
-/*import com.mojang.blaze3d.pipeline.RenderPipeline;
+/*import net.minecraft.client.gl.RenderPipelines;
 *//*?}*/
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -26,7 +26,9 @@ import net.minecraft.client.gui.screen.ButtonTextures;
 import net.minecraft.client.gui.tooltip.HoveredTooltipPositioner;
 import net.minecraft.client.gui.tooltip.TooltipPositioner;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
+/*? if <1.21.6 {*/
 import net.minecraft.client.render.RenderLayer;
+/*?}*/
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.registry.Registries;
@@ -96,7 +98,7 @@ public class SortButtonWidget extends TexturedButtonWidget {
         context.getMatrices().scale(.5f, .5f);
         context.getMatrices().translate(getX(), getY());
         Identifier identifier = TEXTURES.get(true, isHovered());
-        context.drawTexture(RenderPipeline.builder().build(), identifier, getX(), getY(), 0, 0, 20, 18, 20, 18);
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, identifier, getX(), getY(), 0, 0, 20, 18, 20, 18);
         context.getMatrices().popMatrix();
         *//*?} else {*/
         context.getMatrices().push();

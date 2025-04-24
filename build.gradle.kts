@@ -4,6 +4,8 @@ plugins {
     id("gg.meza.stonecraft")
 }
 
+stonecutter.consts(Pair("hasModMenu", mod.prop("modmenu_version", "0") != "0"))
+
 modSettings {
 
     clientOptions {
@@ -15,7 +17,7 @@ modSettings {
     variableReplacements = mapOf(
         "schema" to "\$schema",
         "clothVersion" to mod.prop("cloth_version"),
-        "modmenuVersion" to mod.prop("modmenu_version"),
+        "modmenuVersion" to mod.prop("modmenu_version", "*"),
         "fabricPermissionsApiVersion" to mod.prop("fabric_permissions_api_version"),
         "fabricVersion" to mod.prop("fabric_version"),
         "minecraftVersionVirtual" to mod.prop("minecraft_version_virtual", stonecutter.current.version),
@@ -45,7 +47,11 @@ dependencies {
     modImplementation("xyz.nucleoid:server-translations-api:${mod.prop("server_translations_api_version")}")
     include("xyz.nucleoid:server-translations-api:${mod.prop("server_translations_api_version")}")
 
-    modApi("com.terraformersmc:modmenu:${mod.prop("modmenu_version")}")
+    try {
+        modApi("com.terraformersmc:modmenu:${mod.prop("modmenu_version")}")
+    } catch (e: Exception) {
+        logger.warn("Modmenu not found, skipping dependency.")
+    }
     modApi("me.shedaniel.cloth:cloth-config-${mod.loader}:${mod.prop("cloth_version")}") {
         exclude(group = "net.fabricmc.fabric-api")
     }

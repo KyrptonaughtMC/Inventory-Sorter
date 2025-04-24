@@ -1,3 +1,4 @@
+/*? if hasModMenu {*/
 package net.kyrptonaught.inventorysorter.client.modmenu;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
@@ -17,3 +18,4 @@ public class ModMenuIntegration implements ModMenuApi {
         return ConfigScreen::getConfigScreen;
     }
 }
+/*?}*/
