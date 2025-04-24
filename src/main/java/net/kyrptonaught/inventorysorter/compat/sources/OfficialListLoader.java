@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,7 +30,7 @@ public class OfficialListLoader implements CompatibilityLoader {
         LOGGER.debug("Loading compatibility data from: {}", URL);
         try {
             URL url = URI.create(URL).toURL();
-            Reader reader = new InputStreamReader(url.openStream());
+            Reader reader = new InputStreamReader(url.openStream(), StandardCharsets.UTF_8);
             return parseJson(reader);
         } catch (Exception e) {
             LOGGER.error("Error downloading compatibility data from URL: {}", URL);
