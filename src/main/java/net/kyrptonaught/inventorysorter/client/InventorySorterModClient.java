@@ -19,6 +19,7 @@ import org.lwjgl.glfw.GLFW;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.*;
 
@@ -29,15 +30,15 @@ public class InventorySorterModClient implements ClientModInitializer {
     private ScheduledExecutorService scheduler;
 
 
-    public static final KeyBinding sortButton = new KeyBinding(
-            "inventorysorter.key.sort",
+    public static final KeyBinding configButton = new KeyBinding(
+            "inventorysorter.key.config",
             InputUtil.Type.KEYSYM,
             GLFW.GLFW_KEY_P,
             "inventorysorter.key.category"
     );
 
-    public static final KeyBinding configButton = new KeyBinding(
-            "inventorysorter.key.config",
+    public static final KeyBinding sortButton = new KeyBinding(
+            "inventorysorter.key.sort",
             InputUtil.Type.KEYSYM,
             GLFW.GLFW_KEY_P,
             "inventorysorter.key.category"
@@ -54,8 +55,8 @@ public class InventorySorterModClient implements ClientModInitializer {
     public void onInitializeClient() {
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdownScheduler));
 
-        KeyBindingHelper.registerKeyBinding(sortButton);
         KeyBindingHelper.registerKeyBinding(configButton);
+        KeyBindingHelper.registerKeyBinding(sortButton);
         KeyBindingHelper.registerKeyBinding(modifierButton);
 
         /*
@@ -95,8 +96,16 @@ public class InventorySorterModClient implements ClientModInitializer {
         });
 
         ClientTickEvents.END_CLIENT_TICK.register((client) -> {
-            if (configButton.wasPressed()) {
-                client.setScreen(ConfigScreen.getConfigScreen(null));
+            InputUtil.Key config = KeyBindingHelper.getBoundKeyOf(configButton);
+            InputUtil.Key sort = KeyBindingHelper.getBoundKeyOf(sortButton);
+            Supplier<Boolean> keyToCheck = configButton::wasPressed;
+
+            if (config.getCode() == sort.getCode()) {
+                keyToCheck = () -> sortButton.wasPressed() || configButton.wasPressed();
+            }
+
+            if (keyToCheck.get()) {
+                client.setScreen(ConfigScreen.getConfigScreen(client.currentScreen));
             }
         });
 

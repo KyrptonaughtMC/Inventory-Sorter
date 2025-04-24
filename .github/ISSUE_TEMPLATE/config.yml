@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Questions, Sharing ideas, Other support
+    url: https://github.com/KyrptonaughtMC/Inventory-Sorter/discussions
+    about: Check out the community discussions.
+  - name: Discord
+    url: https://discord.gg/dvg3tcQCPW
+    about: Join our Discord server to chat with the community in real-time.
+  - name: Documentation
+    url: https://inventorysorter.meza.gg/
+    about: Check out the documentation for more information.
