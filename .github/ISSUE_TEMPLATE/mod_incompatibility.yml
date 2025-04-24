@@ -43,6 +43,15 @@ body:
       placeholder: "1.21.5"
     validations:
       required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating System
+      description: Which operating system are you using?
+      options:
+        - Windows
+        - Linux
+        - MacOS
   - type: textarea
     id: what-happened
     attributes:

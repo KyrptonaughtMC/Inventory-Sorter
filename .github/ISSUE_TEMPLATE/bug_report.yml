@@ -53,6 +53,14 @@ body:
     validations:
       required: true
   - type: input
+    id: minecraft_version
+    attributes:
+      label: Minecraft Version
+      description: What is the version of Minecraft you are using?
+      placeholder: "1.21.5"
+    validations:
+      required: true
+  - type: input
     id: config
     attributes:
       label: Logs
