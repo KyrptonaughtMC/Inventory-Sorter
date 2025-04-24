@@ -17,7 +17,8 @@ modSettings {
         "clothVersion" to mod.prop("cloth_version"),
         "modmenuVersion" to mod.prop("modmenu_version"),
         "fabricPermissionsApiVersion" to mod.prop("fabric_permissions_api_version"),
-        "fabricVersion" to mod.prop("fabric_version")
+        "fabricVersion" to mod.prop("fabric_version"),
+        "minecraftVersionVirtual" to mod.prop("minecraft_version_virtual", stonecutter.current.version),
     )
 }
 
@@ -26,6 +27,7 @@ repositories {
 	maven("https://maven.terraformersmc.com/releases")
     maven("https://maven.shedaniel.me")
     maven("https://maven.meza.gg/releases")
+    maven("https://maven.meza.gg/snapshots")
     maven("https://maven.nucleoid.xyz")
 }
 

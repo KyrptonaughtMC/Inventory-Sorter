@@ -47,7 +47,7 @@
     "fabricloader": "*",
     "fabric-api": ">=${fabricVersion}",
     "cloth-config": ">=${clothVersion}",
-    "minecraft": ">=${minecraftVersion}"
+    "minecraft": ">=${minecraftVersionVirtual}"
   },
   "recommends": {
     "modmenu": ">=${modmenuVersion}"
