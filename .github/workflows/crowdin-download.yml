@@ -27,7 +27,25 @@ jobs:
       fail-fast: false
       max-parallel: 1
       matrix:
-        lc: [{lc: de, name: German}, {lc: fr, name: French}, {lc: pt-BR, name: Portuguese (br)}, {lc: ru, name: Russian}, {lc: uk, name: Ukrainian}, {lc: zh-CN, name: Chinese}, {lc: zh-HK, name: "Chinese (Hong Kong)"}, {lc: ar, name: Arabic}, {lc: da, name: Danish}, {lc: fi, name: Finnish}, {lc: el, name: Greek}, {lc: it, name: Italian}, {lc: ja, name: Japanese}, {lc: no, name: Norwegian}, {lc: es-ES, name: Spanish (es)}, {lc: sv-SE, name: Swedish}]
+        lc: [
+          { lc: ar, name: Arabic },
+          { lc: br-FR, name: "Brazilian Portuguese" },
+          { lc: zh-CN, name: Chinese },
+          { lc: zh-HK, name: "Chinese (Hong Kong)" },
+          { lc: da, name: Danish },
+          { lc: fi, name: Finnish },
+          { lc: fr, name: French },
+          { lc: de, name: German },
+          { lc: el, name: Greek },
+          { lc: it, name: Italian },
+          { lc: ja, name: Japanese },
+          { lc: no, name: Norwegian },
+          { lc: pt-BR, name: "Portuguese (br)" },
+          { lc: ru, name: Russian },
+          { lc: es-ES, name: "Spanish (es)" },
+          { lc: sv-SE, name: Swedish },
+          { lc: uk, name: Ukrainian }
+        ]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
