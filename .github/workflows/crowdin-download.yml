@@ -24,7 +24,7 @@ jobs:
   crowdin:
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
+      fail-fast: true
       max-parallel: 1
       matrix:
         lc: [
@@ -62,6 +62,7 @@ jobs:
           localization_branch_name: l10n/${{matrix.lc.lc}}
 
           create_pull_request: true
+          skip_untranslated_files: true
           skip_untranslated_strings: true
           commit_message: 'fix(l10n): additional ${{matrix.lc.name}} translations'
           pull_request_title: 'fix(l10n): additional ${{matrix.lc.name}} translations'
