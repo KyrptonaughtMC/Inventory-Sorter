@@ -29,7 +29,7 @@ jobs:
       matrix:
         lc: [
           { lc: ar, name: Arabic },
-          { lc: br-FR, name: "Brazilian Portuguese" },
+          { lc: br-FR, name: "Breton" },
           { lc: zh-CN, name: Chinese },
           { lc: zh-HK, name: "Chinese (Hong Kong)" },
           { lc: da, name: Danish },
@@ -40,7 +40,7 @@ jobs:
           { lc: it, name: Italian },
           { lc: ja, name: Japanese },
           { lc: no, name: Norwegian },
-          { lc: pt-BR, name: "Portuguese (br)" },
+          { lc: pt-BR, name: "Brazilian Portuguese" },
           { lc: ru, name: Russian },
           { lc: es-ES, name: "Spanish (es)" },
           { lc: sv-SE, name: Swedish },
