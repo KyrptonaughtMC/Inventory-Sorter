@@ -70,6 +70,6 @@ Thank you for the gorgeous design!
 
 <!-- marker:patrons-start -->
 
-Yama · morgantic
+morgantic
 
 <!-- marker:patrons-end -->
