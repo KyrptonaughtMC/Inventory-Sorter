@@ -1,7 +1,8 @@
 package net.kyrptonaught.inventorysorter.client;
 
 public interface SortableContainerScreen {
-    SortButtonWidget getSortButton();
+    SortButtonWidget inventorySorter$getSortButton();
+    SortButtonWidget inventorySorter$getPlayerSortButton();
 
     int getMiddleHeight();
 }

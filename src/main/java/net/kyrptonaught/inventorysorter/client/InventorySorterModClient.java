@@ -5,11 +5,14 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents;
 import net.kyrptonaught.inventorysorter.compat.config.CompatConfig;
 import net.kyrptonaught.inventorysorter.compat.sources.ConfigLoader;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.kyrptonaught.inventorysorter.network.*;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.input.Input;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
@@ -32,24 +35,18 @@ public class InventorySorterModClient implements ClientModInitializer {
 
     public static final KeyBinding configButton = new KeyBinding(
             "inventorysorter.key.config",
-            InputUtil.Type.KEYSYM,
-            GLFW.GLFW_KEY_P,
+            InputUtil.GLFW_KEY_P,
             "inventorysorter.key.category"
     );
 
     public static final KeyBinding sortButton = new KeyBinding(
             "inventorysorter.key.sort",
-            InputUtil.Type.KEYSYM,
-            GLFW.GLFW_KEY_P,
+            InputUtil.GLFW_KEY_P,
             "inventorysorter.key.category"
     );
 
-    public static final KeyBinding modifierButton = new KeyBinding(
-            "inventorysorter.key.modifier",
-            InputUtil.Type.KEYSYM,
-            GLFW.GLFW_KEY_LEFT_CONTROL,
-            "inventorysorter.key.category"
-    );
+    public static final InputUtil.Key modifierButton = InputUtil.Type.KEYSYM.createFromCode(InputUtil.GLFW_KEY_LEFT_CONTROL);
+
 
     @Override
     public void onInitializeClient() {
@@ -57,12 +54,13 @@ public class InventorySorterModClient implements ClientModInitializer {
 
         KeyBindingHelper.registerKeyBinding(configButton);
         KeyBindingHelper.registerKeyBinding(sortButton);
-        KeyBindingHelper.registerKeyBinding(modifierButton);
 
         /*
           This is to attach server defined configs to the compatibility layer on the client only
          */
         compatibility.addLoader(new ConfigLoader(() -> serverConfig));
+
+
 
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
             scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -93,6 +91,30 @@ public class InventorySorterModClient implements ClientModInitializer {
             compatibility.reload();
             serverIsPresent = false;
             shutdownScheduler();
+        });
+
+        ScreenEvents.BEFORE_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
+            /*
+                Using this in favor of injecting into the screen mouse scroll event due to mod compatibility issues.
+                Some mods completely override the mouse scroll event, which can cause issues with the sort button.
+                This way, we ensure that the sort button's scroll functionality is always checked after the screen is initialized.
+            */
+            ScreenMouseEvents.afterMouseScroll(screen).register((scr, x, y, horizontalAmount, verticalAmount) -> {
+                if (!(scr instanceof SortableContainerScreen innerScreen)) {
+                    // If it's not our screen type, we don't handle the scroll event.
+                    return;
+                }
+
+                SortButtonWidget inventoryButton = innerScreen.inventorySorter$getSortButton();
+                if (inventoryButton != null && inventoryButton.visible && inventoryButton.isHovered()) {
+                    inventoryButton.mouseScrolled(x, y, verticalAmount, horizontalAmount);
+                }
+
+                SortButtonWidget playerButton = innerScreen.inventorySorter$getPlayerSortButton();
+                if (playerButton != null && playerButton.visible && playerButton.isHovered()) {
+                    playerButton.mouseScrolled(x, y, verticalAmount, horizontalAmount);
+                }
+            });
         });
 
         ClientTickEvents.END_CLIENT_TICK.register((client) -> {

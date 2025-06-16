@@ -63,7 +63,7 @@ This can be toggled in the configuration screen or directly in the config file.
 
 ### Hiding the main Sort Button
 
-Clicking the sort button while holding the **[modifier key](#modifier-key-for-hidingswitching)** (`CTRL` by default) will hide the button for the current screen.
+Clicking the sort button while holding `Left Control` will hide the button for the current screen.
 This is useful if the button overlaps with other UI elements or mods.
 
 To re-enable it, use the GUI configuration menu or manually update the config file.
@@ -81,7 +81,7 @@ While hovering over the sort button, scrolling the mouse wheel will cycle throug
 
 ![](/img/usage-guide/scroll-type.webp)
 
-By default, you can scroll through the sort types without holding the **[modifier key](#modifier-key-for-hidingswitching)** (`CTRL` by default).
+You can scroll through the sort types without holding `Left Control`.
 You can change this in the configuration via the [`requireModifierToScroll`](/configuration/#requiremodifiertoscroll) setting.
 
 ![](/img/usage-guide/modifier-settings.png)
@@ -109,11 +109,6 @@ That’s fine. Inventory Sorter handles this safely, you don’t need to separat
 
 ![](/img/usage-guide/keybinds.png)
 
-#### Modifier Key (for hiding/switching)
-
-A key to hold to uncover alternative functionalities of the sort button. 
-- Hide the sort button
-- Switch between sort types by scrolling.
 
 #### Sort inventory
 

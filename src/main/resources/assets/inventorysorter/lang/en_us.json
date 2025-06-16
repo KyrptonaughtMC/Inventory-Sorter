@@ -5,6 +5,8 @@
   "inventorysorter.key.config": "Open Settings",
   "inventorysorter.key.modifier": "Modifier Key (for hiding/switching)",
 
+  "modmenu.descriptionTranslation.inventorysorter": "Sorts your inventory with the click of a button!",
+
   "inventorysorter.warning.missing-server": "No server-side support detected.\nSorting will NOT work!",
 
   "inventorysorter.toggle.enabled": "On",

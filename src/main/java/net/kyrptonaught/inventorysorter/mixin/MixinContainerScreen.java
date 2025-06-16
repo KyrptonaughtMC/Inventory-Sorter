@@ -59,21 +59,6 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
         super(text_1);
     }
 
-    @Inject(method = "mouseScrolled", at = @At("HEAD"))
-    public void mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount, CallbackInfoReturnable<Boolean> cir) {
-        if (client == null || client.player == null) {
-            return;
-        }
-
-        if (invsort$SortBtn != null && invsort$SortBtn.isMouseOver(mouseX, mouseY)) {
-            invsort$SortBtn.mouseScrolled(mouseX, mouseY, verticalAmount, horizontalAmount);
-        }
-
-        if (invsort$PlayerSortBtn != null && invsort$PlayerSortBtn.isMouseOver(mouseX, mouseY)) {
-            invsort$PlayerSortBtn.mouseScrolled(mouseX, mouseY, verticalAmount, horizontalAmount);
-        }
-    }
-
     @Inject(method = "init", at = @At("TAIL"))
     private void invsort$init(CallbackInfo callbackinfo) {
         if (client == null || client.player == null) {
@@ -140,8 +125,11 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
     }
 
     @Override
-    public SortButtonWidget getSortButton() {
+    public SortButtonWidget inventorySorter$getSortButton() {
         return invsort$SortBtn;
+    }
+    public SortButtonWidget inventorySorter$getPlayerSortButton() {
+        return invsort$PlayerSortBtn;
     }
 
     @Override

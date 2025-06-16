@@ -9,7 +9,6 @@ package net.kyrptonaught.inventorysorter.client;
 *//*?}*/
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.kyrptonaught.inventorysorter.InventoryHelper;
 import net.kyrptonaught.inventorysorter.InventorySorterMod;
 import net.kyrptonaught.inventorysorter.SortType;
@@ -19,7 +18,7 @@ import net.kyrptonaught.inventorysorter.network.InventorySortPacket;
 import net.minecraft.client.MinecraftClient;
 /*? if <1.21.5 {*/
 /*import net.minecraft.client.gl.ShaderProgramKeys;
-*//*?}*/
+ *//*?}*/
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ButtonTextures;
@@ -63,7 +62,7 @@ public class SortButtonWidget extends TexturedButtonWidget {
     public SortButtonWidget(int int_1, int int_2, boolean playerInv) {
         super(int_1, int_2, 10, 9, TEXTURES, null, Text.literal(""));
         this.playerInv = playerInv;
-        this.modifierKey = KeyBindingHelper.getBoundKeyOf(modifierButton);
+        this.modifierKey = modifierButton;
     }
 
     @Override
@@ -168,7 +167,7 @@ public class SortButtonWidget extends TexturedButtonWidget {
                 lines.add(Text.translatable("inventorysorter.sortButton.tooltip.hide").asOrderedText());
             }
 
-            if  ((config.scrollBehaviour == ScrollBehaviour.MODIFIER) && isModifierPressed()) {
+            if ((config.scrollBehaviour == ScrollBehaviour.MODIFIER) && isModifierPressed()) {
                 lines.add(Text.translatable("inventorysorter.sortButton.tooltip.sortType", Text.translatable(getConfig().sortType.getTranslationKey()).formatted(Formatting.BOLD)).asOrderedText());
                 lines.add(Text.translatable("inventorysorter.sortButton.tooltip.help.sortType").formatted(Formatting.GRAY).asOrderedText());
                 lines.add(Text.translatable("inventorysorter.sortButton.tooltip.hide").formatted(Formatting.GRAY).asOrderedText());

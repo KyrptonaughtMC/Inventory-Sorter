@@ -10,9 +10,20 @@
     languages_mapping:
       locale_with_underscore:
         en-US: en_us
-        de: de_de
+        ar: ar_ar
+        br-FR: br_fr
+        zh-CN: zh_cn
+        zh-HK: zh_hk
+        da: da_dk
+        fi: fi_fi
         fr: fr_fr
+        de: de_de
+        el: el_gr
+        it: it_it
+        ja: ja_jp
+        "no": no_no
         pt-BR: pt_br
         ru: ru_ru
+        es-ES: es_es
+        sv-SE: sv_se
         uk: uk_ua
-        zh-CN: zh_cn

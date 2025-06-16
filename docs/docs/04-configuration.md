@@ -210,7 +210,7 @@ And you can check the current value with:
 **Config file key:** `requireModifierToScroll`  
 **Default:** `false` (off)  
 
-When **on (`true`)**, you must hold the [modifier key](/usage-guide#modifier-key-for-hidingswitching) while scrolling to change the sorting method.  
+When **on (`true`)**, you must hold `Left Control` while scrolling to change the sorting method.  
 When **off (`false`)**, scrolling changes the sorting method without needing to hold any keys.
 
 ---

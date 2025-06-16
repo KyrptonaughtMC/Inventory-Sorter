@@ -4,6 +4,8 @@ plugins {
     id("gg.meza.stonecraft")
 }
 
+stonecutter.replacement(true, "MOD_VERSION_REPL", mod.version)
+
 stonecutter.consts(Pair("hasModMenu", mod.prop("modmenu_version", "0") != "0"))
 
 modSettings {
@@ -12,6 +14,7 @@ modSettings {
         darkBackground = true
         musicVolume = 0.0
         narrator = false
+        fov = 90
     }
 
     variableReplacements = mapOf(
@@ -31,6 +34,7 @@ repositories {
     maven("https://maven.meza.gg/releases")
     maven("https://maven.meza.gg/snapshots")
     maven("https://maven.nucleoid.xyz")
+    maven("https://api.modrinth.com/maven")
 }
 
 dependencies {
@@ -41,8 +45,8 @@ dependencies {
     modImplementation("me.lucko:fabric-permissions-api:${mod.prop("fabric_permissions_api_version")}")
     include("me.lucko:fabric-permissions-api:${mod.prop("fabric_permissions_api_version")}")
 
-    modImplementation("gg.meza:supporters_core-${mod.loader}:${mod.prop("supporters_core_version")}")
-    include("gg.meza:supporters_core-${mod.loader}:${mod.prop("supporters_core_version")}")
+    modImplementation("gg.meza:meza_core-${mod.loader}:${mod.prop("meza_core_version")}")
+    include("gg.meza:meza_core-${mod.loader}:${mod.prop("meza_core_version")}")
 
     modImplementation("xyz.nucleoid:server-translations-api:${mod.prop("server_translations_api_version")}")
     include("xyz.nucleoid:server-translations-api:${mod.prop("server_translations_api_version")}")
