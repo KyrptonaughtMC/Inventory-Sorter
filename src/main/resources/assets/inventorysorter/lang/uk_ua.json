@@ -10,7 +10,7 @@
   "inventorysorter.toggle.disabled": "Вимкнути",
   "inventorysorter.toggle.yes": "Так",
   "inventorysorter.toggle.no": "Ні",
-  "inventorysorter.cmd.translate": "Граєш у Minecraft іншою мовою?\nТи можеш допомогти з перекладом %s!\n\nПросто натисни на посилання нижче, щоб почати.\nЦе дуже просто, і ти можеш зробити це прямо в браузері.\nНе потрібно нічого завантажувати чи створювати спеціальний акаунт.",
+  "inventorysorter.cmd.translate": "Граєш у Minecraft іншою мовою?\nТи можеш допомогти з перекладом %s!\n\nПросто натисни на посилання нижче, щоб почати.\nЦе дуже просто, і ти можеш зробити це прямо в браузері.\nНе потрібно нічого завантажувати чи створювати спеціальний обліковий запис.",
   "inventorysorter.cmd.crowdin": "Перекладати на Crowdin",
   "inventorysorter.cmd.crowdin.tooltip": "Натисни, щоб відкрити сторінку перекладу на Crowdin",
   "inventorysorter.config.screen.title": "Налаштування сортувальника інвентарю",
