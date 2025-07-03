@@ -14,6 +14,7 @@
         br-FR: br_fr
         zh-CN: zh_cn
         zh-HK: zh_hk
+        zh-TW: zh_tw
         da: da_dk
         fi: fi_fi
         fr: fr_fr
@@ -27,3 +28,4 @@
         es-ES: es_es
         sv-SE: sv_se
         uk: uk_ua
+        tr: tr_tr
