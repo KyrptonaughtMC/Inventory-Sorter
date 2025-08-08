@@ -1,1 +1,5 @@
-{}
+{
+  "inventorysorter.discord": "Discord",
+  "inventorysorter.config.showTooltip.tooltip": "Verktygstipen visar sorteringstypen vid svävning över sorteringsknappen",
+  "inventorysorter.cmd.remote.show": "Aktuell fjärrkonfigurations-URL: %s"
+}

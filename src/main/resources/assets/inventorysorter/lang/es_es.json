@@ -22,7 +22,7 @@
   "inventorysorter.config.compat.others": "Inventarios modificados",
   "inventorysorter.config.compat.remoteUrl": "URL de configuración de compatibilidad remota",
   "inventorysorter.config.compat.remoteUrl.reset": "Borrar URL remota",
-  "inventorysorter.config.compat.remoteUrl.tooltip": "La URL a un archivo de configuración remoto, que será descargado y usado por compatibilidad",
+  "inventorysorter.config.compat.remoteUrl.tooltip": "El URL a un archivo de configuración remoto, que será descargado y usado por compatibilidad",
   "inventorysorter.config.compat.hideButton.tooltip": "Desactivar esto deshabilitará el botón de ordenar en %s",
   "inventorysorter.config.compat.preventSort": "Ordenar Prevenir",
   "inventorysorter.config.compat.preventSort.tooltip": "Evitar ordenar %s",
