@@ -9,7 +9,7 @@ import static net.kyrptonaught.inventorysorter.InventorySorterMod.MOD_ID;
 
 public record ServerPresencePacket() implements CustomPayload {
 
-    public static final Id<ServerPresencePacket> ID = new Id<>(Identifier.of(MOD_ID, "client_sync_packet"));
+    public static final Id<ServerPresencePacket> ID = new Id<>(Identifier.of(MOD_ID, "server_presence_packet"));
     public static final ServerPresencePacket DEFAULT = new ServerPresencePacket();
 
     public static final PacketCodec<RegistryByteBuf, ServerPresencePacket> CODEC =
