@@ -11,6 +11,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
@@ -29,7 +30,12 @@ public record InventorySortPacket(boolean shouldSortPlayerInventory, int sortTyp
         ServerPlayNetworking.registerGlobalReceiver(InventorySortPacket.ID, ((payload, context) -> {
             SortType sortType = SortType.values()[payload.sortType];
             ServerPlayerEntity player = context.player();
-            player.getServer().execute(() -> InventoryHelper.sortInventory(player, payload.shouldSortPlayerInventory, sortType));
+            /*? if >= 1.21.9 {*/
+            MinecraftServer server = player.getEntityWorld().getServer();
+            /*?} else {*/
+            /*MinecraftServer server = player.getServer();
+            *//*?}*/
+            server.execute(() -> InventoryHelper.sortInventory(player, payload.shouldSortPlayerInventory, sortType));
         }));
     }
 

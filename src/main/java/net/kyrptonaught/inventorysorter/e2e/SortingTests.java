@@ -258,10 +258,18 @@ public class SortingTests {
     @GameTest(/*? if <1.21.5 {*//*templateName = template*//*?}*/)
     public void testPlayerHeads(TestContext ctx) {
 
-        ProfileComponent houseofmeza = new ProfileComponent(new GameProfile(UUID.randomUUID(), "houseofmeza"));
+        /*? if >= 1.21.9 {*/
+        ProfileComponent houseofmeza = ProfileComponent.ofStatic(new GameProfile(UUID.randomUUID(), "houseofmeza"));
+        ProfileComponent kyrptonaught = ProfileComponent.ofStatic(new GameProfile(UUID.randomUUID(), "Kyrptonaught"));
+        ProfileComponent morgant1c = ProfileComponent.ofStatic(new GameProfile(UUID.randomUUID(), "morgant1c"));
+        ProfileComponent zombie_konsti = ProfileComponent.ofStatic(new GameProfile(UUID.randomUUID(), "Zombie_konsti"));
+        /*?} else {*/
+        /*ProfileComponent houseofmeza = new ProfileComponent(new GameProfile(UUID.randomUUID(), "houseofmeza"));
         ProfileComponent kyrptonaught = new ProfileComponent(new GameProfile(UUID.randomUUID(), "Kyrptonaught"));
         ProfileComponent morgant1c = new ProfileComponent(new GameProfile(UUID.randomUUID(), "morgant1c"));
         ProfileComponent zombie_konsti = new ProfileComponent(new GameProfile(UUID.randomUUID(), "Zombie_konsti"));
+        *//*?}*/
+
 
         ComponentChanges houseofmezaHead =
                 ComponentChanges.builder().add(DataComponentTypes.PROFILE, houseofmeza).build();

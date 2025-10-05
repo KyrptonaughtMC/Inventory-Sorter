@@ -1,6 +1,6 @@
 {
   "inventorysorter.discord": "Discord server",
-  "inventorysorter.key.category": "Sortering av inventar",
+  "key.category.inventorysorter.main": "Sortering av inventar",
   "inventorysorter.key.sort": "Sortere",
   "inventorysorter.key.config": "Åpne Innstillinger",
   "inventorysorter.key.modifier": "Modifikasjonstast (for å skjule/bytte)",

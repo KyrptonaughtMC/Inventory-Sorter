@@ -45,7 +45,11 @@ public class InventoryHelper {
         if (!(hit instanceof BlockHitResult blockHit)) return null;
 
         BlockPos blockPos = blockHit.getBlockPos();
-        World world = player.getWorld();
+        /*? if >= 1.21.9 {*/
+        World world = player.getEntityWorld();
+        /*?} else {*/
+        /*World world = player.getWorld();
+        *//*?}*/
         BlockState blockState = world.getBlockState(blockPos);
 
         // Inventory to sort

@@ -32,6 +32,9 @@ import net.minecraft.client.gui.widget.TexturedButtonWidget;
 /*? if <1.21.6 {*/
 /*import net.minecraft.client.render.RenderLayer;
 *//*?}*/
+/*? if >= 1.21.9 {*/
+import net.minecraft.client.input.AbstractInput;
+/*?}*/
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.registry.Registries;
@@ -78,7 +81,7 @@ public class SortButtonWidget extends TexturedButtonWidget {
     }
 
     @Override
-    public void onPress() {
+    public void onPress(/*? if >= 1.21.9 {*/AbstractInput input/*?}*/) {
         MinecraftClient instance = MinecraftClient.getInstance();
         String screenID = null;
         if (InventoryHelper.canSortInventory(instance.player)) {
@@ -186,7 +189,12 @@ public class SortButtonWidget extends TexturedButtonWidget {
     }
 
     private boolean isModifierPressed() {
-        return InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), modifierKey.getCode());
+        /*? if >= 1.21.9 {*/
+        return InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow(), modifierKey.getCode());
+        /*?} else {*/
+        /*return InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), modifierKey.getCode());
+        *//*?}*/
+
     }
 
 

@@ -1,6 +1,6 @@
 {
   "inventorysorter.discord": "Discord",
-  "inventorysorter.key.category": "Сортувальник інвентарю",
+  "key.category.inventorysorter.main": "Сортувальник інвентарю",
   "inventorysorter.key.sort": "Сортувати",
   "inventorysorter.key.config": "Відкрити налаштування",
   "inventorysorter.key.modifier": "Клавіша-модифікатор (для приховування/перемикання)",

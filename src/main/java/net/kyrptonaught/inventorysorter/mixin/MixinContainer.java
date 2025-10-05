@@ -32,7 +32,11 @@ public abstract class MixinContainer {
     @Inject(method = "onSlotClick", at = @At("HEAD"), cancellable = true)
     public void sortOnDoubleClickEmpty(int slotIndex, int button, SlotActionType actionType, PlayerEntity player, CallbackInfo ci) {
         // Server side only
-        if (!player.getWorld().isClient) {
+        /*? if >= 1.21.9 {*/
+        if (!player.getEntityWorld().isClient()) {
+        /*?} else {*/
+        /*if (!player.getWorld().isClient) {
+        *//*?}*/
             if (!(player instanceof ServerPlayerEntity)) {
                 // Heuristics, just to be on the safe side
                 LOGGER.debug("Player is not a ServerPlayerEntity, skipping sort on double click");

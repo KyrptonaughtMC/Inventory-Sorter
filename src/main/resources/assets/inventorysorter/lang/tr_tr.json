@@ -1,6 +1,6 @@
 {
   "inventorysorter.discord": "Discord",
-  "inventorysorter.key.category": "Envanter Sıralayıcı",
+  "key.category.inventorysorter.main": "Envanter Sıralayıcı",
   "inventorysorter.key.sort": "Sırala",
   "inventorysorter.key.config": "Ayarları Aç",
   "inventorysorter.key.modifier": "Değiştirici Tuş (gizlemek/değiştirmek için)",

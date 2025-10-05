@@ -14,14 +14,18 @@
         be: be_by
         be-LATN: be_latn
         br-FR: br_fr
+        ca: ca_es
         da: da_dk
         de: de_de
         el: el_gr
         es-ES: es_es
         fi: fi_fi
         fr: fr_fr
+        hu: hu_hu
         it: it_it
         ja: ja_jp
+        ko: ko_kr
+        lol: lol_us
         "no": no_no
         pl: pl_pl
         pt-BR: pt_br

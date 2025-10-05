@@ -1,10 +1,10 @@
 {
   "inventorysorter.discord": "Discord",
-  "inventorysorter.key.category": "Inventory Sorter",
+  "key.category.inventorysorter.main": "Inventory Sorter",
   "inventorysorter.key.sort": "Sortieren",
   "inventorysorter.key.config": "Einstellungen öffnen",
-  "inventorysorter.key.modifier": "Modifikator-Taste (zum Verstecken/Umschalten)",
-  "modmenu.descriptionTranslation.inventorysorter": "Sortiert Dein Inventar mit einem Klick!",
+  "inventorysorter.key.modifier": "Modifikation-Taste (zum Verstecken/Umschalten)",
+  "modmenu.descriptionTranslation.inventorysorter": "Sortiert dein Inventar mit einem Klick!",
   "inventorysorter.warning.missing-server": "Keine serverseitige Unterstützung erkannt.\nSortieren wird NICHT funktionieren!",
   "inventorysorter.toggle.enabled": "An",
   "inventorysorter.toggle.disabled": "Aus",

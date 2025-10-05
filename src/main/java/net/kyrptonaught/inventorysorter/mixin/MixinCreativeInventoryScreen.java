@@ -24,18 +24,20 @@ public abstract class MixinCreativeInventoryScreen implements SortableContainerS
     @Inject(method = "init", at = @At("TAIL"))
     private void invsort$init(CallbackInfo callbackinfo) {
         if (getConfig().showSortButton) {
-            SortButtonWidget sortbtn = this.inventorySorter$getSortButton();
-            if (sortbtn != null)
+            SortButtonWidget sortbtn = this.inventorySorter$getPlayerSortButton();
+            if (sortbtn != null) {
                 sortbtn.visible = this.isInventoryTabSelected();
+            }
         }
     }
 
     @Inject(method = "render", at = @At("TAIL"))
     private void invsort$render(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         if (getConfig().showSortButton) {
-            SortButtonWidget sortbtn = this.inventorySorter$getSortButton();
-            if (sortbtn != null)
+            SortButtonWidget sortbtn = this.inventorySorter$getPlayerSortButton();
+            if (sortbtn != null) {
                 sortbtn.visible = this.isInventoryTabSelected();
+            }
         }
     }
 }
