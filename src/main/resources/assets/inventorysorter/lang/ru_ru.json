@@ -1,6 +1,6 @@
 {
   "inventorysorter.discord": "Дискорд",
-  "inventorysorter.key.category": "Сортировка инвентаря",
+  "key.category.inventorysorter.main": "Сортировка инвентаря",
   "inventorysorter.key.sort": "Сортировать",
   "inventorysorter.key.config": "Открыть настройки",
   "inventorysorter.key.modifier": "Модификатор (для скрытия/переключения)",

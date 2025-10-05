@@ -1,6 +1,6 @@
 {
   "inventorysorter.discord": "Discord",
-  "inventorysorter.key.category": "Inventory Sorter",
+  "key.category.inventorysorter.main": "Inventory Sorter",
   "inventorysorter.key.sort": "Sortieren",
   "inventorysorter.key.config": "Einstellungen öffnen",
   "inventorysorter.key.modifier": "Modifikation-Taste (zum Verstecken/Umschalten)",

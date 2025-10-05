@@ -1,6 +1,6 @@
 {
   "inventorysorter.discord": "Discord",
-  "inventorysorter.key.category": "Inventory Sorter",
+  "key.category.inventorysorter.main": "Inventory Sorter",
   "inventorysorter.key.sort": "整理",
   "inventorysorter.key.config": "開啟設定",
   "inventorysorter.key.modifier": "修飾鍵（用於隱藏/切換）",

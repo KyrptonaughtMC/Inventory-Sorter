@@ -1,6 +1,6 @@
 {
   "inventorysorter.discord": "Discord",
-  "inventorysorter.key.category": "Inventory Sorter - インベントリ整理ツール",
+  "key.category.inventorysorter.main": "Inventory Sorter - インベントリ整理ツール",
   "inventorysorter.key.sort": "並べ換え",
   "inventorysorter.key.config": "設定を開く",
   "inventorysorter.key.modifier": "修飾キー（表示/非表示 切り替え用）",
