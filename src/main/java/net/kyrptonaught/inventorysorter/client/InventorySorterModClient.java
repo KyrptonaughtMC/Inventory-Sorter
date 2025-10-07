@@ -80,10 +80,10 @@ public class InventorySorterModClient implements ClientModInitializer {
             ClientPlayNetworking.send(new ClientSync(true));
             syncConfig();
 
-            // Two-stage check: first at 5 seconds, then at 15 seconds if still no server
+            // Two-stage check: first at 5 seconds, then at 25 seconds if still no server
             scheduler.schedule(() -> {
                 if (!serverIsPresent) {
-                    // First check at 5 seconds - schedule another check at 15 seconds
+                    // First check at 5 seconds - schedule another check at 25 seconds
                     scheduler.schedule(() -> {
                         if (!serverIsPresent && client.player != null) {
                             client.execute(() -> client.player.sendMessage(
@@ -91,7 +91,7 @@ public class InventorySorterModClient implements ClientModInitializer {
                                             .append(Text.translatable("inventorysorter.warning.missing-server").styled(style -> style.withBold(false).withColor(Formatting.YELLOW))
                                             ), false));
                         }
-                    }, 10, TimeUnit.SECONDS);
+                    }, 20, TimeUnit.SECONDS);
                 }
             }, 5, TimeUnit.SECONDS);
         });
