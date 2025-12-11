@@ -49,7 +49,7 @@
   "inventorysorter.config.showTooltip": "Ordenar descripción del botón",
   "inventorysorter.config.showTooltip.tooltip": "La descripción muestra el tipo de clasificación al pasar el cursor sobre el botón de ordenación",
   "inventorysorter.config.sortHovered": "Ordenar solo el inventario bajo el ratón",
-  "inventorysorter.config.sortHovered.tooltip": "Solo ordenar el inventario bajo el ratón cuando se utiliza el keybind u ordenar con doble clic",
+  "inventorysorter.config.sortHovered.tooltip": "Only sort the inventory under the mouse when using the keybind or double-click sort",
   "inventorysorter.cmd.sortHovered.set": "Solo ordenar el inventario bajo el ratón es ahora %s",
   "inventorysorter.cmd.sortHovered.get": "Sólo ordenar el inventario bajo el ratón es actualmente %s",
   "inventorysorter.cmd.player-required": "Este comando solo puede ser ejecutado por un jugador",
