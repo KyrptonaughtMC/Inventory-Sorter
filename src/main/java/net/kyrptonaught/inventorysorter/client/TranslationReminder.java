@@ -37,13 +37,8 @@ public class TranslationReminder {
             URI crowdinUri = URI.create("https://crowdin.com/project/inventory-sorter");
             MutableText crowdinTooltip = Text.translatable(MOD_ID + ".cmd.crowdin.tooltip");
 
-            /*? if > 1.21.4 {*/
             ClickEvent.OpenUrl clickEvent = new ClickEvent.OpenUrl(crowdinUri);
             HoverEvent.ShowText showText = new HoverEvent.ShowText(crowdinTooltip);
-            /*?} else {*/
-            /*ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.OPEN_URL, crowdinUri.toString());
-            HoverEvent showText = new HoverEvent(HoverEvent.Action.SHOW_TEXT, crowdinTooltip);
-            *//*?}*/
 
             client.player.sendMessage(
                     Text.translatable(MOD_ID + ".cmd.translate", Text.literal("Inventory Sorter").styled(style -> style.withBold(true).withColor(Formatting.GOLD))).styled(style -> style.withColor(Formatting.AQUA))

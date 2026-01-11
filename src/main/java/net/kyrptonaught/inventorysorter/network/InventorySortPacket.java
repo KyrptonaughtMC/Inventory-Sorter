@@ -30,11 +30,7 @@ public record InventorySortPacket(boolean shouldSortPlayerInventory, int sortTyp
         ServerPlayNetworking.registerGlobalReceiver(InventorySortPacket.ID, ((payload, context) -> {
             SortType sortType = SortType.values()[payload.sortType];
             ServerPlayerEntity player = context.player();
-            /*? if >= 1.21.9 {*/
             MinecraftServer server = player.getEntityWorld().getServer();
-            /*?} else {*/
-            /*MinecraftServer server = player.getServer();
-            *//*?}*/
             server.execute(() -> InventoryHelper.sortInventory(player, payload.shouldSortPlayerInventory, sortType));
         }));
     }

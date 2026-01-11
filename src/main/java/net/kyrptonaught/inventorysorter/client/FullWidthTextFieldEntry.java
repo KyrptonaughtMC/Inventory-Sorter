@@ -34,7 +34,7 @@ public abstract class FullWidthTextFieldEntry<T> extends TooltipListEntry<T> {
     private boolean isSelected;
 
     protected FullWidthTextFieldEntry(Text fieldName, T original, Text resetButtonKey, Supplier<T> defaultValue) {
-        this(fieldName, original, resetButtonKey, defaultValue, (Supplier) null);
+        this(fieldName, original, resetButtonKey, defaultValue, null);
     }
 
     protected FullWidthTextFieldEntry(Text fieldName, T original, Text resetButtonKey, Supplier<T> defaultValue, Supplier<Optional<Text[]>> tooltipSupplier) {
@@ -62,7 +62,7 @@ public abstract class FullWidthTextFieldEntry<T> extends TooltipListEntry<T> {
         this.textFieldWidget.setText(String.valueOf(original));
         this.textFieldWidget.setCursorToStart(false);
         this.resetButton = ButtonWidget.builder(resetButtonKey, (widget) -> this.textFieldWidget.setText(String.valueOf(defaultValue.get()))).dimensions(0, 0, MinecraftClient.getInstance().textRenderer.getWidth(resetButtonKey) + 6, 20).build();
-        this.widgets = Lists.newArrayList(new ClickableWidget[]{this.textFieldWidget, this.resetButton});
+        this.widgets = Lists.newArrayList(this.textFieldWidget, this.resetButton);
     }
 
     public boolean isEdited() {
@@ -102,23 +102,18 @@ public abstract class FullWidthTextFieldEntry<T> extends TooltipListEntry<T> {
      */
     public void render(DrawContext graphics, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isHovered, float delta) {
         super.render(graphics, index, y, x, entryWidth, entryHeight, mouseX, mouseY, isHovered, delta);
-//        Window window = MinecraftClient.getInstance().getWindow();
         this.resetButton.active = this.isEditable() && this.getDefaultValue().isPresent() && !this.isMatchDefault(this.textFieldWidget.getText());
         this.resetButton.setY(y);
         this.textFieldWidget.setEditable(this.isEditable());
         this.textFieldWidget.setY(y + 1);
-//        Text displayedFieldName = this.getDisplayedFieldName();
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
 
         int labelWidth = 0;
-//        int labelWidth = textRenderer.getWidth(displayedFieldName.asOrderedText());
         int padding = 6;
         if (textRenderer.isRightToLeft()) {
-//            graphics.drawTextWithShadow(textRenderer, displayedFieldName.asOrderedText(), window.getScaledWidth() - x - textRenderer.getWidth(displayedFieldName), y + padding, this.getPreferredTextColor());
             this.resetButton.setX(x);
             this.textFieldWidget.setX(x + this.resetButton.getWidth());
         } else {
-//            graphics.drawTextWithShadow(textRenderer, displayedFieldName.asOrderedText(), x, y + padding, this.getPreferredTextColor());
             this.resetButton.setX(x + entryWidth - this.resetButton.getWidth());
 
             this.textFieldWidget.setX(x + labelWidth + padding);

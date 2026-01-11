@@ -14,7 +14,7 @@ import net.minecraft.network.NetworkSide;
 import net.minecraft.server.network.ConnectedClientData;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.test.TestContext;
-/*? if >=1.21.5 {*/import net.minecraft.text.Text;/*?}*/
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.Map;
@@ -27,8 +27,8 @@ public class TestUtils {
     public record Scenario(ServerPlayerEntity player, ChestBlockEntity chest) {
     }
 
-    private static /*? if <1.21.5 {*//*String*//*?} else {*/Text/*?}*/ getMessage(String message) {
-        return /*? if <1.21.5 {*//*message*//*?} else {*/Text.of(message)/*?}*/;
+    private static Text getMessage(String message) {
+        return Text.of(message);
     }
 
     public static void assertContents(TestContext ctx, Scenario scenario, Map<Integer, ItemStack> expectedContents) {
@@ -79,7 +79,7 @@ public class TestUtils {
         player.teleport(abspos.getX() + 2, abspos.getY(), abspos.getZ() + 2, false);
         player.lookAt(EntityAnchorArgumentType.EntityAnchor.EYES, abspos.toCenterPos());
 
-        ChestBlockEntity chest = (ChestBlockEntity) ctx.getBlockEntity(inventoryPosition/*? if >=1.21.5 {*/, ChestBlockEntity.class/*?}*/);
+        ChestBlockEntity chest = ctx.getBlockEntity(inventoryPosition, ChestBlockEntity.class);
 
         for (Map.Entry<Integer, ItemStack> entry : inventoryContents.entrySet()) {
             chest.setStack(entry.getKey(), entry.getValue());
@@ -102,7 +102,7 @@ public class TestUtils {
             }
         };
         ClientConnection clientConnection = new ClientConnection(NetworkSide.SERVERBOUND);
-        new EmbeddedChannel(new ChannelHandler[]{clientConnection});
+        new EmbeddedChannel(clientConnection);
         ctx.getWorld().getServer().getPlayerManager().onPlayerConnect(clientConnection, serverPlayerEntity, connectedClientData);
         return serverPlayerEntity;
     }

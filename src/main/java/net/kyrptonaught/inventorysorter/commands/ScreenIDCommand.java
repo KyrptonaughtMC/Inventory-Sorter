@@ -39,23 +39,12 @@ public class ScreenIDCommand {
 
         MutableText feedbackText = Text.translatable("inventorysorter.cmd.screenid.success", screenID.toString());
 
-        /*? if >=1.21.5 {*/
         Text copyableText = feedbackText
                 .styled(style -> style
                         .withColor(Formatting.GREEN)
                         .withClickEvent(new ClickEvent.CopyToClipboard(screenID.toString()))
                         .withHoverEvent(new HoverEvent.ShowText(Text.translatable("inventorysorter.cmd.screenid.copy.hover")))
                 );
-        /*?} else {*/
-
-        /*Text copyableText = feedbackText
-                .styled(style -> style
-                        .withColor(Formatting.GREEN)
-                        .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, screenID.toString()))
-                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("inventorysorter.cmd.screenid.copy.hover")))
-                );
-        *//*?}*/
-
 
         commandContext.getSource().sendFeedback(() -> copyableText, false);
         return 1;

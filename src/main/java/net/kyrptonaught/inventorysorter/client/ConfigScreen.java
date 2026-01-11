@@ -7,7 +7,6 @@ import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import me.shedaniel.clothconfig2.gui.entries.SubCategoryListEntry;
 import me.shedaniel.clothconfig2.impl.builders.SubCategoryBuilder;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.kyrptonaught.inventorysorter.InventoryHelper;
 import net.kyrptonaught.inventorysorter.SortType;
 import net.kyrptonaught.inventorysorter.client.clothconfig.ContainerEntry;
@@ -16,12 +15,12 @@ import net.kyrptonaught.inventorysorter.config.ScrollBehaviour;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.text.*;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
 import java.util.*;
-import java.util.List;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.*;
 import static net.kyrptonaught.inventorysorter.client.InventorySorterModClient.modifierButton;
@@ -149,7 +148,7 @@ public class ConfigScreen {
                         .build())
                 .addEntry(entryBuilder.startEnumSelector(Text.translatable("inventorysorter.config.scrollbehaviour"), ScrollBehaviour.class, options.scrollBehaviour)
                         .setEnumNameProvider((scrollBehaviour) -> Text.translatable(((ScrollBehaviour) scrollBehaviour).getTranslationKey()))
-                        .setTooltipSupplier((scrollBehaviour) -> Optional.of(new MutableText[]{Text.translatable((scrollBehaviour).getTranslationKey()+".tooltip", modifierKey.getLocalizedText())}))
+                        .setTooltipSupplier((scrollBehaviour) -> Optional.of(new MutableText[]{Text.translatable((scrollBehaviour).getTranslationKey() + ".tooltip", modifierKey.getLocalizedText())}))
                         .setDefaultValue(ScrollBehaviour.FREE)
                         .setSaveConsumer(val -> options.scrollBehaviour = val)
                         .build());

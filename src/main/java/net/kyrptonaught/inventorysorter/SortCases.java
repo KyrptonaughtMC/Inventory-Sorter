@@ -96,11 +96,7 @@ public class SortCases {
 
     private static String playerHeadName(ItemStack stack) {
         ProfileComponent profileComponent = stack.getComponents().get(DataComponentTypes.PROFILE);
-        /*? if >= 1.21.9 {*/
         Optional<String> componentName = profileComponent.getName();
-        /*?} else {*/
-        /*Optional<String> componentName = profileComponent.name();
-        *//*?}*/
 
         return componentName.orElseGet(() -> stackName(stack));
 

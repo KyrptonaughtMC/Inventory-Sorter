@@ -25,10 +25,6 @@ stonecutter {
             for (it in loaders) version("$version-$it", version)
         }
 
-        mc("1.21.4", "fabric")
-        mc("1.21.5", "fabric")
-        mc("1.21.6", "fabric")
-        mc("1.21.9", "fabric")
         mc("1.21.11", "fabric")
 
         vcsVersion = "1.21.11-fabric"

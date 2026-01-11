@@ -1,27 +1,18 @@
 package net.kyrptonaught.inventorysorter.client;
-import net.kyrptonaught.inventorysorter.ButtonType;
-import net.kyrptonaught.inventorysorter.mixin.RecipeBookScreenAccessor;
 
-/*? if <1.21.5 {*/
-/*import com.mojang.blaze3d.systems.RenderSystem;
-*//*?}*/
-
-/*? if >=1.21.6 {*/
-import net.minecraft.client.gl.RenderPipelines;
-/*?}*/
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.kyrptonaught.inventorysorter.ButtonType;
 import net.kyrptonaught.inventorysorter.InventoryHelper;
 import net.kyrptonaught.inventorysorter.InventorySorterMod;
 import net.kyrptonaught.inventorysorter.SortType;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.kyrptonaught.inventorysorter.config.ScrollBehaviour;
+import net.kyrptonaught.inventorysorter.mixin.RecipeBookScreenAccessor;
 import net.kyrptonaught.inventorysorter.network.InventorySortPacket;
 import net.minecraft.client.MinecraftClient;
-/*? if <1.21.5 {*/
-/*import net.minecraft.client.gl.ShaderProgramKeys;
- *//*?}*/
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ButtonTextures;
 import net.minecraft.client.gui.screen.Screen;
@@ -29,20 +20,13 @@ import net.minecraft.client.gui.screen.ingame.RecipeBookScreen;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget;
 import net.minecraft.client.gui.tooltip.HoveredTooltipPositioner;
 import net.minecraft.client.gui.tooltip.TooltipPositioner;
-
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
-/*? if <1.21.6 {*/
-/*import net.minecraft.client.render.RenderLayer;
-*//*?}*/
-/*? if >= 1.21.9 {*/
 import net.minecraft.client.input.AbstractInput;
-/*?}*/
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.registry.Registries;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.text.OrderedText;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
@@ -53,7 +37,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import static net.kyrptonaught.inventorysorter.InventorySorterMod.*;
+import static net.kyrptonaught.inventorysorter.InventorySorterMod.compatibility;
+import static net.kyrptonaught.inventorysorter.InventorySorterMod.getConfig;
 import static net.kyrptonaught.inventorysorter.client.InventorySorterModClient.PLAYER_INVENTORY;
 import static net.kyrptonaught.inventorysorter.client.InventorySorterModClient.modifierButton;
 
@@ -66,11 +51,11 @@ public class SortButtonWidget extends TexturedButtonWidget {
     private final boolean playerInv;
     private final TooltipPositioner widgetTooltipPositioner = HoveredTooltipPositioner.INSTANCE;
     private final InputUtil.Key modifierKey;
-    private Screen parentScreen;
+    private final Screen parentScreen;
     // Offset used to align the sort button with the recipe book in the UI.
     // The value 77 was determined based on the default layout of the Minecraft inventory screen.
     private static final int RECIPE_BOOK_OFFSET = 77;
-    private int initialX;
+    private final int initialX;
 
     private static final ScheduledExecutorService debounceExecutor = Executors.newSingleThreadScheduledExecutor();
     private static ScheduledFuture<?> debounceTask;
@@ -85,7 +70,7 @@ public class SortButtonWidget extends TexturedButtonWidget {
     }
 
     @Override
-    public void onPress(/*? if >= 1.21.9 {*/AbstractInput input/*?}*/) {
+    public void onPress(AbstractInput input) {
         MinecraftClient instance = MinecraftClient.getInstance();
         String screenID = null;
         if (InventoryHelper.canSortInventory(instance.player)) {
@@ -101,15 +86,15 @@ public class SortButtonWidget extends TexturedButtonWidget {
         }
 
         if (isModifierPressed()) {
-                getConfig().disableButtonForScreen(screenID);
-                compatibility.addShouldHideSortButton(screenID);
-                getConfig().save();
-                compatibility.reload();
-                InventorySorterModClient.syncConfig();
-                SystemToast.add(instance.getToastManager(), SystemToast.Type.PERIODIC_NOTIFICATION,
-                        net.minecraft.text.Text.translatable("inventorysorter.sortButton.toast.hide.success.title"),
-                        net.minecraft.text.Text.translatable("inventorysorter.sortButton.toast.hide.success.description", screenID));
-                this.visible = false;
+            getConfig().disableButtonForScreen(screenID);
+            compatibility.addShouldHideSortButton(screenID);
+            getConfig().save();
+            compatibility.reload();
+            InventorySorterModClient.syncConfig();
+            SystemToast.add(instance.getToastManager(), SystemToast.Type.PERIODIC_NOTIFICATION,
+                    net.minecraft.text.Text.translatable("inventorysorter.sortButton.toast.hide.success.title"),
+                    net.minecraft.text.Text.translatable("inventorysorter.sortButton.toast.hide.success.description", screenID));
+            this.visible = false;
 
         } else {
             InventorySortPacket.sendSortPacket(playerInv);
@@ -117,42 +102,23 @@ public class SortButtonWidget extends TexturedButtonWidget {
     }
 
     @Override
-    /*? if >= 1.21.11 {*/
+
     public void drawIcon(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
-    /*?} else {*/
-    /*public void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
-    *//*?}*/
         int offset = 0;
         if (!this.visible) return;
 
-        if (this.parentScreen != null && this.parentScreen instanceof RecipeBookScreen<?>) {
-            RecipeBookScreen<?> s = (RecipeBookScreen<?>) this.parentScreen;
+        if (this.parentScreen != null && this.parentScreen instanceof RecipeBookScreen<?> s) {
             RecipeBookWidget<?> widget = ((RecipeBookScreenAccessor) s).getRecipeBook();
             offset = widget.isOpen() ? RECIPE_BOOK_OFFSET : 0;
         }
 
         setX(this.initialX + offset);
-
-        /*? if <1.21.5 {*/
-        /*RenderSystem.setShader(ShaderProgramKeys.POSITION);
-        RenderSystem.enableDepthTest();
-        *//*?}*/
-        /*? if >=1.21.6 {*/
-
         context.getMatrices().pushMatrix();
         context.getMatrices().scale(.5f, .5f);
         context.getMatrices().translate(getX(), getY());
         Identifier identifier = TEXTURES.get(true, isHovered());
         context.drawTexture(RenderPipelines.GUI_TEXTURED, identifier, getX(), getY(), 0, 0, 20, 18, 20, 18);
         context.getMatrices().popMatrix();
-        /*?} else {*/
-        /*context.getMatrices().push();
-        context.getMatrices().scale(.5f, .5f, 1);
-        context.getMatrices().translate(getX(), getY(), 0);
-        Identifier identifier = TEXTURES.get(true, isHovered());
-        context.drawTexture(RenderLayer::getGuiTextured, identifier, getX(), getY(), 0, 0, 20, 18, 20, 18);
-        context.getMatrices().pop();
-        *//*?}*/
         this.renderTooltip(context, mouseX, mouseY);
     }
 
@@ -197,12 +163,7 @@ public class SortButtonWidget extends TexturedButtonWidget {
     }
 
     private boolean isModifierPressed() {
-        /*? if >= 1.21.9 {*/
         return InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow(), modifierKey.getCode());
-        /*?} else {*/
-        /*return InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), modifierKey.getCode());
-        *//*?}*/
-
     }
 
 
@@ -235,21 +196,13 @@ public class SortButtonWidget extends TexturedButtonWidget {
 
             }
 
-            /*? if >=1.21.6 {*/
             context.drawTooltip(
                     textRenderer,
                     lines,
                     widgetTooltipPositioner,
                     mouseX, mouseY, true
             );
-            /*?} else {*/
-            /*context.drawTooltip(
-                    textRenderer,
-                    lines,
-                    widgetTooltipPositioner,
-                    mouseX, mouseY
-            );
-            *//*?}*/
+
         }
     }
 }
