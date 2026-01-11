@@ -12,13 +12,11 @@ import net.kyrptonaught.inventorysorter.compat.config.CompatConfig;
 import net.kyrptonaught.inventorysorter.compat.sources.ConfigLoader;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.kyrptonaught.inventorysorter.network.*;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -26,27 +24,29 @@ import java.util.function.Supplier;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.*;
 
+import com.mojang.blaze3d.platform.InputConstants;
+
 public class InventorySorterModClient implements ClientModInitializer {
 
     private CompatConfig serverConfig = new CompatConfig();
     private volatile boolean serverIsPresent = false;
     private ScheduledExecutorService scheduler;
-    public static Identifier PLAYER_INVENTORY = Identifier.of("player_inventory");
-    private static final KeyBinding.Category category = KeyBinding.Category.create(Identifier.of(InventorySorterMod.MOD_ID, "main"));
+    public static Identifier PLAYER_INVENTORY = Identifier.parse("player_inventory");
+    private static final KeyMapping.Category category = KeyMapping.Category.register(Identifier.fromNamespaceAndPath(InventorySorterMod.MOD_ID, "main"));
 
-    public static final KeyBinding configButton = new KeyBinding(
+    public static final KeyMapping configButton = new KeyMapping(
             "inventorysorter.key.config",
-            InputUtil.GLFW_KEY_P,
+            InputConstants.KEY_P,
             category
     );
 
-    public static final KeyBinding sortButton = new KeyBinding(
+    public static final KeyMapping sortButton = new KeyMapping(
             "inventorysorter.key.sort",
-            InputUtil.GLFW_KEY_P,
+            InputConstants.KEY_P,
             category
     );
 
-    public static final InputUtil.Key modifierButton = InputUtil.Type.KEYSYM.createFromCode(InputUtil.GLFW_KEY_LEFT_CONTROL);
+    public static final InputConstants.Key modifierButton = InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_LCONTROL);
 
 
     @Override
@@ -76,9 +76,9 @@ public class InventorySorterModClient implements ClientModInitializer {
                     // First check at 5 seconds - schedule another check at 25 seconds
                     scheduler.schedule(() -> {
                         if (!serverIsPresent && client.player != null) {
-                            client.execute(() -> client.player.sendMessage(
-                                    Text.literal("[Inventory Sorter] ").styled(style -> style.withBold(true).withColor(Formatting.AQUA))
-                                            .append(Text.translatable("inventorysorter.warning.missing-server").styled(style -> style.withBold(false).withColor(Formatting.YELLOW))
+                            client.execute(() -> client.player.displayClientMessage(
+                                    Component.literal("[Inventory Sorter] ").withStyle(style -> style.withBold(true).withColor(ChatFormatting.AQUA))
+                                            .append(Component.translatable("inventorysorter.warning.missing-server").withStyle(style -> style.withBold(false).withColor(ChatFormatting.YELLOW))
                                             ), false));
                         }
                     }, 20, TimeUnit.SECONDS);
@@ -123,16 +123,16 @@ public class InventorySorterModClient implements ClientModInitializer {
         });
 
         ClientTickEvents.END_CLIENT_TICK.register((client) -> {
-            InputUtil.Key config = KeyBindingHelper.getBoundKeyOf(configButton);
-            InputUtil.Key sort = KeyBindingHelper.getBoundKeyOf(sortButton);
-            Supplier<Boolean> keyToCheck = configButton::wasPressed;
+            InputConstants.Key config = KeyBindingHelper.getBoundKeyOf(configButton);
+            InputConstants.Key sort = KeyBindingHelper.getBoundKeyOf(sortButton);
+            Supplier<Boolean> keyToCheck = configButton::consumeClick;
 
-            if (config.getCode() == sort.getCode()) {
-                keyToCheck = () -> sortButton.wasPressed() || configButton.wasPressed();
+            if (config.getValue() == sort.getValue()) {
+                keyToCheck = () -> sortButton.consumeClick() || configButton.consumeClick();
             }
 
             if (keyToCheck.get()) {
-                client.setScreen(ConfigScreen.getConfigScreen(client.currentScreen));
+                client.setScreen(ConfigScreen.getConfigScreen(client.screen));
             }
         });
 
@@ -170,8 +170,8 @@ public class InventorySorterModClient implements ClientModInitializer {
         });
 
         ClientPlayNetworking.registerGlobalReceiver(LastSeenVersionPacket.ID, (payload, context) -> {
-            MinecraftClient client = context.client();
-            if (payload.lastSeenVersion().equals(VERSION) && payload.lastSeenLanguage().equals(client.getLanguageManager().getLanguage().toLowerCase())) {
+            Minecraft client = context.client();
+            if (payload.lastSeenVersion().equals(VERSION) && payload.lastSeenLanguage().equals(client.getLanguageManager().getSelected().toLowerCase())) {
                 return;
             }
             TranslationReminder.notify(client);

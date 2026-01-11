@@ -2,8 +2,7 @@ package net.kyrptonaught.inventorysorter.compat;
 
 import com.google.gson.Gson;
 import net.kyrptonaught.inventorysorter.compat.sources.CompatibilityLoader;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.resources.Identifier;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -71,7 +70,7 @@ public class Compatibility {
     }
 
     public void addShouldHideSortButton(String identifier) {
-        shouldHideSortButtons.add(Identifier.of(identifier));
+        shouldHideSortButtons.add(Identifier.parse(identifier));
     }
 
     public static Set<Identifier> parseJson(Reader fileInputStream) {
@@ -80,7 +79,7 @@ public class Compatibility {
         String[] rawIdentifiers = gson.fromJson(fileInputStream, String[].class);
 
         for (String rawIdentifier : rawIdentifiers) {
-            Identifier identifier = Identifier.of(rawIdentifier);
+            Identifier identifier = Identifier.parse(rawIdentifier);
             identifiers.add(identifier);
         }
 

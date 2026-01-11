@@ -6,34 +6,34 @@ import com.mojang.brigadier.context.CommandContext;
 import net.kyrptonaught.inventorysorter.InventoryHelper;
 import net.kyrptonaught.inventorysorter.network.PlayerSortPrevention;
 import net.kyrptonaught.inventorysorter.permissions.CommandPermission;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.PLAYER_SORT_PREVENTION;
 
 public class NoSortCommand {
-    public static void register(CommandDispatcher<ServerCommandSource> dispatcher, LiteralArgumentBuilder<ServerCommandSource> rootCommand) {
-        LiteralArgumentBuilder<ServerCommandSource> nosort = CommandManager.literal("nosort")
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher, LiteralArgumentBuilder<CommandSourceStack> rootCommand) {
+        LiteralArgumentBuilder<CommandSourceStack> nosort = Commands.literal("nosort")
                 .requires(CommandPermission.require("nosort", 0));
 
         dispatcher.register(rootCommand.then(nosort.then(
-                CommandManager.literal("add").executes(NoSortCommand::add)
+                Commands.literal("add").executes(NoSortCommand::add)
         )));
         dispatcher.register(rootCommand.then(nosort.then(
-                CommandManager.literal("remove").executes(NoSortCommand::remove)
+                Commands.literal("remove").executes(NoSortCommand::remove)
         )));
         dispatcher.register(rootCommand.then(nosort.then(
-                CommandManager.literal("list").executes(NoSortCommand::list)
+                Commands.literal("list").executes(NoSortCommand::list)
         )));
 
     }
 
-    public static int add(CommandContext<ServerCommandSource> commandContext) {
-        ServerPlayerEntity player = commandContext.getSource().getPlayer();
+    public static int add(CommandContext<CommandSourceStack> commandContext) {
+        ServerPlayer player = commandContext.getSource().getPlayer();
         if (player == null) {
-            commandContext.getSource().sendFeedback(CommandTranslations::playerRequired, false);
+            commandContext.getSource().sendSuccess(CommandTranslations::playerRequired, false);
             return 0;
         }
         PlayerSortPrevention playerSortPrevention = player.getAttachedOrCreate(PLAYER_SORT_PREVENTION);
@@ -45,20 +45,20 @@ public class NoSortCommand {
         });
 
         if (Boolean.FALSE.equals(success)) {
-            commandContext.getSource().sendFeedback(() -> Text.translatable("inventorysorter.cmd.nosort.add.fail"), false);
+            commandContext.getSource().sendSuccess(() -> Component.translatable("inventorysorter.cmd.nosort.add.fail"), false);
             return 0;
         }
 
         playerSortPrevention.sync(player);
 
-        commandContext.getSource().sendFeedback(() -> Text.translatable("inventorysorter.cmd.nosort.add.success"), false);
+        commandContext.getSource().sendSuccess(() -> Component.translatable("inventorysorter.cmd.nosort.add.success"), false);
         return 1;
     }
 
-    public static int remove(CommandContext<ServerCommandSource> commandContext) {
-        ServerPlayerEntity player = commandContext.getSource().getPlayer();
+    public static int remove(CommandContext<CommandSourceStack> commandContext) {
+        ServerPlayer player = commandContext.getSource().getPlayer();
         if (player == null) {
-            commandContext.getSource().sendFeedback(CommandTranslations::playerRequired, false);
+            commandContext.getSource().sendSuccess(CommandTranslations::playerRequired, false);
             return 0;
         }
         PlayerSortPrevention playerSortPrevention = player.getAttachedOrCreate(PLAYER_SORT_PREVENTION);
@@ -70,24 +70,24 @@ public class NoSortCommand {
         });
 
         if (Boolean.FALSE.equals(success)) {
-            commandContext.getSource().sendFeedback(() -> Text.translatable("inventorysorter.cmd.nosort.remove.fail"), false);
+            commandContext.getSource().sendSuccess(() -> Component.translatable("inventorysorter.cmd.nosort.remove.fail"), false);
             return 0;
         }
 
         playerSortPrevention.sync(player);
-        commandContext.getSource().sendFeedback(() -> Text.translatable("inventorysorter.cmd.nosort.remove.success"), false);
+        commandContext.getSource().sendSuccess(() -> Component.translatable("inventorysorter.cmd.nosort.remove.success"), false);
         return 1;
     }
 
-    public static int list(CommandContext<ServerCommandSource> commandContext) {
-        ServerPlayerEntity player = commandContext.getSource().getPlayer();
+    public static int list(CommandContext<CommandSourceStack> commandContext) {
+        ServerPlayer player = commandContext.getSource().getPlayer();
         if (player == null) {
-            commandContext.getSource().sendFeedback(CommandTranslations::playerRequired, false);
+            commandContext.getSource().sendSuccess(CommandTranslations::playerRequired, false);
             return 0;
         }
         PlayerSortPrevention playerSortPrevention = player.getAttachedOrCreate(PLAYER_SORT_PREVENTION);
 
-        commandContext.getSource().sendFeedback(() -> Text.translatable(
+        commandContext.getSource().sendSuccess(() -> Component.translatable(
                 "inventorysorter.cmd.nosort.list",
                 String.join(",", playerSortPrevention.preventSortForScreens())
         ), false);

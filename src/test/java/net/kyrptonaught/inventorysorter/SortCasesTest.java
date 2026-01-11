@@ -1,12 +1,11 @@
 package net.kyrptonaught.inventorysorter;
 
-import net.minecraft.Bootstrap;
 import net.minecraft.SharedConstants;
-import net.minecraft.component.ComponentChanges;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.text.Text;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.Bootstrap;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -15,12 +14,14 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import static net.minecraft.core.component.DataComponents.ITEM_NAME;
+
 public class SortCasesTest {
 
     @BeforeAll
     public static void setup() {
-        SharedConstants.createGameVersion();
-        Bootstrap.initialize();
+        SharedConstants.tryDetectVersion();
+        Bootstrap.bootStrap();
     }
 
     @Test
@@ -44,16 +45,16 @@ public class SortCasesTest {
         input.sort(comparator);
 
         for (int i = 0; i < input.size(); i++) {
-            System.out.println("Input: " + input.get(i).getName().getString());
-            Assertions.assertEquals(expected.get(i).getName().getString(), input.get(i).getName().getString(), "Sorting failed at index " + i);
+            System.out.println("Input: " + input.get(i).getItemName().getString());
+            Assertions.assertEquals(expected.get(i).getItemName().getString(), input.get(i).getItemName().getString(), "Sorting failed at index " + i);
         }
     }
 
     private ItemStack createStackWithName(String name) {
-        ComponentChanges changes = ComponentChanges.builder()
-                .add(DataComponentTypes.ITEM_NAME, Text.of(name))
+        DataComponentPatch changes = DataComponentPatch.builder()
+                .set(ITEM_NAME, Component.nullToEmpty(name))
                 .build();
 
-        return new ItemStack(Items.EGG.getRegistryEntry(), 4, changes);
+        return new ItemStack(Items.EGG.builtInRegistryHolder(), 4, changes);
     }
 }

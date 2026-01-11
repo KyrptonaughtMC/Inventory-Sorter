@@ -1,26 +1,25 @@
 package net.kyrptonaught.inventorysorter;
 
 import net.kyrptonaught.inventorysorter.network.PlayerSortPrevention;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.HopperBlockEntity;
-import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.registry.Registries;
-import net.minecraft.screen.NamedScreenHandlerFactory;
-import net.minecraft.screen.PlayerScreenHandler;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
+import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.HopperBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -38,103 +37,103 @@ public class InventoryHelper {
     private static final long TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes in milliseconds
 
 
-    public record ScreenContext(ScreenHandler handler, Identifier screenId, Inventory inventory) {}
+    public record ScreenContext(AbstractContainerMenu handler, Identifier screenId, Container inventory) {}
 
-    public static <T> T withTargetedScreenHandler(ServerPlayerEntity player, Function<ScreenContext, T> action) {
-        HitResult hit = player.raycast(MAX_LOOKUP_DISTANCE, 1.0F, false);
+    public static <T> T withTargetedScreenHandler(ServerPlayer player, Function<ScreenContext, T> action) {
+        HitResult hit = player.pick(MAX_LOOKUP_DISTANCE, 1.0F, false);
         if (!(hit instanceof BlockHitResult blockHit)) return null;
 
         BlockPos blockPos = blockHit.getBlockPos();
-        World world = player.getEntityWorld();
+        Level world = player.level();
         BlockState blockState = world.getBlockState(blockPos);
 
         // Inventory to sort
-        Inventory inventory = null;
+        Container inventory = null;
         // Screen to open and check
-        NamedScreenHandlerFactory namedScreenHandlerFactory = null;
+        MenuProvider namedScreenHandlerFactory = null;
 
 
         if (blockState.hasBlockEntity()) {
             BlockEntity blockEntity = world.getBlockEntity(blockPos);
-            inventory = HopperBlockEntity.getInventoryAt(world, blockPos);
-            namedScreenHandlerFactory = blockState.createScreenHandlerFactory(world, blockPos);
-            if (namedScreenHandlerFactory == null && blockEntity instanceof NamedScreenHandlerFactory)
-                namedScreenHandlerFactory = (NamedScreenHandlerFactory) blockEntity;
+            inventory = HopperBlockEntity.getContainerAt(world, blockPos);
+            namedScreenHandlerFactory = blockState.getMenuProvider(world, blockPos);
+            if (namedScreenHandlerFactory == null && blockEntity instanceof MenuProvider)
+                namedScreenHandlerFactory = (MenuProvider) blockEntity;
         } else {
-            namedScreenHandlerFactory = blockState.createScreenHandlerFactory(world, blockPos);
+            namedScreenHandlerFactory = blockState.getMenuProvider(world, blockPos);
         }
         // fail if either is not present
         if (namedScreenHandlerFactory == null) {
             return null;
         }
 
-        OptionalInt syncId = player.openHandledScreen(namedScreenHandlerFactory);
+        OptionalInt syncId = player.openMenu(namedScreenHandlerFactory);
         if (syncId.isEmpty()) return null;
 
-        ScreenHandler screenHandler = namedScreenHandlerFactory.createMenu(syncId.getAsInt(), player.getInventory(), player);
+        AbstractContainerMenu screenHandler = namedScreenHandlerFactory.createMenu(syncId.getAsInt(), player.getInventory(), player);
 
         try {
-            Identifier id = Registries.SCREEN_HANDLER.getId(screenHandler.getType());
+            Identifier id = BuiltInRegistries.MENU.getKey(screenHandler.getType());
             if (id == null) return null;
 
             return action.apply(new ScreenContext(screenHandler, id, inventory));
         } catch (Exception e) {
             return null;
         } finally {
-            player.closeHandledScreen();
-            screenHandler.onClosed(player);
+            player.closeContainer();
+            screenHandler.removed(player);
         }
     }
 
 
-    public static Text sortTargetedBlock(ServerPlayerEntity player, SortType sortType) {
+    public static Component sortTargetedBlock(ServerPlayer player, SortType sortType) {
 
         Boolean result = withTargetedScreenHandler(player, (context) -> {
             if (context.inventory == null) {
                 return false;
             }
             if (canSortInventory(player, context.handler)) {
-                String languageCode = player.getClientOptions().language().toLowerCase();
-                sortInventory(context.inventory, 0, context.inventory.size(), sortType, languageCode);
+                String languageCode = player.clientInformation().language().toLowerCase();
+                sortInventory(context.inventory, 0, context.inventory.getContainerSize(), sortType, languageCode);
                 return true;
             }
             return false;
         });
 
         if (result == null) {
-            return Text.translatable("inventorysorter.cmd.sort.error");
+            return Component.translatable("inventorysorter.cmd.sort.error");
         }
         if (result) {
-            return Text.translatable("inventorysorter.cmd.sort.sorted");
+            return Component.translatable("inventorysorter.cmd.sort.sorted");
         }
 
-        return Text.translatable("inventorysorter.cmd.sort.notsortable");
+        return Component.translatable("inventorysorter.cmd.sort.notsortable");
     }
 
-    public static boolean sortInventory(ServerPlayerEntity player, boolean shouldSortPlayerInventory, SortType sortType) {
-        String languageCode = player.getClientOptions().language().toLowerCase();
+    public static boolean sortInventory(ServerPlayer player, boolean shouldSortPlayerInventory, SortType sortType) {
+        String languageCode = player.clientInformation().language().toLowerCase();
         if (shouldSortPlayerInventory) {
             sortInventory(player.getInventory(), 9, 27, sortType, languageCode);
             return true;
         } else if (canSortInventory(player)) {
-            Inventory inv = getInventory(player.currentScreenHandler);
+            Container inv = getInventory(player.containerMenu);
             if (inv != null) {
-                sortInventory(inv, 0, inv.size(), sortType, languageCode);
+                sortInventory(inv, 0, inv.getContainerSize(), sortType, languageCode);
                 return true;
             }
         }
         return false;
     }
 
-    public static Inventory getInventory(ScreenHandler screenHandler) {
+    public static Container getInventory(AbstractContainerMenu screenHandler) {
         if (screenHandler.slots.isEmpty()) return null;
-        return screenHandler.slots.getFirst().inventory;
+        return screenHandler.slots.getFirst().container;
     }
 
-    private static void sortInventory(Inventory inv, int startSlot, int invSize, SortType sortType, String languageCode) {
+    private static void sortInventory(Container inv, int startSlot, int invSize, SortType sortType, String languageCode) {
         List<ItemStack> stacks = new ArrayList<>();
         for (int i = 0; i < invSize; i++) {
-            addStackWithMerge(stacks, inv.getStack(startSlot + i));
+            addStackWithMerge(stacks, inv.getItem(startSlot + i));
         }
 
         stacks.sort(SortCases.getComparator(sortType, languageCode));
@@ -142,15 +141,15 @@ public class InventoryHelper {
             return;
         }
         for (int i = 0; i < invSize; i++)
-            inv.setStack(startSlot + i, i < stacks.size() ? stacks.get(i) : ItemStack.EMPTY);
-        inv.markDirty();
+            inv.setItem(startSlot + i, i < stacks.size() ? stacks.get(i) : ItemStack.EMPTY);
+        inv.setChanged();
     }
 
     private static void addStackWithMerge(List<ItemStack> stacks, ItemStack newStack) {
         if (newStack.getItem() == Items.AIR) {
             return;
         }
-        if (newStack.isStackable() && newStack.getCount() != newStack.getMaxCount())
+        if (newStack.isStackable() && newStack.getCount() != newStack.getMaxStackSize())
             for (int j = stacks.size() - 1; j >= 0; j--) {
                 ItemStack oldStack = stacks.get(j);
                 if (canMergeItems(newStack, oldStack)) {
@@ -164,47 +163,47 @@ public class InventoryHelper {
     }
 
     private static void combineStacks(ItemStack stack, ItemStack stack2) {
-        if (stack.getMaxCount() >= stack.getCount() + stack2.getCount()) {
-            stack.increment(stack2.getCount());
+        if (stack.getMaxStackSize() >= stack.getCount() + stack2.getCount()) {
+            stack.grow(stack2.getCount());
             stack2.setCount(0);
         }
-        int maxInsertAmount = Math.min(stack.getMaxCount() - stack.getCount(), stack2.getCount());
-        stack.increment(maxInsertAmount);
-        stack2.decrement(maxInsertAmount);
+        int maxInsertAmount = Math.min(stack.getMaxStackSize() - stack.getCount(), stack2.getCount());
+        stack.grow(maxInsertAmount);
+        stack2.shrink(maxInsertAmount);
     }
 
     private static boolean canMergeItems(ItemStack itemStack_1, ItemStack itemStack_2) {
         if (!itemStack_1.isStackable() || !itemStack_2.isStackable()) {
             return false;
         }
-        if (itemStack_1.getCount() == itemStack_1.getMaxCount() || itemStack_2.getCount() == itemStack_2.getMaxCount()) {
+        if (itemStack_1.getCount() == itemStack_1.getMaxStackSize() || itemStack_2.getCount() == itemStack_2.getMaxStackSize()) {
             return false;
         }
         if (itemStack_1.getItem() != itemStack_2.getItem()) {
             return false;
         }
-        if (itemStack_1.getDamage() != itemStack_2.getDamage()) {
+        if (itemStack_1.getDamageValue() != itemStack_2.getDamageValue()) {
             return false;
         }
-        return ItemStack.areItemsAndComponentsEqual(itemStack_1, itemStack_2);
+        return ItemStack.isSameItemSameComponents(itemStack_1, itemStack_2);
     }
 
-    public static boolean shouldDisplayButtons(PlayerEntity player) {
+    public static boolean shouldDisplayButtons(Player player) {
 
-        if (player.currentScreenHandler == null || !player.currentScreenHandler.canUse(player)) {
+        if (player.containerMenu == null || !player.containerMenu.stillValid(player)) {
             return false;
         }
 
-        if (player.currentScreenHandler instanceof PlayerScreenHandler) {
+        if (player.containerMenu instanceof InventoryMenu) {
             return true;
         }
 
-        if (player.currentScreenHandler instanceof CreativeInventoryScreen.CreativeScreenHandler) {
+        if (player.containerMenu instanceof CreativeModeInventoryScreen.ItemPickerMenu) {
             return true;
         }
 
         try {
-            Identifier id = Registries.SCREEN_HANDLER.getId(player.currentScreenHandler.getType());
+            Identifier id = BuiltInRegistries.MENU.getKey(player.containerMenu.getType());
 
             if (id == null) {
                 return false;
@@ -217,15 +216,15 @@ public class InventoryHelper {
         }
     }
 
-    public static boolean canSortInventory(PlayerEntity player) {
-        if (player.currentScreenHandler instanceof PlayerScreenHandler) {
+    public static boolean canSortInventory(Player player) {
+        if (player.containerMenu instanceof InventoryMenu) {
             return false;
         }
-        return canSortInventory(player, player.currentScreenHandler);
+        return canSortInventory(player, player.containerMenu);
     }
 
-    public static boolean canSortInventory(PlayerEntity player, ScreenHandler screenHandler) {
-        if (screenHandler == null || !screenHandler.canUse(player)) {
+    public static boolean canSortInventory(Player player, AbstractContainerMenu screenHandler) {
+        if (screenHandler == null || !screenHandler.stillValid(player)) {
             return false;
         }
         if (player.isSpectator()) {
@@ -233,7 +232,7 @@ public class InventoryHelper {
         }
 
         try {
-            Identifier id = Registries.SCREEN_HANDLER.getId(screenHandler.getType());
+            Identifier id = BuiltInRegistries.MENU.getKey(screenHandler.getType());
 
             if (id == null) {
                 return false;
@@ -245,7 +244,7 @@ public class InventoryHelper {
         }
     }
 
-    private static boolean isSortableContainer(PlayerEntity player, ScreenHandler screenHandler, Identifier screenID) {
+    private static boolean isSortableContainer(Player player, AbstractContainerMenu screenHandler, Identifier screenID) {
         @SuppressWarnings("UnstableApiUsage")
         PlayerSortPrevention playerSortPrevention = player.getAttachedOrCreate(PLAYER_SORT_PREVENTION);
         if (!compatibility.isSortAllowed(screenID, playerSortPrevention.preventSortForScreens())) {

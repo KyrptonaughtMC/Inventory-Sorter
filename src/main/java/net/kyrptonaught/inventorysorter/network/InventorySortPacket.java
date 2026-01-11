@@ -7,21 +7,21 @@ import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.kyrptonaught.inventorysorter.InventoryHelper;
 import net.kyrptonaught.inventorysorter.SortType;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
+import net.minecraft.server.level.ServerPlayer;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.getConfig;
 
-public record InventorySortPacket(boolean shouldSortPlayerInventory, int sortType) implements CustomPayload {
-    private static final CustomPayload.Id<InventorySortPacket> ID = new CustomPayload.Id<>(Identifier.of("inventorysorter", "sort_inv_packet"));
-    private static final PacketCodec<RegistryByteBuf, InventorySortPacket> CODEC = CustomPayload.codecOf(InventorySortPacket::write, InventorySortPacket::new);
+public record InventorySortPacket(boolean shouldSortPlayerInventory, int sortType) implements CustomPacketPayload {
+    private static final CustomPacketPayload.Type<InventorySortPacket> ID = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath("inventorysorter", "sort_inv_packet"));
+    private static final StreamCodec<RegistryFriendlyByteBuf, InventorySortPacket> CODEC = CustomPacketPayload.codec(InventorySortPacket::write, InventorySortPacket::new);
 
-    public InventorySortPacket(PacketByteBuf buf) {
+    public InventorySortPacket(FriendlyByteBuf buf) {
         this(buf.readBoolean(), buf.readInt());
     }
 
@@ -29,8 +29,8 @@ public record InventorySortPacket(boolean shouldSortPlayerInventory, int sortTyp
         PayloadTypeRegistry.playC2S().register(InventorySortPacket.ID, InventorySortPacket.CODEC);
         ServerPlayNetworking.registerGlobalReceiver(InventorySortPacket.ID, ((payload, context) -> {
             SortType sortType = SortType.values()[payload.sortType];
-            ServerPlayerEntity player = context.player();
-            MinecraftServer server = player.getEntityWorld().getServer();
+            ServerPlayer player = context.player();
+            MinecraftServer server = player.level().getServer();
             server.execute(() -> InventoryHelper.sortInventory(player, payload.shouldSortPlayerInventory, sortType));
         }));
     }
@@ -42,13 +42,13 @@ public record InventorySortPacket(boolean shouldSortPlayerInventory, int sortTyp
             sendSortPacket(true);
     }
 
-    public void write(PacketByteBuf buf) {
+    public void write(FriendlyByteBuf buf) {
         buf.writeBoolean(shouldSortPlayerInventory);
         buf.writeInt(sortType);
     }
 
     @Override
-    public Id<? extends CustomPayload> getId() {
+    public Type<? extends CustomPacketPayload> type() {
         return ID;
     }
 }

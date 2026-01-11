@@ -4,26 +4,25 @@ import com.mojang.authlib.GameProfile;
 import it.unimi.dsi.fastutil.booleans.Boolean2ObjectFunction;
 import net.kyrptonaught.inventorysorter.InventoryHelper;
 import net.kyrptonaught.inventorysorter.SortType;
-import net.minecraft.component.ComponentChanges;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.BlockStateComponent;
-import net.minecraft.component.type.OminousBottleAmplifierComponent;
-import net.minecraft.component.type.ProfileComponent;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.entry.RegistryEntry;
+import net.kyrptonaught.inventorysorter.e2e.TestUtils.Scenario;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.BlockItemStateProperties;
+import net.minecraft.world.item.component.OminousBottleAmplifier;
+import net.minecraft.world.item.component.ResolvableProfile;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.GameType;
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
-
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.test.TestContext;
-import net.minecraft.text.Text;
-import net.minecraft.world.GameMode;
-
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.IntFunction;
@@ -31,7 +30,7 @@ import static net.kyrptonaught.inventorysorter.e2e.TestUtils.*;
 
 public class SortingTests {
     @GameTest()
-    public void testSimpleStackable(TestContext ctx) {
+    public void testSimpleStackable(GameTestHelper ctx) {
         Scenario scenario = setUpScene(ctx, Map.of(
                 5, new ItemStack(Items.DIAMOND, 32),
                 6, new ItemStack(Items.DIAMOND, 32)
@@ -41,11 +40,11 @@ public class SortingTests {
 
         assertContents(ctx, scenario, Map.of(0, new ItemStack(Items.DIAMOND, 64)));
 
-        ctx.complete();
+        ctx.succeed();
     }
 
     @GameTest()
-    public void testSimpleStackableWithLeftovers(TestContext ctx) {
+    public void testSimpleStackableWithLeftovers(GameTestHelper ctx) {
 
         Scenario scenario = setUpScene(ctx, Map.of(
                 5, new ItemStack(Items.DIAMOND, 32),
@@ -59,18 +58,18 @@ public class SortingTests {
                 1, new ItemStack(Items.DIAMOND, 1)
         ));
 
-        ctx.complete();
+        ctx.succeed();
     }
 
     @GameTest()
-    public void testSpectatorsCannotSort(TestContext ctx) {
+    public void testSpectatorsCannotSort(GameTestHelper ctx) {
         Scenario scenario = setUpScene(ctx, Map.of(
                 5, new ItemStack(Items.DIAMOND, 32),
                 6, new ItemStack(Items.DIAMOND, 33)
         ), TestUtils.IS_SPECTATOR);
 
-        ServerPlayerEntity player = scenario.player();
-        player.changeGameMode(GameMode.SPECTATOR);
+        ServerPlayer player = scenario.player();
+        player.setGameMode(GameType.SPECTATOR);
 
         InventoryHelper.sortInventory(player, false, SortType.NAME);
 
@@ -79,11 +78,11 @@ public class SortingTests {
                 6, new ItemStack(Items.DIAMOND, 33)
         ));
 
-        ctx.complete();
+        ctx.succeed();
     }
 
     @GameTest()
-    public void testSortWithStackables(TestContext ctx) {
+    public void testSortWithStackables(GameTestHelper ctx) {
         Scenario scenario = setUpScene(ctx, Map.ofEntries(
                 Map.entry(0, new ItemStack(Items.ACACIA_LEAVES, 12)),
                 Map.entry(1, new ItemStack(Items.BLACKSTONE, 9)),
@@ -114,23 +113,23 @@ public class SortingTests {
                 Map.entry(9, new ItemStack(Items.ITEM_FRAME, 45))
         ));
 
-        ctx.complete();
+        ctx.succeed();
     }
 
     @GameTest()
-    public void testCustomMaxStackSizeSorting(TestContext ctx) {
+    public void testCustomMaxStackSizeSorting(GameTestHelper ctx) {
 
-        ComponentChanges changes = ComponentChanges.builder().add(DataComponentTypes.MAX_STACK_SIZE, 99).build();
+        DataComponentPatch changes = DataComponentPatch.builder().set(DataComponents.MAX_STACK_SIZE, 99).build();
 
         Scenario scenario = setUpScene(ctx, Map.of(
                 5, new ItemStack(Items.EGG, 7),
                 6, new ItemStack(Items.EGG, 8),
-                7, new ItemStack(Items.EGG.getRegistryEntry(), 99, changes),
-                9, new ItemStack(Items.EGG.getRegistryEntry(), 99, changes),
-                11, new ItemStack(Items.EGG.getRegistryEntry(), 99, changes),
-                15, new ItemStack(Items.EGG.getRegistryEntry(), 99, changes),
-                19, new ItemStack(Items.EGG.getRegistryEntry(), 99, changes),
-                26, new ItemStack(Items.EGG.getRegistryEntry(), 99, changes),
+                7, new ItemStack(Items.EGG.builtInRegistryHolder(), 99, changes),
+                9, new ItemStack(Items.EGG.builtInRegistryHolder(), 99, changes),
+                11, new ItemStack(Items.EGG.builtInRegistryHolder(), 99, changes),
+                15, new ItemStack(Items.EGG.builtInRegistryHolder(), 99, changes),
+                19, new ItemStack(Items.EGG.builtInRegistryHolder(), 99, changes),
+                26, new ItemStack(Items.EGG.builtInRegistryHolder(), 99, changes),
                 1, new ItemStack(Items.EGG, 16)
         ));
 
@@ -147,17 +146,17 @@ public class SortingTests {
                 7, new ItemStack(Items.EGG, 15)
         ));
 
-        ctx.complete();
+        ctx.succeed();
     }
 
     @GameTest()
-    public void testSameItemDifferentName(TestContext ctx) {
+    public void testSameItemDifferentName(GameTestHelper ctx) {
 
-        ComponentChanges changes = ComponentChanges.builder()
-                .add(DataComponentTypes.ITEM_NAME, Text.of("omelette"))
+        DataComponentPatch changes = DataComponentPatch.builder()
+                .set(DataComponents.ITEM_NAME, Component.nullToEmpty("omelette"))
                 .build();
 
-        ItemStack omelette = new ItemStack(Items.EGG.getRegistryEntry(), 4, changes);
+        ItemStack omelette = new ItemStack(Items.EGG.builtInRegistryHolder(), 4, changes);
 
         Scenario scenario = setUpScene(ctx, Map.of(
                 5, new ItemStack(Items.EGG, 7),
@@ -174,11 +173,11 @@ public class SortingTests {
                 2, omelette
         ));
 
-        ctx.complete();
+        ctx.succeed();
     }
 
     @GameTest()
-    public void testSimplePickaxes(TestContext ctx) {
+    public void testSimplePickaxes(GameTestHelper ctx) {
         Scenario scenario = setUpScene(ctx, Map.of(
                 0, new ItemStack(Items.NETHERITE_PICKAXE, 1),
                 1, new ItemStack(Items.DIAMOND_PICKAXE, 1),
@@ -199,26 +198,26 @@ public class SortingTests {
                 5, new ItemStack(Items.WOODEN_PICKAXE, 1)
         ));
 
-        ctx.complete();
+        ctx.succeed();
     }
 
     @GameTest()
-    public void testDamagedPickaxes(TestContext ctx) {
+    public void testDamagedPickaxes(GameTestHelper ctx) {
         ItemStack diamondPick80PercentDamaged = new ItemStack(
-                RegistryEntry.of(Items.DIAMOND_PICKAXE), 1,
-                ComponentChanges.builder().add(DataComponentTypes.DAMAGE, damageForPercent(Items.DIAMOND_PICKAXE, 20)).build());
+                Holder.direct(Items.DIAMOND_PICKAXE), 1,
+                DataComponentPatch.builder().set(DataComponents.DAMAGE, damageForPercent(Items.DIAMOND_PICKAXE, 20)).build());
 
         ItemStack diamondPick25PercentDamaged = new ItemStack(
-                RegistryEntry.of(Items.DIAMOND_PICKAXE), 1,
-                ComponentChanges.builder().add(DataComponentTypes.DAMAGE, damageForPercent(Items.DIAMOND_PICKAXE, 75)).build());
+                Holder.direct(Items.DIAMOND_PICKAXE), 1,
+                DataComponentPatch.builder().set(DataComponents.DAMAGE, damageForPercent(Items.DIAMOND_PICKAXE, 75)).build());
 
         ItemStack netheritePick75PercentDamaged = new ItemStack(
-                RegistryEntry.of(Items.NETHERITE_PICKAXE), 1,
-                ComponentChanges.builder().add(DataComponentTypes.DAMAGE, damageForPercent(Items.NETHERITE_PICKAXE, 25)).build());
+                Holder.direct(Items.NETHERITE_PICKAXE), 1,
+                DataComponentPatch.builder().set(DataComponents.DAMAGE, damageForPercent(Items.NETHERITE_PICKAXE, 25)).build());
 
         ItemStack netheritePick50PercentDamaged = new ItemStack(
-                RegistryEntry.of(Items.NETHERITE_PICKAXE), 1,
-                ComponentChanges.builder().add(DataComponentTypes.DAMAGE, damageForPercent(Items.NETHERITE_PICKAXE, 50)).build());
+                Holder.direct(Items.NETHERITE_PICKAXE), 1,
+                DataComponentPatch.builder().set(DataComponents.DAMAGE, damageForPercent(Items.NETHERITE_PICKAXE, 50)).build());
 
         ItemStack netheritePickNotDamaged = new ItemStack(Items.NETHERITE_PICKAXE, 1);
 
@@ -244,55 +243,55 @@ public class SortingTests {
                 5, netheritePick50PercentDamaged
         ));
 
-        ctx.complete();
+        ctx.succeed();
     }
 
     @GameTest()
-    public void testPlayerHeads(TestContext ctx) {
-        ProfileComponent houseofmeza = ProfileComponent.ofStatic(new GameProfile(UUID.randomUUID(), "houseofmeza"));
-        ProfileComponent kyrptonaught = ProfileComponent.ofStatic(new GameProfile(UUID.randomUUID(), "Kyrptonaught"));
-        ProfileComponent morgant1c = ProfileComponent.ofStatic(new GameProfile(UUID.randomUUID(), "morgant1c"));
-        ProfileComponent zombie_konsti = ProfileComponent.ofStatic(new GameProfile(UUID.randomUUID(), "Zombie_konsti"));
+    public void testPlayerHeads(GameTestHelper ctx) {
+        ResolvableProfile houseofmeza = ResolvableProfile.createResolved(new GameProfile(UUID.randomUUID(), "houseofmeza"));
+        ResolvableProfile kyrptonaught = ResolvableProfile.createResolved(new GameProfile(UUID.randomUUID(), "Kyrptonaught"));
+        ResolvableProfile morgant1c = ResolvableProfile.createResolved(new GameProfile(UUID.randomUUID(), "morgant1c"));
+        ResolvableProfile zombie_konsti = ResolvableProfile.createResolved(new GameProfile(UUID.randomUUID(), "Zombie_konsti"));
 
-        ComponentChanges houseofmezaHead =
-                ComponentChanges.builder().add(DataComponentTypes.PROFILE, houseofmeza).build();
+        DataComponentPatch houseofmezaHead =
+                DataComponentPatch.builder().set(DataComponents.PROFILE, houseofmeza).build();
 
-        ComponentChanges kyrptonaughtHead =
-                ComponentChanges.builder().add(DataComponentTypes.PROFILE, kyrptonaught).build();
+        DataComponentPatch kyrptonaughtHead =
+                DataComponentPatch.builder().set(DataComponents.PROFILE, kyrptonaught).build();
 
-        ComponentChanges morgant1cHead =
-                ComponentChanges.builder().add(DataComponentTypes.PROFILE, morgant1c).build();
+        DataComponentPatch morgant1cHead =
+                DataComponentPatch.builder().set(DataComponents.PROFILE, morgant1c).build();
 
-        ComponentChanges zombie_konstiHead =
-                ComponentChanges.builder().add(DataComponentTypes.PROFILE, zombie_konsti).build();
+        DataComponentPatch zombie_konstiHead =
+                DataComponentPatch.builder().set(DataComponents.PROFILE, zombie_konsti).build();
 
         Scenario scenario = setUpScene(ctx, Map.of(
-                0, new ItemStack(RegistryEntry.of(Items.PLAYER_HEAD), 1, zombie_konstiHead),
-                1, new ItemStack(RegistryEntry.of(Items.PLAYER_HEAD), 4, morgant1cHead),
-                2, new ItemStack(RegistryEntry.of(Items.PLAYER_HEAD), 1, houseofmezaHead),
-                3, new ItemStack(RegistryEntry.of(Items.PLAYER_HEAD), 32, kyrptonaughtHead),
+                0, new ItemStack(Holder.direct(Items.PLAYER_HEAD), 1, zombie_konstiHead),
+                1, new ItemStack(Holder.direct(Items.PLAYER_HEAD), 4, morgant1cHead),
+                2, new ItemStack(Holder.direct(Items.PLAYER_HEAD), 1, houseofmezaHead),
+                3, new ItemStack(Holder.direct(Items.PLAYER_HEAD), 32, kyrptonaughtHead),
                 4, new ItemStack(Items.PLAYER_HEAD, 16),
-                5, new ItemStack(RegistryEntry.of(Items.PLAYER_HEAD), 33, kyrptonaughtHead)
+                5, new ItemStack(Holder.direct(Items.PLAYER_HEAD), 33, kyrptonaughtHead)
         ));
 
         InventoryHelper.sortInventory(scenario.player(), false, SortType.NAME);
 
         assertContents(ctx, scenario, Map.of(
-                0, new ItemStack(RegistryEntry.of(Items.PLAYER_HEAD), 1, houseofmezaHead),
-                1, new ItemStack(RegistryEntry.of(Items.PLAYER_HEAD), 64, kyrptonaughtHead),
-                2, new ItemStack(RegistryEntry.of(Items.PLAYER_HEAD), 1, kyrptonaughtHead),
-                3, new ItemStack(RegistryEntry.of(Items.PLAYER_HEAD), 4, morgant1cHead),
+                0, new ItemStack(Holder.direct(Items.PLAYER_HEAD), 1, houseofmezaHead),
+                1, new ItemStack(Holder.direct(Items.PLAYER_HEAD), 64, kyrptonaughtHead),
+                2, new ItemStack(Holder.direct(Items.PLAYER_HEAD), 1, kyrptonaughtHead),
+                3, new ItemStack(Holder.direct(Items.PLAYER_HEAD), 4, morgant1cHead),
                 4, new ItemStack(Items.PLAYER_HEAD, 16),
-                5, new ItemStack(RegistryEntry.of(Items.PLAYER_HEAD), 1, zombie_konstiHead)
+                5, new ItemStack(Holder.direct(Items.PLAYER_HEAD), 1, zombie_konstiHead)
         ));
 
 
-        ctx.complete();
+        ctx.succeed();
     }
 
     @GameTest()
-    public void testEnchantedBooks(TestContext ctx) {
-        Registry<Enchantment> registry = ctx.getWorld().getRegistryManager().getOrThrow(RegistryKeys.ENCHANTMENT);
+    public void testEnchantedBooks(GameTestHelper ctx) {
+        Registry<Enchantment> registry = ctx.getLevel().registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
 
         ItemStack sharpnessBook = new ItemStack(Items.ENCHANTED_BOOK, 1);
         ItemStack silkTouchBook = new ItemStack(Items.ENCHANTED_BOOK, 1);
@@ -300,27 +299,27 @@ public class SortingTests {
         ItemStack fortune3Book = new ItemStack(Items.ENCHANTED_BOOK, 1);
         ItemStack bulkBook = new ItemStack(Items.ENCHANTED_BOOK, 1);
 
-        EnchantmentHelper.apply(sharpnessBook, builder -> {
-            builder.add(registry.getEntry(registry.get(Enchantments.SHARPNESS)), 1);
+        EnchantmentHelper.updateEnchantments(sharpnessBook, builder -> {
+            builder.upgrade(registry.wrapAsHolder(registry.getValue(Enchantments.SHARPNESS)), 1);
         });
 
-        EnchantmentHelper.apply(silkTouchBook, builder -> {
-            builder.add(registry.getEntry(registry.get(Enchantments.SILK_TOUCH)), 1);
+        EnchantmentHelper.updateEnchantments(silkTouchBook, builder -> {
+            builder.upgrade(registry.wrapAsHolder(registry.getValue(Enchantments.SILK_TOUCH)), 1);
         });
 
-        EnchantmentHelper.apply(fortune1Book, builder -> {
-            builder.add(registry.getEntry(registry.get(Enchantments.FORTUNE)), 1);
+        EnchantmentHelper.updateEnchantments(fortune1Book, builder -> {
+            builder.upgrade(registry.wrapAsHolder(registry.getValue(Enchantments.FORTUNE)), 1);
         });
 
-        EnchantmentHelper.apply(fortune3Book, builder -> {
-            builder.add(registry.getEntry(registry.get(Enchantments.FORTUNE)), 3);
+        EnchantmentHelper.updateEnchantments(fortune3Book, builder -> {
+            builder.upgrade(registry.wrapAsHolder(registry.getValue(Enchantments.FORTUNE)), 3);
         });
 
-        EnchantmentHelper.apply(bulkBook, builder -> {
-            builder.add(registry.getEntry(registry.get(Enchantments.SILK_TOUCH)), 1);
-            builder.add(registry.getEntry(registry.get(Enchantments.FORTUNE)), 3);
-            builder.add(registry.getEntry(registry.get(Enchantments.EFFICIENCY)), 5);
-            builder.add(registry.getEntry(registry.get(Enchantments.UNBREAKING)), 3);
+        EnchantmentHelper.updateEnchantments(bulkBook, builder -> {
+            builder.upgrade(registry.wrapAsHolder(registry.getValue(Enchantments.SILK_TOUCH)), 1);
+            builder.upgrade(registry.wrapAsHolder(registry.getValue(Enchantments.FORTUNE)), 3);
+            builder.upgrade(registry.wrapAsHolder(registry.getValue(Enchantments.EFFICIENCY)), 5);
+            builder.upgrade(registry.wrapAsHolder(registry.getValue(Enchantments.UNBREAKING)), 3);
         });
 
         Scenario scenario = setUpScene(ctx, Map.of(
@@ -341,11 +340,11 @@ public class SortingTests {
                 4, bulkBook
         ));
 
-        ctx.complete();
+        ctx.succeed();
     }
 
     @GameTest()
-    public void testCategorySort(TestContext ctx) {
+    public void testCategorySort(GameTestHelper ctx) {
         ItemStack coloredBlockStack = new ItemStack(Items.WHITE_WOOL, 64);
         ItemStack naturalBlockStack = new ItemStack(Items.DIRT, 64);
         ItemStack functionalBlockStack = new ItemStack(Items.CRAFTING_TABLE, 64);
@@ -385,67 +384,67 @@ public class SortingTests {
                 Map.entry(9, ingredientStack),
                 Map.entry(10, spawnEggStack)
         ));
-        ctx.complete();
+        ctx.succeed();
 
     }
 
     @GameTest()
-    public void testOminousPotions(TestContext ctx) {
+    public void testOminousPotions(GameTestHelper ctx) {
 
-        IntFunction<ComponentChanges> potionLevel = (int level) -> ComponentChanges.builder()
-                .add(DataComponentTypes.OMINOUS_BOTTLE_AMPLIFIER, new OminousBottleAmplifierComponent(level - 1))
+        IntFunction<DataComponentPatch> potionLevel = (int level) -> DataComponentPatch.builder()
+                .set(DataComponents.OMINOUS_BOTTLE_AMPLIFIER, new OminousBottleAmplifier(level - 1))
                 .build();
 
 
         Scenario scenario = setUpScene(ctx, Map.of(
-                0, new ItemStack(RegistryEntry.of(Items.OMINOUS_BOTTLE), 12, potionLevel.apply(1)),
-                3, new ItemStack(RegistryEntry.of(Items.OMINOUS_BOTTLE), 42, potionLevel.apply(4)),
-                6, new ItemStack(RegistryEntry.of(Items.OMINOUS_BOTTLE), 34, potionLevel.apply(5)),
-                9, new ItemStack(RegistryEntry.of(Items.OMINOUS_BOTTLE), 55, potionLevel.apply(1)),
-                10, new ItemStack(RegistryEntry.of(Items.OMINOUS_BOTTLE), 3, potionLevel.apply(2)),
-                12, new ItemStack(RegistryEntry.of(Items.OMINOUS_BOTTLE), 58, potionLevel.apply(3)),
-                14, new ItemStack(RegistryEntry.of(Items.OMINOUS_BOTTLE), 45, potionLevel.apply(4)),
-                20, new ItemStack(RegistryEntry.of(Items.OMINOUS_BOTTLE), 5, potionLevel.apply(2)),
-                25, new ItemStack(RegistryEntry.of(Items.OMINOUS_BOTTLE), 11, potionLevel.apply(4))
+                0, new ItemStack(Holder.direct(Items.OMINOUS_BOTTLE), 12, potionLevel.apply(1)),
+                3, new ItemStack(Holder.direct(Items.OMINOUS_BOTTLE), 42, potionLevel.apply(4)),
+                6, new ItemStack(Holder.direct(Items.OMINOUS_BOTTLE), 34, potionLevel.apply(5)),
+                9, new ItemStack(Holder.direct(Items.OMINOUS_BOTTLE), 55, potionLevel.apply(1)),
+                10, new ItemStack(Holder.direct(Items.OMINOUS_BOTTLE), 3, potionLevel.apply(2)),
+                12, new ItemStack(Holder.direct(Items.OMINOUS_BOTTLE), 58, potionLevel.apply(3)),
+                14, new ItemStack(Holder.direct(Items.OMINOUS_BOTTLE), 45, potionLevel.apply(4)),
+                20, new ItemStack(Holder.direct(Items.OMINOUS_BOTTLE), 5, potionLevel.apply(2)),
+                25, new ItemStack(Holder.direct(Items.OMINOUS_BOTTLE), 11, potionLevel.apply(4))
         ));
 
         InventoryHelper.sortInventory(scenario.player(), false, SortType.NAME);
 
         assertContents(ctx, scenario, Map.of(
-                0, new ItemStack(RegistryEntry.of(Items.OMINOUS_BOTTLE), 64, potionLevel.apply(1)),
-                1, new ItemStack(RegistryEntry.of(Items.OMINOUS_BOTTLE), 3, potionLevel.apply(1)),
-                2, new ItemStack(RegistryEntry.of(Items.OMINOUS_BOTTLE), 8, potionLevel.apply(2)),
-                3, new ItemStack(RegistryEntry.of(Items.OMINOUS_BOTTLE), 58, potionLevel.apply(3)),
-                4, new ItemStack(RegistryEntry.of(Items.OMINOUS_BOTTLE), 64, potionLevel.apply(4)),
-                5, new ItemStack(RegistryEntry.of(Items.OMINOUS_BOTTLE), 34, potionLevel.apply(4)),
-                6, new ItemStack(RegistryEntry.of(Items.OMINOUS_BOTTLE), 34, potionLevel.apply(5))
+                0, new ItemStack(Holder.direct(Items.OMINOUS_BOTTLE), 64, potionLevel.apply(1)),
+                1, new ItemStack(Holder.direct(Items.OMINOUS_BOTTLE), 3, potionLevel.apply(1)),
+                2, new ItemStack(Holder.direct(Items.OMINOUS_BOTTLE), 8, potionLevel.apply(2)),
+                3, new ItemStack(Holder.direct(Items.OMINOUS_BOTTLE), 58, potionLevel.apply(3)),
+                4, new ItemStack(Holder.direct(Items.OMINOUS_BOTTLE), 64, potionLevel.apply(4)),
+                5, new ItemStack(Holder.direct(Items.OMINOUS_BOTTLE), 34, potionLevel.apply(4)),
+                6, new ItemStack(Holder.direct(Items.OMINOUS_BOTTLE), 34, potionLevel.apply(5))
         ));
 
-        ctx.complete();
+        ctx.succeed();
 
     }
 
     @GameTest()
-    public void testVaults(TestContext ctx) {
-        Boolean2ObjectFunction<ComponentChanges> setOminous = (boolean isOminous) -> ComponentChanges.builder()
-                .add(DataComponentTypes.BLOCK_STATE, new BlockStateComponent(Map.of("ominous", String.valueOf(isOminous))))
+    public void testVaults(GameTestHelper ctx) {
+        Boolean2ObjectFunction<DataComponentPatch> setOminous = (boolean isOminous) -> DataComponentPatch.builder()
+                .set(DataComponents.BLOCK_STATE, new BlockItemStateProperties(Map.of("ominous", String.valueOf(isOminous))))
                 .build();
 
         Scenario scenario = setUpScene(ctx, Map.of(
-                2, new ItemStack(RegistryEntry.of(Items.VAULT), 12, setOminous.apply(false)),
-                12, new ItemStack(RegistryEntry.of(Items.VAULT), 32, setOminous.apply(true)),
-                22, new ItemStack(RegistryEntry.of(Items.VAULT), 10, setOminous.apply(false)),
-                6, new ItemStack(RegistryEntry.of(Items.VAULT), 12, setOminous.apply(false)),
-                3, new ItemStack(RegistryEntry.of(Items.VAULT), 12, setOminous.apply(true))
+                2, new ItemStack(Holder.direct(Items.VAULT), 12, setOminous.apply(false)),
+                12, new ItemStack(Holder.direct(Items.VAULT), 32, setOminous.apply(true)),
+                22, new ItemStack(Holder.direct(Items.VAULT), 10, setOminous.apply(false)),
+                6, new ItemStack(Holder.direct(Items.VAULT), 12, setOminous.apply(false)),
+                3, new ItemStack(Holder.direct(Items.VAULT), 12, setOminous.apply(true))
         ));
 
         InventoryHelper.sortInventory(scenario.player(), false, SortType.NAME);
 
         assertContents(ctx, scenario, Map.of(
-                0, new ItemStack(RegistryEntry.of(Items.VAULT), 34, setOminous.apply(false)),
-                1, new ItemStack(RegistryEntry.of(Items.VAULT), 44, setOminous.apply(true))
+                0, new ItemStack(Holder.direct(Items.VAULT), 34, setOminous.apply(false)),
+                1, new ItemStack(Holder.direct(Items.VAULT), 44, setOminous.apply(true))
         ));
 
-        ctx.complete();
+        ctx.succeed();
     }
 }

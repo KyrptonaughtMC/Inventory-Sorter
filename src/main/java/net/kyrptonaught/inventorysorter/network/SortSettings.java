@@ -5,11 +5,11 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.kyrptonaught.inventorysorter.SortType;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerPlayer;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.MOD_ID;
 
@@ -18,21 +18,21 @@ public record SortSettings(
         boolean sortPlayerInventory,
         boolean enableDoubleClick,
         SortType sortType
-) implements CustomPayload {
+) implements CustomPacketPayload {
 
-    public static final PacketCodec<RegistryByteBuf, SortSettings> CODEC =
-            PacketCodec.of(
+    public static final StreamCodec<RegistryFriendlyByteBuf, SortSettings> CODEC =
+            StreamCodec.ofMember(
                     (value, buf) -> {
                         buf.writeBoolean(value.sortHighlightedItem());
                         buf.writeBoolean(value.sortPlayerInventory());
                         buf.writeBoolean(value.enableDoubleClick());
-                        buf.writeEnumConstant(value.sortType());
+                        buf.writeEnum(value.sortType());
                     },
                     buf -> new SortSettings(
                             buf.readBoolean(),
                             buf.readBoolean(),
                             buf.readBoolean(),
-                            buf.readEnumConstant(SortType.class)
+                            buf.readEnum(SortType.class)
                     )
             );
 
@@ -44,12 +44,12 @@ public record SortSettings(
                     .fieldOf("sortType").forGetter(SortSettings::sortType)
     ).apply(instance, SortSettings::new));
 
-    public static final CustomPayload.Id<SortSettings> ID = new CustomPayload.Id<>(Identifier.of(MOD_ID, "sync_settings_packet"));
+    public static final CustomPacketPayload.Type<SortSettings> ID = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(MOD_ID, "sync_settings_packet"));
 
     public static final SortSettings DEFAULT = new SortSettings(true, false, true, SortType.NAME);
 
     @Override
-    public Id<? extends CustomPayload> getId() {
+    public Type<? extends CustomPacketPayload> type() {
         return ID;
     }
 
@@ -78,7 +78,7 @@ public record SortSettings(
         );
     }
 
-    public void sync(ServerPlayerEntity player) {
+    public void sync(ServerPlayer player) {
         ServerPlayNetworking.send(player, this);
     }
 }

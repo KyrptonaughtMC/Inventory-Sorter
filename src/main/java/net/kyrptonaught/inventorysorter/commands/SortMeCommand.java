@@ -6,31 +6,31 @@ import com.mojang.brigadier.context.CommandContext;
 import net.kyrptonaught.inventorysorter.InventoryHelper;
 import net.kyrptonaught.inventorysorter.network.SortSettings;
 import net.kyrptonaught.inventorysorter.permissions.CommandPermission;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.SORT_SETTINGS;
 
 public class SortMeCommand {
-    public static void register(CommandDispatcher<ServerCommandSource> dispatcher, LiteralArgumentBuilder<ServerCommandSource> rootCommand) {
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher, LiteralArgumentBuilder<CommandSourceStack> rootCommand) {
         dispatcher.register(rootCommand.then(
-                CommandManager.literal("sortme")
+                Commands.literal("sortme")
                         .requires(CommandPermission.require("sortme", 0))
                         .executes(SortMeCommand::run)));
     }
 
-    public static int run(CommandContext<ServerCommandSource> commandContext) {
-        ServerPlayerEntity player = commandContext.getSource().getPlayer();
+    public static int run(CommandContext<CommandSourceStack> commandContext) {
+        ServerPlayer player = commandContext.getSource().getPlayer();
         if (player == null) {
-            commandContext.getSource().sendFeedback(CommandTranslations::playerRequired, false);
+            commandContext.getSource().sendSuccess(CommandTranslations::playerRequired, false);
             return 0;
         }
         SortSettings settings = player.getAttachedOrCreate(SORT_SETTINGS);
         InventoryHelper.sortInventory(player, true, settings.sortType());
 
-        commandContext.getSource().sendFeedback(() -> Text.translatable("inventorysorter.cmd.sort.sorted"), false);
+        commandContext.getSource().sendSuccess(() -> Component.translatable("inventorysorter.cmd.sort.sorted"), false);
         return 1;
     }
 }

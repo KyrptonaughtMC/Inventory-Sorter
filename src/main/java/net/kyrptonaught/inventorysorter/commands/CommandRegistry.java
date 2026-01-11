@@ -2,17 +2,17 @@ package net.kyrptonaught.inventorysorter.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
 
 public class CommandRegistry {
     public static void register(
-            CommandDispatcher<ServerCommandSource> dispatcher,
-            CommandRegistryAccess commandRegistryAccess,
-            CommandManager.RegistrationEnvironment registrationEnvironment
+            CommandDispatcher<CommandSourceStack> dispatcher,
+            CommandBuildContext commandRegistryAccess,
+            Commands.CommandSelection registrationEnvironment
     ) {
-        LiteralArgumentBuilder<ServerCommandSource> rootCommand = CommandManager.literal("invsort");
+        LiteralArgumentBuilder<CommandSourceStack> rootCommand = Commands.literal("invsort");
 
         SortCommand.register(dispatcher, rootCommand);
         DoubleClickSortCommand.register(dispatcher, rootCommand);
@@ -24,7 +24,7 @@ public class CommandRegistry {
         ReloadCommand.register(dispatcher, rootCommand);
         ScreenIDCommand.register(dispatcher, rootCommand);
 
-        if(registrationEnvironment.dedicated) {
+        if(registrationEnvironment.includeDedicated) {
             AdminCommands.register(dispatcher, rootCommand);
         }
     }

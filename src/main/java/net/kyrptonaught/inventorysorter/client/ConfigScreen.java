@@ -12,42 +12,42 @@ import net.kyrptonaught.inventorysorter.SortType;
 import net.kyrptonaught.inventorysorter.client.clothconfig.ContainerEntry;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.kyrptonaught.inventorysorter.config.ScrollBehaviour;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.Identifier;
 import java.util.*;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.*;
 import static net.kyrptonaught.inventorysorter.client.InventorySorterModClient.modifierButton;
 
+import com.mojang.blaze3d.platform.InputConstants;
+
 public class ConfigScreen {
 
-    private static Text on() {
-        return Text.translatable("inventorysorter.toggle.enabled").formatted(Formatting.GREEN);
+    private static Component on() {
+        return Component.translatable("inventorysorter.toggle.enabled").withStyle(ChatFormatting.GREEN);
     }
 
-    private static Text off() {
-        return Text.translatable("inventorysorter.toggle.disabled").formatted(Formatting.RED);
+    private static Component off() {
+        return Component.translatable("inventorysorter.toggle.disabled").withStyle(ChatFormatting.RED);
     }
 
-    private static Text yes() {
-        return Text.translatable("inventorysorter.toggle.yes").formatted(Formatting.GREEN);
+    private static Component yes() {
+        return Component.translatable("inventorysorter.toggle.yes").withStyle(ChatFormatting.GREEN);
     }
 
-    private static Text no() {
-        return Text.translatable("inventorysorter.toggle.no").formatted(Formatting.RED);
+    private static Component no() {
+        return Component.translatable("inventorysorter.toggle.no").withStyle(ChatFormatting.RED);
     }
 
-    public static Text toggleState(boolean state) {
+    public static Component toggleState(boolean state) {
         return state ? on() : off();
     }
 
-    public static Text toggleYesNoState(boolean state) {
+    public static Component toggleYesNoState(boolean state) {
         return state ? yes() : no();
     }
 
@@ -58,17 +58,17 @@ public class ConfigScreen {
         List<AbstractConfigListEntry<?>> entries = new ArrayList<>();
 
         if (InventoryHelper.getLastCheckedId().isPresent()) {
-            entries.add(builder.startTextDescription(Text.literal(" ")).build());
+            entries.add(builder.startTextDescription(Component.literal(" ")).build());
             String screenId = InventoryHelper.getLastCheckedId().get().toString();
             SubCategoryListEntry lastOpenedRow = ContainerEntry.build(builder, config, screenId, true);
-            SubCategoryBuilder lastOpened = builder.startSubCategory(Text.translatable("inventorysorter.config.compat.lastOpened"))
+            SubCategoryBuilder lastOpened = builder.startSubCategory(Component.translatable("inventorysorter.config.compat.lastOpened"))
                     .setExpanded(true);
             lastOpened.add(lastOpenedRow);
             entries.add(lastOpened.build());
-            entries.add(builder.startTextDescription(Text.literal(" ")).build());
+            entries.add(builder.startTextDescription(Component.literal(" ")).build());
         }
 
-        SubCategoryBuilder otherScreens = builder.startSubCategory(Text.translatable("inventorysorter.config.compat.others"))
+        SubCategoryBuilder otherScreens = builder.startSubCategory(Component.translatable("inventorysorter.config.compat.others"))
                 .setExpanded(false);
         for (String screenId : allScreens) {
             if (InventoryHelper.getLastCheckedId().isPresent() && InventoryHelper.getLastCheckedId().get().toString().equals(screenId)) {
@@ -85,88 +85,88 @@ public class ConfigScreen {
 
     public static Screen getConfigScreen(Screen parent) {
         NewConfigOptions options = getConfig();
-        InputUtil.Key modifierKey = modifierButton;
+        InputConstants.Key modifierKey = modifierButton;
 
         ConfigBuilder screenBuilder = ConfigBuilder.create()
                 .setParentScreen(parent)
-                .setDefaultBackgroundTexture(Identifier.of("minecraft", "textures/block/dirt.png"))
-                .setTitle(Text.translatable("inventorysorter.config.screen.title"));
+                .setDefaultBackgroundTexture(Identifier.fromNamespaceAndPath("minecraft", "textures/block/dirt.png"))
+                .setTitle(Component.translatable("inventorysorter.config.screen.title"));
         ConfigEntryBuilder entryBuilder = screenBuilder.entryBuilder();
 
         screenBuilder.setSavingRunnable(() -> {
             getConfig().save();
             reloadConfig();
-            if (MinecraftClient.getInstance().player != null)
+            if (Minecraft.getInstance().player != null)
                 InventorySorterModClient.syncConfig();
         });
 
-        screenBuilder.getOrCreateCategory(Text.translatable("inventorysorter.config.category.display"))
-                .addEntry(entryBuilder.startBooleanToggle(Text.translatable("inventorysorter.config.sortButton"), options.showSortButton)
+        screenBuilder.getOrCreateCategory(Component.translatable("inventorysorter.config.category.display"))
+                .addEntry(entryBuilder.startBooleanToggle(Component.translatable("inventorysorter.config.sortButton"), options.showSortButton)
                         .setDefaultValue(true)
                         .setYesNoTextSupplier(ConfigScreen::toggleState)
-                        .setTooltip(Text.translatable("inventorysorter.config.sortButton.tooltip"))
+                        .setTooltip(Component.translatable("inventorysorter.config.sortButton.tooltip"))
                         .setSaveConsumer(b -> options.showSortButton = b)
                         .build())
-                .addEntry(entryBuilder.startBooleanToggle(Text.translatable("inventorysorter.config.separateButton"), options.separateButton)
+                .addEntry(entryBuilder.startBooleanToggle(Component.translatable("inventorysorter.config.separateButton"), options.separateButton)
                         .setDefaultValue(true)
                         .setYesNoTextSupplier(ConfigScreen::toggleState)
-                        .setTooltip(Text.translatable("inventorysorter.config.separateButton.tooltip"))
+                        .setTooltip(Component.translatable("inventorysorter.config.separateButton.tooltip"))
                         .setSaveConsumer(b -> options.separateButton = b)
                         .build())
-                .addEntry(entryBuilder.startBooleanToggle(Text.translatable("inventorysorter.config.showTooltip"), options.showTooltips)
+                .addEntry(entryBuilder.startBooleanToggle(Component.translatable("inventorysorter.config.showTooltip"), options.showTooltips)
                         .setDefaultValue(true)
                         .setYesNoTextSupplier(ConfigScreen::toggleState)
-                        .setTooltip(Text.translatable("inventorysorter.config.showTooltip.tooltip"))
+                        .setTooltip(Component.translatable("inventorysorter.config.showTooltip.tooltip"))
                         .setSaveConsumer(b -> options.showTooltips = b)
                         .build());
 
-        screenBuilder.getOrCreateCategory(Text.translatable("inventorysorter.config.category.logic"))
-                .addEntry(entryBuilder.startEnumSelector(Text.translatable("inventorysorter.config.sortType"), SortType.class, options.sortType)
-                        .setEnumNameProvider((sortType) -> Text.translatable(((SortType) sortType).getTranslationKey()))
+        screenBuilder.getOrCreateCategory(Component.translatable("inventorysorter.config.category.logic"))
+                .addEntry(entryBuilder.startEnumSelector(Component.translatable("inventorysorter.config.sortType"), SortType.class, options.sortType)
+                        .setEnumNameProvider((sortType) -> Component.translatable(((SortType) sortType).getTranslationKey()))
                         .setDefaultValue(SortType.NAME)
                         .setSaveConsumer(val -> options.sortType = val)
                         .build())
-                .addEntry(entryBuilder.startBooleanToggle(Text.translatable("inventorysorter.config.sortPlayerInventory"), options.sortPlayerInventory)
+                .addEntry(entryBuilder.startBooleanToggle(Component.translatable("inventorysorter.config.sortPlayerInventory"), options.sortPlayerInventory)
                         .setDefaultValue(false)
                         .setYesNoTextSupplier(ConfigScreen::toggleState)
-                        .setTooltip(Text.translatable("inventorysorter.config.sortPlayerInventory.tooltip"))
+                        .setTooltip(Component.translatable("inventorysorter.config.sortPlayerInventory.tooltip"))
                         .setSaveConsumer(val -> options.sortPlayerInventory = val)
                         .build())
-                .addEntry(entryBuilder.startBooleanToggle(Text.translatable("inventorysorter.config.sortHovered"), options.sortHighlightedItem)
+                .addEntry(entryBuilder.startBooleanToggle(Component.translatable("inventorysorter.config.sortHovered"), options.sortHighlightedItem)
                         .setDefaultValue(true)
                         .setYesNoTextSupplier(ConfigScreen::toggleState)
-                        .setTooltip(Text.translatable("inventorysorter.config.sortHovered.tooltip"))
+                        .setTooltip(Component.translatable("inventorysorter.config.sortHovered.tooltip"))
                         .setSaveConsumer(val -> options.sortHighlightedItem = val)
                         .build());
 
-        screenBuilder.getOrCreateCategory(Text.translatable("inventorysorter.config.category.activation"))
-                .addEntry(entryBuilder.startBooleanToggle(Text.translatable("inventorysorter.config.doubleClickSort"), options.enableDoubleClickSort)
+        screenBuilder.getOrCreateCategory(Component.translatable("inventorysorter.config.category.activation"))
+                .addEntry(entryBuilder.startBooleanToggle(Component.translatable("inventorysorter.config.doubleClickSort"), options.enableDoubleClickSort)
                         .setDefaultValue(true)
                         .setYesNoTextSupplier(ConfigScreen::toggleState)
-                        .setTooltip(Text.translatable("inventorysorter.config.doubleClickSort.tooltip"))
+                        .setTooltip(Component.translatable("inventorysorter.config.doubleClickSort.tooltip"))
                         .setSaveConsumer(val -> options.enableDoubleClickSort = val)
                         .build())
-                .addEntry(entryBuilder.startEnumSelector(Text.translatable("inventorysorter.config.scrollbehaviour"), ScrollBehaviour.class, options.scrollBehaviour)
-                        .setEnumNameProvider((scrollBehaviour) -> Text.translatable(((ScrollBehaviour) scrollBehaviour).getTranslationKey()))
-                        .setTooltipSupplier((scrollBehaviour) -> Optional.of(new MutableText[]{Text.translatable((scrollBehaviour).getTranslationKey() + ".tooltip", modifierKey.getLocalizedText())}))
+                .addEntry(entryBuilder.startEnumSelector(Component.translatable("inventorysorter.config.scrollbehaviour"), ScrollBehaviour.class, options.scrollBehaviour)
+                        .setEnumNameProvider((scrollBehaviour) -> Component.translatable(((ScrollBehaviour) scrollBehaviour).getTranslationKey()))
+                        .setTooltipSupplier((scrollBehaviour) -> Optional.of(new MutableComponent[]{Component.translatable((scrollBehaviour).getTranslationKey() + ".tooltip", modifierKey.getDisplayName())}))
                         .setDefaultValue(ScrollBehaviour.FREE)
                         .setSaveConsumer(val -> options.scrollBehaviour = val)
                         .build());
 
-        ConfigCategory compatCategory = screenBuilder.getOrCreateCategory(Text.translatable("inventorysorter.config.category.compat"));
+        ConfigCategory compatCategory = screenBuilder.getOrCreateCategory(Component.translatable("inventorysorter.config.category.compat"));
 
         FullWidthStringListEntry stringListEntry = new FullWidthStringListEntry(
-                Text.translatable("inventorysorter.config.compat.remoteUrl"),
+                Component.translatable("inventorysorter.config.compat.remoteUrl"),
                 options.customCompatibilityListDownloadUrl,
-                Text.translatable("inventorysorter.config.compat.remoteUrl.reset"),
+                Component.translatable("inventorysorter.config.compat.remoteUrl.reset"),
                 () -> "",
-                () -> Optional.of(new MutableText[]{Text.translatable("inventorysorter.config.compat.remoteUrl.tooltip")}),
+                () -> Optional.of(new MutableComponent[]{Component.translatable("inventorysorter.config.compat.remoteUrl.tooltip")}),
                 false
         );
 
         compatCategory.addEntry(
                 entryBuilder.startSubCategory(
-                                Text.translatable("inventorysorter.config.compat.remoteUrl"), List.of(stringListEntry))
+                                Component.translatable("inventorysorter.config.compat.remoteUrl"), List.of(stringListEntry))
                         .setExpanded(false)
                         .build()
         );

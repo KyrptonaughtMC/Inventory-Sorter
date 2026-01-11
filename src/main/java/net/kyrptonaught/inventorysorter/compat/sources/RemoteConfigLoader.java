@@ -3,8 +3,7 @@ package net.kyrptonaught.inventorysorter.compat.sources;
 import com.google.gson.Gson;
 import net.kyrptonaught.inventorysorter.compat.config.CompatConfig;
 import net.kyrptonaught.inventorysorter.config.SchemaValidator;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.resources.Identifier;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
@@ -66,7 +65,7 @@ public class RemoteConfigLoader implements CompatibilityLoader {
     public Set<Identifier> getPreventSort() {
         loadRemoteConfig();
         return config.preventSortForScreens.stream()
-                .map(Identifier::of)
+                .map(Identifier::parse)
                 .collect(Collectors.toSet());
     }
 
@@ -74,7 +73,7 @@ public class RemoteConfigLoader implements CompatibilityLoader {
     public Set<Identifier> getShouldHideSortButtons() {
         loadRemoteConfig();
         return config.hideButtonsForScreens.stream()
-                .map(Identifier::of)
+                .map(Identifier::parse)
                 .collect(Collectors.toSet());
     }
 }

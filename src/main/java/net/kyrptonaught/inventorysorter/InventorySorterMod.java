@@ -14,10 +14,10 @@ import net.kyrptonaught.inventorysorter.compat.sources.*;
 import net.kyrptonaught.inventorysorter.config.Config;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.kyrptonaught.inventorysorter.network.*;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemGroups;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +53,7 @@ public class InventorySorterMod implements ModInitializer {
 
     @SuppressWarnings("UnstableApiUsage")
     public static final AttachmentType<SortSettings> SORT_SETTINGS = AttachmentRegistry.create(
-            Identifier.of(MOD_ID, "sort_settings"),
+            Identifier.fromNamespaceAndPath(MOD_ID, "sort_settings"),
             builder -> builder
                     .initializer(() -> SortSettings.DEFAULT)
                     .persistent(SortSettings.NBT_CODEC)
@@ -62,7 +62,7 @@ public class InventorySorterMod implements ModInitializer {
 
     @SuppressWarnings("UnstableApiUsage")
     public static final AttachmentType<PlayerSortPrevention> PLAYER_SORT_PREVENTION = AttachmentRegistry.create(
-            Identifier.of(MOD_ID, "player_sort_prevention"),
+            Identifier.fromNamespaceAndPath(MOD_ID, "player_sort_prevention"),
             builder -> builder
                     .initializer(() -> PlayerSortPrevention.DEFAULT)
                     .persistent(PlayerSortPrevention.NBT_CODEC)
@@ -75,7 +75,7 @@ public class InventorySorterMod implements ModInitializer {
      */
     @SuppressWarnings("UnstableApiUsage")
     public static final AttachmentType<ClientSync> CLIENT_SYNC = AttachmentRegistry.create(
-            Identifier.of(MOD_ID, "client_sync"),
+            Identifier.fromNamespaceAndPath(MOD_ID, "client_sync"),
             builder -> builder
                     .persistent(ClientSync.NBT_CODEC)
                     .copyOnDeath()
@@ -83,7 +83,7 @@ public class InventorySorterMod implements ModInitializer {
 
     @SuppressWarnings("UnstableApiUsage")
     public static final AttachmentType<LastSeenVersionPacket> LAST_SEEN_VERSION = AttachmentRegistry.create(
-            Identifier.of(MOD_ID, "last_seen_version"),
+            Identifier.fromNamespaceAndPath(MOD_ID, "last_seen_version"),
             builder -> builder
                     .persistent(LastSeenVersionPacket.NBT_CODEC)
     );
@@ -110,14 +110,14 @@ public class InventorySorterMod implements ModInitializer {
         InventorySortPacket.registerReceivePacket();
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
-            var context = new ItemGroup.DisplayContext(server.getSaveProperties().getEnabledFeatures(), false, server.getRegistryManager());
-            ItemGroups.getGroups().forEach(group -> {
-                if (group.getSearchTabStacks().isEmpty()) group.updateEntries(context);
+            var context = new CreativeModeTab.ItemDisplayParameters(server.getWorldData().enabledFeatures(), false, server.registryAccess());
+            CreativeModeTabs.allTabs().forEach(group -> {
+                if (group.getSearchTabDisplayItems().isEmpty()) group.buildContents(context);
             });
         });
 
         ServerPlayConnectionEvents.JOIN.register((handler, server, client) -> {
-            ServerPlayerEntity player = handler.getPlayer();
+            ServerPlayer player = handler.getPlayer();
             ServerPlayNetworking.send(player, new ServerPresencePacket());
             if(!player.hasAttached(LAST_SEEN_VERSION)) {
                 LastSeenVersionPacket.DEFAULT.send(player);
@@ -125,9 +125,9 @@ public class InventorySorterMod implements ModInitializer {
                 Objects.requireNonNull(player.getAttached(LAST_SEEN_VERSION)).send(player);
             }
 
-            player.setAttached(LAST_SEEN_VERSION, new LastSeenVersionPacket(VERSION, player.getClientOptions().language().toLowerCase()));
+            player.setAttached(LAST_SEEN_VERSION, new LastSeenVersionPacket(VERSION, player.clientInformation().language().toLowerCase()));
 
-            if (client.isDedicated()) {
+            if (client.isDedicatedServer()) {
                 if (!player.hasAttached(SORT_SETTINGS)) {
                     player.setAttached(SORT_SETTINGS, SortSettings.DEFAULT);
                 }

@@ -6,17 +6,17 @@ import me.shedaniel.clothconfig2.gui.entries.SubCategoryListEntry;
 import me.shedaniel.clothconfig2.impl.builders.SubCategoryBuilder;
 import net.kyrptonaught.inventorysorter.client.ConfigScreen;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
 
 public class ContainerEntry {
 
     public static SubCategoryListEntry build(ConfigEntryBuilder builder, NewConfigOptions config, String screenId, boolean expanded) {
         @NotNull BooleanListEntry hideToggle = builder
-                .startBooleanToggle(Text.translatable("inventorysorter.config.sortButton"), !config.hideButtonsForScreens.contains(screenId))
+                .startBooleanToggle(Component.translatable("inventorysorter.config.sortButton"), !config.hideButtonsForScreens.contains(screenId))
                 .setYesNoTextSupplier(ConfigScreen::toggleState)
-                .setTooltip(Text.translatable("inventorysorter.config.compat.hideButton.tooltip", screenId))
+                .setTooltip(Component.translatable("inventorysorter.config.compat.hideButton.tooltip", screenId))
                 .setDefaultValue(true)
                 .setSaveConsumer(shouldShow -> {
                     if (shouldShow) {
@@ -28,17 +28,17 @@ public class ContainerEntry {
                 .build();
 
         @NotNull BooleanListEntry preventToggle = builder
-                .startBooleanToggle(Text.translatable("inventorysorter.config.compat.preventSort"), config.preventSortForScreens.contains(screenId))
+                .startBooleanToggle(Component.translatable("inventorysorter.config.compat.preventSort"), config.preventSortForScreens.contains(screenId))
                 .setYesNoTextSupplier(ConfigScreen::toggleYesNoState)
                 .setDefaultValue(false)
-                .setTooltip(Text.translatable("inventorysorter.config.compat.preventSort.tooltip", screenId))
+                .setTooltip(Component.translatable("inventorysorter.config.compat.preventSort.tooltip", screenId))
                 .setSaveConsumer(newValue -> {
                     if (newValue) config.disableSortForScreen(screenId);
                     else config.enableSortForScreen(screenId);
                 })
                 .build();
 
-        MutableText subcategoryTitle = Text.literal(screenId);
+        MutableComponent subcategoryTitle = Component.literal(screenId);
 
         SubCategoryBuilder screenRow = builder.startSubCategory(subcategoryTitle).setExpanded(expanded);
 

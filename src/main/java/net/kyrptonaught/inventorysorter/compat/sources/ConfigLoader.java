@@ -1,8 +1,7 @@
 package net.kyrptonaught.inventorysorter.compat.sources;
 
 import net.kyrptonaught.inventorysorter.compat.config.CompatConfig;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.resources.Identifier;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -23,7 +22,7 @@ public class ConfigLoader implements CompatibilityLoader {
         preventSort.clear();
 
         if (config.get().preventSortForScreens != null) {
-            preventSort.addAll(config.get().preventSortForScreens.stream().map(Identifier::of).collect(Collectors.toSet()));
+            preventSort.addAll(config.get().preventSortForScreens.stream().map(Identifier::parse).collect(Collectors.toSet()));
         }
 
         return preventSort;
@@ -34,7 +33,7 @@ public class ConfigLoader implements CompatibilityLoader {
         shouldHideSortButtons.clear();
 
         if (config.get().hideButtonsForScreens != null) {
-            shouldHideSortButtons.addAll(config.get().hideButtonsForScreens.stream().map(Identifier::of).collect(Collectors.toSet()));
+            shouldHideSortButtons.addAll(config.get().hideButtonsForScreens.stream().map(Identifier::parse).collect(Collectors.toSet()));
         }
 
         return shouldHideSortButtons;

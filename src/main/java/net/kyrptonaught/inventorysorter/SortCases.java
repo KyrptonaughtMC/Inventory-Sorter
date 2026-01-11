@@ -1,15 +1,17 @@
 package net.kyrptonaught.inventorysorter;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import net.minecraft.component.ComponentMap;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.ItemEnchantmentsComponent;
-import net.minecraft.component.type.ProfileComponent;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.item.*;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.entry.RegistryEntry;
-
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ResolvableProfile;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import java.text.Collator;
 import java.util.*;
 import java.util.stream.IntStream;
@@ -21,21 +23,21 @@ public class SortCases {
         var defaultComparator = Comparator.comparing(SortCases::getSortableName, collator)
                 .thenComparing(SortCases::isOminous)
                 .thenComparing(SortCases::getOminousAmplifier)
-                .thenComparing(ItemStack::getDamage)
+                .thenComparing(ItemStack::getDamageValue)
                 .thenComparing(ItemStack::getCount, Comparator.reverseOrder());
         switch (sortType) {
             case CATEGORY -> {
                 return Comparator.comparing(SortCases::getGroupIdentifier).thenComparing(defaultComparator);
             }
             case MOD -> {
-                return Comparator.comparing((ItemStack stack) -> Registries.ITEM.getId(stack.getItem()).getNamespace()).thenComparing(defaultComparator);
+                return Comparator.comparing((ItemStack stack) -> BuiltInRegistries.ITEM.getKey(stack.getItem()).getNamespace()).thenComparing(defaultComparator);
             }
             case NAME -> {
                 return defaultComparator;
             }
             case ID -> {
                 // @TODO: check this
-                return Comparator.comparing((ItemStack stack) -> Registries.ITEM.getId(stack.getItem()).toString()).thenComparing(defaultComparator);
+                return Comparator.comparing((ItemStack stack) -> BuiltInRegistries.ITEM.getKey(stack.getItem()).toString()).thenComparing(defaultComparator);
             }
             default -> {
                 return defaultComparator;
@@ -44,13 +46,13 @@ public class SortCases {
     }
 
     private static int getGroupIdentifier(ItemStack stack) {
-        List<ItemGroup> groups = ItemGroups.getGroups();
+        List<CreativeModeTab> groups = CreativeModeTabs.allTabs();
         for (int i = 0; i < groups.size(); i++) {
             var group = groups.get(i);
-            var stacks = group.getSearchTabStacks().stream().toList();
+            var stacks = group.getSearchTabDisplayItems().stream().toList();
             var index = IntStream
                     .range(0, stacks.size())
-                    .filter(j -> ItemStack.areItemsAndComponentsEqual(stacks.get(j), stack))
+                    .filter(j -> ItemStack.isSameItemSameComponents(stacks.get(j), stack))
                     .findFirst();
 
             if (index.isPresent()) {
@@ -61,9 +63,9 @@ public class SortCases {
     }
 
     private static int getOminousAmplifier(ItemStack stack) {
-        ComponentMap components = stack.getComponents();
-        if (components.contains(DataComponentTypes.OMINOUS_BOTTLE_AMPLIFIER)) {
-            int i = components.get(DataComponentTypes.OMINOUS_BOTTLE_AMPLIFIER).value() + 1;
+        DataComponentMap components = stack.getComponents();
+        if (components.has(DataComponents.OMINOUS_BOTTLE_AMPLIFIER)) {
+            int i = components.get(DataComponents.OMINOUS_BOTTLE_AMPLIFIER).value() + 1;
             return i;
         }
 
@@ -71,23 +73,23 @@ public class SortCases {
     }
 
     private static boolean isOminous(ItemStack stack) {
-        ComponentMap components = stack.getComponents();
-        if (!components.contains(DataComponentTypes.BLOCK_STATE)) {
+        DataComponentMap components = stack.getComponents();
+        if (!components.has(DataComponents.BLOCK_STATE)) {
             return false;
         }
 
-        String result = components.get(DataComponentTypes.BLOCK_STATE).properties().getOrDefault("ominous", "false");
+        String result = components.get(DataComponents.BLOCK_STATE).properties().getOrDefault("ominous", "false");
         return Boolean.parseBoolean(result);
     }
 
     private static String getSortableName(ItemStack stack) {
-        ComponentMap components = stack.getComponents();
+        DataComponentMap components = stack.getComponents();
 
-        if (components.contains(DataComponentTypes.PROFILE)) {
+        if (components.has(DataComponents.PROFILE)) {
             return playerHeadName(stack).toLowerCase();
         }
 
-        if (stack.isOf(Items.ENCHANTED_BOOK)) {
+        if (stack.is(Items.ENCHANTED_BOOK)) {
             return enchantedBookNameCase(stack).toLowerCase();
         }
 
@@ -95,29 +97,29 @@ public class SortCases {
     }
 
     private static String playerHeadName(ItemStack stack) {
-        ProfileComponent profileComponent = stack.getComponents().get(DataComponentTypes.PROFILE);
-        Optional<String> componentName = profileComponent.getName();
+        ResolvableProfile profileComponent = stack.getComponents().get(DataComponents.PROFILE);
+        Optional<String> componentName = profileComponent.name();
 
         return componentName.orElseGet(() -> stackName(stack));
 
     }
 
     private static String stackName(ItemStack stack) {
-        return stack.getName().getString();
+        return stack.getHoverName().getString();
     }
 
     private static String enchantedBookNameCase(ItemStack stack) {
-        ItemEnchantmentsComponent enchantmentsComponent = stack.getComponents().get(DataComponentTypes.STORED_ENCHANTMENTS);
+        ItemEnchantments enchantmentsComponent = stack.getComponents().get(DataComponents.STORED_ENCHANTMENTS);
         List<String> names = new ArrayList<>();
         StringBuilder enchantNames = new StringBuilder();
-        for (Object2IntMap.Entry<RegistryEntry<Enchantment>> enchant : enchantmentsComponent.getEnchantmentEntries()) {
-            names.add(Enchantment.getName(enchant.getKey(), enchant.getIntValue()).getString());
+        for (Object2IntMap.Entry<Holder<Enchantment>> enchant : enchantmentsComponent.entrySet()) {
+            names.add(Enchantment.getFullname(enchant.getKey(), enchant.getIntValue()).getString());
         }
         Collections.sort(names);
         for (String enchant : names) {
             enchantNames.append(enchant).append(" ");
         }
-        return stack.getName().getString() + " " + enchantmentsComponent.getSize() + " " + enchantNames;
+        return stack.getHoverName().getString() + " " + enchantmentsComponent.size() + " " + enchantNames;
     }
 
     private static Locale fromMinecraftLocale(String mcLocale) {

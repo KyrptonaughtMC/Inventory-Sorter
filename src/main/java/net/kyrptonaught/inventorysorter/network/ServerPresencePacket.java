@@ -1,25 +1,25 @@
 package net.kyrptonaught.inventorysorter.network;
 
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
-
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.MOD_ID;
 
-public record ServerPresencePacket() implements CustomPayload {
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.Identifier;
 
-    public static final Id<ServerPresencePacket> ID = new Id<>(Identifier.of(MOD_ID, "server_presence_packet"));
+public record ServerPresencePacket() implements CustomPacketPayload {
+
+    public static final Type<ServerPresencePacket> ID = new Type<>(Identifier.fromNamespaceAndPath(MOD_ID, "server_presence_packet"));
     public static final ServerPresencePacket DEFAULT = new ServerPresencePacket();
 
-    public static final PacketCodec<RegistryByteBuf, ServerPresencePacket> CODEC =
-            PacketCodec.of(
+    public static final StreamCodec<RegistryFriendlyByteBuf, ServerPresencePacket> CODEC =
+            StreamCodec.ofMember(
                     (value, buf) -> {},
                     buf -> new ServerPresencePacket()
             );
 
     @Override
-    public Id<? extends CustomPayload> getId() {
+    public Type<? extends CustomPacketPayload> type() {
         return ID;
     }
 }
