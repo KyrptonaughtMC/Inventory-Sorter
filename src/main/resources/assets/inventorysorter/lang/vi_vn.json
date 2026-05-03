@@ -1,1 +1,24 @@
-{}
+{
+  "inventorysorter.discord": "Discord",
+  "key.category.inventorysorter.main": "Sắp xếp kho đồ",
+  "inventorysorter.key.sort": "Sắp xếp",
+  "inventorysorter.key.config": "Tùy chỉnh",
+  "inventorysorter.key.modifier": "Phím bổ trợ (cho ẩn/bật tắt)",
+  "modmenu.descriptionTranslation.inventorysorter": "Sắp xếp kho đồ của bạn chỉ với một cú nhấp chuột!",
+  "inventorysorter.warning.missing-server": "Không phát hiện được hộ trợ từ phía máy chủ. Việc sắp xếp sẽ KHÔNG hoạt động!",
+  "inventorysorter.toggle.enabled": "Bật",
+  "inventorysorter.toggle.disabled": "Tắt",
+  "inventorysorter.toggle.yes": "Có",
+  "inventorysorter.toggle.no": "Không",
+  "inventorysorter.cmd.translate": "Chơi Minecraft bằng một ngôn ngữ khác? Bạn có thể giúp chúng tôi dịch thuật!%s\n\nChỉ cần chấp vào đường link bên dưới để bắt đầu.\nNó dễ như ăn bánh và bạn có thể làm nó ngay trong phần mềm tìm kiếm của bạn.\nkhông cần tải bất cứ thứ gì hoặc tạo một tài khoản đặc biệt.",
+  "inventorysorter.cmd.crowdin": "Dịch trên Crowdin",
+  "inventorysorter.cmd.crowdin.tooltip": "Nhấp để mở trang dịch thuật Crowdin",
+  "inventorysorter.config.screen.title": "Tùy chỉnh sắp xếp kho đồ",
+  "inventorysorter.config.category.display": "Hiện",
+  "inventorysorter.config.category.logic": "Logic",
+  "inventorysorter.config.category.activation": "Kích hoạt",
+  "inventorysorter.config.category.compat": "Khả năng tương thích",
+  "inventorysorter.config.compat.lastOpened": "Lần mở kho đồ lần trước",
+  "inventorysorter.config.compat.others": "Bổ trợ kho đồ",
+  "inventorysorter.config.compat.remoteUrl": "Cấu Hình Tương Thích URL Từ xa"
+}
