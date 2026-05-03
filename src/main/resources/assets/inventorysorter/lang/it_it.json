@@ -17,6 +17,7 @@
   "inventorysorter.config.category.logic": "Logica",
   "inventorysorter.config.category.activation": "Attivazione",
   "inventorysorter.config.category.compat": "Compatibilità",
+  "inventorysorter.config.compat.lastOpened": "Ultimo inventario aperto",
   "inventorysorter.config.compat.others": "Inventari modificati",
   "inventorysorter.config.compat.remoteUrl.reset": "Cancella URL Remoto",
   "inventorysorter.config.compat.hideButton.tooltip": "Disattivando questa opzione si disabiliterà il pulsante di ordinamento in %s",
