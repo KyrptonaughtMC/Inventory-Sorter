@@ -38,6 +38,35 @@ import static net.kyrptonaught.inventorysorter.e2e.TestUtils.*;
 
 public class SortingTests {
     @GameTest()
+    public void testSortCommandSortsTargetInventory(GameTestHelper ctx) {
+        Scenario scenario = setUpScene(ctx, Map.of(
+                5, new ItemStack(Items.DIAMOND, 32),
+                6, new ItemStack(Items.DIAMOND, 32)
+        ));
+
+        runCommand(scenario.player(), "/invsort sort");
+
+        assertContents(ctx, scenario, Map.of(0, new ItemStack(Items.DIAMOND, 64)));
+
+        ctx.succeed();
+    }
+
+    @GameTest()
+    public void testSortMeCommandSortsPlayerInventory(GameTestHelper ctx) {
+        Scenario scenario = setUpScene(ctx, Map.of());
+        ServerPlayer player = scenario.player();
+
+        player.getInventory().setItem(14, new ItemStack(Items.DIAMOND, 32));
+        player.getInventory().setItem(15, new ItemStack(Items.DIAMOND, 32));
+
+        runCommand(player, "/invsort sortme");
+
+        assertPlayerInventoryContents(ctx, player, Map.of(9, new ItemStack(Items.DIAMOND, 64)));
+
+        ctx.succeed();
+    }
+
+    @GameTest()
     public void testPlayerDataPlatformStoresPlayerData(GameTestHelper ctx) {
         Scenario scenario = setUpScene(ctx, Map.of());
         ServerPlayer player = scenario.player();
@@ -483,5 +512,19 @@ public class SortingTests {
         ItemStack stack = new ItemStack(item, count);
         stack.applyComponents(components);
         return stack;
+    }
+
+    private static void runCommand(ServerPlayer player, String command) {
+        player.level().getServer().getCommands().performPrefixedCommand(player.createCommandSourceStack(), command);
+    }
+
+    private static void assertPlayerInventoryContents(GameTestHelper ctx, ServerPlayer player, Map<Integer, ItemStack> expectedContents) {
+        for (int slot = 9; slot < 36; slot++) {
+            ItemStack stack = player.getInventory().getItem(slot);
+            ItemStack expectedStack = expectedContents.getOrDefault(slot, ItemStack.EMPTY);
+
+            ctx.assertValueEqual(stack.getItem(), expectedStack.getItem(), Component.nullToEmpty("Player inventory slot " + slot + " does not have the expected item"));
+            ctx.assertValueEqual(stack.getCount(), expectedStack.getCount(), Component.nullToEmpty("Player inventory slot " + slot + " does not have the expected count"));
+        }
     }
 }

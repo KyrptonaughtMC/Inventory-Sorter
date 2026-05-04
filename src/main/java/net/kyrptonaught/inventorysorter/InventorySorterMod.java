@@ -1,10 +1,8 @@
 package net.kyrptonaught.inventorysorter;
 
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.kyrptonaught.inventorysorter.commands.CommandRegistry;
 import net.kyrptonaught.inventorysorter.compat.Compatibility;
 import net.kyrptonaught.inventorysorter.compat.sources.*;
 import net.kyrptonaught.inventorysorter.config.Config;
@@ -47,7 +45,7 @@ public class InventorySorterMod implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        CommandRegistrationCallback.EVENT.register(CommandRegistry::register);
+        PlatformServices.COMMANDS.registerCommands();
 
         PlatformServices.NETWORK.registerPayloads();
 
