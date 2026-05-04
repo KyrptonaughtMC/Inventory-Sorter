@@ -1,7 +1,7 @@
 tmp
 # minecraft
 run/
-
+.tmp/
 .env
 
 # gradle

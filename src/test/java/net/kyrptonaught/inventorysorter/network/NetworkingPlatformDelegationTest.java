@@ -1,5 +1,6 @@
 package net.kyrptonaught.inventorysorter.network;
 
+import net.kyrptonaught.inventorysorter.SortTarget;
 import net.kyrptonaught.inventorysorter.SortType;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.kyrptonaught.inventorysorter.platform.NetworkingPlatform;
@@ -38,9 +39,9 @@ public class NetworkingPlatformDelegationTest {
         NewConfigOptions config = new NewConfigOptions();
         config.sortType = SortType.CATEGORY;
 
-        InventorySortPacket.sendSortPacket(true, config, networking);
+        InventorySortPacket.sendSortPacket(SortTarget.PLAYER_INVENTORY, config, networking);
 
-        Assertions.assertEquals(List.of(new InventorySortPacket(true, SortType.CATEGORY)), networking.serverboundPayloads);
+        Assertions.assertEquals(List.of(new InventorySortPacket(SortTarget.PLAYER_INVENTORY, SortType.CATEGORY)), networking.serverboundPayloads);
     }
 
     @Test
@@ -49,11 +50,11 @@ public class NetworkingPlatformDelegationTest {
         NewConfigOptions config = new NewConfigOptions();
         config.sortPlayerInventory = true;
 
-        InventorySortPacket.sendSortPacket(false, config, networking);
+        InventorySortPacket.sendSortPacket(SortTarget.CONTAINER, config, networking);
 
         Assertions.assertEquals(List.of(
-                new InventorySortPacket(false, SortType.NAME),
-                new InventorySortPacket(true, SortType.NAME)
+                new InventorySortPacket(SortTarget.CONTAINER, SortType.NAME),
+                new InventorySortPacket(SortTarget.PLAYER_INVENTORY, SortType.NAME)
         ), networking.serverboundPayloads);
     }
 

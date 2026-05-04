@@ -1,6 +1,7 @@
 package net.kyrptonaught.inventorysorter.client;
 
 import net.kyrptonaught.inventorysorter.ButtonType;
+import net.kyrptonaught.inventorysorter.SortTarget;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -49,7 +50,7 @@ public class SortButtonWidgetTest {
         private double horizontalAmount;
 
         private RecordingSortButtonWidget(boolean hovered, boolean scrollResult) {
-            super(ButtonType.INVENTORY, 0, 0, false, null);
+            super(ButtonType.INVENTORY, 0, 0, SortTarget.CONTAINER, null);
             this.hovered = hovered;
             this.scrollResult = scrollResult;
         }

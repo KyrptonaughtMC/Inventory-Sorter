@@ -10,6 +10,10 @@
     "enableDoubleClickSort": { "type": "boolean", "default": true },
     "sortHighlightedItem": { "type": "boolean", "default": true },
     "customCompatibilityListDownloadUrl": { "type": "string" },
+    "missingServerWarningSuppressions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
     "preventSortForScreens": {
       "type": "array",
       "items": { "type": "string" }

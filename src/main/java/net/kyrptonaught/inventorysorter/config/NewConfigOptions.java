@@ -10,6 +10,9 @@ import net.kyrptonaught.inventorysorter.compat.config.CompatConfig;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.LOGGER;
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.MOD_ID;
@@ -26,6 +29,7 @@ public class NewConfigOptions extends CompatConfig {
     public boolean enableDoubleClickSort = true;
     public boolean sortHighlightedItem = true;
     public ScrollBehaviour scrollBehaviour = ScrollBehaviour.FREE;
+    public List<String> missingServerWarningSuppressions = new ArrayList<>();
 
     public static NewConfigOptions load() throws IOException {
         Path filePath = ConfigPathResolver.getConfigPath(CONFIG_FILE);
@@ -78,5 +82,20 @@ public class NewConfigOptions extends CompatConfig {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public boolean shouldShowMissingServerWarning(String serverAddress, String modVersion) {
+        return !missingServerWarningSuppressions.contains(missingServerWarningKey(serverAddress, modVersion));
+    }
+
+    public void markMissingServerWarningShown(String serverAddress, String modVersion) {
+        String warningKey = missingServerWarningKey(serverAddress, modVersion);
+        if (!missingServerWarningSuppressions.contains(warningKey)) {
+            missingServerWarningSuppressions.add(warningKey);
+        }
+    }
+
+    private static String missingServerWarningKey(String serverAddress, String modVersion) {
+        return serverAddress.trim().toLowerCase(Locale.ROOT) + "|" + modVersion;
     }
 }

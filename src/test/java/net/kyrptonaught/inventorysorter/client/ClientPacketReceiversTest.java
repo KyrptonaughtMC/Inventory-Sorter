@@ -58,6 +58,28 @@ public class ClientPacketReceiversTest {
     }
 
     @Test
+    void serverPresenceReceiverEnablesServerSorting() {
+        TestConfig config = new TestConfig();
+        RecordingNetworkingPlatform networking = new RecordingNetworkingPlatform();
+        RecordingCallbacks callbacks = new RecordingCallbacks();
+        ClientServerSupport serverSupport = new ClientServerSupport();
+        ClientPacketReceivers receivers = new ClientPacketReceivers(
+                () -> config,
+                callbacks::reloadConfig,
+                callbacks::reloadCompatibility,
+                serverSupport
+        );
+
+        receivers.register(networking);
+
+        Assertions.assertFalse(serverSupport.shouldUseServerSorting());
+
+        networking.serverPresenceHandler.run();
+
+        Assertions.assertTrue(serverSupport.shouldUseServerSorting());
+    }
+
+    @Test
     void sortSettingsUpdateClientConfigAndSave() {
         TestConfig config = new TestConfig();
         ClientPacketReceivers receivers = newReceivers(config);

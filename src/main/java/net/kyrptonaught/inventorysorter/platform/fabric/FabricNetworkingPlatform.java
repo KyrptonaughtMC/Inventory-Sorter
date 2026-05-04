@@ -36,7 +36,7 @@ public class FabricNetworkingPlatform implements NetworkingPlatform {
         ServerPlayNetworking.registerGlobalReceiver(InventorySortPacket.ID, ((payload, context) -> {
             ServerPlayer player = context.player();
             MinecraftServer server = player.level().getServer();
-            server.execute(() -> InventoryHelper.sortInventory(player, payload.shouldSortPlayerInventory(), payload.sortType()));
+            server.execute(() -> InventoryHelper.sortInventory(player, payload.target(), payload.sortType()));
         }));
 
         ServerPlayNetworking.registerGlobalReceiver(SortSettings.ID, (payload, context) -> {

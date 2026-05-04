@@ -14,7 +14,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.HopperBlockEntity;
@@ -107,12 +106,12 @@ public class InventoryHelper {
         return Component.translatable("inventorysorter.cmd.sort.notsortable");
     }
 
-    public static boolean sortInventory(ServerPlayer player, boolean shouldSortPlayerInventory, SortType sortType) {
+    public static boolean sortInventory(ServerPlayer player, SortTarget target, SortType sortType) {
         String languageCode = player.clientInformation().language().toLowerCase();
-        if (shouldSortPlayerInventory) {
+        if (target == SortTarget.PLAYER_INVENTORY) {
             sortInventory(player.getInventory(), 9, 27, sortType, languageCode);
             return true;
-        } else if (canSortInventory(player)) {
+        } else if (target == SortTarget.CONTAINER && canSortInventory(player)) {
             Container inv = getInventory(player.containerMenu);
             if (inv != null) {
                 sortInventory(inv, 0, inv.getContainerSize(), sortType, languageCode);
@@ -130,59 +129,16 @@ public class InventoryHelper {
     private static void sortInventory(Container inv, int startSlot, int invSize, SortType sortType, String languageCode) {
         List<ItemStack> stacks = new ArrayList<>();
         for (int i = 0; i < invSize; i++) {
-            addStackWithMerge(stacks, inv.getItem(startSlot + i));
+            stacks.add(inv.getItem(startSlot + i));
         }
 
-        stacks.sort(SortCases.getComparator(sortType, languageCode));
-        if (stacks.size() == 0) {
+        SortedInventoryLayout sortedInventoryLayout = SortedInventoryLayout.from(stacks, sortType, languageCode);
+        if (sortedInventoryLayout.stacks().stream().allMatch(ItemStack::isEmpty)) {
             return;
         }
         for (int i = 0; i < invSize; i++)
-            inv.setItem(startSlot + i, i < stacks.size() ? stacks.get(i) : ItemStack.EMPTY);
+            inv.setItem(startSlot + i, sortedInventoryLayout.stacks().get(i));
         inv.setChanged();
-    }
-
-    private static void addStackWithMerge(List<ItemStack> stacks, ItemStack newStack) {
-        if (newStack.getItem() == Items.AIR) {
-            return;
-        }
-        if (newStack.isStackable() && newStack.getCount() != newStack.getMaxStackSize())
-            for (int j = stacks.size() - 1; j >= 0; j--) {
-                ItemStack oldStack = stacks.get(j);
-                if (canMergeItems(newStack, oldStack)) {
-                    combineStacks(newStack, oldStack);
-                    if (oldStack.getItem() == Items.AIR || oldStack.getCount() == 0) {
-                        stacks.remove(j);
-                    }
-                }
-            }
-        stacks.add(newStack);
-    }
-
-    private static void combineStacks(ItemStack stack, ItemStack stack2) {
-        if (stack.getMaxStackSize() >= stack.getCount() + stack2.getCount()) {
-            stack.grow(stack2.getCount());
-            stack2.setCount(0);
-        }
-        int maxInsertAmount = Math.min(stack.getMaxStackSize() - stack.getCount(), stack2.getCount());
-        stack.grow(maxInsertAmount);
-        stack2.shrink(maxInsertAmount);
-    }
-
-    private static boolean canMergeItems(ItemStack itemStack_1, ItemStack itemStack_2) {
-        if (!itemStack_1.isStackable() || !itemStack_2.isStackable()) {
-            return false;
-        }
-        if (itemStack_1.getCount() == itemStack_1.getMaxStackSize() || itemStack_2.getCount() == itemStack_2.getMaxStackSize()) {
-            return false;
-        }
-        if (itemStack_1.getItem() != itemStack_2.getItem()) {
-            return false;
-        }
-        if (itemStack_1.getDamageValue() != itemStack_2.getDamageValue()) {
-            return false;
-        }
-        return ItemStack.isSameItemSameComponents(itemStack_1, itemStack_2);
     }
 
     public static boolean shouldDisplayButtons(Player player) {
