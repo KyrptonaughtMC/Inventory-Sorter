@@ -92,10 +92,7 @@ public class InventorySorterModClient implements ClientModInitializer {
               This is to clear the server defined configs when the client disconnects from a server.
               This is to prevent configs from one server from being used on another server.
              */
-            serverConfig = new CompatConfig();
-            compatibility.reload();
-            serverIsPresent = false;
-            shutdownScheduler();
+            resetServerStateOnDisconnect();
         });
 
         ScreenEvents.BEFORE_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
@@ -171,6 +168,13 @@ public class InventorySorterModClient implements ClientModInitializer {
 
     private void handleServerPresence() {
         serverIsPresent = true;
+    }
+
+    private void resetServerStateOnDisconnect() {
+        serverConfig = new CompatConfig();
+        compatibility.reload();
+        serverIsPresent = false;
+        shutdownScheduler();
     }
 
     private void shutdownScheduler() {
