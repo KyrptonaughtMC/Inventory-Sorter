@@ -30,6 +30,7 @@ import java.util.function.Supplier;
 public abstract class FullWidthTextFieldEntry<T> extends TooltipListEntry<T> {
     private static final int ERROR_TEXT_COLOR = ARGB.opaque(0xFF5555);
     private static final int TEXT_COLOR = ARGB.opaque(0xE0E0E0);
+    private static final int TEXT_FIELD_PADDING = 6;
 
     protected EditBox textFieldWidget;
     protected Button resetButton;
@@ -98,13 +99,6 @@ public abstract class FullWidthTextFieldEntry<T> extends TooltipListEntry<T> {
         this.isSelected = isSelected;
     }
 
-    /*
-        I made the executive decision to not use the label for the field.
-        In this particular mod, the field is nested inside a subcategory, which already has a label,
-        and it looks much better this way.
-
-        If you do want labels, uncomment all the lines that are commented out in this method.
-     */
     public void extractRenderState(GuiGraphicsExtractor graphics, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isHovered, float delta) {
         super.extractRenderState(graphics, index, y, x, entryWidth, entryHeight, mouseX, mouseY, isHovered, delta);
         this.resetButton.active = this.isEditable() && this.getDefaultValue().isPresent() && !this.isMatchDefault(this.textFieldWidget.getValue());
@@ -113,18 +107,16 @@ public abstract class FullWidthTextFieldEntry<T> extends TooltipListEntry<T> {
         this.textFieldWidget.setY(y + 1);
         Font textRenderer = Minecraft.getInstance().font;
 
-        int labelWidth = 0;
-        int padding = 6;
+        int resetButtonWidth = this.resetButton.getWidth();
         if (textRenderer.isBidirectional()) {
             this.resetButton.setX(x);
-            this.textFieldWidget.setX(x + this.resetButton.getWidth());
+            this.textFieldWidget.setX(x + resetButtonWidth);
         } else {
-            this.resetButton.setX(x + entryWidth - this.resetButton.getWidth());
-
-            this.textFieldWidget.setX(x + labelWidth + padding);
+            this.resetButton.setX(x + entryWidth - resetButtonWidth);
+            this.textFieldWidget.setX(x + TEXT_FIELD_PADDING);
         }
 
-        setTextFieldWidth(this.textFieldWidget, entryWidth - labelWidth - this.resetButton.getWidth() - 2 * padding);
+        setTextFieldWidth(this.textFieldWidget, entryWidth - resetButtonWidth - 2 * TEXT_FIELD_PADDING);
         this.resetButton.extractRenderState(graphics, mouseX, mouseY, delta);
         this.textFieldWidget.extractRenderState(graphics, mouseX, mouseY, delta);
     }
