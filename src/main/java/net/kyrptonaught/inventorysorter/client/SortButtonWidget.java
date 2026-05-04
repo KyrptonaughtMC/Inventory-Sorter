@@ -45,6 +45,10 @@ import org.jspecify.annotations.NonNull;
 
 @Environment(EnvType.CLIENT)
 public class SortButtonWidget extends ImageButton {
+    private static final int BUTTON_WIDTH = 10;
+    private static final int BUTTON_HEIGHT = 9;
+    private static final int TEXTURE_WIDTH = 20;
+    private static final int TEXTURE_HEIGHT = 18;
     private static final WidgetSprites TEXTURES = new WidgetSprites(
             Identifier.fromNamespaceAndPath(InventorySorterMod.MOD_ID, "textures/gui/button_unfocused.png"),
             Identifier.fromNamespaceAndPath(InventorySorterMod.MOD_ID, "textures/gui/button_focused.png"));
@@ -62,7 +66,7 @@ public class SortButtonWidget extends ImageButton {
     private static ScheduledFuture<?> debounceTask;
 
     public SortButtonWidget(ButtonType buttonType, int x, int y, boolean playerInv, Screen parent) {
-        super(x, y, 10, 9, TEXTURES, null, net.minecraft.network.chat.Component.literal(""));
+        super(x, y, BUTTON_WIDTH, BUTTON_HEIGHT, TEXTURES, null, net.minecraft.network.chat.Component.literal(""));
         this.buttonType = buttonType;
         this.playerInv = playerInv;
         this.modifierKey = modifierButton;
@@ -113,12 +117,8 @@ public class SortButtonWidget extends ImageButton {
         }
 
         setX(this.initialX + offset);
-        context.pose().pushMatrix();
-        context.pose().scale(.5f, .5f);
-        context.pose().translate(getX(), getY());
         Identifier identifier = TEXTURES.get(true, isHovered());
-        context.blit(RenderPipelines.GUI_TEXTURED, identifier, getX(), getY(), 0, 0, 20, 18, 20, 18);
-        context.pose().popMatrix();
+        context.blit(RenderPipelines.GUI_TEXTURED, identifier, getX(), getY(), 0, 0, BUTTON_WIDTH, BUTTON_HEIGHT, TEXTURE_WIDTH, TEXTURE_HEIGHT, TEXTURE_WIDTH, TEXTURE_HEIGHT);
         this.renderTooltip(context, mouseX, mouseY);
     }
 
