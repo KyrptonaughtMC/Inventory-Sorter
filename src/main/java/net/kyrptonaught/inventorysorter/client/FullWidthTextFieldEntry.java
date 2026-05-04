@@ -13,6 +13,7 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.ARGB;
 import org.jspecify.annotations.NonNull;
 
 import java.util.List;
@@ -27,6 +28,9 @@ import java.util.function.Supplier;
  */
 @Environment(EnvType.CLIENT)
 public abstract class FullWidthTextFieldEntry<T> extends TooltipListEntry<T> {
+    private static final int ERROR_TEXT_COLOR = ARGB.opaque(0xFF5555);
+    private static final int TEXT_COLOR = ARGB.opaque(0xE0E0E0);
+
     protected EditBox textFieldWidget;
     protected Button resetButton;
     protected Supplier<T> defaultValue;
@@ -87,7 +91,7 @@ public abstract class FullWidthTextFieldEntry<T> extends TooltipListEntry<T> {
     }
 
     protected void textFieldPreRender(EditBox widget) {
-        widget.setTextColor(this.getConfigError().isPresent() ? 16733525 : 14737632);
+        widget.setTextColor(this.getConfigError().isPresent() ? ERROR_TEXT_COLOR : TEXT_COLOR);
     }
 
     public void updateSelected(boolean isSelected) {
