@@ -9,6 +9,7 @@ import net.kyrptonaught.inventorysorter.InventorySorterMod;
 import net.kyrptonaught.inventorysorter.SortType;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.kyrptonaught.inventorysorter.config.ScrollBehaviour;
+import net.kyrptonaught.inventorysorter.client.platform.ClientPlatformServices;
 import net.kyrptonaught.inventorysorter.mixin.RecipeBookScreenAccessor;
 import net.kyrptonaught.inventorysorter.network.InventorySortPacket;
 import net.minecraft.ChatFormatting;
@@ -39,7 +40,6 @@ import java.util.concurrent.TimeUnit;
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.compatibility;
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.getConfig;
 import static net.kyrptonaught.inventorysorter.client.InventorySorterModClient.PLAYER_INVENTORY;
-import static net.kyrptonaught.inventorysorter.client.InventorySorterModClient.modifierButton;
 
 @Environment(EnvType.CLIENT)
 public class SortButtonWidget extends ImageButton {
@@ -65,7 +65,7 @@ public class SortButtonWidget extends ImageButton {
         super(x, y, BUTTON_WIDTH, BUTTON_HEIGHT, TEXTURES, null, net.minecraft.network.chat.Component.literal(""));
         this.buttonType = buttonType;
         this.playerInv = playerInv;
-        this.modifierKey = modifierButton;
+        this.modifierKey = ClientPlatformServices.KEY_MAPPINGS.modifierKey();
         this.parentScreen = parent;
         this.initialX = x;
     }

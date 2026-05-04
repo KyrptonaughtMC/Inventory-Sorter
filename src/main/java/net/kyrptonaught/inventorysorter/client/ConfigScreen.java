@@ -11,6 +11,7 @@ import me.shedaniel.clothconfig2.impl.builders.SubCategoryBuilder;
 import net.kyrptonaught.inventorysorter.InventoryHelper;
 import net.kyrptonaught.inventorysorter.SortType;
 import net.kyrptonaught.inventorysorter.client.clothconfig.ContainerEntry;
+import net.kyrptonaught.inventorysorter.client.platform.ClientPlatformServices;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.kyrptonaught.inventorysorter.config.ScrollBehaviour;
 import net.minecraft.ChatFormatting;
@@ -24,7 +25,6 @@ import net.minecraft.resources.Identifier;
 import java.util.*;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.*;
-import static net.kyrptonaught.inventorysorter.client.InventorySorterModClient.modifierButton;
 
 public class ConfigScreen {
 
@@ -100,7 +100,7 @@ public class ConfigScreen {
 
     public static Screen getConfigScreen(Screen parent) {
         NewConfigOptions options = getConfig();
-        InputConstants.Key modifierKey = modifierButton;
+        InputConstants.Key modifierKey = ClientPlatformServices.KEY_MAPPINGS.modifierKey();
 
         ConfigBuilder screenBuilder = ConfigBuilder.create()
                 .setParentScreen(parent)

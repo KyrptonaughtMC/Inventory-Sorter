@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.kyrptonaught.inventorysorter.SortType;
-import net.kyrptonaught.inventorysorter.client.InventorySorterModClient;
+import net.kyrptonaught.inventorysorter.client.platform.ClientPlatformServices;
 import net.kyrptonaught.inventorysorter.compat.config.CompatConfig;
 
 import java.io.*;
@@ -64,7 +64,7 @@ public class NewConfigOptions extends CompatConfig {
         if (oldOptions.keybinding != null) {
             // @TODO come up with something for this
             InputConstants.Key boundKey = InputConstants.getKey(oldOptions.keybinding);
-            InventorySorterModClient.sortButton.setKey(boundKey); // this doesn't seem to take effect
+            ClientPlatformServices.KEY_MAPPINGS.sortKeyMapping().setKey(boundKey); // this doesn't seem to take effect
         }
 
         return newOptions;

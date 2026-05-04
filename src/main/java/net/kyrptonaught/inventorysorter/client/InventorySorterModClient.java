@@ -1,18 +1,16 @@
 package net.kyrptonaught.inventorysorter.client;
 
-import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.kyrptonaught.inventorysorter.InventorySorterMod;
 import net.kyrptonaught.inventorysorter.compat.config.CompatConfig;
 import net.kyrptonaught.inventorysorter.compat.sources.ConfigLoader;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.kyrptonaught.inventorysorter.network.*;
+import net.kyrptonaught.inventorysorter.client.platform.ClientPlatformServices;
 import net.kyrptonaught.inventorysorter.platform.PlatformServices;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -25,18 +23,6 @@ import static net.kyrptonaught.inventorysorter.InventorySorterMod.*;
 
 public class InventorySorterModClient implements ClientModInitializer {
 
-    public static final InputConstants.Key modifierButton = InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_LCONTROL);
-    private static final KeyMapping.Category category = KeyMapping.Category.register(Identifier.fromNamespaceAndPath(InventorySorterMod.MOD_ID, "main"));
-    public static final KeyMapping configButton = new KeyMapping(
-            "inventorysorter.key.config",
-            InputConstants.KEY_P,
-            category
-    );
-    public static final KeyMapping sortButton = new KeyMapping(
-            "inventorysorter.key.sort",
-            InputConstants.KEY_P,
-            category
-    );
     public static Identifier PLAYER_INVENTORY = Identifier.parse("player_inventory");
     private CompatConfig serverConfig = new CompatConfig();
     private volatile boolean serverIsPresent = false;
@@ -50,8 +36,7 @@ public class InventorySorterModClient implements ClientModInitializer {
     public void onInitializeClient() {
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdownScheduler));
 
-        KeyMappingHelper.registerKeyMapping(configButton);
-        KeyMappingHelper.registerKeyMapping(sortButton);
+        ClientPlatformServices.KEY_MAPPINGS.register();
 
         /*
           This is to attach server defined configs to the compatibility layer on the client only
@@ -77,9 +62,13 @@ public class InventorySorterModClient implements ClientModInitializer {
     }
 
     private void handleClientTick(Minecraft client) {
-        InputConstants.Key config = KeyMappingHelper.getBoundKeyOf(configButton);
-        InputConstants.Key sort = KeyMappingHelper.getBoundKeyOf(sortButton);
-        ConfigScreen.openIfConfigKeyPressed(client, configButton, sortButton, config, sort);
+        ConfigScreen.openIfConfigKeyPressed(
+                client,
+                ClientPlatformServices.KEY_MAPPINGS.configKeyMapping(),
+                ClientPlatformServices.KEY_MAPPINGS.sortKeyMapping(),
+                ClientPlatformServices.KEY_MAPPINGS.boundConfigKey(),
+                ClientPlatformServices.KEY_MAPPINGS.boundSortKey()
+        );
     }
 
     private void registerClientReceivers() {

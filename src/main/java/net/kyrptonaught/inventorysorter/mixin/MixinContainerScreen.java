@@ -7,6 +7,7 @@ import net.kyrptonaught.inventorysorter.InventoryHelper;
 import net.kyrptonaught.inventorysorter.InventorySorterMod;
 import net.kyrptonaught.inventorysorter.client.SortButtonWidget;
 import net.kyrptonaught.inventorysorter.client.SortableContainerScreen;
+import net.kyrptonaught.inventorysorter.client.platform.ClientPlatformServices;
 import net.kyrptonaught.inventorysorter.network.InventorySortPacket;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
@@ -31,7 +32,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.compatibility;
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.getConfig;
 import static net.kyrptonaught.inventorysorter.client.InventorySorterModClient.PLAYER_INVENTORY;
-import static net.kyrptonaught.inventorysorter.client.InventorySorterModClient.sortButton;
 
 @Environment(EnvType.CLIENT)
 @Mixin(AbstractContainerScreen.class)
@@ -96,7 +96,7 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
             callbackInfoReturnable.setReturnValue(true);
             return;
         }
-        if (sortButton.matchesMouse(click)) {
+        if (ClientPlatformServices.KEY_MAPPINGS.sortKeyMapping().matchesMouse(click)) {
             sortInventory(callbackInfoReturnable);
         }
 
@@ -112,7 +112,7 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
         // Keybind check for key bindings, client only
         if (minecraft == null || minecraft.player == null) return;
 
-        if (sortButton.matches(input)) {
+        if (ClientPlatformServices.KEY_MAPPINGS.sortKeyMapping().matches(input)) {
             sortInventory(callbackInfoReturnable);
         }
     }
