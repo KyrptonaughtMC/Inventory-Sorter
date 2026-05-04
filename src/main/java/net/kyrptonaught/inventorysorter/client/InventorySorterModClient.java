@@ -80,6 +80,10 @@ public class InventorySorterModClient implements ClientModInitializer {
             ConfigScreen.openIfConfigKeyPressed(client, configButton, sortButton, config, sort);
         });
 
+        registerClientReceivers();
+    }
+
+    private void registerClientReceivers() {
         PlatformServices.NETWORK.registerClientReceivers(
                 this::applySortSettings,
                 this::applyPlayerSortPrevention,
