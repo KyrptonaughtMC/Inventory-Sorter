@@ -9,6 +9,7 @@ import net.kyrptonaught.inventorysorter.config.Config;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.kyrptonaught.inventorysorter.network.*;
 import net.kyrptonaught.inventorysorter.platform.PlatformServices;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
@@ -49,12 +50,7 @@ public class InventorySorterMod implements ModInitializer {
 
         PlatformServices.NETWORK.registerPayloads();
 
-        ServerLifecycleEvents.SERVER_STARTED.register(server -> {
-            var context = new CreativeModeTab.ItemDisplayParameters(server.getWorldData().enabledFeatures(), false, server.registryAccess());
-            CreativeModeTabs.allTabs().forEach(group -> {
-                if (group.getSearchTabDisplayItems().isEmpty()) group.buildContents(context);
-            });
-        });
+        ServerLifecycleEvents.SERVER_STARTED.register(this::ensureCreativeSearchTabsBuilt);
 
         ServerPlayConnectionEvents.JOIN.register((handler, server, client) -> {
             ServerPlayer player = handler.getPlayer();
@@ -86,5 +82,12 @@ public class InventorySorterMod implements ModInitializer {
             }
         });
 
+    }
+
+    void ensureCreativeSearchTabsBuilt(MinecraftServer server) {
+        var context = new CreativeModeTab.ItemDisplayParameters(server.getWorldData().enabledFeatures(), false, server.registryAccess());
+        CreativeModeTabs.allTabs().forEach(group -> {
+            if (group.getSearchTabDisplayItems().isEmpty()) group.buildContents(context);
+        });
     }
 }
