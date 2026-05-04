@@ -12,21 +12,18 @@ import net.kyrptonaught.inventorysorter.mixin.RecipeBookScreenAccessor;
 import net.kyrptonaught.inventorysorter.network.InventorySortPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractRecipeBookScreen;
-import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
-import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
 import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.inventory.InventoryMenu;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +51,6 @@ public class SortButtonWidget extends ImageButton {
             Identifier.fromNamespaceAndPath(InventorySorterMod.MOD_ID, "textures/gui/button_focused.png"));
     private final ButtonType buttonType;
     private final boolean playerInv;
-    private final ClientTooltipPositioner widgetTooltipPositioner = DefaultTooltipPositioner.INSTANCE;
     private final InputConstants.Key modifierKey;
     private final Screen parentScreen;
     // Offset used to align the sort button with the recipe book in the UI.
@@ -170,38 +166,30 @@ public class SortButtonWidget extends ImageButton {
     public void renderTooltip(GuiGraphicsExtractor context, int mouseX, int mouseY) {
         NewConfigOptions config = getConfig();
         if (config.showTooltips && this.isHovered()) {
-            Minecraft instance = Minecraft.getInstance();
-            Font textRenderer = instance.font;
-
-            List<FormattedCharSequence> lines = new ArrayList<>();
+            List<Component> lines = new ArrayList<>();
 
             if ((config.scrollBehaviour == ScrollBehaviour.FREE || config.scrollBehaviour == ScrollBehaviour.DISABLED) && isModifierPressed()) {
-                lines.add(net.minecraft.network.chat.Component.translatable("inventorysorter.sortButton.tooltip.hide").getVisualOrderText());
+                lines.add(Component.translatable("inventorysorter.sortButton.tooltip.hide"));
             }
 
             if ((config.scrollBehaviour == ScrollBehaviour.MODIFIER) && isModifierPressed()) {
-                lines.add(net.minecraft.network.chat.Component.translatable("inventorysorter.sortButton.tooltip.sortType", net.minecraft.network.chat.Component.translatable(getConfig().sortType.getTranslationKey()).withStyle(ChatFormatting.BOLD)).getVisualOrderText());
-                lines.add(net.minecraft.network.chat.Component.translatable("inventorysorter.sortButton.tooltip.help.sortType").withStyle(ChatFormatting.GRAY).getVisualOrderText());
-                lines.add(net.minecraft.network.chat.Component.translatable("inventorysorter.sortButton.tooltip.hide").withStyle(ChatFormatting.GRAY).getVisualOrderText());
+                lines.add(Component.translatable("inventorysorter.sortButton.tooltip.sortType", Component.translatable(getConfig().sortType.getTranslationKey()).withStyle(ChatFormatting.BOLD)));
+                lines.add(Component.translatable("inventorysorter.sortButton.tooltip.help.sortType").withStyle(ChatFormatting.GRAY));
+                lines.add(Component.translatable("inventorysorter.sortButton.tooltip.hide").withStyle(ChatFormatting.GRAY));
             }
 
             if (!isModifierPressed()) {
-                lines.add(net.minecraft.network.chat.Component.translatable("inventorysorter.sortButton.tooltip.sortType", net.minecraft.network.chat.Component.translatable(getConfig().sortType.getTranslationKey()).withStyle(ChatFormatting.BOLD)).getVisualOrderText());
+                lines.add(Component.translatable("inventorysorter.sortButton.tooltip.sortType", Component.translatable(getConfig().sortType.getTranslationKey()).withStyle(ChatFormatting.BOLD)));
                 if (config.scrollBehaviour == ScrollBehaviour.MODIFIER) {
-                    lines.add(net.minecraft.network.chat.Component.translatable("inventorysorter.sortButton.tooltip.help.sortType.modifier", modifierKey.getDisplayName()).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+                    lines.add(Component.translatable("inventorysorter.sortButton.tooltip.help.sortType.modifier", modifierKey.getDisplayName()).withStyle(ChatFormatting.DARK_GRAY));
                 } else if (config.scrollBehaviour != ScrollBehaviour.DISABLED) {
-                    lines.add(net.minecraft.network.chat.Component.translatable("inventorysorter.sortButton.tooltip.help.sortType").withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+                    lines.add(Component.translatable("inventorysorter.sortButton.tooltip.help.sortType").withStyle(ChatFormatting.DARK_GRAY));
                 }
-                lines.add(net.minecraft.network.chat.Component.translatable("inventorysorter.sortButton.tooltip.help.hide", modifierKey.getDisplayName()).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+                lines.add(Component.translatable("inventorysorter.sortButton.tooltip.help.hide", modifierKey.getDisplayName()).withStyle(ChatFormatting.DARK_GRAY));
 
             }
 
-            context.setTooltipForNextFrame(
-                    textRenderer,
-                    lines,
-                    widgetTooltipPositioner,
-                    mouseX, mouseY, true
-            );
+            context.setComponentTooltipForNextFrame(Minecraft.getInstance().font, lines, mouseX, mouseY);
 
         }
     }
