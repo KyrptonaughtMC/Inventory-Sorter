@@ -123,11 +123,7 @@ public class InventorySorterModClient implements ClientModInitializer {
     }
 
     private void handleLastSeenVersion(LastSeenVersionPacket payload) {
-        Minecraft client = Minecraft.getInstance();
-        if (payload.lastSeenVersion().equals(VERSION) && payload.lastSeenLanguage().equals(client.getLanguageManager().getSelected().toLowerCase())) {
-            return;
-        }
-        TranslationReminder.notify(client);
+        TranslationReminder.notifyIfOutdated(Minecraft.getInstance(), payload, VERSION);
     }
 
     private void handleServerPresence() {

@@ -7,6 +7,7 @@ import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
+import net.kyrptonaught.inventorysorter.network.LastSeenVersionPacket;
 
 import java.net.URI;
 import java.util.List;
@@ -16,6 +17,20 @@ import static net.kyrptonaught.inventorysorter.InventorySorterMod.MOD_ID;
 public class TranslationReminder {
     // replaced at build time by scripts/patch-completed-langs.sh
     private static final List<String> completedLanguages = List.of("KNOWN_LANGUAGES_REPL");
+
+    public static void notifyIfOutdated(Minecraft client, LastSeenVersionPacket lastSeenVersion, String currentVersion) {
+        String selectedLanguage = client.getLanguageManager().getSelected().toLowerCase();
+        if (hasSeenCurrentVersion(lastSeenVersion, currentVersion, selectedLanguage)) {
+            return;
+        }
+
+        notify(client);
+    }
+
+    static boolean hasSeenCurrentVersion(LastSeenVersionPacket lastSeenVersion, String currentVersion, String selectedLanguage) {
+        return lastSeenVersion.lastSeenVersion().equals(currentVersion)
+                && lastSeenVersion.lastSeenLanguage().equals(selectedLanguage.toLowerCase());
+    }
 
     public static void notify(Minecraft client) {
         String languageCode = client.getLanguageManager().getSelected().toLowerCase();
