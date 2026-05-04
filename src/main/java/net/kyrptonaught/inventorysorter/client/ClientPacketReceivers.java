@@ -15,8 +15,8 @@ public class ClientPacketReceivers {
     private final Supplier<NewConfigOptions> config;
     private final Runnable reloadConfig;
     private final Runnable reloadCompatibility;
+    private final ClientServerSupport serverSupport;
     private CompatConfig serverConfig = new CompatConfig();
-    private volatile boolean serverIsPresent = false;
 
     public ClientPacketReceivers() {
         this(InventorySorterMod::getConfig, InventorySorterMod::reloadConfig, compatibility::reload);
@@ -27,9 +27,19 @@ public class ClientPacketReceivers {
             Runnable reloadConfig,
             Runnable reloadCompatibility
     ) {
+        this(config, reloadConfig, reloadCompatibility, new ClientServerSupport());
+    }
+
+    ClientPacketReceivers(
+            Supplier<NewConfigOptions> config,
+            Runnable reloadConfig,
+            Runnable reloadCompatibility,
+            ClientServerSupport serverSupport
+    ) {
         this.config = config;
         this.reloadConfig = reloadConfig;
         this.reloadCompatibility = reloadCompatibility;
+        this.serverSupport = serverSupport;
     }
 
     CompatConfig serverConfig() {
@@ -37,16 +47,20 @@ public class ClientPacketReceivers {
     }
 
     boolean serverIsPresent() {
-        return serverIsPresent;
+        return serverSupport.isPresent();
     }
 
     void resetServerState() {
         serverConfig = new CompatConfig();
-        serverIsPresent = false;
+        serverSupport.reset();
     }
 
     void markServerPresent() {
-        serverIsPresent = true;
+        serverSupport.markPresent();
+    }
+
+    void markServerAbsent() {
+        serverSupport.markAbsent();
     }
 
     public void register(NetworkingPlatform networking) {

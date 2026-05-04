@@ -1,6 +1,7 @@
 package net.kyrptonaught.inventorysorter.mixin;
 
 import net.kyrptonaught.inventorysorter.InventoryHelper;
+import net.kyrptonaught.inventorysorter.SortTarget;
 import net.kyrptonaught.inventorysorter.network.SortSettings;
 import net.kyrptonaught.inventorysorter.platform.PlatformServices;
 import net.minecraft.core.NonNullList;
@@ -45,16 +46,17 @@ public abstract class MixinContainer {
                 if (carried.isEmpty())
                     if (slotIndex >= 0 && slotIndex < this.slots.size() && this.slots.get(slotIndex).getItem().isEmpty()) {
                         boolean isPlayerInventory = slots.get(slotIndex).container instanceof Inventory;
+                        SortTarget target = isPlayerInventory ? SortTarget.PLAYER_INVENTORY : SortTarget.CONTAINER;
                         InventoryHelper.sortInventory(
                                 serverPlayer,
-                                isPlayerInventory,
+                                target,
                                 settings.sortType()
                         );
 
-                        if (!isPlayerInventory && settings.sortPlayerInventory()) {
+                        if (target == SortTarget.CONTAINER && settings.sortPlayerInventory()) {
                             InventoryHelper.sortInventory(
                                     serverPlayer,
-                                    true,
+                                    SortTarget.PLAYER_INVENTORY,
                                     settings.sortType()
                             );
                         }

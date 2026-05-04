@@ -10,8 +10,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.*;
 import java.util.function.Consumer;
 
 public class ClientServerSessionTest {
@@ -22,13 +22,12 @@ public class ClientServerSessionTest {
         packetReceivers.markServerPresent();
         RecordingNetworkingPlatform networking = new RecordingNetworkingPlatform();
         RecordingCallbacks callbacks = new RecordingCallbacks();
-        RecordingScheduledExecutorService scheduler = new RecordingScheduledExecutorService();
         ClientServerSession session = new ClientServerSession(
                 packetReceivers,
                 networking,
                 callbacks::syncConfig,
                 callbacks::reloadCompatibility,
-                () -> scheduler
+                callbacks::clearClientSortQueue
         );
 
         session.join(null);
@@ -37,24 +36,22 @@ public class ClientServerSessionTest {
         Assertions.assertTrue(packetReceivers.serverConfig().hideButtonsForScreens.isEmpty());
         Assertions.assertEquals(List.of(new ClientSync(true)), networking.serverboundPayloads);
         Assertions.assertEquals(1, callbacks.syncConfigCalls);
-        Assertions.assertEquals(1, scheduler.scheduledTasks.size());
-        Assertions.assertEquals(5, scheduler.scheduledTasks.get(0).delay);
-        Assertions.assertEquals(TimeUnit.SECONDS, scheduler.scheduledTasks.get(0).unit);
+        Assertions.assertEquals(1, callbacks.clearClientSortQueueCalls);
+        Assertions.assertTrue(session.hasPendingMissingServerWarningCheck());
     }
 
     @Test
-    void disconnectResetsServerStateReloadsCompatibilityAndShutsDownScheduler() {
+    void disconnectResetsServerStateReloadsCompatibilityAndClearsPendingWarningCheck() {
         ClientPacketReceivers packetReceivers = newReceivers();
         packetReceivers.applyHideButton(new HideButton(Set.of("minecraft:chest")));
         packetReceivers.markServerPresent();
         RecordingCallbacks callbacks = new RecordingCallbacks();
-        RecordingScheduledExecutorService scheduler = new RecordingScheduledExecutorService();
         ClientServerSession session = new ClientServerSession(
                 packetReceivers,
                 new RecordingNetworkingPlatform(),
                 callbacks::syncConfig,
                 callbacks::reloadCompatibility,
-                () -> scheduler
+                callbacks::clearClientSortQueue
         );
         session.join(null);
 
@@ -63,15 +60,13 @@ public class ClientServerSessionTest {
         Assertions.assertFalse(packetReceivers.serverIsPresent());
         Assertions.assertTrue(packetReceivers.serverConfig().hideButtonsForScreens.isEmpty());
         Assertions.assertEquals(1, callbacks.reloadCompatibilityCalls);
-        Assertions.assertTrue(scheduler.shutdown);
-        Assertions.assertEquals(1, scheduler.awaitTerminationCalls);
-        Assertions.assertFalse(scheduler.shutdownNow);
+        Assertions.assertEquals(2, callbacks.clearClientSortQueueCalls);
+        Assertions.assertFalse(session.hasPendingMissingServerWarningCheck());
     }
 
     @Test
-    void shutdownForcesSchedulerShutdownWhenAwaitTimesOut() {
-        RecordingScheduledExecutorService scheduler = new RecordingScheduledExecutorService();
-        scheduler.awaitTerminationResult = false;
+    void missingServerWarningWaitsForSecondCheckWhenServerIsStillMissing() {
+        MutableClock clock = new MutableClock();
         ClientServerSession session = new ClientServerSession(
                 newReceivers(),
                 new RecordingNetworkingPlatform(),
@@ -79,35 +74,95 @@ public class ClientServerSessionTest {
                 },
                 () -> {
                 },
-                () -> scheduler
+                () -> {
+                },
+                TestConfig::new,
+                "26.1.2",
+                client -> Optional.of("example.org:25565"),
+                client -> {
+                },
+                clock::now
         );
         session.join(null);
 
-        session.shutdown();
+        clock.advance(5_000);
+        session.tick(null);
 
-        Assertions.assertTrue(scheduler.shutdown);
-        Assertions.assertTrue(scheduler.shutdownNow);
+        Assertions.assertTrue(session.hasPendingMissingServerWarningCheck());
     }
 
     @Test
-    void missingServerWarningSchedulesSecondCheckWhenServerIsStillMissing() {
-        RecordingScheduledExecutorService scheduler = new RecordingScheduledExecutorService();
+    void missingServerWarningCheckClearsWhenServerSupportArrives() {
+        ClientPacketReceivers packetReceivers = newReceivers();
+        MutableClock clock = new MutableClock();
         ClientServerSession session = new ClientServerSession(
+                packetReceivers,
+                new RecordingNetworkingPlatform(),
+                () -> {
+                },
+                () -> {
+                },
+                () -> {
+                },
+                TestConfig::new,
+                "26.1.2",
+                client -> Optional.of("example.org:25565"),
+                client -> {
+                },
+                clock::now
+        );
+        session.join(null);
+
+        packetReceivers.markServerPresent();
+        clock.advance(5_000);
+        session.tick(null);
+
+        Assertions.assertFalse(session.hasPendingMissingServerWarningCheck());
+    }
+
+    @Test
+    void missingServerWarningIsSuppressedAfterFirstMessageForServerAndVersion() {
+        TestConfig config = new TestConfig();
+        RecordingCallbacks callbacks = new RecordingCallbacks();
+        ClientServerSession session = newSessionWithConfig(config, "26.1.2");
+
+        Assertions.assertTrue(session.warnAboutMissingServerIfNeeded("Example.Org:25565", callbacks::showMissingServerWarning));
+        Assertions.assertFalse(session.warnAboutMissingServerIfNeeded("example.org:25565", callbacks::showMissingServerWarning));
+
+        Assertions.assertEquals(1, callbacks.missingServerWarningCalls);
+        Assertions.assertEquals(1, config.saveCalls);
+    }
+
+    @Test
+    void missingServerWarningIsShownAgainForNewModVersion() {
+        TestConfig config = new TestConfig();
+        config.markMissingServerWarningShown("example.org:25565", "26.1.2");
+        RecordingCallbacks callbacks = new RecordingCallbacks();
+        ClientServerSession session = newSessionWithConfig(config, "26.1.3");
+
+        Assertions.assertTrue(session.warnAboutMissingServerIfNeeded("example.org:25565", callbacks::showMissingServerWarning));
+
+        Assertions.assertEquals(1, callbacks.missingServerWarningCalls);
+        Assertions.assertEquals(1, config.saveCalls);
+    }
+
+    private ClientServerSession newSessionWithConfig(TestConfig config, String modVersion) {
+        return new ClientServerSession(
                 newReceivers(),
                 new RecordingNetworkingPlatform(),
                 () -> {
                 },
                 () -> {
                 },
-                () -> scheduler
+                () -> {
+                },
+                () -> config,
+                modVersion,
+                client -> Optional.of("example.org:25565"),
+                client -> {
+                },
+                System::currentTimeMillis
         );
-        session.join(null);
-
-        scheduler.scheduledTasks.get(0).command.run();
-
-        Assertions.assertEquals(2, scheduler.scheduledTasks.size());
-        Assertions.assertEquals(20, scheduler.scheduledTasks.get(1).delay);
-        Assertions.assertEquals(TimeUnit.SECONDS, scheduler.scheduledTasks.get(1).unit);
     }
 
     private ClientPacketReceivers newReceivers() {
@@ -121,14 +176,19 @@ public class ClientServerSessionTest {
     }
 
     private static class TestConfig extends NewConfigOptions {
+        private int saveCalls;
+
         @Override
         public void save() {
+            saveCalls++;
         }
     }
 
     private static class RecordingCallbacks {
         private int syncConfigCalls;
         private int reloadCompatibilityCalls;
+        private int clearClientSortQueueCalls;
+        private int missingServerWarningCalls;
 
         private void syncConfig() {
             syncConfigCalls++;
@@ -136,6 +196,14 @@ public class ClientServerSessionTest {
 
         private void reloadCompatibility() {
             reloadCompatibilityCalls++;
+        }
+
+        private void clearClientSortQueue() {
+            clearClientSortQueueCalls++;
+        }
+
+        private void showMissingServerWarning() {
+            missingServerWarningCalls++;
         }
     }
 
@@ -170,104 +238,15 @@ public class ClientServerSessionTest {
         }
     }
 
-    private static class RecordingScheduledExecutorService extends AbstractExecutorService implements ScheduledExecutorService {
-        private final List<ScheduledTask> scheduledTasks = new ArrayList<>();
-        private boolean shutdown;
-        private boolean shutdownNow;
-        private int awaitTerminationCalls;
-        private boolean awaitTerminationResult = true;
+    private static class MutableClock {
+        private long now;
 
-        @Override
-        public ScheduledFuture<?> schedule(Runnable command, long delay, TimeUnit unit) {
-            scheduledTasks.add(new ScheduledTask(command, delay, unit));
-            return new CompletedScheduledFuture();
+        private void advance(long milliseconds) {
+            now += milliseconds;
         }
 
-        @Override
-        public <V> ScheduledFuture<V> schedule(Callable<V> callable, long delay, TimeUnit unit) {
-            throw new UnsupportedOperationException("Not needed for client server session tests");
-        }
-
-        @Override
-        public ScheduledFuture<?> scheduleAtFixedRate(Runnable command, long initialDelay, long period, TimeUnit unit) {
-            throw new UnsupportedOperationException("Not needed for client server session tests");
-        }
-
-        @Override
-        public ScheduledFuture<?> scheduleWithFixedDelay(Runnable command, long initialDelay, long delay, TimeUnit unit) {
-            throw new UnsupportedOperationException("Not needed for client server session tests");
-        }
-
-        @Override
-        public void shutdown() {
-            shutdown = true;
-        }
-
-        @Override
-        public List<Runnable> shutdownNow() {
-            shutdownNow = true;
-            return List.of();
-        }
-
-        @Override
-        public boolean isShutdown() {
-            return shutdown;
-        }
-
-        @Override
-        public boolean isTerminated() {
-            return shutdown;
-        }
-
-        @Override
-        public boolean awaitTermination(long timeout, TimeUnit unit) {
-            awaitTerminationCalls++;
-            return awaitTerminationResult;
-        }
-
-        @Override
-        public void execute(Runnable command) {
-            command.run();
-        }
-    }
-
-    private record ScheduledTask(Runnable command, long delay, TimeUnit unit) {
-    }
-
-    private static class CompletedScheduledFuture implements ScheduledFuture<Object> {
-        @Override
-        public long getDelay(TimeUnit unit) {
-            return 0;
-        }
-
-        @Override
-        public int compareTo(Delayed other) {
-            return 0;
-        }
-
-        @Override
-        public boolean cancel(boolean mayInterruptIfRunning) {
-            return false;
-        }
-
-        @Override
-        public boolean isCancelled() {
-            return false;
-        }
-
-        @Override
-        public boolean isDone() {
-            return true;
-        }
-
-        @Override
-        public Object get() {
-            return null;
-        }
-
-        @Override
-        public Object get(long timeout, TimeUnit unit) {
-            return null;
+        private long now() {
+            return now;
         }
     }
 }

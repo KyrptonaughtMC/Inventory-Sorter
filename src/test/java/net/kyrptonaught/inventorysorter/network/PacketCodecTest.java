@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import io.netty.buffer.Unpooled;
+import net.kyrptonaught.inventorysorter.SortTarget;
 import net.kyrptonaught.inventorysorter.SortType;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -68,8 +69,8 @@ public class PacketCodecTest {
 
     @Test
     public void inventorySortPacketCodecRoundTripsSortRequest() {
-        assertStreamRoundTrip(InventorySortPacket.CODEC, new InventorySortPacket(false, SortType.CATEGORY));
-        assertStreamRoundTrip(InventorySortPacket.CODEC, new InventorySortPacket(true, SortType.NAME));
+        assertStreamRoundTrip(InventorySortPacket.CODEC, new InventorySortPacket(SortTarget.CONTAINER, SortType.CATEGORY));
+        assertStreamRoundTrip(InventorySortPacket.CODEC, new InventorySortPacket(SortTarget.PLAYER_INVENTORY, SortType.NAME));
     }
 
     @Test

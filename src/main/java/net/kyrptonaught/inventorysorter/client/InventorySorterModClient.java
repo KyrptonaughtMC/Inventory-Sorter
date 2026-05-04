@@ -13,31 +13,31 @@ import static net.kyrptonaught.inventorysorter.InventorySorterMod.*;
 public class InventorySorterModClient implements ClientModInitializer {
 
     public static Identifier PLAYER_INVENTORY = Identifier.parse("player_inventory");
-    private final ClientPacketReceivers clientPacketReceivers = new ClientPacketReceivers();
-    private final ClientServerSession clientServerSession = new ClientServerSession(clientPacketReceivers);
 
     @Override
     public void onInitializeClient() {
-        Runtime.getRuntime().addShutdownHook(new Thread(clientServerSession::shutdown));
+        InventorySorterClientRuntime runtime = InventorySorterClientRuntime.create();
 
         ClientPlatformServices.KEY_MAPPINGS.register();
 
         /*
           This is to attach server defined configs to the compatibility layer on the client only
          */
-        compatibility.addLoader(new ConfigLoader(clientPacketReceivers::serverConfig));
+        compatibility.addLoader(new ConfigLoader(runtime.clientPacketReceivers()::serverConfig));
 
 
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
-            clientServerSession.join(client);
+            runtime.clientServerSession().join(client);
         });
 
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
-            clientServerSession.disconnect();
+            runtime.clientServerSession().disconnect();
         });
 
         ClientTickEvents.END_CLIENT_TICK.register(ConfigScreen::openIfConfigKeyPressed);
+        ClientTickEvents.END_CLIENT_TICK.register(runtime.clientServerSession()::tick);
+        ClientTickEvents.END_CLIENT_TICK.register(runtime.clientSortRuntime()::tickClickExecutor);
 
-        clientPacketReceivers.register(PlatformServices.NETWORK);
+        runtime.clientPacketReceivers().register(PlatformServices.NETWORK);
     }
 }

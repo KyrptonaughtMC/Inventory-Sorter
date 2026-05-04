@@ -6,12 +6,13 @@ import net.fabricmc.api.Environment;
 import net.kyrptonaught.inventorysorter.ButtonType;
 import net.kyrptonaught.inventorysorter.InventoryHelper;
 import net.kyrptonaught.inventorysorter.InventorySorterMod;
+import net.kyrptonaught.inventorysorter.SortTarget;
 import net.kyrptonaught.inventorysorter.SortType;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.kyrptonaught.inventorysorter.config.ScrollBehaviour;
 import net.kyrptonaught.inventorysorter.client.platform.ClientPlatformServices;
+import net.kyrptonaught.inventorysorter.client.sort.ClientSorts;
 import net.kyrptonaught.inventorysorter.mixin.RecipeBookScreenAccessor;
-import net.kyrptonaught.inventorysorter.network.InventorySortPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -56,15 +57,15 @@ public class SortButtonWidget extends ImageButton {
     private static final ScheduledExecutorService debounceExecutor = Executors.newSingleThreadScheduledExecutor();
     private static ScheduledFuture<?> debounceTask;
     private final ButtonType buttonType;
-    private final boolean playerInv;
+    private final SortTarget target;
     private final InputConstants.Key modifierKey;
     private final Screen parentScreen;
     private final int initialX;
 
-    public SortButtonWidget(ButtonType buttonType, int x, int y, boolean playerInv, Screen parent) {
+    public SortButtonWidget(ButtonType buttonType, int x, int y, SortTarget target, Screen parent) {
         super(x, y, BUTTON_WIDTH, BUTTON_HEIGHT, TEXTURES, null, net.minecraft.network.chat.Component.literal(""));
         this.buttonType = buttonType;
-        this.playerInv = playerInv;
+        this.target = target;
         this.modifierKey = ClientPlatformServices.KEY_MAPPINGS.modifierKey();
         this.parentScreen = parent;
         this.initialX = x;
@@ -82,7 +83,7 @@ public class SortButtonWidget extends ImageButton {
         }
 
         if (screenID == null) {
-            InventorySortPacket.sendSortPacket(playerInv);
+            ClientSorts.requestCurrentScreenSort(target);
             return;
         }
 
@@ -98,7 +99,7 @@ public class SortButtonWidget extends ImageButton {
             this.visible = false;
 
         } else {
-            InventorySortPacket.sendSortPacket(playerInv);
+            ClientSorts.requestCurrentScreenSort(target);
         }
     }
 

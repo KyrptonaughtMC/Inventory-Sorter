@@ -7,7 +7,7 @@
 
   "modmenu.descriptionTranslation.inventorysorter": "Sorts your inventory with the click of a button!",
 
-  "inventorysorter.warning.missing-server": "No server-side support detected.\nSorting will NOT work!",
+  "inventorysorter.warning.missing-server": "No server-side support detected.\nSorting will use a client-side fallback here. Installing Inventory Sorter on the server is recommended for faster, more reliable sorting.",
 
   "inventorysorter.toggle.enabled": "On",
   "inventorysorter.toggle.disabled": "Off",

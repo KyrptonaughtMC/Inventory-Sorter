@@ -4,6 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.kyrptonaught.inventorysorter.InventoryHelper;
+import net.kyrptonaught.inventorysorter.SortTarget;
 import net.kyrptonaught.inventorysorter.network.SortSettings;
 import net.kyrptonaught.inventorysorter.platform.PlatformServices;
 import net.kyrptonaught.inventorysorter.permissions.CommandPermission;
@@ -27,7 +28,7 @@ public class SortMeCommand {
             return 0;
         }
         SortSettings settings = PlatformServices.PLAYER_DATA.getSortSettings(player);
-        InventoryHelper.sortInventory(player, true, settings.sortType());
+        InventoryHelper.sortInventory(player, SortTarget.PLAYER_INVENTORY, settings.sortType());
 
         commandContext.getSource().sendSuccess(() -> Component.translatable("inventorysorter.cmd.sort.sorted"), false);
         return 1;

@@ -1,5 +1,6 @@
 package net.kyrptonaught.inventorysorter.network;
 
+import net.kyrptonaught.inventorysorter.SortTarget;
 import net.kyrptonaught.inventorysorter.SortType;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.kyrptonaught.inventorysorter.platform.NetworkingPlatform;
@@ -12,27 +13,27 @@ import net.minecraft.resources.Identifier;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.getConfig;
 
-public record InventorySortPacket(boolean shouldSortPlayerInventory, SortType sortType) implements CustomPacketPayload {
+public record InventorySortPacket(SortTarget target, SortType sortType) implements CustomPacketPayload {
     public static final CustomPacketPayload.Type<InventorySortPacket> ID = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath("inventorysorter", "sort_inv_packet"));
     public static final StreamCodec<RegistryFriendlyByteBuf, InventorySortPacket> CODEC = CustomPacketPayload.codec(InventorySortPacket::write, InventorySortPacket::new);
 
     public InventorySortPacket(FriendlyByteBuf buf) {
-        this(buf.readBoolean(), buf.readEnum(SortType.class));
+        this(SortTarget.fromPlayerInventory(buf.readBoolean()), buf.readEnum(SortType.class));
     }
 
-    public static void sendSortPacket(boolean shouldSortPlayerInventory) {
-        sendSortPacket(shouldSortPlayerInventory, getConfig(), PlatformServices.NETWORK);
+    public static void sendSortPacket(SortTarget target) {
+        sendSortPacket(target, getConfig(), PlatformServices.NETWORK);
     }
 
-    static void sendSortPacket(boolean shouldSortPlayerInventory, NewConfigOptions config, NetworkingPlatform networking) {
-        networking.sendToServer(new InventorySortPacket(shouldSortPlayerInventory, config.sortType));
-        if (!shouldSortPlayerInventory && config.sortPlayerInventory) {
-            sendSortPacket(true, config, networking);
+    static void sendSortPacket(SortTarget target, NewConfigOptions config, NetworkingPlatform networking) {
+        networking.sendToServer(new InventorySortPacket(target, config.sortType));
+        if (target == SortTarget.CONTAINER && config.sortPlayerInventory) {
+            sendSortPacket(SortTarget.PLAYER_INVENTORY, config, networking);
         }
     }
 
     public void write(FriendlyByteBuf buf) {
-        buf.writeBoolean(shouldSortPlayerInventory);
+        buf.writeBoolean(target.isPlayerInventory());
         buf.writeEnum(sortType);
     }
 

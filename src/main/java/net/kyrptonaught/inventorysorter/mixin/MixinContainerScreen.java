@@ -5,10 +5,11 @@ import net.fabricmc.api.Environment;
 import net.kyrptonaught.inventorysorter.ButtonType;
 import net.kyrptonaught.inventorysorter.InventoryHelper;
 import net.kyrptonaught.inventorysorter.InventorySorterMod;
+import net.kyrptonaught.inventorysorter.SortTarget;
 import net.kyrptonaught.inventorysorter.client.SortButtonWidget;
 import net.kyrptonaught.inventorysorter.client.SortableContainerScreen;
 import net.kyrptonaught.inventorysorter.client.platform.ClientPlatformServices;
-import net.kyrptonaught.inventorysorter.network.InventorySortPacket;
+import net.kyrptonaught.inventorysorter.client.sort.ClientSorts;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -71,15 +72,15 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
         if (getConfig().showSortButton && InventoryHelper.shouldDisplayButtons(minecraft.player)) {
             boolean playerOnly = !InventoryHelper.canSortInventory(minecraft.player);
             if (playerOnly) {
-                invsort$PlayerSortBtn = new SortButtonWidget(ButtonType.PLAYER, this.leftPos + this.imageWidth - 20, this.topPos + (playerOnly ? (imageHeight - 95) : 6), playerOnly, minecraft.screen);
+                invsort$PlayerSortBtn = new SortButtonWidget(ButtonType.PLAYER, this.leftPos + this.imageWidth - 20, this.topPos + (playerOnly ? (imageHeight - 95) : 6), SortTarget.PLAYER_INVENTORY, minecraft.screen);
                 invsort$PlayerSortBtn.visible = compatibility.shouldShowSortButton(PLAYER_INVENTORY);
                 this.addRenderableWidget(invsort$PlayerSortBtn);
             } else {
-                invsort$SortBtn = new SortButtonWidget(ButtonType.INVENTORY, this.leftPos + this.imageWidth - 20, this.topPos + (playerOnly ? (imageHeight - 95) : 6), playerOnly, minecraft.screen);
+                invsort$SortBtn = new SortButtonWidget(ButtonType.INVENTORY, this.leftPos + this.imageWidth - 20, this.topPos + (playerOnly ? (imageHeight - 95) : 6), SortTarget.CONTAINER, minecraft.screen);
                 this.addRenderableWidget(invsort$SortBtn);
 
                 if (getConfig().separateButton) { // If separate button is enabled, add a player inventory sort button
-                    invsort$PlayerSortBtn = new SortButtonWidget(ButtonType.PLAYER, invsort$SortBtn.getX(), this.topPos + ((this)).getMiddleHeight(), true, minecraft.screen);
+                    invsort$PlayerSortBtn = new SortButtonWidget(ButtonType.PLAYER, invsort$SortBtn.getX(), this.topPos + ((this)).getMiddleHeight(), SortTarget.PLAYER_INVENTORY, minecraft.screen);
                     invsort$PlayerSortBtn.visible = compatibility.shouldShowSortButton(PLAYER_INVENTORY);
                     this.addRenderableWidget(invsort$PlayerSortBtn);
                 }
@@ -132,12 +133,12 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
 
     @Unique
     private void sortInventory(CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
-        boolean playerOnlyInv = !InventoryHelper.canSortInventory(minecraft.player);
-        if (!playerOnlyInv && getConfig().sortHighlightedItem) {
+        SortTarget target = InventoryHelper.canSortInventory(minecraft.player) ? SortTarget.CONTAINER : SortTarget.PLAYER_INVENTORY;
+        if (target == SortTarget.CONTAINER && getConfig().sortHighlightedItem) {
             if (hoveredSlot != null)
-                playerOnlyInv = hoveredSlot.container instanceof Inventory;
+                target = hoveredSlot.container instanceof Inventory ? SortTarget.PLAYER_INVENTORY : SortTarget.CONTAINER;
         }
-        InventorySortPacket.sendSortPacket(playerOnlyInv);
+        ClientSorts.requestCurrentScreenSort(target);
         callbackInfoReturnable.setReturnValue(true);
     }
 
