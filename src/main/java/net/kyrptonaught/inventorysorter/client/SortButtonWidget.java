@@ -166,23 +166,26 @@ public class SortButtonWidget extends ImageButton {
     public void renderTooltip(GuiGraphicsExtractor context, int mouseX, int mouseY) {
         NewConfigOptions config = getConfig();
         if (config.showTooltips && this.isHovered()) {
+            boolean modifierPressed = isModifierPressed();
+            ScrollBehaviour scrollBehaviour = config.scrollBehaviour;
+            Component sortType = Component.translatable(config.sortType.getTranslationKey()).withStyle(ChatFormatting.BOLD);
             List<Component> lines = new ArrayList<>();
 
-            if ((config.scrollBehaviour == ScrollBehaviour.FREE || config.scrollBehaviour == ScrollBehaviour.DISABLED) && isModifierPressed()) {
+            if ((scrollBehaviour == ScrollBehaviour.FREE || scrollBehaviour == ScrollBehaviour.DISABLED) && modifierPressed) {
                 lines.add(Component.translatable("inventorysorter.sortButton.tooltip.hide"));
             }
 
-            if ((config.scrollBehaviour == ScrollBehaviour.MODIFIER) && isModifierPressed()) {
-                lines.add(Component.translatable("inventorysorter.sortButton.tooltip.sortType", Component.translatable(getConfig().sortType.getTranslationKey()).withStyle(ChatFormatting.BOLD)));
+            if (scrollBehaviour == ScrollBehaviour.MODIFIER && modifierPressed) {
+                lines.add(Component.translatable("inventorysorter.sortButton.tooltip.sortType", sortType));
                 lines.add(Component.translatable("inventorysorter.sortButton.tooltip.help.sortType").withStyle(ChatFormatting.GRAY));
                 lines.add(Component.translatable("inventorysorter.sortButton.tooltip.hide").withStyle(ChatFormatting.GRAY));
             }
 
-            if (!isModifierPressed()) {
-                lines.add(Component.translatable("inventorysorter.sortButton.tooltip.sortType", Component.translatable(getConfig().sortType.getTranslationKey()).withStyle(ChatFormatting.BOLD)));
-                if (config.scrollBehaviour == ScrollBehaviour.MODIFIER) {
+            if (!modifierPressed) {
+                lines.add(Component.translatable("inventorysorter.sortButton.tooltip.sortType", sortType));
+                if (scrollBehaviour == ScrollBehaviour.MODIFIER) {
                     lines.add(Component.translatable("inventorysorter.sortButton.tooltip.help.sortType.modifier", modifierKey.getDisplayName()).withStyle(ChatFormatting.DARK_GRAY));
-                } else if (config.scrollBehaviour != ScrollBehaviour.DISABLED) {
+                } else if (scrollBehaviour != ScrollBehaviour.DISABLED) {
                     lines.add(Component.translatable("inventorysorter.sortButton.tooltip.help.sortType").withStyle(ChatFormatting.DARK_GRAY));
                 }
                 lines.add(Component.translatable("inventorysorter.sortButton.tooltip.help.hide", modifierKey.getDisplayName()).withStyle(ChatFormatting.DARK_GRAY));
