@@ -66,16 +66,16 @@ public abstract class FullWidthTextFieldEntry<T> extends TooltipListEntry<T> {
         this.widgets = Lists.newArrayList(this.textFieldWidget, this.resetButton);
     }
 
+    protected static void setTextFieldWidth(EditBox widget, int width) {
+        widget.setWidth(width);
+    }
+
     public boolean isEdited() {
         return this.isChanged(this.original, this.textFieldWidget.getValue());
     }
 
     protected boolean isChanged(T original, String s) {
         return !String.valueOf(original).equals(s);
-    }
-
-    protected static void setTextFieldWidth(EditBox widget, int width) {
-        widget.setWidth(width);
     }
 
     public void setValue(String s) {

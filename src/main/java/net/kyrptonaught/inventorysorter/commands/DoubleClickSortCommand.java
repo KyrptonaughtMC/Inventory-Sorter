@@ -14,6 +14,7 @@ import static net.kyrptonaught.inventorysorter.InventorySorterMod.SORT_SETTINGS;
 public class DoubleClickSortCommand {
     private static final String SET_KEY = "inventorysorter.cmd.doubleClickSort.set";
     private static final String GET_KEY = "inventorysorter.cmd.doubleClickSort.get";
+
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, LiteralArgumentBuilder<CommandSourceStack> rootCommand) {
 
         dispatcher.register(rootCommand

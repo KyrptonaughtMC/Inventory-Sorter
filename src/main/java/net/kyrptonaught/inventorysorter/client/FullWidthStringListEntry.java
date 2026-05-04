@@ -1,8 +1,9 @@
 package net.kyrptonaught.inventorysorter.client;
 
+import net.minecraft.network.chat.Component;
+
 import java.util.Optional;
 import java.util.function.Supplier;
-import net.minecraft.network.chat.Component;
 
 public class FullWidthStringListEntry extends FullWidthTextFieldEntry<String> {
 

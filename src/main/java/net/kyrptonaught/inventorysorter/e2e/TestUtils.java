@@ -1,10 +1,7 @@
 package net.kyrptonaught.inventorysorter.e2e;
 
 import com.mojang.authlib.GameProfile;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.embedded.EmbeddedChannel;
-import java.util.Map;
-import java.util.UUID;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -19,12 +16,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 
-public class TestUtils {
-    public static boolean IS_SPECTATOR=true;
-    private static ServerPlayer player;
+import java.util.Map;
+import java.util.UUID;
 
-    public record Scenario(ServerPlayer player, ChestBlockEntity chest) {
-    }
+public class TestUtils {
+    public static boolean IS_SPECTATOR = true;
+    private static ServerPlayer player;
 
     private static Component getMessage(String message) {
         return Component.nullToEmpty(message);
@@ -109,5 +106,8 @@ public class TestUtils {
     public static int damageForPercent(Item item, int percent) {
         int maxDamage = item.components().getOrDefault(DataComponents.MAX_DAMAGE, 0);
         return (int) Math.floor(maxDamage * (percent / 100.0));
+    }
+
+    public record Scenario(ServerPlayer player, ChestBlockEntity chest) {
     }
 }

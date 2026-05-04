@@ -1,5 +1,6 @@
 package net.kyrptonaught.inventorysorter.client;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
@@ -17,6 +18,7 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -24,30 +26,31 @@ import java.util.function.Supplier;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.*;
 
-import com.mojang.blaze3d.platform.InputConstants;
-
 public class InventorySorterModClient implements ClientModInitializer {
 
-    private CompatConfig serverConfig = new CompatConfig();
-    private volatile boolean serverIsPresent = false;
-    private ScheduledExecutorService scheduler;
-    public static Identifier PLAYER_INVENTORY = Identifier.parse("player_inventory");
+    public static final InputConstants.Key modifierButton = InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_LCONTROL);
     private static final KeyMapping.Category category = KeyMapping.Category.register(Identifier.fromNamespaceAndPath(InventorySorterMod.MOD_ID, "main"));
-
     public static final KeyMapping configButton = new KeyMapping(
             "inventorysorter.key.config",
             InputConstants.KEY_P,
             category
     );
-
     public static final KeyMapping sortButton = new KeyMapping(
             "inventorysorter.key.sort",
             InputConstants.KEY_P,
             category
     );
+    public static Identifier PLAYER_INVENTORY = Identifier.parse("player_inventory");
+    private CompatConfig serverConfig = new CompatConfig();
+    private volatile boolean serverIsPresent = false;
+    private ScheduledExecutorService scheduler;
 
-    public static final InputConstants.Key modifierButton = InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_LCONTROL);
+    public static void syncConfig() {
+        NewConfigOptions config = getConfig();
 
+        ClientPlayNetworking.send(SortSettings.fromConfig(config));
+        ClientPlayNetworking.send(PlayerSortPrevention.fromConfig(config));
+    }
 
     @Override
     public void onInitializeClient() {
@@ -60,7 +63,6 @@ public class InventorySorterModClient implements ClientModInitializer {
           This is to attach server defined configs to the compatibility layer on the client only
          */
         compatibility.addLoader(new ConfigLoader(() -> serverConfig));
-
 
 
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
@@ -180,13 +182,6 @@ public class InventorySorterModClient implements ClientModInitializer {
         ClientPlayNetworking.registerGlobalReceiver(ServerPresencePacket.ID, (payload, context) -> {
             serverIsPresent = true;
         });
-    }
-
-    public static void syncConfig() {
-        NewConfigOptions config = getConfig();
-
-        ClientPlayNetworking.send(SortSettings.fromConfig(config));
-        ClientPlayNetworking.send(PlayerSortPrevention.fromConfig(config));
     }
 
     private void shutdownScheduler() {

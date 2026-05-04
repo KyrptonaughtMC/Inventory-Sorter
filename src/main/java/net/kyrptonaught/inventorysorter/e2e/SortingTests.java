@@ -2,10 +2,10 @@ package net.kyrptonaught.inventorysorter.e2e;
 
 import com.mojang.authlib.GameProfile;
 import it.unimi.dsi.fastutil.booleans.Boolean2ObjectFunction;
+import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.kyrptonaught.inventorysorter.InventoryHelper;
 import net.kyrptonaught.inventorysorter.SortType;
-import net.kyrptonaught.inventorysorter.e2e.TestUtils.Scenario;
-import net.minecraft.core.Holder;
+import net.kyrptonaught.inventorysorter.e2e.TestUtils.*;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
@@ -13,6 +13,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.BlockItemStateProperties;
@@ -22,10 +23,11 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.GameType;
-import net.fabricmc.fabric.api.gametest.v1.GameTest;
+
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.IntFunction;
+
 import static net.kyrptonaught.inventorysorter.e2e.TestUtils.*;
 
 public class SortingTests {
@@ -124,12 +126,12 @@ public class SortingTests {
         Scenario scenario = setUpScene(ctx, Map.of(
                 5, new ItemStack(Items.EGG, 7),
                 6, new ItemStack(Items.EGG, 8),
-                7, new ItemStack(Items.EGG.builtInRegistryHolder(), 99, changes),
-                9, new ItemStack(Items.EGG.builtInRegistryHolder(), 99, changes),
-                11, new ItemStack(Items.EGG.builtInRegistryHolder(), 99, changes),
-                15, new ItemStack(Items.EGG.builtInRegistryHolder(), 99, changes),
-                19, new ItemStack(Items.EGG.builtInRegistryHolder(), 99, changes),
-                26, new ItemStack(Items.EGG.builtInRegistryHolder(), 99, changes),
+                7, stackWithComponents(Items.EGG, 99, changes),
+                9, stackWithComponents(Items.EGG, 99, changes),
+                11, stackWithComponents(Items.EGG, 99, changes),
+                15, stackWithComponents(Items.EGG, 99, changes),
+                19, stackWithComponents(Items.EGG, 99, changes),
+                26, stackWithComponents(Items.EGG, 99, changes),
                 1, new ItemStack(Items.EGG, 16)
         ));
 
@@ -156,7 +158,7 @@ public class SortingTests {
                 .set(DataComponents.ITEM_NAME, Component.nullToEmpty("omelette"))
                 .build();
 
-        ItemStack omelette = new ItemStack(Items.EGG.builtInRegistryHolder(), 4, changes);
+        ItemStack omelette = stackWithComponents(Items.EGG, 4, changes);
 
         Scenario scenario = setUpScene(ctx, Map.of(
                 5, new ItemStack(Items.EGG, 7),
@@ -204,20 +206,20 @@ public class SortingTests {
     @GameTest()
     public void testDamagedPickaxes(GameTestHelper ctx) {
         ItemStack diamondPick80PercentDamaged = new ItemStack(
-                Holder.direct(Items.DIAMOND_PICKAXE), 1,
-                DataComponentPatch.builder().set(DataComponents.DAMAGE, damageForPercent(Items.DIAMOND_PICKAXE, 20)).build());
+                Items.DIAMOND_PICKAXE, 1);
+        diamondPick80PercentDamaged.applyComponents(DataComponentPatch.builder().set(DataComponents.DAMAGE, damageForPercent(Items.DIAMOND_PICKAXE, 20)).build());
 
         ItemStack diamondPick25PercentDamaged = new ItemStack(
-                Holder.direct(Items.DIAMOND_PICKAXE), 1,
-                DataComponentPatch.builder().set(DataComponents.DAMAGE, damageForPercent(Items.DIAMOND_PICKAXE, 75)).build());
+                Items.DIAMOND_PICKAXE, 1);
+        diamondPick25PercentDamaged.applyComponents(DataComponentPatch.builder().set(DataComponents.DAMAGE, damageForPercent(Items.DIAMOND_PICKAXE, 75)).build());
 
         ItemStack netheritePick75PercentDamaged = new ItemStack(
-                Holder.direct(Items.NETHERITE_PICKAXE), 1,
-                DataComponentPatch.builder().set(DataComponents.DAMAGE, damageForPercent(Items.NETHERITE_PICKAXE, 25)).build());
+                Items.NETHERITE_PICKAXE, 1);
+        netheritePick75PercentDamaged.applyComponents(DataComponentPatch.builder().set(DataComponents.DAMAGE, damageForPercent(Items.NETHERITE_PICKAXE, 25)).build());
 
         ItemStack netheritePick50PercentDamaged = new ItemStack(
-                Holder.direct(Items.NETHERITE_PICKAXE), 1,
-                DataComponentPatch.builder().set(DataComponents.DAMAGE, damageForPercent(Items.NETHERITE_PICKAXE, 50)).build());
+                Items.NETHERITE_PICKAXE, 1);
+        netheritePick50PercentDamaged.applyComponents(DataComponentPatch.builder().set(DataComponents.DAMAGE, damageForPercent(Items.NETHERITE_PICKAXE, 50)).build());
 
         ItemStack netheritePickNotDamaged = new ItemStack(Items.NETHERITE_PICKAXE, 1);
 
@@ -266,23 +268,23 @@ public class SortingTests {
                 DataComponentPatch.builder().set(DataComponents.PROFILE, zombie_konsti).build();
 
         Scenario scenario = setUpScene(ctx, Map.of(
-                0, new ItemStack(Holder.direct(Items.PLAYER_HEAD), 1, zombie_konstiHead),
-                1, new ItemStack(Holder.direct(Items.PLAYER_HEAD), 4, morgant1cHead),
-                2, new ItemStack(Holder.direct(Items.PLAYER_HEAD), 1, houseofmezaHead),
-                3, new ItemStack(Holder.direct(Items.PLAYER_HEAD), 32, kyrptonaughtHead),
+                0, stackWithComponents(Items.PLAYER_HEAD, 1, zombie_konstiHead),
+                1, stackWithComponents(Items.PLAYER_HEAD, 4, morgant1cHead),
+                2, stackWithComponents(Items.PLAYER_HEAD, 1, houseofmezaHead),
+                3, stackWithComponents(Items.PLAYER_HEAD, 32, kyrptonaughtHead),
                 4, new ItemStack(Items.PLAYER_HEAD, 16),
-                5, new ItemStack(Holder.direct(Items.PLAYER_HEAD), 33, kyrptonaughtHead)
+                5, stackWithComponents(Items.PLAYER_HEAD, 33, kyrptonaughtHead)
         ));
 
         InventoryHelper.sortInventory(scenario.player(), false, SortType.NAME);
 
         assertContents(ctx, scenario, Map.of(
-                0, new ItemStack(Holder.direct(Items.PLAYER_HEAD), 1, houseofmezaHead),
-                1, new ItemStack(Holder.direct(Items.PLAYER_HEAD), 64, kyrptonaughtHead),
-                2, new ItemStack(Holder.direct(Items.PLAYER_HEAD), 1, kyrptonaughtHead),
-                3, new ItemStack(Holder.direct(Items.PLAYER_HEAD), 4, morgant1cHead),
+                0, stackWithComponents(Items.PLAYER_HEAD, 1, houseofmezaHead),
+                1, stackWithComponents(Items.PLAYER_HEAD, 64, kyrptonaughtHead),
+                2, stackWithComponents(Items.PLAYER_HEAD, 1, kyrptonaughtHead),
+                3, stackWithComponents(Items.PLAYER_HEAD, 4, morgant1cHead),
                 4, new ItemStack(Items.PLAYER_HEAD, 16),
-                5, new ItemStack(Holder.direct(Items.PLAYER_HEAD), 1, zombie_konstiHead)
+                5, stackWithComponents(Items.PLAYER_HEAD, 1, zombie_konstiHead)
         ));
 
 
@@ -397,27 +399,27 @@ public class SortingTests {
 
 
         Scenario scenario = setUpScene(ctx, Map.of(
-                0, new ItemStack(Holder.direct(Items.OMINOUS_BOTTLE), 12, potionLevel.apply(1)),
-                3, new ItemStack(Holder.direct(Items.OMINOUS_BOTTLE), 42, potionLevel.apply(4)),
-                6, new ItemStack(Holder.direct(Items.OMINOUS_BOTTLE), 34, potionLevel.apply(5)),
-                9, new ItemStack(Holder.direct(Items.OMINOUS_BOTTLE), 55, potionLevel.apply(1)),
-                10, new ItemStack(Holder.direct(Items.OMINOUS_BOTTLE), 3, potionLevel.apply(2)),
-                12, new ItemStack(Holder.direct(Items.OMINOUS_BOTTLE), 58, potionLevel.apply(3)),
-                14, new ItemStack(Holder.direct(Items.OMINOUS_BOTTLE), 45, potionLevel.apply(4)),
-                20, new ItemStack(Holder.direct(Items.OMINOUS_BOTTLE), 5, potionLevel.apply(2)),
-                25, new ItemStack(Holder.direct(Items.OMINOUS_BOTTLE), 11, potionLevel.apply(4))
+                0, stackWithComponents(Items.OMINOUS_BOTTLE, 12, potionLevel.apply(1)),
+                3, stackWithComponents(Items.OMINOUS_BOTTLE, 42, potionLevel.apply(4)),
+                6, stackWithComponents(Items.OMINOUS_BOTTLE, 34, potionLevel.apply(5)),
+                9, stackWithComponents(Items.OMINOUS_BOTTLE, 55, potionLevel.apply(1)),
+                10, stackWithComponents(Items.OMINOUS_BOTTLE, 3, potionLevel.apply(2)),
+                12, stackWithComponents(Items.OMINOUS_BOTTLE, 58, potionLevel.apply(3)),
+                14, stackWithComponents(Items.OMINOUS_BOTTLE, 45, potionLevel.apply(4)),
+                20, stackWithComponents(Items.OMINOUS_BOTTLE, 5, potionLevel.apply(2)),
+                25, stackWithComponents(Items.OMINOUS_BOTTLE, 11, potionLevel.apply(4))
         ));
 
         InventoryHelper.sortInventory(scenario.player(), false, SortType.NAME);
 
         assertContents(ctx, scenario, Map.of(
-                0, new ItemStack(Holder.direct(Items.OMINOUS_BOTTLE), 64, potionLevel.apply(1)),
-                1, new ItemStack(Holder.direct(Items.OMINOUS_BOTTLE), 3, potionLevel.apply(1)),
-                2, new ItemStack(Holder.direct(Items.OMINOUS_BOTTLE), 8, potionLevel.apply(2)),
-                3, new ItemStack(Holder.direct(Items.OMINOUS_BOTTLE), 58, potionLevel.apply(3)),
-                4, new ItemStack(Holder.direct(Items.OMINOUS_BOTTLE), 64, potionLevel.apply(4)),
-                5, new ItemStack(Holder.direct(Items.OMINOUS_BOTTLE), 34, potionLevel.apply(4)),
-                6, new ItemStack(Holder.direct(Items.OMINOUS_BOTTLE), 34, potionLevel.apply(5))
+                0, stackWithComponents(Items.OMINOUS_BOTTLE, 64, potionLevel.apply(1)),
+                1, stackWithComponents(Items.OMINOUS_BOTTLE, 3, potionLevel.apply(1)),
+                2, stackWithComponents(Items.OMINOUS_BOTTLE, 8, potionLevel.apply(2)),
+                3, stackWithComponents(Items.OMINOUS_BOTTLE, 58, potionLevel.apply(3)),
+                4, stackWithComponents(Items.OMINOUS_BOTTLE, 64, potionLevel.apply(4)),
+                5, stackWithComponents(Items.OMINOUS_BOTTLE, 34, potionLevel.apply(4)),
+                6, stackWithComponents(Items.OMINOUS_BOTTLE, 34, potionLevel.apply(5))
         ));
 
         ctx.succeed();
@@ -431,20 +433,26 @@ public class SortingTests {
                 .build();
 
         Scenario scenario = setUpScene(ctx, Map.of(
-                2, new ItemStack(Holder.direct(Items.VAULT), 12, setOminous.apply(false)),
-                12, new ItemStack(Holder.direct(Items.VAULT), 32, setOminous.apply(true)),
-                22, new ItemStack(Holder.direct(Items.VAULT), 10, setOminous.apply(false)),
-                6, new ItemStack(Holder.direct(Items.VAULT), 12, setOminous.apply(false)),
-                3, new ItemStack(Holder.direct(Items.VAULT), 12, setOminous.apply(true))
+                2, stackWithComponents(Items.VAULT, 12, setOminous.apply(false)),
+                12, stackWithComponents(Items.VAULT, 32, setOminous.apply(true)),
+                22, stackWithComponents(Items.VAULT, 10, setOminous.apply(false)),
+                6, stackWithComponents(Items.VAULT, 12, setOminous.apply(false)),
+                3, stackWithComponents(Items.VAULT, 12, setOminous.apply(true))
         ));
 
         InventoryHelper.sortInventory(scenario.player(), false, SortType.NAME);
 
         assertContents(ctx, scenario, Map.of(
-                0, new ItemStack(Holder.direct(Items.VAULT), 34, setOminous.apply(false)),
-                1, new ItemStack(Holder.direct(Items.VAULT), 44, setOminous.apply(true))
+                0, stackWithComponents(Items.VAULT, 34, setOminous.apply(false)),
+                1, stackWithComponents(Items.VAULT, 44, setOminous.apply(true))
         ));
 
         ctx.succeed();
+    }
+
+    private static ItemStack stackWithComponents(Item item, int count, DataComponentPatch components) {
+        ItemStack stack = new ItemStack(item, count);
+        stack.applyComponents(components);
+        return stack;
     }
 }

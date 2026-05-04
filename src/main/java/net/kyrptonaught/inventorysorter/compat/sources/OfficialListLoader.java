@@ -1,5 +1,7 @@
 package net.kyrptonaught.inventorysorter.compat.sources;
 
+import net.minecraft.resources.Identifier;
+
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
@@ -7,7 +9,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
-import net.minecraft.resources.Identifier;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.LOGGER;
 import static net.kyrptonaught.inventorysorter.compat.Compatibility.parseJson;

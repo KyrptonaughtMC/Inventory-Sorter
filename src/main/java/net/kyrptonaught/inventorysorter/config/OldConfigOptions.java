@@ -13,6 +13,7 @@ import static net.kyrptonaught.inventorysorter.InventorySorterMod.MOD_ID;
 
 public class OldConfigOptions {
 
+    public static final String CONFIG_FILE = MOD_ID + "/config.json5";
     public boolean displaySort = true;
     public boolean displayTooltip = true;
     public boolean seperateBtn = true;
@@ -24,16 +25,14 @@ public class OldConfigOptions {
     public Boolean sortMouseHighlighted = true;
     public boolean debugMode = false;
 
-    public static final String CONFIG_FILE = MOD_ID + "/config.json5";
-
-    public void save() throws IOException {
-        LOGGER.info("Saving config to " + CONFIG_FILE + "is deprecated, please use the new config system.");
-    }
-
     public static OldConfigOptions load() throws SyntaxError, IOException {
         Path filePath = ConfigPathResolver.getConfigPath(CONFIG_FILE);
         Jankson jankson = Jankson.builder().build();
         JsonObject original = jankson.load(filePath.toFile());
         return jankson.fromJson(original, OldConfigOptions.class);
+    }
+
+    public void save() throws IOException {
+        LOGGER.info("Saving config to " + CONFIG_FILE + "is deprecated, please use the new config system.");
     }
 }

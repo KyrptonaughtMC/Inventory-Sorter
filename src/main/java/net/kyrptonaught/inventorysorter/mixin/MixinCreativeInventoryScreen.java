@@ -19,7 +19,8 @@ import static net.kyrptonaught.inventorysorter.InventorySorterMod.getConfig;
 public abstract class MixinCreativeInventoryScreen implements SortableContainerScreen {
 
 
-    @Shadow public abstract boolean isInventoryOpen();
+    @Shadow
+    public abstract boolean isInventoryOpen();
 
     @Inject(method = "init", at = @At("TAIL"))
     private void invsort$init(CallbackInfo callbackinfo) {

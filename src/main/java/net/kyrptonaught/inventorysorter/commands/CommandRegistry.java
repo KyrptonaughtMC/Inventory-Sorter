@@ -24,7 +24,7 @@ public class CommandRegistry {
         ReloadCommand.register(dispatcher, rootCommand);
         ScreenIDCommand.register(dispatcher, rootCommand);
 
-        if(registrationEnvironment.includeDedicated) {
+        if (registrationEnvironment.includeDedicated) {
             AdminCommands.register(dispatcher, rootCommand);
         }
     }

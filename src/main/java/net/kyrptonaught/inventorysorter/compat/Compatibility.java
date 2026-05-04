@@ -3,6 +3,7 @@ package net.kyrptonaught.inventorysorter.compat;
 import com.google.gson.Gson;
 import net.kyrptonaught.inventorysorter.compat.sources.CompatibilityLoader;
 import net.minecraft.resources.Identifier;
+
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -20,6 +21,19 @@ public class Compatibility {
     public Compatibility(ArrayList<CompatibilityLoader> loaders) {
         this.loaders = loaders;
         this.load();
+    }
+
+    public static Set<Identifier> parseJson(Reader fileInputStream) {
+        Set<Identifier> identifiers = new HashSet<>();
+        Gson gson = new Gson().newBuilder().create();
+        String[] rawIdentifiers = gson.fromJson(fileInputStream, String[].class);
+
+        for (String rawIdentifier : rawIdentifiers) {
+            Identifier identifier = Identifier.parse(rawIdentifier);
+            identifiers.add(identifier);
+        }
+
+        return identifiers;
     }
 
     public void addLoader(CompatibilityLoader loader) {
@@ -62,27 +76,10 @@ public class Compatibility {
             return false;
         }
 
-        if (playerSortPrevention.contains(inventoryIdentifier.toString())) {
-            return false;
-        }
-
-        return true;
+        return !playerSortPrevention.contains(inventoryIdentifier.toString());
     }
 
     public void addShouldHideSortButton(String identifier) {
         shouldHideSortButtons.add(Identifier.parse(identifier));
-    }
-
-    public static Set<Identifier> parseJson(Reader fileInputStream) {
-        Set<Identifier> identifiers = new HashSet<>();
-        Gson gson = new Gson().newBuilder().create();
-        String[] rawIdentifiers = gson.fromJson(fileInputStream, String[].class);
-
-        for (String rawIdentifier : rawIdentifiers) {
-            Identifier identifier = Identifier.parse(rawIdentifier);
-            identifiers.add(identifier);
-        }
-
-        return identifiers;
     }
 }

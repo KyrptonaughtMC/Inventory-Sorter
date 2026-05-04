@@ -1,5 +1,6 @@
 package net.kyrptonaught.inventorysorter.client;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.kyrptonaught.inventorysorter.ButtonType;
@@ -26,6 +27,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.InventoryMenu;
+import org.jspecify.annotations.NonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -38,9 +41,6 @@ import static net.kyrptonaught.inventorysorter.InventorySorterMod.getConfig;
 import static net.kyrptonaught.inventorysorter.client.InventorySorterModClient.PLAYER_INVENTORY;
 import static net.kyrptonaught.inventorysorter.client.InventorySorterModClient.modifierButton;
 
-import com.mojang.blaze3d.platform.InputConstants;
-import org.jspecify.annotations.NonNull;
-
 @Environment(EnvType.CLIENT)
 public class SortButtonWidget extends ImageButton {
     private static final int BUTTON_WIDTH = 10;
@@ -50,17 +50,16 @@ public class SortButtonWidget extends ImageButton {
     private static final WidgetSprites TEXTURES = new WidgetSprites(
             Identifier.fromNamespaceAndPath(InventorySorterMod.MOD_ID, "textures/gui/button_unfocused.png"),
             Identifier.fromNamespaceAndPath(InventorySorterMod.MOD_ID, "textures/gui/button_focused.png"));
+    // Offset used to align the sort button with the recipe book in the UI.
+    // The value 77 was determined based on the default layout of the Minecraft inventory screen.
+    private static final int RECIPE_BOOK_OFFSET = 77;
+    private static final ScheduledExecutorService debounceExecutor = Executors.newSingleThreadScheduledExecutor();
+    private static ScheduledFuture<?> debounceTask;
     private final ButtonType buttonType;
     private final boolean playerInv;
     private final InputConstants.Key modifierKey;
     private final Screen parentScreen;
-    // Offset used to align the sort button with the recipe book in the UI.
-    // The value 77 was determined based on the default layout of the Minecraft inventory screen.
-    private static final int RECIPE_BOOK_OFFSET = 77;
     private final int initialX;
-
-    private static final ScheduledExecutorService debounceExecutor = Executors.newSingleThreadScheduledExecutor();
-    private static ScheduledFuture<?> debounceTask;
 
     public SortButtonWidget(ButtonType buttonType, int x, int y, boolean playerInv, Screen parent) {
         super(x, y, BUTTON_WIDTH, BUTTON_HEIGHT, TEXTURES, null, net.minecraft.network.chat.Component.literal(""));

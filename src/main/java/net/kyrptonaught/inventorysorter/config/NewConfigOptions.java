@@ -6,6 +6,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.kyrptonaught.inventorysorter.SortType;
 import net.kyrptonaught.inventorysorter.client.InventorySorterModClient;
 import net.kyrptonaught.inventorysorter.compat.config.CompatConfig;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -15,6 +16,8 @@ import static net.kyrptonaught.inventorysorter.InventorySorterMod.MOD_ID;
 
 public class NewConfigOptions extends CompatConfig {
 
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    private static final String CONFIG_FILE = MOD_ID + ".json";
     public boolean showSortButton = true;
     public boolean showTooltips = true;
     public boolean separateButton = true;
@@ -23,19 +26,6 @@ public class NewConfigOptions extends CompatConfig {
     public boolean enableDoubleClickSort = true;
     public boolean sortHighlightedItem = true;
     public ScrollBehaviour scrollBehaviour = ScrollBehaviour.FREE;
-
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private static final String CONFIG_FILE = MOD_ID + ".json";
-
-    public void save() {
-        Path filePath = ConfigPathResolver.getConfigPath(CONFIG_FILE);
-
-        try (FileWriter writer = new FileWriter(filePath.toFile(), StandardCharsets.UTF_8)) {
-            GSON.toJson(this, writer);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     public static NewConfigOptions load() throws IOException {
         Path filePath = ConfigPathResolver.getConfigPath(CONFIG_FILE);
@@ -78,5 +68,15 @@ public class NewConfigOptions extends CompatConfig {
         }
 
         return newOptions;
+    }
+
+    public void save() {
+        Path filePath = ConfigPathResolver.getConfigPath(CONFIG_FILE);
+
+        try (FileWriter writer = new FileWriter(filePath.toFile(), StandardCharsets.UTF_8)) {
+            GSON.toJson(this, writer);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -29,8 +29,6 @@ import java.util.Objects;
 public class InventorySorterMod implements ModInitializer {
     public static final String MOD_ID = "inventorysorter";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-    public static final String VERSION = "VERSION_REPL";
-
     private static NewConfigOptions CONFIG = Config.load();
     public static final Compatibility compatibility = new Compatibility(
             new ArrayList<>(List.of(
@@ -41,16 +39,7 @@ public class InventorySorterMod implements ModInitializer {
                     new RemoteConfigLoader(() -> InventorySorterMod.getConfig().customCompatibilityListDownloadUrl)
             ))
     );
-
-    public static NewConfigOptions getConfig() {
-        return CONFIG;
-    }
-
-    public static void reloadConfig() {
-        CONFIG = Config.load();
-        compatibility.reload();
-    }
-
+    public static final String VERSION = "VERSION_REPL";
     @SuppressWarnings("UnstableApiUsage")
     public static final AttachmentType<SortSettings> SORT_SETTINGS = AttachmentRegistry.create(
             Identifier.fromNamespaceAndPath(MOD_ID, "sort_settings"),
@@ -59,7 +48,6 @@ public class InventorySorterMod implements ModInitializer {
                     .persistent(SortSettings.NBT_CODEC)
                     .copyOnDeath()
     );
-
     @SuppressWarnings("UnstableApiUsage")
     public static final AttachmentType<PlayerSortPrevention> PLAYER_SORT_PREVENTION = AttachmentRegistry.create(
             Identifier.fromNamespaceAndPath(MOD_ID, "player_sort_prevention"),
@@ -68,7 +56,6 @@ public class InventorySorterMod implements ModInitializer {
                     .persistent(PlayerSortPrevention.NBT_CODEC)
                     .copyOnDeath()
     );
-
     /**
      * This attachment is used to tell if the user has used a modded client before. Helps us with figuring
      * out if we need to send configuration to the client or accept the client's settings on the server instead.
@@ -80,13 +67,21 @@ public class InventorySorterMod implements ModInitializer {
                     .persistent(ClientSync.NBT_CODEC)
                     .copyOnDeath()
     );
-
     @SuppressWarnings("UnstableApiUsage")
     public static final AttachmentType<LastSeenVersionPacket> LAST_SEEN_VERSION = AttachmentRegistry.create(
             Identifier.fromNamespaceAndPath(MOD_ID, "last_seen_version"),
             builder -> builder
                     .persistent(LastSeenVersionPacket.NBT_CODEC)
     );
+
+    public static NewConfigOptions getConfig() {
+        return CONFIG;
+    }
+
+    public static void reloadConfig() {
+        CONFIG = Config.load();
+        compatibility.reload();
+    }
 
     @Override
     @SuppressWarnings("UnstableApiUsage")
@@ -119,7 +114,7 @@ public class InventorySorterMod implements ModInitializer {
         ServerPlayConnectionEvents.JOIN.register((handler, server, client) -> {
             ServerPlayer player = handler.getPlayer();
             ServerPlayNetworking.send(player, new ServerPresencePacket());
-            if(!player.hasAttached(LAST_SEEN_VERSION)) {
+            if (!player.hasAttached(LAST_SEEN_VERSION)) {
                 LastSeenVersionPacket.DEFAULT.send(player);
             } else {
                 Objects.requireNonNull(player.getAttached(LAST_SEEN_VERSION)).send(player);

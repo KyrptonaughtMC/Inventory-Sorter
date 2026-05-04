@@ -1,7 +1,5 @@
 package net.kyrptonaught.inventorysorter.client;
 
-import java.net.URI;
-import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.LanguageInfo;
@@ -9,6 +7,9 @@ import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
+
+import java.net.URI;
+import java.util.List;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.MOD_ID;
 

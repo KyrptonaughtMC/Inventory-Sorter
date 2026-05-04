@@ -1,12 +1,13 @@
 package net.kyrptonaught.inventorysorter.compat.sources;
 
-import java.util.Objects;
-import java.util.Set;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.MenuType;
 
-public class PredefinedLoader implements CompatibilityLoader{
+import java.util.Objects;
+import java.util.Set;
+
+public class PredefinedLoader implements CompatibilityLoader {
     @Override
     public Set<Identifier> getPreventSort() {
         return Set.of(

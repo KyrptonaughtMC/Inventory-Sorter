@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import net.kyrptonaught.inventorysorter.compat.config.CompatConfig;
 import net.kyrptonaught.inventorysorter.config.SchemaValidator;
 import net.minecraft.resources.Identifier;
+
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
@@ -16,10 +17,10 @@ import java.util.stream.Collectors;
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.LOGGER;
 
 public class RemoteConfigLoader implements CompatibilityLoader {
+    private static final long CACHE_TTL_MILLIS = 2 * 1000; // 2 seconds small cache TTL
     private final Supplier<String> customCompatibilityListDownloadUrl;
     private CompatConfig config = new CompatConfig();
     private long lastRemoteConfigFetch = 0;
-    private static final long CACHE_TTL_MILLIS = 2 * 1000; // 2 seconds small cache TTL
 
     public RemoteConfigLoader(Supplier<String> customCompatibilityListDownloadUrl) {
         this.customCompatibilityListDownloadUrl = customCompatibilityListDownloadUrl;

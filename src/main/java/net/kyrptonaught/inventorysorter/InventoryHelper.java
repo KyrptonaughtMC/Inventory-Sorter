@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.entity.HopperBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,12 +33,9 @@ import static net.kyrptonaught.inventorysorter.InventorySorterMod.compatibility;
 public class InventoryHelper {
 
     public static final double MAX_LOOKUP_DISTANCE = 6.0D;
+    private static final long TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes in milliseconds
     private static Identifier lastCheckedId;
     private static long lastCheckedTimestamp;
-    private static final long TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes in milliseconds
-
-
-    public record ScreenContext(AbstractContainerMenu handler, Identifier screenId, Container inventory) {}
 
     public static <T> T withTargetedScreenHandler(ServerPlayer player, Function<ScreenContext, T> action) {
         HitResult hit = player.pick(MAX_LOOKUP_DISTANCE, 1.0F, false);
@@ -84,7 +82,6 @@ public class InventoryHelper {
             screenHandler.removed(player);
         }
     }
-
 
     public static Component sortTargetedBlock(ServerPlayer player, SortType sortType) {
 
@@ -269,5 +266,8 @@ public class InventoryHelper {
             lastCheckedId = null;
         }
         return Optional.ofNullable(lastCheckedId);
+    }
+
+    public record ScreenContext(AbstractContainerMenu handler, Identifier screenId, Container inventory) {
     }
 }

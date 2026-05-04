@@ -48,6 +48,15 @@ public record SortSettings(
 
     public static final SortSettings DEFAULT = new SortSettings(true, false, true, SortType.NAME);
 
+    public static SortSettings fromConfig(NewConfigOptions config) {
+        return new SortSettings(
+                config.sortHighlightedItem,
+                config.sortPlayerInventory,
+                config.enableDoubleClickSort,
+                config.sortType
+        );
+    }
+
     @Override
     public Type<? extends CustomPacketPayload> type() {
         return ID;
@@ -67,15 +76,6 @@ public record SortSettings(
 
     public SortSettings withSortHighlightedInventory(boolean enabled) {
         return new SortSettings(enabled, this.sortPlayerInventory(), this.enableDoubleClick(), this.sortType());
-    }
-
-    public static SortSettings fromConfig(NewConfigOptions config) {
-        return new SortSettings(
-                config.sortHighlightedItem,
-                config.sortPlayerInventory,
-                config.enableDoubleClickSort,
-                config.sortType
-        );
     }
 
     public void sync(ServerPlayer player) {

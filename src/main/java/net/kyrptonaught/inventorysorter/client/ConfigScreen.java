@@ -1,5 +1,6 @@
 package net.kyrptonaught.inventorysorter.client;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import gg.meza.supporters.clothconfig.SupportCategory;
 import me.shedaniel.clothconfig2.api.AbstractConfigListEntry;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
@@ -18,12 +19,11 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
+
 import java.util.*;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.*;
 import static net.kyrptonaught.inventorysorter.client.InventorySorterModClient.modifierButton;
-
-import com.mojang.blaze3d.platform.InputConstants;
 
 public class ConfigScreen {
 

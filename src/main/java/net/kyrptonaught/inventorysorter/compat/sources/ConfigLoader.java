@@ -2,6 +2,7 @@ package net.kyrptonaught.inventorysorter.compat.sources;
 
 import net.kyrptonaught.inventorysorter.compat.config.CompatConfig;
 import net.minecraft.resources.Identifier;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -9,8 +10,8 @@ import java.util.stream.Collectors;
 
 public class ConfigLoader implements CompatibilityLoader {
     private final Supplier<CompatConfig> config;
-    private Set<Identifier> preventSort = new HashSet<>();
-    private Set<Identifier> shouldHideSortButtons = new HashSet<>();
+    private final Set<Identifier> preventSort = new HashSet<>();
+    private final Set<Identifier> shouldHideSortButtons = new HashSet<>();
 
     public ConfigLoader(Supplier<CompatConfig> config) {
         this.config = config;

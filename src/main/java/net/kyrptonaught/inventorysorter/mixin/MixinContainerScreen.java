@@ -5,7 +5,6 @@ import net.fabricmc.api.Environment;
 import net.kyrptonaught.inventorysorter.ButtonType;
 import net.kyrptonaught.inventorysorter.InventoryHelper;
 import net.kyrptonaught.inventorysorter.InventorySorterMod;
-import net.kyrptonaught.inventorysorter.client.InventorySorterModClient;
 import net.kyrptonaught.inventorysorter.client.SortButtonWidget;
 import net.kyrptonaught.inventorysorter.client.SortableContainerScreen;
 import net.kyrptonaught.inventorysorter.network.InventorySortPacket;
@@ -30,7 +29,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import static net.kyrptonaught.inventorysorter.InventorySorterMod.*;
+import static net.kyrptonaught.inventorysorter.InventorySorterMod.compatibility;
+import static net.kyrptonaught.inventorysorter.InventorySorterMod.getConfig;
 import static net.kyrptonaught.inventorysorter.client.InventorySorterModClient.PLAYER_INVENTORY;
 import static net.kyrptonaught.inventorysorter.client.InventorySorterModClient.sortButton;
 
@@ -97,7 +97,7 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
             callbackInfoReturnable.setReturnValue(true);
             return;
         }
-        if(sortButton.matchesMouse(click)) {
+        if (sortButton.matchesMouse(click)) {
             sortInventory(callbackInfoReturnable);
         }
 
@@ -113,7 +113,7 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
         // Keybind check for key bindings, client only
         if (minecraft == null || minecraft.player == null) return;
 
-        if(sortButton.matches(input)) {
+        if (sortButton.matches(input)) {
             sortInventory(callbackInfoReturnable);
         }
     }
@@ -149,7 +149,7 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
                 invsort$PlayerSortBtn.visible = shouldShow && compatibility.shouldShowSortButton(PLAYER_INVENTORY);
             }
 
-        }  catch (UnsupportedOperationException e) {
+        } catch (UnsupportedOperationException e) {
             InventorySorterMod.LOGGER.debug("Unable to get screen ID for sort button visibility check", e);
 
             if (invsort$PlayerSortBtn != null) {
@@ -162,6 +162,7 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
     public SortButtonWidget inventorySorter$getSortButton() {
         return invsort$SortBtn;
     }
+
     public SortButtonWidget inventorySorter$getPlayerSortButton() {
         return invsort$PlayerSortBtn;
     }
