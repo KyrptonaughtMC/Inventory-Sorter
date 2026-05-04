@@ -3,10 +3,7 @@ package net.kyrptonaught.inventorysorter.client;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
-import net.kyrptonaught.inventorysorter.InventorySorterMod;
-import net.kyrptonaught.inventorysorter.compat.config.CompatConfig;
 import net.kyrptonaught.inventorysorter.compat.sources.ConfigLoader;
-import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.kyrptonaught.inventorysorter.network.*;
 import net.kyrptonaught.inventorysorter.client.platform.ClientPlatformServices;
 import net.kyrptonaught.inventorysorter.platform.PlatformServices;
@@ -24,8 +21,7 @@ import static net.kyrptonaught.inventorysorter.InventorySorterMod.*;
 public class InventorySorterModClient implements ClientModInitializer {
 
     public static Identifier PLAYER_INVENTORY = Identifier.parse("player_inventory");
-    private CompatConfig serverConfig = new CompatConfig();
-    private volatile boolean serverIsPresent = false;
+    private final ClientPacketReceivers clientPacketReceivers = new ClientPacketReceivers();
     private ScheduledExecutorService scheduler;
 
     public static void syncConfig() {
@@ -41,7 +37,7 @@ public class InventorySorterModClient implements ClientModInitializer {
         /*
           This is to attach server defined configs to the compatibility layer on the client only
          */
-        compatibility.addLoader(new ConfigLoader(() -> serverConfig));
+        compatibility.addLoader(new ConfigLoader(clientPacketReceivers::serverConfig));
 
 
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
@@ -58,7 +54,7 @@ public class InventorySorterModClient implements ClientModInitializer {
 
         ClientTickEvents.END_CLIENT_TICK.register(this::handleClientTick);
 
-        registerClientReceivers();
+        clientPacketReceivers.register(PlatformServices.NETWORK);
     }
 
     private void handleClientTick(Minecraft client) {
@@ -71,56 +67,8 @@ public class InventorySorterModClient implements ClientModInitializer {
         );
     }
 
-    private void registerClientReceivers() {
-        PlatformServices.NETWORK.registerClientReceivers(
-                this::applySortSettings,
-                this::applyPlayerSortPrevention,
-                this::applyHideButton,
-                InventorySorterMod::reloadConfig,
-                this::handleLastSeenVersion,
-                this::handleServerPresence
-        );
-    }
-
-    private void applySortSettings(SortSettings payload) {
-        NewConfigOptions currentConfig = getConfig();
-        currentConfig.enableDoubleClickSort = payload.enableDoubleClick();
-        currentConfig.sortType = payload.sortType();
-        currentConfig.save();
-    }
-
-    /*
-      This happens when the client connects to a server for the first time.
-      It's to sync the server's config to the client if the user has added any sort
-      preventions for themselves.
-     */
-    private void applyPlayerSortPrevention(PlayerSortPrevention payload) {
-        NewConfigOptions currentConfig = getConfig();
-        currentConfig.preventSortForScreens.retainAll(payload.preventSortForScreens());
-        payload.preventSortForScreens().forEach(currentConfig::disableSortForScreen);
-        currentConfig.save();
-        compatibility.reload();
-    }
-
-    /*
-      If the server owners have defined any screens that should have the sort button hidden,
-      this is how we sync that to the client and keep it separate from the player's config.
-     */
-    private void applyHideButton(HideButton payload) {
-        serverConfig.hideButtonsForScreens = payload.hideButtonForScreens().stream().toList();
-        compatibility.reload();
-    }
-
-    private void handleLastSeenVersion(LastSeenVersionPacket payload) {
-        TranslationReminder.notifyIfOutdated(Minecraft.getInstance(), payload, VERSION);
-    }
-
-    private void handleServerPresence() {
-        serverIsPresent = true;
-    }
-
     private void handleClientJoin(Minecraft client) {
-        serverIsPresent = false;
+        clientPacketReceivers.resetServerState();
         scheduler = Executors.newSingleThreadScheduledExecutor();
 
         PlatformServices.NETWORK.sendToServer(new ClientSync(true));
@@ -132,10 +80,10 @@ public class InventorySorterModClient implements ClientModInitializer {
     private void scheduleMissingServerWarning(Minecraft client) {
         // Two-stage check: first at 5 seconds, then at 25 seconds if still no server
         scheduler.schedule(() -> {
-            if (!serverIsPresent) {
+            if (!clientPacketReceivers.serverIsPresent()) {
                 // First check at 5 seconds - schedule another check at 25 seconds
                 scheduler.schedule(() -> {
-                    if (!serverIsPresent && client.player != null) {
+                    if (!clientPacketReceivers.serverIsPresent() && client.player != null) {
                         client.execute(() -> client.player.sendSystemMessage(
                                 Component.literal("[Inventory Sorter] ").withStyle(style -> style.withBold(true).withColor(ChatFormatting.AQUA))
                                         .append(Component.translatable("inventorysorter.warning.missing-server").withStyle(style -> style.withBold(false).withColor(ChatFormatting.YELLOW))
@@ -147,9 +95,8 @@ public class InventorySorterModClient implements ClientModInitializer {
     }
 
     private void resetServerStateOnDisconnect() {
-        serverConfig = new CompatConfig();
+        clientPacketReceivers.resetServerState();
         compatibility.reload();
-        serverIsPresent = false;
         shutdownScheduler();
     }
 
