@@ -22,7 +22,6 @@ import net.minecraft.resources.Identifier;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.*;
 
@@ -111,8 +110,8 @@ public class InventorySorterModClient implements ClientModInitializer {
                     return false;
                 }
 
-                boolean inventoryButtonScrolled = scrollButton(innerScreen.inventorySorter$getSortButton(), x, y, verticalAmount, horizontalAmount);
-                boolean playerButtonScrolled = scrollButton(innerScreen.inventorySorter$getPlayerSortButton(), x, y, verticalAmount, horizontalAmount);
+                boolean inventoryButtonScrolled = SortButtonWidget.scrollIfHovered(innerScreen.inventorySorter$getSortButton(), x, y, verticalAmount, horizontalAmount);
+                boolean playerButtonScrolled = SortButtonWidget.scrollIfHovered(innerScreen.inventorySorter$getPlayerSortButton(), x, y, verticalAmount, horizontalAmount);
                 return inventoryButtonScrolled || playerButtonScrolled;
             });
         });
@@ -120,15 +119,7 @@ public class InventorySorterModClient implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register((client) -> {
             InputConstants.Key config = KeyMappingHelper.getBoundKeyOf(configButton);
             InputConstants.Key sort = KeyMappingHelper.getBoundKeyOf(sortButton);
-            Supplier<Boolean> keyToCheck = configButton::consumeClick;
-
-            if (config.getValue() == sort.getValue()) {
-                keyToCheck = () -> sortButton.consumeClick() || configButton.consumeClick();
-            }
-
-            if (keyToCheck.get()) {
-                client.setScreen(ConfigScreen.getConfigScreen(client.screen));
-            }
+            ConfigScreen.openIfConfigKeyPressed(client, configButton, sortButton, config, sort);
         });
 
         PlatformServices.NETWORK.registerClientReceivers(
@@ -180,14 +171,6 @@ public class InventorySorterModClient implements ClientModInitializer {
 
     private void handleServerPresence() {
         serverIsPresent = true;
-    }
-
-    private static boolean scrollButton(SortButtonWidget button, double x, double y, double verticalAmount, double horizontalAmount) {
-        if (button == null || !button.visible || !button.isHovered()) {
-            return false;
-        }
-
-        return button.mouseScrolled(x, y, verticalAmount, horizontalAmount);
     }
 
     private void shutdownScheduler() {

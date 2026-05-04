@@ -151,6 +151,14 @@ public class SortButtonWidget extends ImageButton {
 
     }
 
+    public static boolean scrollIfHovered(SortButtonWidget button, double x, double y, double verticalAmount, double horizontalAmount) {
+        if (button == null || !button.visible || !button.isHovered()) {
+            return false;
+        }
+
+        return button.mouseScrolled(x, y, verticalAmount, horizontalAmount);
+    }
+
     private boolean isModifierPressed() {
         return InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), modifierKey.getValue());
     }

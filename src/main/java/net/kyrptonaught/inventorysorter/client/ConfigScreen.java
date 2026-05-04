@@ -14,6 +14,7 @@ import net.kyrptonaught.inventorysorter.client.clothconfig.ContainerEntry;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.kyrptonaught.inventorysorter.config.ScrollBehaviour;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -49,6 +50,20 @@ public class ConfigScreen {
 
     public static Component toggleYesNoState(boolean state) {
         return state ? yes() : no();
+    }
+
+    public static void openIfConfigKeyPressed(Minecraft client, KeyMapping configButton, KeyMapping sortButton, InputConstants.Key configKey, InputConstants.Key sortKey) {
+        if (consumeConfigScreenClick(configButton, sortButton, configKey, sortKey)) {
+            client.setScreen(getConfigScreen(client.screen));
+        }
+    }
+
+    static boolean consumeConfigScreenClick(KeyMapping configButton, KeyMapping sortButton, InputConstants.Key configKey, InputConstants.Key sortKey) {
+        if (configKey.getValue() == sortKey.getValue()) {
+            return sortButton.consumeClick() || configButton.consumeClick();
+        }
+
+        return configButton.consumeClick();
     }
 
     private static List<AbstractConfigListEntry<?>> buildCompatEditor(ConfigEntryBuilder builder, NewConfigOptions config) {
