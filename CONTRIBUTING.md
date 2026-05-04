@@ -42,3 +42,12 @@ To make sure that the project tests and builds correctly:
 ### DO NOT
 
 Do not run traditional gradle compile tasks. The project uses a custom build process that includes additional steps beyond compilation. Running standard compile tasks may lead to incomplete builds and test failures.
+
+## Documentation
+
+- For the project, look in the docs folder.
+- For fabric, use: https://docs.fabricmc.net/develop/
+- For neoforge, use: https://docs.neoforged.net/docs/gettingstarted/
+- For Minecraft: use the embedded code itself
+- For Stonecraft: https://stonecraft.meza.gg/
+- For Stonecutter: https://stonecutter.kikugie.dev/wiki/
