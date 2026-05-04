@@ -39,15 +39,14 @@ public class TranslationReminder {
             ClickEvent.OpenUrl clickEvent = new ClickEvent.OpenUrl(crowdinUri);
             HoverEvent.ShowText showText = new HoverEvent.ShowText(crowdinTooltip);
 
-            client.player.displayClientMessage(
+            client.player.sendSystemMessage(
                     Component.translatable(MOD_ID + ".cmd.translate", Component.literal("Inventory Sorter").withStyle(style -> style.withBold(true).withColor(ChatFormatting.GOLD))).withStyle(style -> style.withColor(ChatFormatting.AQUA))
                             .append(Component.literal("\n\n"))
                             .append(Component.translatable(MOD_ID + ".cmd.crowdin").withStyle(style -> style.withBold(true)
                                     .withColor(ChatFormatting.BLUE)
                                     .withUnderlined(true)
                                     .withHoverEvent(showText)
-                                    .withClickEvent(clickEvent))),
-                    false
+                                    .withClickEvent(clickEvent)))
             );
         }
     }

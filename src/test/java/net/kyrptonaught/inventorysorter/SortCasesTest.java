@@ -1,7 +1,7 @@
 package net.kyrptonaught.inventorysorter;
 
 import net.minecraft.SharedConstants;
-import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.world.item.ItemStack;
@@ -51,10 +51,8 @@ public class SortCasesTest {
     }
 
     private ItemStack createStackWithName(String name) {
-        DataComponentPatch changes = DataComponentPatch.builder()
-                .set(ITEM_NAME, Component.nullToEmpty(name))
-                .build();
-
-        return new ItemStack(Items.EGG.builtInRegistryHolder(), 4, changes);
+        ItemStack stack = new ItemStack(Holder.direct(Items.EGG), 4);
+        stack.set(ITEM_NAME, Component.nullToEmpty(name));
+        return stack;
     }
 }

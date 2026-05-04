@@ -2,7 +2,7 @@ package net.kyrptonaught.inventorysorter.client;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
@@ -53,8 +53,8 @@ public class InventorySorterModClient implements ClientModInitializer {
     public void onInitializeClient() {
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdownScheduler));
 
-        KeyBindingHelper.registerKeyBinding(configButton);
-        KeyBindingHelper.registerKeyBinding(sortButton);
+        KeyMappingHelper.registerKeyMapping(configButton);
+        KeyMappingHelper.registerKeyMapping(sortButton);
 
         /*
           This is to attach server defined configs to the compatibility layer on the client only
@@ -76,10 +76,10 @@ public class InventorySorterModClient implements ClientModInitializer {
                     // First check at 5 seconds - schedule another check at 25 seconds
                     scheduler.schedule(() -> {
                         if (!serverIsPresent && client.player != null) {
-                            client.execute(() -> client.player.displayClientMessage(
+                            client.execute(() -> client.player.sendSystemMessage(
                                     Component.literal("[Inventory Sorter] ").withStyle(style -> style.withBold(true).withColor(ChatFormatting.AQUA))
                                             .append(Component.translatable("inventorysorter.warning.missing-server").withStyle(style -> style.withBold(false).withColor(ChatFormatting.YELLOW))
-                                            ), false));
+                                            )));
                         }
                     }, 20, TimeUnit.SECONDS);
                 }
@@ -123,8 +123,8 @@ public class InventorySorterModClient implements ClientModInitializer {
         });
 
         ClientTickEvents.END_CLIENT_TICK.register((client) -> {
-            InputConstants.Key config = KeyBindingHelper.getBoundKeyOf(configButton);
-            InputConstants.Key sort = KeyBindingHelper.getBoundKeyOf(sortButton);
+            InputConstants.Key config = KeyMappingHelper.getBoundKeyOf(configButton);
+            InputConstants.Key sort = KeyMappingHelper.getBoundKeyOf(sortButton);
             Supplier<Boolean> keyToCheck = configButton::consumeClick;
 
             if (config.getValue() == sort.getValue()) {

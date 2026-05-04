@@ -93,19 +93,19 @@ public class InventorySorterMod implements ModInitializer {
     public void onInitialize() {
         CommandRegistrationCallback.EVENT.register(CommandRegistry::register);
 
-        PayloadTypeRegistry.playC2S().register(ClientSync.ID, ClientSync.CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(ClientSync.ID, ClientSync.CODEC);
 
-        PayloadTypeRegistry.playS2C().register(LastSeenVersionPacket.ID, LastSeenVersionPacket.CODEC);
-        PayloadTypeRegistry.playS2C().register(ServerPresencePacket.ID, ServerPresencePacket.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(LastSeenVersionPacket.ID, LastSeenVersionPacket.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(ServerPresencePacket.ID, ServerPresencePacket.CODEC);
 
-        PayloadTypeRegistry.playS2C().register(HideButton.ID, HideButton.CODEC);
-        PayloadTypeRegistry.playS2C().register(ReloadConfigPacket.ID, ReloadConfigPacket.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(HideButton.ID, HideButton.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(ReloadConfigPacket.ID, ReloadConfigPacket.CODEC);
 
-        PayloadTypeRegistry.playC2S().register(PlayerSortPrevention.ID, PlayerSortPrevention.CODEC);
-        PayloadTypeRegistry.playS2C().register(PlayerSortPrevention.ID, PlayerSortPrevention.CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(PlayerSortPrevention.ID, PlayerSortPrevention.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(PlayerSortPrevention.ID, PlayerSortPrevention.CODEC);
 
-        PayloadTypeRegistry.playC2S().register(SortSettings.ID, SortSettings.CODEC);
-        PayloadTypeRegistry.playS2C().register(SortSettings.ID, SortSettings.CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(SortSettings.ID, SortSettings.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(SortSettings.ID, SortSettings.CODEC);
 
         InventorySortPacket.registerReceivePacket();
 

@@ -25,9 +25,9 @@ stonecutter {
             for (it in loaders) version("$version-$it", version)
         }
 
-        mc("1.21.11", "fabric")
+        mc("26.1", "fabric")
 
-        vcsVersion = "1.21.11-fabric"
+        vcsVersion = "26.1-fabric"
     }
     create(rootProject)
 }

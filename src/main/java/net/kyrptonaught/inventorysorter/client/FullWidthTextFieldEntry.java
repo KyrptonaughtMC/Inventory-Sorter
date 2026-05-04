@@ -6,13 +6,15 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.network.chat.Component;
+import org.jspecify.annotations.NonNull;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -47,13 +49,13 @@ public abstract class FullWidthTextFieldEntry<T> extends TooltipListEntry<T> {
         this.defaultValue = defaultValue;
         this.original = original;
         this.textFieldWidget = new EditBox(Minecraft.getInstance().font, 0, 0, 148, 18, Component.empty()) {
-            public void renderWidget(GuiGraphics graphics, int int_1, int int_2, float float_1) {
+            public void extractWidgetRenderState(@NonNull GuiGraphicsExtractor graphics, int int_1, int int_2, float float_1) {
                 this.setFocused(FullWidthTextFieldEntry.this.isSelected && FullWidthTextFieldEntry.this.getFocused() == this);
                 FullWidthTextFieldEntry.this.textFieldPreRender(this);
-                super.renderWidget(graphics, int_1, int_2, float_1);
+                super.extractWidgetRenderState(graphics, int_1, int_2, float_1);
             }
 
-            public void insertText(String string_1) {
+            public void insertText(@NonNull String string_1) {
                 super.insertText(FullWidthTextFieldEntry.this.stripAddText(string_1));
             }
         };
@@ -99,8 +101,8 @@ public abstract class FullWidthTextFieldEntry<T> extends TooltipListEntry<T> {
 
         If you do want labels, uncomment all the lines that are commented out in this method.
      */
-    public void render(GuiGraphics graphics, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isHovered, float delta) {
-        super.render(graphics, index, y, x, entryWidth, entryHeight, mouseX, mouseY, isHovered, delta);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isHovered, float delta) {
+        super.extractRenderState(graphics, index, y, x, entryWidth, entryHeight, mouseX, mouseY, isHovered, delta);
         this.resetButton.active = this.isEditable() && this.getDefaultValue().isPresent() && !this.isMatchDefault(this.textFieldWidget.getValue());
         this.resetButton.setY(y);
         this.textFieldWidget.setEditable(this.isEditable());
@@ -119,8 +121,8 @@ public abstract class FullWidthTextFieldEntry<T> extends TooltipListEntry<T> {
         }
 
         setTextFieldWidth(this.textFieldWidget, entryWidth - labelWidth - this.resetButton.getWidth() - 2 * padding);
-        this.resetButton.render(graphics, mouseX, mouseY, delta);
-        this.textFieldWidget.render(graphics, mouseX, mouseY, delta);
+        this.resetButton.extractRenderState(graphics, mouseX, mouseY, delta);
+        this.textFieldWidget.extractRenderState(graphics, mouseX, mouseY, delta);
     }
 
     protected boolean isMatchDefault(String text) {

@@ -26,7 +26,7 @@ public record InventorySortPacket(boolean shouldSortPlayerInventory, int sortTyp
     }
 
     public static void registerReceivePacket() {
-        PayloadTypeRegistry.playC2S().register(InventorySortPacket.ID, InventorySortPacket.CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(InventorySortPacket.ID, InventorySortPacket.CODEC);
         ServerPlayNetworking.registerGlobalReceiver(InventorySortPacket.ID, ((payload, context) -> {
             SortType sortType = SortType.values()[payload.sortType];
             ServerPlayer player = context.player();

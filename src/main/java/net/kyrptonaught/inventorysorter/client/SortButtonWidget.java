@@ -13,7 +13,7 @@ import net.kyrptonaught.inventorysorter.network.InventorySortPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.components.toasts.SystemToast;
@@ -41,6 +41,7 @@ import static net.kyrptonaught.inventorysorter.client.InventorySorterModClient.P
 import static net.kyrptonaught.inventorysorter.client.InventorySorterModClient.modifierButton;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import org.jspecify.annotations.NonNull;
 
 @Environment(EnvType.CLIENT)
 public class SortButtonWidget extends ImageButton {
@@ -102,8 +103,7 @@ public class SortButtonWidget extends ImageButton {
     }
 
     @Override
-
-    public void renderContents(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
+    public void extractContents(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {
         int offset = 0;
         if (!this.visible) return;
 
@@ -167,7 +167,7 @@ public class SortButtonWidget extends ImageButton {
     }
 
 
-    public void renderTooltip(GuiGraphics context, int mouseX, int mouseY) {
+    public void renderTooltip(GuiGraphicsExtractor context, int mouseX, int mouseY) {
         NewConfigOptions config = getConfig();
         if (config.showTooltips && this.isHovered()) {
             Minecraft instance = Minecraft.getInstance();
