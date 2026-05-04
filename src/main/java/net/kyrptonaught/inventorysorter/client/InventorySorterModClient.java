@@ -43,10 +43,7 @@ public class InventorySorterModClient implements ClientModInitializer {
     private ScheduledExecutorService scheduler;
 
     public static void syncConfig() {
-        NewConfigOptions config = getConfig();
-
-        PlatformServices.NETWORK.sendToServer(SortSettings.fromConfig(config));
-        PlatformServices.NETWORK.sendToServer(PlayerSortPrevention.fromConfig(config));
+        ClientConfigSync.syncConfigToServer(getConfig(), PlatformServices.NETWORK);
     }
 
     @Override
