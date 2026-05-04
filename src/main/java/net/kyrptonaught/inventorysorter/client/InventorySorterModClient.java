@@ -5,8 +5,6 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
-import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
-import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents;
 import net.kyrptonaught.inventorysorter.InventorySorterMod;
 import net.kyrptonaught.inventorysorter.compat.config.CompatConfig;
 import net.kyrptonaught.inventorysorter.compat.sources.ConfigLoader;
@@ -74,17 +72,6 @@ public class InventorySorterModClient implements ClientModInitializer {
               This is to prevent configs from one server from being used on another server.
              */
             resetServerStateOnDisconnect();
-        });
-
-        ScreenEvents.BEFORE_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
-            /*
-                Using this in favor of injecting into the screen mouse scroll event due to mod compatibility issues.
-                Some mods completely override the mouse scroll event, which can cause issues with the sort button.
-                This way, we ensure that the sort button's scroll functionality is always checked after the screen is initialized.
-            */
-            ScreenMouseEvents.afterMouseScroll(screen).register((scr, x, y, horizontalAmount, verticalAmount, consumed) ->
-                    SortButtonWidget.scrollScreenButtonsIfHovered(scr, x, y, verticalAmount, horizontalAmount)
-            );
         });
 
         ClientTickEvents.END_CLIENT_TICK.register((client) -> {

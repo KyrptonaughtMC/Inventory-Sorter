@@ -117,6 +117,19 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
         }
     }
 
+    @Inject(method = "mouseScrolled", at = @At("TAIL"), cancellable = true)
+    private void invsort$mouseScrolled(double mouseX, double mouseY, double verticalAmount, double horizontalAmount, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
+        if (callbackInfoReturnable.getReturnValue()) {
+            return;
+        }
+
+        boolean inventoryButtonScrolled = SortButtonWidget.scrollIfHovered(invsort$SortBtn, mouseX, mouseY, verticalAmount, horizontalAmount);
+        boolean playerButtonScrolled = SortButtonWidget.scrollIfHovered(invsort$PlayerSortBtn, mouseX, mouseY, verticalAmount, horizontalAmount);
+        if (inventoryButtonScrolled || playerButtonScrolled) {
+            callbackInfoReturnable.setReturnValue(true);
+        }
+    }
+
     @Unique
     private void sortInventory(CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
         boolean playerOnlyInv = !InventoryHelper.canSortInventory(minecraft.player);
