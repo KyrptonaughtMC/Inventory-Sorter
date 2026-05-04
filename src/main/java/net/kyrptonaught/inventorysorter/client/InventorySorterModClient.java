@@ -71,13 +71,15 @@ public class InventorySorterModClient implements ClientModInitializer {
             resetServerStateOnDisconnect();
         });
 
-        ClientTickEvents.END_CLIENT_TICK.register((client) -> {
-            InputConstants.Key config = KeyMappingHelper.getBoundKeyOf(configButton);
-            InputConstants.Key sort = KeyMappingHelper.getBoundKeyOf(sortButton);
-            ConfigScreen.openIfConfigKeyPressed(client, configButton, sortButton, config, sort);
-        });
+        ClientTickEvents.END_CLIENT_TICK.register(this::handleClientTick);
 
         registerClientReceivers();
+    }
+
+    private void handleClientTick(Minecraft client) {
+        InputConstants.Key config = KeyMappingHelper.getBoundKeyOf(configButton);
+        InputConstants.Key sort = KeyMappingHelper.getBoundKeyOf(sortButton);
+        ConfigScreen.openIfConfigKeyPressed(client, configButton, sortButton, config, sort);
     }
 
     private void registerClientReceivers() {
