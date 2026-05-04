@@ -24,6 +24,7 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.InventoryMenu;
 import java.util.ArrayList;
 import java.util.List;
@@ -133,17 +134,10 @@ public class SortButtonWidget extends ImageButton {
             return false;
         }
 
-        int current = config.sortType.ordinal();
-        if (verticalAmount > 0) {
-            current++;
-            if (current >= SortType.values().length)
-                current = 0;
-        } else {
-            current--;
-            if (current < 0)
-                current = SortType.values().length - 1;
-        }
-        config.sortType = SortType.values()[current];
+        SortType[] sortTypes = SortType.values();
+        int direction = verticalAmount > 0 ? 1 : -1;
+        int current = Mth.positiveModulo(config.sortType.ordinal() + direction, sortTypes.length);
+        config.sortType = sortTypes[current];
 
         if (debounceTask != null) {
             debounceTask.cancel(false);
