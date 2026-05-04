@@ -7,14 +7,8 @@ import net.kyrptonaught.inventorysorter.compat.sources.ConfigLoader;
 import net.kyrptonaught.inventorysorter.network.*;
 import net.kyrptonaught.inventorysorter.client.platform.ClientPlatformServices;
 import net.kyrptonaught.inventorysorter.platform.PlatformServices;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.*;
 
@@ -22,7 +16,7 @@ public class InventorySorterModClient implements ClientModInitializer {
 
     public static Identifier PLAYER_INVENTORY = Identifier.parse("player_inventory");
     private final ClientPacketReceivers clientPacketReceivers = new ClientPacketReceivers();
-    private ScheduledExecutorService scheduler;
+    private final ClientServerSession clientServerSession = new ClientServerSession(clientPacketReceivers);
 
     public static void syncConfig() {
         ClientConfigSync.syncConfigToServer(getConfig(), PlatformServices.NETWORK);
@@ -30,7 +24,7 @@ public class InventorySorterModClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        Runtime.getRuntime().addShutdownHook(new Thread(this::shutdownScheduler));
+        Runtime.getRuntime().addShutdownHook(new Thread(clientServerSession::shutdown));
 
         ClientPlatformServices.KEY_MAPPINGS.register();
 
@@ -41,15 +35,11 @@ public class InventorySorterModClient implements ClientModInitializer {
 
 
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
-            handleClientJoin(client);
+            clientServerSession.join(client);
         });
 
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
-            /*
-              This is to clear the server defined configs when the client disconnects from a server.
-              This is to prevent configs from one server from being used on another server.
-             */
-            resetServerStateOnDisconnect();
+            clientServerSession.disconnect();
         });
 
         ClientTickEvents.END_CLIENT_TICK.register(this::handleClientTick);
@@ -67,50 +57,4 @@ public class InventorySorterModClient implements ClientModInitializer {
         );
     }
 
-    private void handleClientJoin(Minecraft client) {
-        clientPacketReceivers.resetServerState();
-        scheduler = Executors.newSingleThreadScheduledExecutor();
-
-        PlatformServices.NETWORK.sendToServer(new ClientSync(true));
-        syncConfig();
-
-        scheduleMissingServerWarning(client);
-    }
-
-    private void scheduleMissingServerWarning(Minecraft client) {
-        // Two-stage check: first at 5 seconds, then at 25 seconds if still no server
-        scheduler.schedule(() -> {
-            if (!clientPacketReceivers.serverIsPresent()) {
-                // First check at 5 seconds - schedule another check at 25 seconds
-                scheduler.schedule(() -> {
-                    if (!clientPacketReceivers.serverIsPresent() && client.player != null) {
-                        client.execute(() -> client.player.sendSystemMessage(
-                                Component.literal("[Inventory Sorter] ").withStyle(style -> style.withBold(true).withColor(ChatFormatting.AQUA))
-                                        .append(Component.translatable("inventorysorter.warning.missing-server").withStyle(style -> style.withBold(false).withColor(ChatFormatting.YELLOW))
-                                        )));
-                    }
-                }, 20, TimeUnit.SECONDS);
-            }
-        }, 5, TimeUnit.SECONDS);
-    }
-
-    private void resetServerStateOnDisconnect() {
-        clientPacketReceivers.resetServerState();
-        compatibility.reload();
-        shutdownScheduler();
-    }
-
-    private void shutdownScheduler() {
-        if (scheduler == null || scheduler.isShutdown()) return;
-
-        scheduler.shutdown();
-        try {
-            if (!scheduler.awaitTermination(5, TimeUnit.SECONDS)) {
-                scheduler.shutdownNow();
-            }
-        } catch (InterruptedException e) {
-            scheduler.shutdownNow();
-            Thread.currentThread().interrupt();
-        }
-    }
 }
