@@ -52,6 +52,6 @@ Thank you for the gorgeous design!
 Thanks to all the patrons who make this project possible!
 <!-- marker:patrons-start -->
 
-morgantic
+Schauweg
 
 <!-- marker:patrons-end -->
