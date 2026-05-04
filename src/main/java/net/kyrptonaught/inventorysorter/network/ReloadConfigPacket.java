@@ -1,6 +1,7 @@
 package net.kyrptonaught.inventorysorter.network;
 
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.kyrptonaught.inventorysorter.platform.NetworkingPlatform;
+import net.kyrptonaught.inventorysorter.platform.PlatformServices;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -26,6 +27,10 @@ public record ReloadConfigPacket() implements CustomPacketPayload {
     }
 
     public void fire(ServerPlayer player) {
-        ServerPlayNetworking.send(player, this);
+        this.fire(player, PlatformServices.NETWORK);
+    }
+
+    void fire(ServerPlayer player, NetworkingPlatform networking) {
+        networking.sendToPlayer(player, this);
     }
 }

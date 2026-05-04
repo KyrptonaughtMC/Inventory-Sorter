@@ -5,7 +5,6 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents;
 import net.kyrptonaught.inventorysorter.InventorySorterMod;
@@ -13,6 +12,7 @@ import net.kyrptonaught.inventorysorter.compat.config.CompatConfig;
 import net.kyrptonaught.inventorysorter.compat.sources.ConfigLoader;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.kyrptonaught.inventorysorter.network.*;
+import net.kyrptonaught.inventorysorter.platform.PlatformServices;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -48,8 +48,8 @@ public class InventorySorterModClient implements ClientModInitializer {
     public static void syncConfig() {
         NewConfigOptions config = getConfig();
 
-        ClientPlayNetworking.send(SortSettings.fromConfig(config));
-        ClientPlayNetworking.send(PlayerSortPrevention.fromConfig(config));
+        PlatformServices.NETWORK.sendToServer(SortSettings.fromConfig(config));
+        PlatformServices.NETWORK.sendToServer(PlayerSortPrevention.fromConfig(config));
     }
 
     @Override
@@ -69,7 +69,7 @@ public class InventorySorterModClient implements ClientModInitializer {
             serverIsPresent = false;
             scheduler = Executors.newSingleThreadScheduledExecutor();
 
-            ClientPlayNetworking.send(new ClientSync(true));
+            PlatformServices.NETWORK.sendToServer(new ClientSync(true));
             syncConfig();
 
             // Two-stage check: first at 5 seconds, then at 25 seconds if still no server
@@ -131,50 +131,55 @@ public class InventorySorterModClient implements ClientModInitializer {
             }
         });
 
-        ClientPlayNetworking.registerGlobalReceiver(SortSettings.ID, (payload, context) -> {
-            NewConfigOptions currentConfig = getConfig();
-            currentConfig.enableDoubleClickSort = payload.enableDoubleClick();
-            currentConfig.sortType = payload.sortType();
-            currentConfig.save();
-        });
+        PlatformServices.NETWORK.registerClientReceivers(
+                this::applySortSettings,
+                this::applyPlayerSortPrevention,
+                this::applyHideButton,
+                InventorySorterMod::reloadConfig,
+                this::handleLastSeenVersion,
+                this::handleServerPresence
+        );
+    }
 
-        /*
-          This happens when the client connects to a server for the first time.
-          It's to sync the server's config to the client if the user has added any sort
-          preventions for themselves.
-         */
-        ClientPlayNetworking.registerGlobalReceiver(PlayerSortPrevention.ID, (payload, context) -> {
-            NewConfigOptions currentConfig = getConfig();
-            currentConfig.preventSortForScreens.retainAll(payload.preventSortForScreens());
-            payload.preventSortForScreens().forEach(currentConfig::disableSortForScreen);
-            currentConfig.save();
-            compatibility.reload();
-        });
+    private void applySortSettings(SortSettings payload) {
+        NewConfigOptions currentConfig = getConfig();
+        currentConfig.enableDoubleClickSort = payload.enableDoubleClick();
+        currentConfig.sortType = payload.sortType();
+        currentConfig.save();
+    }
 
-        /*
-          If the server owners have defined any screens that should have the sort button hidden,
-          this is how we sync that to the client and keep it separate from the player's config.
-         */
-        ClientPlayNetworking.registerGlobalReceiver(HideButton.ID, (payload, context) -> {
-            serverConfig.hideButtonsForScreens = payload.hideButtonForScreens().stream().toList();
-            compatibility.reload();
-        });
+    /*
+      This happens when the client connects to a server for the first time.
+      It's to sync the server's config to the client if the user has added any sort
+      preventions for themselves.
+     */
+    private void applyPlayerSortPrevention(PlayerSortPrevention payload) {
+        NewConfigOptions currentConfig = getConfig();
+        currentConfig.preventSortForScreens.retainAll(payload.preventSortForScreens());
+        payload.preventSortForScreens().forEach(currentConfig::disableSortForScreen);
+        currentConfig.save();
+        compatibility.reload();
+    }
 
-        ClientPlayNetworking.registerGlobalReceiver(ReloadConfigPacket.ID, (payload, context) -> {
-            reloadConfig();
-        });
+    /*
+      If the server owners have defined any screens that should have the sort button hidden,
+      this is how we sync that to the client and keep it separate from the player's config.
+     */
+    private void applyHideButton(HideButton payload) {
+        serverConfig.hideButtonsForScreens = payload.hideButtonForScreens().stream().toList();
+        compatibility.reload();
+    }
 
-        ClientPlayNetworking.registerGlobalReceiver(LastSeenVersionPacket.ID, (payload, context) -> {
-            Minecraft client = context.client();
-            if (payload.lastSeenVersion().equals(VERSION) && payload.lastSeenLanguage().equals(client.getLanguageManager().getSelected().toLowerCase())) {
-                return;
-            }
-            TranslationReminder.notify(client);
-        });
+    private void handleLastSeenVersion(LastSeenVersionPacket payload) {
+        Minecraft client = Minecraft.getInstance();
+        if (payload.lastSeenVersion().equals(VERSION) && payload.lastSeenLanguage().equals(client.getLanguageManager().getSelected().toLowerCase())) {
+            return;
+        }
+        TranslationReminder.notify(client);
+    }
 
-        ClientPlayNetworking.registerGlobalReceiver(ServerPresencePacket.ID, (payload, context) -> {
-            serverIsPresent = true;
-        });
+    private void handleServerPresence() {
+        serverIsPresent = true;
     }
 
     private static boolean scrollButton(SortButtonWidget button, double x, double y, double verticalAmount, double horizontalAmount) {

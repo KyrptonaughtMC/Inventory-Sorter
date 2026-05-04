@@ -5,9 +5,7 @@ import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.kyrptonaught.inventorysorter.commands.CommandRegistry;
 import net.kyrptonaught.inventorysorter.compat.Compatibility;
 import net.kyrptonaught.inventorysorter.compat.sources.*;
@@ -89,21 +87,7 @@ public class InventorySorterMod implements ModInitializer {
     public void onInitialize() {
         CommandRegistrationCallback.EVENT.register(CommandRegistry::register);
 
-        PayloadTypeRegistry.serverboundPlay().register(ClientSync.ID, ClientSync.CODEC);
-
-        PayloadTypeRegistry.clientboundPlay().register(LastSeenVersionPacket.ID, LastSeenVersionPacket.CODEC);
-        PayloadTypeRegistry.clientboundPlay().register(ServerPresencePacket.ID, ServerPresencePacket.CODEC);
-
-        PayloadTypeRegistry.clientboundPlay().register(HideButton.ID, HideButton.CODEC);
-        PayloadTypeRegistry.clientboundPlay().register(ReloadConfigPacket.ID, ReloadConfigPacket.CODEC);
-
-        PayloadTypeRegistry.serverboundPlay().register(PlayerSortPrevention.ID, PlayerSortPrevention.CODEC);
-        PayloadTypeRegistry.clientboundPlay().register(PlayerSortPrevention.ID, PlayerSortPrevention.CODEC);
-
-        PayloadTypeRegistry.serverboundPlay().register(SortSettings.ID, SortSettings.CODEC);
-        PayloadTypeRegistry.clientboundPlay().register(SortSettings.ID, SortSettings.CODEC);
-
-        InventorySortPacket.registerReceivePacket();
+        PlatformServices.NETWORK.registerPayloads();
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             var context = new CreativeModeTab.ItemDisplayParameters(server.getWorldData().enabledFeatures(), false, server.registryAccess());
@@ -114,7 +98,7 @@ public class InventorySorterMod implements ModInitializer {
 
         ServerPlayConnectionEvents.JOIN.register((handler, server, client) -> {
             ServerPlayer player = handler.getPlayer();
-            ServerPlayNetworking.send(player, new ServerPresencePacket());
+            PlatformServices.NETWORK.sendToPlayer(player, new ServerPresencePacket());
             if (!player.hasAttached(LAST_SEEN_VERSION)) {
                 LastSeenVersionPacket.DEFAULT.send(player);
             } else {
@@ -158,16 +142,5 @@ public class InventorySorterMod implements ModInitializer {
             }
         });
 
-        ServerPlayNetworking.registerGlobalReceiver(SortSettings.ID, (payload, context) -> {
-            context.player().setAttached(SORT_SETTINGS, payload);
-        });
-
-        ServerPlayNetworking.registerGlobalReceiver(PlayerSortPrevention.ID, (payload, context) -> {
-            context.player().setAttached(PLAYER_SORT_PREVENTION, payload);
-        });
-
-        ServerPlayNetworking.registerGlobalReceiver(ClientSync.ID, (payload, context) -> {
-            context.player().setAttached(CLIENT_SYNC, new ClientSync(true));
-        });
     }
 }

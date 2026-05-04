@@ -2,9 +2,10 @@ package net.kyrptonaught.inventorysorter.network;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.kyrptonaught.inventorysorter.SortType;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
+import net.kyrptonaught.inventorysorter.platform.NetworkingPlatform;
+import net.kyrptonaught.inventorysorter.platform.PlatformServices;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -79,6 +80,10 @@ public record SortSettings(
     }
 
     public void sync(ServerPlayer player) {
-        ServerPlayNetworking.send(player, this);
+        this.sync(player, PlatformServices.NETWORK);
+    }
+
+    void sync(ServerPlayer player, NetworkingPlatform networking) {
+        networking.sendToPlayer(player, this);
     }
 }

@@ -2,7 +2,8 @@ package net.kyrptonaught.inventorysorter.network;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.kyrptonaught.inventorysorter.platform.NetworkingPlatform;
+import net.kyrptonaught.inventorysorter.platform.PlatformServices;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -39,6 +40,10 @@ public record LastSeenVersionPacket(
     }
 
     public void send(ServerPlayer player) {
-        ServerPlayNetworking.send(player, this);
+        this.send(player, PlatformServices.NETWORK);
+    }
+
+    void send(ServerPlayer player, NetworkingPlatform networking) {
+        networking.sendToPlayer(player, this);
     }
 }
