@@ -14,6 +14,7 @@ import net.kyrptonaught.inventorysorter.compat.sources.*;
 import net.kyrptonaught.inventorysorter.config.Config;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.kyrptonaught.inventorysorter.network.*;
+import net.kyrptonaught.inventorysorter.platform.PlatformServices;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.CreativeModeTab;
@@ -122,7 +123,7 @@ public class InventorySorterMod implements ModInitializer {
 
             player.setAttached(LAST_SEEN_VERSION, new LastSeenVersionPacket(VERSION, player.clientInformation().language().toLowerCase()));
 
-            if (client.isDedicatedServer()) {
+            if (PlatformServices.PLATFORM.isDedicatedServer(client)) {
                 if (!player.hasAttached(SORT_SETTINGS)) {
                     player.setAttached(SORT_SETTINGS, SortSettings.DEFAULT);
                 }
