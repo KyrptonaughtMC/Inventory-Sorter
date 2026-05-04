@@ -39,6 +39,11 @@ public class SortButtonWidgetTest {
         Assertions.assertEquals(4, button.horizontalAmount);
     }
 
+    @Test
+    void scrollScreenButtonsIfHoveredIgnoresMissingScreen() {
+        Assertions.assertFalse(SortButtonWidget.scrollScreenButtonsIfHovered(null, 1, 2, 3, 4));
+    }
+
     private static class RecordingSortButtonWidget extends SortButtonWidget {
         private final boolean hovered;
         private final boolean scrollResult;

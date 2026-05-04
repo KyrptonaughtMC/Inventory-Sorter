@@ -159,6 +159,16 @@ public class SortButtonWidget extends ImageButton {
         return button.mouseScrolled(x, y, verticalAmount, horizontalAmount);
     }
 
+    public static boolean scrollScreenButtonsIfHovered(Screen screen, double x, double y, double verticalAmount, double horizontalAmount) {
+        if (!(screen instanceof SortableContainerScreen innerScreen)) {
+            return false;
+        }
+
+        boolean inventoryButtonScrolled = scrollIfHovered(innerScreen.inventorySorter$getSortButton(), x, y, verticalAmount, horizontalAmount);
+        boolean playerButtonScrolled = scrollIfHovered(innerScreen.inventorySorter$getPlayerSortButton(), x, y, verticalAmount, horizontalAmount);
+        return inventoryButtonScrolled || playerButtonScrolled;
+    }
+
     private boolean isModifierPressed() {
         return InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), modifierKey.getValue());
     }

@@ -82,16 +82,9 @@ public class InventorySorterModClient implements ClientModInitializer {
                 Some mods completely override the mouse scroll event, which can cause issues with the sort button.
                 This way, we ensure that the sort button's scroll functionality is always checked after the screen is initialized.
             */
-            ScreenMouseEvents.afterMouseScroll(screen).register((scr, x, y, horizontalAmount, verticalAmount, consumed) -> {
-                if (!(scr instanceof SortableContainerScreen innerScreen)) {
-                    // If it's not our screen type, we don't handle the scroll event.
-                    return false;
-                }
-
-                boolean inventoryButtonScrolled = SortButtonWidget.scrollIfHovered(innerScreen.inventorySorter$getSortButton(), x, y, verticalAmount, horizontalAmount);
-                boolean playerButtonScrolled = SortButtonWidget.scrollIfHovered(innerScreen.inventorySorter$getPlayerSortButton(), x, y, verticalAmount, horizontalAmount);
-                return inventoryButtonScrolled || playerButtonScrolled;
-            });
+            ScreenMouseEvents.afterMouseScroll(screen).register((scr, x, y, horizontalAmount, verticalAmount, consumed) ->
+                    SortButtonWidget.scrollScreenButtonsIfHovered(scr, x, y, verticalAmount, horizontalAmount)
+            );
         });
 
         ClientTickEvents.END_CLIENT_TICK.register((client) -> {
