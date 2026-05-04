@@ -65,26 +65,7 @@ public class InventorySorterModClient implements ClientModInitializer {
 
 
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
-            serverIsPresent = false;
-            scheduler = Executors.newSingleThreadScheduledExecutor();
-
-            PlatformServices.NETWORK.sendToServer(new ClientSync(true));
-            syncConfig();
-
-            // Two-stage check: first at 5 seconds, then at 25 seconds if still no server
-            scheduler.schedule(() -> {
-                if (!serverIsPresent) {
-                    // First check at 5 seconds - schedule another check at 25 seconds
-                    scheduler.schedule(() -> {
-                        if (!serverIsPresent && client.player != null) {
-                            client.execute(() -> client.player.sendSystemMessage(
-                                    Component.literal("[Inventory Sorter] ").withStyle(style -> style.withBold(true).withColor(ChatFormatting.AQUA))
-                                            .append(Component.translatable("inventorysorter.warning.missing-server").withStyle(style -> style.withBold(false).withColor(ChatFormatting.YELLOW))
-                                            )));
-                        }
-                    }, 20, TimeUnit.SECONDS);
-                }
-            }, 5, TimeUnit.SECONDS);
+            handleClientJoin(client);
         });
 
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
@@ -168,6 +149,33 @@ public class InventorySorterModClient implements ClientModInitializer {
 
     private void handleServerPresence() {
         serverIsPresent = true;
+    }
+
+    private void handleClientJoin(Minecraft client) {
+        serverIsPresent = false;
+        scheduler = Executors.newSingleThreadScheduledExecutor();
+
+        PlatformServices.NETWORK.sendToServer(new ClientSync(true));
+        syncConfig();
+
+        scheduleMissingServerWarning(client);
+    }
+
+    private void scheduleMissingServerWarning(Minecraft client) {
+        // Two-stage check: first at 5 seconds, then at 25 seconds if still no server
+        scheduler.schedule(() -> {
+            if (!serverIsPresent) {
+                // First check at 5 seconds - schedule another check at 25 seconds
+                scheduler.schedule(() -> {
+                    if (!serverIsPresent && client.player != null) {
+                        client.execute(() -> client.player.sendSystemMessage(
+                                Component.literal("[Inventory Sorter] ").withStyle(style -> style.withBold(true).withColor(ChatFormatting.AQUA))
+                                        .append(Component.translatable("inventorysorter.warning.missing-server").withStyle(style -> style.withBold(false).withColor(ChatFormatting.YELLOW))
+                                        )));
+                    }
+                }, 20, TimeUnit.SECONDS);
+            }
+        }, 5, TimeUnit.SECONDS);
     }
 
     private void resetServerStateOnDisconnect() {
