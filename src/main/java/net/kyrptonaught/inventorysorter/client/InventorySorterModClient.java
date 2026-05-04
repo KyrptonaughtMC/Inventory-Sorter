@@ -111,16 +111,9 @@ public class InventorySorterModClient implements ClientModInitializer {
                     return false;
                 }
 
-                SortButtonWidget inventoryButton = innerScreen.inventorySorter$getSortButton();
-                if (inventoryButton != null && inventoryButton.visible && inventoryButton.isHovered()) {
-                    inventoryButton.mouseScrolled(x, y, verticalAmount, horizontalAmount);
-                }
-
-                SortButtonWidget playerButton = innerScreen.inventorySorter$getPlayerSortButton();
-                if (playerButton != null && playerButton.visible && playerButton.isHovered()) {
-                    playerButton.mouseScrolled(x, y, verticalAmount, horizontalAmount);
-                }
-                return true;
+                boolean inventoryButtonScrolled = scrollButton(innerScreen.inventorySorter$getSortButton(), x, y, verticalAmount, horizontalAmount);
+                boolean playerButtonScrolled = scrollButton(innerScreen.inventorySorter$getPlayerSortButton(), x, y, verticalAmount, horizontalAmount);
+                return inventoryButtonScrolled || playerButtonScrolled;
             });
         });
 
@@ -182,6 +175,14 @@ public class InventorySorterModClient implements ClientModInitializer {
         ClientPlayNetworking.registerGlobalReceiver(ServerPresencePacket.ID, (payload, context) -> {
             serverIsPresent = true;
         });
+    }
+
+    private static boolean scrollButton(SortButtonWidget button, double x, double y, double verticalAmount, double horizontalAmount) {
+        if (button == null || !button.visible || !button.isHovered()) {
+            return false;
+        }
+
+        return button.mouseScrolled(x, y, verticalAmount, horizontalAmount);
     }
 
     private void shutdownScheduler() {
