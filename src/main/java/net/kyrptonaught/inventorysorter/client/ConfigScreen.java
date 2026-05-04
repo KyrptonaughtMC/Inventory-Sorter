@@ -52,8 +52,13 @@ public class ConfigScreen {
         return state ? yes() : no();
     }
 
-    public static void openIfConfigKeyPressed(Minecraft client, KeyMapping configButton, KeyMapping sortButton, InputConstants.Key configKey, InputConstants.Key sortKey) {
-        if (consumeConfigScreenClick(configButton, sortButton, configKey, sortKey)) {
+    public static void openIfConfigKeyPressed(Minecraft client) {
+        if (consumeConfigScreenClick(
+                ClientPlatformServices.KEY_MAPPINGS.configKeyMapping(),
+                ClientPlatformServices.KEY_MAPPINGS.sortKeyMapping(),
+                ClientPlatformServices.KEY_MAPPINGS.boundConfigKey(),
+                ClientPlatformServices.KEY_MAPPINGS.boundSortKey()
+        )) {
             client.setScreen(getConfigScreen(client.screen));
         }
     }

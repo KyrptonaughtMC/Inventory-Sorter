@@ -7,7 +7,6 @@ import net.kyrptonaught.inventorysorter.compat.sources.ConfigLoader;
 import net.kyrptonaught.inventorysorter.network.*;
 import net.kyrptonaught.inventorysorter.client.platform.ClientPlatformServices;
 import net.kyrptonaught.inventorysorter.platform.PlatformServices;
-import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.*;
@@ -42,19 +41,8 @@ public class InventorySorterModClient implements ClientModInitializer {
             clientServerSession.disconnect();
         });
 
-        ClientTickEvents.END_CLIENT_TICK.register(this::handleClientTick);
+        ClientTickEvents.END_CLIENT_TICK.register(ConfigScreen::openIfConfigKeyPressed);
 
         clientPacketReceivers.register(PlatformServices.NETWORK);
     }
-
-    private void handleClientTick(Minecraft client) {
-        ConfigScreen.openIfConfigKeyPressed(
-                client,
-                ClientPlatformServices.KEY_MAPPINGS.configKeyMapping(),
-                ClientPlatformServices.KEY_MAPPINGS.sortKeyMapping(),
-                ClientPlatformServices.KEY_MAPPINGS.boundConfigKey(),
-                ClientPlatformServices.KEY_MAPPINGS.boundSortKey()
-        );
-    }
-
 }
