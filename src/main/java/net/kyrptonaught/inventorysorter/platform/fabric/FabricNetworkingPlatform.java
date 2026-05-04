@@ -6,13 +6,12 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.kyrptonaught.inventorysorter.InventoryHelper;
 import net.kyrptonaught.inventorysorter.network.*;
 import net.kyrptonaught.inventorysorter.platform.NetworkingPlatform;
+import net.kyrptonaught.inventorysorter.platform.PlatformServices;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.function.Consumer;
-
-import static net.kyrptonaught.inventorysorter.InventorySorterMod.*;
 
 public class FabricNetworkingPlatform implements NetworkingPlatform {
     @Override
@@ -41,15 +40,15 @@ public class FabricNetworkingPlatform implements NetworkingPlatform {
         }));
 
         ServerPlayNetworking.registerGlobalReceiver(SortSettings.ID, (payload, context) -> {
-            context.player().setAttached(SORT_SETTINGS, payload);
+            PlatformServices.PLAYER_DATA.setSortSettings(context.player(), payload);
         });
 
         ServerPlayNetworking.registerGlobalReceiver(PlayerSortPrevention.ID, (payload, context) -> {
-            context.player().setAttached(PLAYER_SORT_PREVENTION, payload);
+            PlatformServices.PLAYER_DATA.setPlayerSortPrevention(context.player(), payload);
         });
 
         ServerPlayNetworking.registerGlobalReceiver(ClientSync.ID, (payload, context) -> {
-            context.player().setAttached(CLIENT_SYNC, new ClientSync(true));
+            PlatformServices.PLAYER_DATA.setClientSync(context.player(), new ClientSync(true));
         });
     }
 

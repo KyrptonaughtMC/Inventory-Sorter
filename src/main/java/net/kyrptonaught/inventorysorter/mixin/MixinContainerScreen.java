@@ -8,7 +8,6 @@ import net.kyrptonaught.inventorysorter.InventorySorterMod;
 import net.kyrptonaught.inventorysorter.client.SortButtonWidget;
 import net.kyrptonaught.inventorysorter.client.SortableContainerScreen;
 import net.kyrptonaught.inventorysorter.network.InventorySortPacket;
-import net.kyrptonaught.inventorysorter.network.SortSettings;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -121,8 +120,7 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
     @Unique
     private void sortInventory(CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
         boolean playerOnlyInv = !InventoryHelper.canSortInventory(minecraft.player);
-        SortSettings settings = minecraft.player.getAttachedOrCreate(InventorySorterMod.SORT_SETTINGS);
-        if (!playerOnlyInv && settings.sortHighlightedItem()) {
+        if (!playerOnlyInv && getConfig().sortHighlightedItem) {
             if (hoveredSlot != null)
                 playerOnlyInv = hoveredSlot.container instanceof Inventory;
         }

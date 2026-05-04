@@ -4,12 +4,11 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.kyrptonaught.inventorysorter.network.SortSettings;
+import net.kyrptonaught.inventorysorter.platform.PlatformServices;
 import net.kyrptonaught.inventorysorter.permissions.CommandPermission;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerPlayer;
-
-import static net.kyrptonaught.inventorysorter.InventorySorterMod.SORT_SETTINGS;
 
 public class SortPlayerInventoryCommand {
     private static final String SET_KEY = "inventorysorter.cmd.sortPlayerInventory.set";
@@ -36,8 +35,8 @@ public class SortPlayerInventoryCommand {
             return 0;
         }
 
-        SortSettings settings = player.getAttachedOrCreate(SORT_SETTINGS).withSortPlayerInventory(false);
-        player.setAttached(SORT_SETTINGS, settings);
+        SortSettings settings = PlatformServices.PLAYER_DATA.getSortSettings(player).withSortPlayerInventory(false);
+        PlatformServices.PLAYER_DATA.setSortSettings(player, settings);
 
         settings.sync(player);
 
@@ -52,8 +51,8 @@ public class SortPlayerInventoryCommand {
             return 0;
         }
 
-        SortSettings settings = player.getAttachedOrCreate(SORT_SETTINGS).withSortPlayerInventory(true);
-        player.setAttached(SORT_SETTINGS, settings);
+        SortSettings settings = PlatformServices.PLAYER_DATA.getSortSettings(player).withSortPlayerInventory(true);
+        PlatformServices.PLAYER_DATA.setSortSettings(player, settings);
 
         settings.sync(player);
 
@@ -68,7 +67,7 @@ public class SortPlayerInventoryCommand {
             return 0;
         }
 
-        SortSettings settings = player.getAttachedOrCreate(SORT_SETTINGS);
+        SortSettings settings = PlatformServices.PLAYER_DATA.getSortSettings(player);
 
         commandContext.getSource().sendSuccess(() -> CommandTranslations.getFeedbackMessageForState(GET_KEY, settings.sortPlayerInventory()), false);
         return 1;

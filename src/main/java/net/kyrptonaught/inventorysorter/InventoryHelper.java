@@ -1,6 +1,7 @@
 package net.kyrptonaught.inventorysorter;
 
 import net.kyrptonaught.inventorysorter.network.PlayerSortPrevention;
+import net.kyrptonaught.inventorysorter.platform.PlatformServices;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -27,7 +28,6 @@ import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.function.Function;
 
-import static net.kyrptonaught.inventorysorter.InventorySorterMod.PLAYER_SORT_PREVENTION;
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.compatibility;
 
 public class InventoryHelper {
@@ -242,8 +242,9 @@ public class InventoryHelper {
     }
 
     private static boolean isSortableContainer(Player player, AbstractContainerMenu screenHandler, Identifier screenID) {
-        @SuppressWarnings("UnstableApiUsage")
-        PlayerSortPrevention playerSortPrevention = player.getAttachedOrCreate(PLAYER_SORT_PREVENTION);
+        PlayerSortPrevention playerSortPrevention = player instanceof ServerPlayer serverPlayer
+                ? PlatformServices.PLAYER_DATA.getPlayerSortPrevention(serverPlayer)
+                : PlayerSortPrevention.DEFAULT;
         if (!compatibility.isSortAllowed(screenID, playerSortPrevention.preventSortForScreens())) {
             return false;
         }

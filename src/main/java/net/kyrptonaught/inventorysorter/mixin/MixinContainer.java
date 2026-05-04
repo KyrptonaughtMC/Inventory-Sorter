@@ -2,6 +2,7 @@ package net.kyrptonaught.inventorysorter.mixin;
 
 import net.kyrptonaught.inventorysorter.InventoryHelper;
 import net.kyrptonaught.inventorysorter.network.SortSettings;
+import net.kyrptonaught.inventorysorter.platform.PlatformServices;
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
@@ -18,7 +19,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.LOGGER;
-import static net.kyrptonaught.inventorysorter.InventorySorterMod.SORT_SETTINGS;
 
 @Mixin(AbstractContainerMenu.class)
 public abstract class MixinContainer {
@@ -38,21 +38,22 @@ public abstract class MixinContainer {
                 LOGGER.debug("Player is not a ServerPlayerEntity, skipping sort on double click");
                 return;
             }
-            SortSettings settings = player.getAttachedOrCreate(SORT_SETTINGS);
+            ServerPlayer serverPlayer = (ServerPlayer) player;
+            SortSettings settings = PlatformServices.PLAYER_DATA.getSortSettings(serverPlayer);
 
             if (settings.enableDoubleClick() && buttonNum == 0 && containerInput.equals(ContainerInput.PICKUP_ALL))
                 if (carried.isEmpty())
                     if (slotIndex >= 0 && slotIndex < this.slots.size() && this.slots.get(slotIndex).getItem().isEmpty()) {
                         boolean isPlayerInventory = slots.get(slotIndex).container instanceof Inventory;
                         InventoryHelper.sortInventory(
-                                (ServerPlayer) player,
+                                serverPlayer,
                                 isPlayerInventory,
                                 settings.sortType()
                         );
 
                         if (!isPlayerInventory && settings.sortPlayerInventory()) {
                             InventoryHelper.sortInventory(
-                                    (ServerPlayer) player,
+                                    serverPlayer,
                                     true,
                                     settings.sortType()
                             );

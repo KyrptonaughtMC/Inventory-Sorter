@@ -5,13 +5,12 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.kyrptonaught.inventorysorter.InventoryHelper;
 import net.kyrptonaught.inventorysorter.network.PlayerSortPrevention;
+import net.kyrptonaught.inventorysorter.platform.PlatformServices;
 import net.kyrptonaught.inventorysorter.permissions.CommandPermission;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-
-import static net.kyrptonaught.inventorysorter.InventorySorterMod.PLAYER_SORT_PREVENTION;
 
 public class NoSortCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, LiteralArgumentBuilder<CommandSourceStack> rootCommand) {
@@ -36,11 +35,11 @@ public class NoSortCommand {
             commandContext.getSource().sendSuccess(CommandTranslations::playerRequired, false);
             return 0;
         }
-        PlayerSortPrevention playerSortPrevention = player.getAttachedOrCreate(PLAYER_SORT_PREVENTION);
+        PlayerSortPrevention playerSortPrevention = PlatformServices.PLAYER_DATA.getPlayerSortPrevention(player);
 
         Boolean success = InventoryHelper.withTargetedScreenHandler(player, context -> {
             playerSortPrevention.preventSortForScreens().add(context.screenId().toString());
-            player.setAttached(PLAYER_SORT_PREVENTION, playerSortPrevention);
+            PlatformServices.PLAYER_DATA.setPlayerSortPrevention(player, playerSortPrevention);
             return true;
         });
 
@@ -61,11 +60,11 @@ public class NoSortCommand {
             commandContext.getSource().sendSuccess(CommandTranslations::playerRequired, false);
             return 0;
         }
-        PlayerSortPrevention playerSortPrevention = player.getAttachedOrCreate(PLAYER_SORT_PREVENTION);
+        PlayerSortPrevention playerSortPrevention = PlatformServices.PLAYER_DATA.getPlayerSortPrevention(player);
 
         Boolean success = InventoryHelper.withTargetedScreenHandler(player, context -> {
             playerSortPrevention.preventSortForScreens().remove(context.screenId().toString());
-            player.setAttached(PLAYER_SORT_PREVENTION, playerSortPrevention);
+            PlatformServices.PLAYER_DATA.setPlayerSortPrevention(player, playerSortPrevention);
             return true;
         });
 
@@ -85,7 +84,7 @@ public class NoSortCommand {
             commandContext.getSource().sendSuccess(CommandTranslations::playerRequired, false);
             return 0;
         }
-        PlayerSortPrevention playerSortPrevention = player.getAttachedOrCreate(PLAYER_SORT_PREVENTION);
+        PlayerSortPrevention playerSortPrevention = PlatformServices.PLAYER_DATA.getPlayerSortPrevention(player);
 
         commandContext.getSource().sendSuccess(() -> Component.translatable(
                 "inventorysorter.cmd.nosort.list",

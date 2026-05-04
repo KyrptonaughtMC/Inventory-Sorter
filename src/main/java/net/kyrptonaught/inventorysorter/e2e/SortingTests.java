@@ -6,6 +6,11 @@ import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.kyrptonaught.inventorysorter.InventoryHelper;
 import net.kyrptonaught.inventorysorter.SortType;
 import net.kyrptonaught.inventorysorter.e2e.TestUtils.*;
+import net.kyrptonaught.inventorysorter.network.ClientSync;
+import net.kyrptonaught.inventorysorter.network.LastSeenVersionPacket;
+import net.kyrptonaught.inventorysorter.network.PlayerSortPrevention;
+import net.kyrptonaught.inventorysorter.network.SortSettings;
+import net.kyrptonaught.inventorysorter.platform.PlatformServices;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
@@ -25,12 +30,36 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.GameType;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.IntFunction;
 
 import static net.kyrptonaught.inventorysorter.e2e.TestUtils.*;
 
 public class SortingTests {
+    @GameTest()
+    public void testPlayerDataPlatformStoresPlayerData(GameTestHelper ctx) {
+        Scenario scenario = setUpScene(ctx, Map.of());
+        ServerPlayer player = scenario.player();
+
+        SortSettings sortSettings = new SortSettings(false, true, false, SortType.MOD);
+        PlayerSortPrevention playerSortPrevention = new PlayerSortPrevention(Set.of("minecraft:anvil"));
+        ClientSync clientSync = new ClientSync(true);
+        LastSeenVersionPacket lastSeenVersion = new LastSeenVersionPacket("26.1.2", "en_us");
+
+        PlatformServices.PLAYER_DATA.setSortSettings(player, sortSettings);
+        PlatformServices.PLAYER_DATA.setPlayerSortPrevention(player, playerSortPrevention);
+        PlatformServices.PLAYER_DATA.setClientSync(player, clientSync);
+        PlatformServices.PLAYER_DATA.setLastSeenVersion(player, lastSeenVersion);
+
+        ctx.assertValueEqual(PlatformServices.PLAYER_DATA.getSortSettings(player), sortSettings, Component.nullToEmpty("Sort settings should round-trip through player data"));
+        ctx.assertValueEqual(PlatformServices.PLAYER_DATA.getPlayerSortPrevention(player), playerSortPrevention, Component.nullToEmpty("Player sort prevention should round-trip through player data"));
+        ctx.assertValueEqual(PlatformServices.PLAYER_DATA.getClientSync(player), clientSync, Component.nullToEmpty("Client sync should round-trip through player data"));
+        ctx.assertValueEqual(PlatformServices.PLAYER_DATA.getLastSeenVersion(player), lastSeenVersion, Component.nullToEmpty("Last seen version should round-trip through player data"));
+
+        ctx.succeed();
+    }
+
     @GameTest()
     public void testSimpleStackable(GameTestHelper ctx) {
         Scenario scenario = setUpScene(ctx, Map.of(
