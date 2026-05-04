@@ -26,7 +26,7 @@ public class ClientServerSession {
         this(
                 packetReceivers,
                 PlatformServices.NETWORK,
-                InventorySorterModClient::syncConfig,
+                ClientConfigSync::syncConfigToServer,
                 compatibility::reload,
                 Executors::newSingleThreadScheduledExecutor
         );

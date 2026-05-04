@@ -4,7 +4,6 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.kyrptonaught.inventorysorter.compat.sources.ConfigLoader;
-import net.kyrptonaught.inventorysorter.network.*;
 import net.kyrptonaught.inventorysorter.client.platform.ClientPlatformServices;
 import net.kyrptonaught.inventorysorter.platform.PlatformServices;
 import net.minecraft.resources.Identifier;
@@ -16,10 +15,6 @@ public class InventorySorterModClient implements ClientModInitializer {
     public static Identifier PLAYER_INVENTORY = Identifier.parse("player_inventory");
     private final ClientPacketReceivers clientPacketReceivers = new ClientPacketReceivers();
     private final ClientServerSession clientServerSession = new ClientServerSession(clientPacketReceivers);
-
-    public static void syncConfig() {
-        ClientConfigSync.syncConfigToServer(getConfig(), PlatformServices.NETWORK);
-    }
 
     @Override
     public void onInitializeClient() {

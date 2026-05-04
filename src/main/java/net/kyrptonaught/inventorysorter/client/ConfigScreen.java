@@ -117,7 +117,7 @@ public class ConfigScreen {
             getConfig().save();
             reloadConfig();
             if (Minecraft.getInstance().player != null)
-                InventorySorterModClient.syncConfig();
+                ClientConfigSync.syncConfigToServer();
         });
 
         screenBuilder.getOrCreateCategory(Component.translatable("inventorysorter.config.category.display"))

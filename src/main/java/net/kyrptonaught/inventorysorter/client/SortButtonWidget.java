@@ -91,7 +91,7 @@ public class SortButtonWidget extends ImageButton {
             compatibility.addShouldHideSortButton(screenID);
             getConfig().save();
             compatibility.reload();
-            InventorySorterModClient.syncConfig();
+            ClientConfigSync.syncConfigToServer();
             SystemToast.add(instance.getToastManager(), SystemToast.SystemToastId.PERIODIC_NOTIFICATION,
                     net.minecraft.network.chat.Component.translatable("inventorysorter.sortButton.toast.hide.success.title"),
                     net.minecraft.network.chat.Component.translatable("inventorysorter.sortButton.toast.hide.success.description", screenID));
@@ -144,7 +144,7 @@ public class SortButtonWidget extends ImageButton {
 
         debounceTask = debounceExecutor.schedule(() -> {
             config.save();
-            InventorySorterModClient.syncConfig();
+            ClientConfigSync.syncConfigToServer();
         }, 300, TimeUnit.MILLISECONDS);
 
         return true;
