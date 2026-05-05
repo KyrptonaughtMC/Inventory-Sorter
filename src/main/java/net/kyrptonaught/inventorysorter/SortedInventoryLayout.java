@@ -1,5 +1,6 @@
 package net.kyrptonaught.inventorysorter;
 
+import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
 import net.kyrptonaught.inventorysorter.sort.SortPriorityRules;
 import net.kyrptonaught.inventorysorter.sort.SortType;
 import net.kyrptonaught.inventorysorter.sort.ordering.StackOrderingStrategy;
@@ -13,7 +14,7 @@ public record SortedInventoryLayout(List<ItemStack> stacks) {
         return from(input, sortType, languageCode, List.of());
     }
 
-    public static SortedInventoryLayout from(List<ItemStack> input, SortType sortType, String languageCode, List<SortPriorityRule> sortPriorityRules) {
+    public static SortedInventoryLayout from(List<ItemStack> input, SortType sortType, String languageCode, List<SortPriorityRuleSetting> sortPriorityRules) {
         SortPriorityRules priorityRules = SortPriorityRules.compile(sortPriorityRules);
         List<ItemStack> mergedStacks = new ArrayList<>();
         List<ItemStack> sortedStacks = new ArrayList<>(input.size());

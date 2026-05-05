@@ -1,5 +1,6 @@
 package net.kyrptonaught.inventorysorter;
 
+import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
 import net.kyrptonaught.inventorysorter.sort.SortPriorityPosition;
 import net.kyrptonaught.inventorysorter.sort.SortPriorityRules;
 import net.minecraft.SharedConstants;
@@ -30,7 +31,7 @@ public class SortPriorityRulesTest {
     @Test
     void itemIdRuleCanMoveMatchingStacksFirst() {
         List<ItemStack> sorted = sort(
-                List.of(new SortPriorityRule("minecraft:bundle", SortPriorityPosition.FIRST)),
+                List.of(new SortPriorityRuleSetting("minecraft:bundle", SortPriorityPosition.FIRST)),
                 stack(Items.APPLE),
                 bundle(),
                 stack(Items.DIAMOND)
@@ -43,7 +44,7 @@ public class SortPriorityRulesTest {
     void componentRulesUseMinecraftRegistry() {
         List<ItemStack> sorted = sort(
                 List.of(
-                        new SortPriorityRule("@minecraft:bundle_contents", SortPriorityPosition.LAST)
+                        new SortPriorityRuleSetting("@minecraft:bundle_contents", SortPriorityPosition.LAST)
                 ),
                 bundle(),
                 stack(Items.APPLE),
@@ -61,7 +62,7 @@ public class SortPriorityRulesTest {
     @Test
     void logicalOperatorsCanExcludeSpecificMatches() {
         List<ItemStack> sorted = sort(
-                List.of(new SortPriorityRule("@minecraft:bundle_contents & !minecraft:apple", SortPriorityPosition.FIRST)),
+                List.of(new SortPriorityRuleSetting("@minecraft:bundle_contents & !minecraft:apple", SortPriorityPosition.FIRST)),
                 stack(Items.WHITE_SHULKER_BOX),
                 bundle(),
                 stack(Items.APPLE)
@@ -74,8 +75,8 @@ public class SortPriorityRulesTest {
     void ruleOrderBreaksTiesInsideTheSamePriorityBucket() {
         List<ItemStack> sorted = sort(
                 List.of(
-                        new SortPriorityRule("minecraft:bundle", SortPriorityPosition.FIRST),
-                        new SortPriorityRule("minecraft:white_shulker_box", SortPriorityPosition.FIRST)
+                        new SortPriorityRuleSetting("minecraft:bundle", SortPriorityPosition.FIRST),
+                        new SortPriorityRuleSetting("minecraft:white_shulker_box", SortPriorityPosition.FIRST)
                 ),
                 stack(Items.WHITE_SHULKER_BOX),
                 bundle()
@@ -88,7 +89,7 @@ public class SortPriorityRulesTest {
     @Test
     void nameRulesMatchDisplayNamesWithFullStringGlobs() {
         List<ItemStack> sorted = sort(
-                List.of(new SortPriorityRule("name:\"Meza's *\"", SortPriorityPosition.LAST)),
+                List.of(new SortPriorityRuleSetting("name:\"Meza's *\"", SortPriorityPosition.LAST)),
                 namedStack(Items.DIAMOND_PICKAXE, "Meza's Pickaxe"),
                 namedStack(Items.APPLE, "Apple"),
                 namedStack(Items.FEATHER, "Feather")
@@ -102,12 +103,12 @@ public class SortPriorityRulesTest {
     @Test
     void nameRulesAreCaseInsensitiveAndDoNotTreatPlainTextAsContains() {
         List<ItemStack> exactRuleSorted = sort(
-                List.of(new SortPriorityRule("name:\"meza's pickaxe\"", SortPriorityPosition.FIRST)),
+                List.of(new SortPriorityRuleSetting("name:\"meza's pickaxe\"", SortPriorityPosition.FIRST)),
                 namedStack(Items.APPLE, "Apple"),
                 namedStack(Items.DIAMOND_PICKAXE, "Meza's Pickaxe")
         );
         List<ItemStack> nonContainsRuleSorted = sort(
-                List.of(new SortPriorityRule("name:\"Meza's\"", SortPriorityPosition.FIRST)),
+                List.of(new SortPriorityRuleSetting("name:\"Meza's\"", SortPriorityPosition.FIRST)),
                 namedStack(Items.APPLE, "Apple"),
                 namedStack(Items.DIAMOND_PICKAXE, "Meza's Pickaxe")
         );
@@ -119,7 +120,7 @@ public class SortPriorityRulesTest {
     @Test
     void nameRulesCanEscapeWildcardCharacters() {
         List<ItemStack> sorted = sort(
-                List.of(new SortPriorityRule("name:\"Meza's \\* Pickaxe\"", SortPriorityPosition.FIRST)),
+                List.of(new SortPriorityRuleSetting("name:\"Meza's \\* Pickaxe\"", SortPriorityPosition.FIRST)),
                 namedStack(Items.APPLE, "Apple"),
                 namedStack(Items.DIAMOND_PICKAXE, "Meza's * Pickaxe"),
                 namedStack(Items.IRON_PICKAXE, "Meza's Fast Pickaxe")
@@ -135,7 +136,7 @@ public class SortPriorityRulesTest {
         Assertions.assertTrue(SortPriorityRules.validationError("name:\"Meza's *").isPresent());
 
         List<ItemStack> sorted = sort(
-                List.of(new SortPriorityRule("name:\"Meza's *", SortPriorityPosition.FIRST)),
+                List.of(new SortPriorityRuleSetting("name:\"Meza's *", SortPriorityPosition.FIRST)),
                 namedStack(Items.FEATHER, "Feather"),
                 namedStack(Items.DIAMOND_PICKAXE, "Meza's Pickaxe"),
                 namedStack(Items.APPLE, "Apple")
@@ -149,12 +150,12 @@ public class SortPriorityRulesTest {
     @Test
     void anyMatchingIgnoreRuleExcludesAStackFromSorting() {
         SortPriorityRules firstThenIgnore = SortPriorityRules.compile(List.of(
-                new SortPriorityRule("minecraft:bundle", SortPriorityPosition.FIRST),
-                new SortPriorityRule("@minecraft:bundle_contents", SortPriorityPosition.IGNORE)
+                new SortPriorityRuleSetting("minecraft:bundle", SortPriorityPosition.FIRST),
+                new SortPriorityRuleSetting("@minecraft:bundle_contents", SortPriorityPosition.IGNORE)
         ));
         SortPriorityRules ignoreThenFirst = SortPriorityRules.compile(List.of(
-                new SortPriorityRule("@minecraft:bundle_contents", SortPriorityPosition.IGNORE),
-                new SortPriorityRule("minecraft:bundle", SortPriorityPosition.FIRST)
+                new SortPriorityRuleSetting("@minecraft:bundle_contents", SortPriorityPosition.IGNORE),
+                new SortPriorityRuleSetting("minecraft:bundle", SortPriorityPosition.FIRST)
         ));
 
         Assertions.assertTrue(firstThenIgnore.shouldIgnore(bundle()));
@@ -167,7 +168,7 @@ public class SortPriorityRulesTest {
         Assertions.assertTrue(SortPriorityRules.validationError("@").isPresent());
 
         List<ItemStack> sorted = sort(
-                List.of(new SortPriorityRule("@", SortPriorityPosition.FIRST)),
+                List.of(new SortPriorityRuleSetting("@", SortPriorityPosition.FIRST)),
                 stack(Items.DIAMOND),
                 stack(Items.APPLE)
         );
@@ -176,7 +177,7 @@ public class SortPriorityRulesTest {
         Assertions.assertTrue(sorted.get(1).is(Items.DIAMOND));
     }
 
-    private static List<ItemStack> sort(List<SortPriorityRule> rules, ItemStack... stacks) {
+    private static List<ItemStack> sort(List<SortPriorityRuleSetting> rules, ItemStack... stacks) {
         List<ItemStack> sorted = new java.util.ArrayList<>(List.of(stacks));
         sorted.sort(SortPriorityRules.compile(rules)
                 .applyTo(Comparator.comparing(stack -> BuiltInRegistries.ITEM.getKey(stack.getItem()).toString())));

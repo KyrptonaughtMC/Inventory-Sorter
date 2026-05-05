@@ -1,7 +1,7 @@
 package net.kyrptonaught.inventorysorter.client.sort;
 
 import net.kyrptonaught.inventorysorter.SortedInventoryLayout;
-import net.kyrptonaught.inventorysorter.SortPriorityRule;
+import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
 import net.kyrptonaught.inventorysorter.SortTarget;
 import net.kyrptonaught.inventorysorter.sort.SortType;
 import net.minecraft.client.Minecraft;
@@ -18,7 +18,7 @@ class ClientSideInventorySorter {
     private final Supplier<Minecraft> minecraft;
     private final Supplier<String> languageCode;
     private final Supplier<SortType> sortType;
-    private final Supplier<List<SortPriorityRule>> sortPriorityRules;
+    private final Supplier<List<SortPriorityRuleSetting>> sortPriorityRules;
     private final BooleanSupplier sortPlayerInventory;
     private final ClientInventoryClickExecutor clickExecutor;
     private final ClientSortClickPlanner clickPlanner;
@@ -27,7 +27,7 @@ class ClientSideInventorySorter {
             Supplier<Minecraft> minecraft,
             Supplier<String> languageCode,
             Supplier<SortType> sortType,
-            Supplier<List<SortPriorityRule>> sortPriorityRules,
+            Supplier<List<SortPriorityRuleSetting>> sortPriorityRules,
             BooleanSupplier sortPlayerInventory,
             ClientInventoryClickExecutor clickExecutor,
             ClientSortClickPlanner clickPlanner

@@ -1,6 +1,7 @@
 package net.kyrptonaught.inventorysorter;
 
 import net.kyrptonaught.inventorysorter.network.PlayerSortPrevention;
+import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
 import net.kyrptonaught.inventorysorter.network.SortSettings;
 import net.kyrptonaught.inventorysorter.platform.PlatformServices;
 import net.kyrptonaught.inventorysorter.sort.SortType;
@@ -134,7 +135,7 @@ public class InventoryHelper {
         return screenHandler.slots.getFirst().container;
     }
 
-    private static void sortInventory(Container inv, int startSlot, int invSize, SortType sortType, String languageCode, List<SortPriorityRule> sortPriorityRules) {
+    private static void sortInventory(Container inv, int startSlot, int invSize, SortType sortType, String languageCode, List<SortPriorityRuleSetting> sortPriorityRules) {
         List<ItemStack> stacks = new ArrayList<>();
         for (int i = 0; i < invSize; i++) {
             stacks.add(inv.getItem(startSlot + i));

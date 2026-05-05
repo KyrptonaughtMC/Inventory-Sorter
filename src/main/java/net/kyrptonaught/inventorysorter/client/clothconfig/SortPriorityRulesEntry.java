@@ -6,7 +6,7 @@ import me.shedaniel.clothconfig2.gui.entries.TooltipListEntry;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.kyrptonaught.inventorysorter.sort.SortPriorityPosition;
-import net.kyrptonaught.inventorysorter.SortPriorityRule;
+import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
 import net.kyrptonaught.inventorysorter.sort.SortPriorityRules;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -26,7 +26,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 @Environment(EnvType.CLIENT)
-public class SortPriorityRulesEntry extends TooltipListEntry<List<SortPriorityRule>> {
+public class SortPriorityRulesEntry extends TooltipListEntry<List<SortPriorityRuleSetting>> {
     private static final int TEXT_COLOR = ARGB.opaque(0xE0E0E0);
     private static final int ERROR_TEXT_COLOR = ARGB.opaque(0xFF5555);
     private static final int GAP = 4;
@@ -37,11 +37,11 @@ public class SortPriorityRulesEntry extends TooltipListEntry<List<SortPriorityRu
 
     private final List<RuleRow> rows;
     private RuleRow draftRow;
-    private final List<SortPriorityRule> original;
+    private final List<SortPriorityRuleSetting> original;
     private final ConfigEntryBuilder entryBuilder;
     private boolean isSelected;
 
-    public SortPriorityRulesEntry(ConfigEntryBuilder entryBuilder, Component fieldName, List<SortPriorityRule> rules, Consumer<List<SortPriorityRule>> saveConsumer) {
+    public SortPriorityRulesEntry(ConfigEntryBuilder entryBuilder, Component fieldName, List<SortPriorityRuleSetting> rules, Consumer<List<SortPriorityRuleSetting>> saveConsumer) {
         super(fieldName, null, false);
         this.entryBuilder = entryBuilder;
         this.original = List.copyOf(rules);
@@ -60,16 +60,16 @@ public class SortPriorityRulesEntry extends TooltipListEntry<List<SortPriorityRu
     }
 
     @Override
-    public List<SortPriorityRule> getValue() {
+    public List<SortPriorityRuleSetting> getValue() {
         return this.rows.stream()
                 .map(RuleRow::toRule)
                 .filter(SortPriorityRulesEntry::isSaveable)
-                .map(rule -> new SortPriorityRule(rule.match().trim(), rule.position()))
+                .map(rule -> new SortPriorityRuleSetting(rule.match().trim(), rule.position()))
                 .toList();
     }
 
     @Override
-    public Optional<List<SortPriorityRule>> getDefaultValue() {
+    public Optional<List<SortPriorityRuleSetting>> getDefaultValue() {
         return Optional.empty();
     }
 
@@ -146,15 +146,15 @@ public class SortPriorityRulesEntry extends TooltipListEntry<List<SortPriorityRu
         this.draftRow = draftRow();
     }
 
-    private RuleRow existingRow(SortPriorityRule rule) {
+    private RuleRow existingRow(SortPriorityRuleSetting rule) {
         return new RuleRow(rule, false);
     }
 
     private RuleRow draftRow() {
-        return new RuleRow(new SortPriorityRule("", SortPriorityPosition.DEFAULT), true);
+        return new RuleRow(new SortPriorityRuleSetting("", SortPriorityPosition.DEFAULT), true);
     }
 
-    private static boolean isSaveable(SortPriorityRule rule) {
+    private static boolean isSaveable(SortPriorityRuleSetting rule) {
         return rule.match() != null && !rule.match().isBlank();
     }
 
@@ -176,7 +176,7 @@ public class SortPriorityRulesEntry extends TooltipListEntry<List<SortPriorityRu
         private final Button addButton;
         private final boolean draft;
 
-        private RuleRow(SortPriorityRule rule, boolean draft) {
+        private RuleRow(SortPriorityRuleSetting rule, boolean draft) {
             this.draft = draft;
             this.matchField = new EditBox(Minecraft.getInstance().font, 0, 0, 120, 18, SortPriorityRulesEntry.this.getFieldName()) {
                 public void extractWidgetRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
@@ -255,8 +255,8 @@ public class SortPriorityRulesEntry extends TooltipListEntry<List<SortPriorityRu
                     : List.of(this.matchField, this.positionButton, this.upButton, this.downButton, this.deleteButton);
         }
 
-        private SortPriorityRule toRule() {
-            return new SortPriorityRule(this.matchField.getValue(), this.positionEntry.getValue());
+        private SortPriorityRuleSetting toRule() {
+            return new SortPriorityRuleSetting(this.matchField.getValue(), this.positionEntry.getValue());
         }
     }
 }

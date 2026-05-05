@@ -6,7 +6,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.kyrptonaught.inventorysorter.sort.SortPriorityPosition;
-import net.kyrptonaught.inventorysorter.SortPriorityRule;
+import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
 import net.kyrptonaught.inventorysorter.network.SortSettings;
 import net.kyrptonaught.inventorysorter.permissions.CommandPermission;
 import net.kyrptonaught.inventorysorter.platform.PlatformServices;
@@ -53,40 +53,40 @@ public class SortPriorityRulesCommand {
         dispatcher.register(rootCommand.then(priority));
     }
 
-    static List<SortPriorityRule> addRule(List<SortPriorityRule> rules, SortPriorityRule rule) {
-        List<SortPriorityRule> updatedRules = new ArrayList<>(rules);
+    static List<SortPriorityRuleSetting> addRule(List<SortPriorityRuleSetting> rules, SortPriorityRuleSetting rule) {
+        List<SortPriorityRuleSetting> updatedRules = new ArrayList<>(rules);
         updatedRules.add(rule);
         return updatedRules;
     }
 
-    static List<SortPriorityRule> setRule(List<SortPriorityRule> rules, int userIndex, SortPriorityRule rule) {
-        List<SortPriorityRule> updatedRules = new ArrayList<>(rules);
+    static List<SortPriorityRuleSetting> setRule(List<SortPriorityRuleSetting> rules, int userIndex, SortPriorityRuleSetting rule) {
+        List<SortPriorityRuleSetting> updatedRules = new ArrayList<>(rules);
         updatedRules.set(toListIndex(updatedRules, userIndex), rule);
         return updatedRules;
     }
 
-    static List<SortPriorityRule> setRulePosition(List<SortPriorityRule> rules, int userIndex, SortPriorityPosition position) {
-        List<SortPriorityRule> updatedRules = new ArrayList<>(rules);
+    static List<SortPriorityRuleSetting> setRulePosition(List<SortPriorityRuleSetting> rules, int userIndex, SortPriorityPosition position) {
+        List<SortPriorityRuleSetting> updatedRules = new ArrayList<>(rules);
         int index = toListIndex(updatedRules, userIndex);
-        SortPriorityRule currentRule = updatedRules.get(index);
-        updatedRules.set(index, new SortPriorityRule(currentRule.match(), position));
+        SortPriorityRuleSetting currentRule = updatedRules.get(index);
+        updatedRules.set(index, new SortPriorityRuleSetting(currentRule.match(), position));
         return updatedRules;
     }
 
-    static List<SortPriorityRule> removeRule(List<SortPriorityRule> rules, int userIndex) {
-        List<SortPriorityRule> updatedRules = new ArrayList<>(rules);
+    static List<SortPriorityRuleSetting> removeRule(List<SortPriorityRuleSetting> rules, int userIndex) {
+        List<SortPriorityRuleSetting> updatedRules = new ArrayList<>(rules);
         updatedRules.remove(toListIndex(updatedRules, userIndex));
         return updatedRules;
     }
 
-    static List<SortPriorityRule> moveRule(List<SortPriorityRule> rules, int userIndex, MoveDirection direction) {
-        List<SortPriorityRule> updatedRules = new ArrayList<>(rules);
+    static List<SortPriorityRuleSetting> moveRule(List<SortPriorityRuleSetting> rules, int userIndex, MoveDirection direction) {
+        List<SortPriorityRuleSetting> updatedRules = new ArrayList<>(rules);
         int index = toListIndex(updatedRules, userIndex);
         int destination = direction.destination(index);
         if (destination < 0 || destination >= updatedRules.size()) {
             throw new IllegalArgumentException("Cannot move rule " + userIndex + " " + direction.commandName);
         }
-        SortPriorityRule rule = updatedRules.remove(index);
+        SortPriorityRuleSetting rule = updatedRules.remove(index);
         updatedRules.add(destination, rule);
         return updatedRules;
     }
@@ -126,7 +126,7 @@ public class SortPriorityRulesCommand {
             return 0;
         }
 
-        List<SortPriorityRule> rules = PlatformServices.PLAYER_DATA.getSortSettings(player).sortPriorityRules();
+        List<SortPriorityRuleSetting> rules = PlatformServices.PLAYER_DATA.getSortSettings(player).sortPriorityRules();
         if (rules.isEmpty()) {
             context.getSource().sendSuccess(() -> Component.translatable("inventorysorter.cmd.priority.list.empty"), false);
             return 1;
@@ -134,7 +134,7 @@ public class SortPriorityRulesCommand {
 
         for (int i = 0; i < rules.size(); i++) {
             int userIndex = i + 1;
-            SortPriorityRule rule = rules.get(i);
+            SortPriorityRuleSetting rule = rules.get(i);
             context.getSource().sendSuccess(() -> Component.translatable(
                     "inventorysorter.cmd.priority.list.entry",
                     userIndex,
@@ -165,7 +165,7 @@ public class SortPriorityRulesCommand {
         }
     }
 
-    private static SortPriorityRule parseRule(CommandContext<CommandSourceStack> context, SortPriorityPosition position) {
+    private static SortPriorityRuleSetting parseRule(CommandContext<CommandSourceStack> context, SortPriorityPosition position) {
         String match = StringArgumentType.getString(context, "match").trim();
         if (match.isBlank()) {
             throw new IllegalArgumentException("Match expression cannot be blank");
@@ -173,10 +173,10 @@ public class SortPriorityRulesCommand {
         SortPriorityRules.validationError(match).ifPresent(message -> {
             throw new IllegalArgumentException(message);
         });
-        return new SortPriorityRule(match, position);
+        return new SortPriorityRuleSetting(match, position);
     }
 
-    private static int toListIndex(List<SortPriorityRule> rules, int userIndex) {
+    private static int toListIndex(List<SortPriorityRuleSetting> rules, int userIndex) {
         int index = userIndex - 1;
         if (index < 0 || index >= rules.size()) {
             throw new IllegalArgumentException("Unknown rule index: " + userIndex);
@@ -186,7 +186,7 @@ public class SortPriorityRulesCommand {
 
     @FunctionalInterface
     private interface RulesUpdate {
-        List<SortPriorityRule> apply(List<SortPriorityRule> rules);
+        List<SortPriorityRuleSetting> apply(List<SortPriorityRuleSetting> rules);
     }
 
     enum MoveDirection {

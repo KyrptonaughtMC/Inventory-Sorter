@@ -2,7 +2,7 @@ package net.kyrptonaught.inventorysorter.client.sort;
 
 import net.kyrptonaught.inventorysorter.SortTarget;
 import net.kyrptonaught.inventorysorter.sort.SortType;
-import net.kyrptonaught.inventorysorter.SortPriorityRule;
+import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
 import net.kyrptonaught.inventorysorter.client.ClientServerSupport;
 import net.kyrptonaught.inventorysorter.network.InventorySortPacket;
 import net.minecraft.client.Minecraft;
@@ -37,7 +37,7 @@ public final class ClientSortRuntime {
             Supplier<Minecraft> minecraft,
             Supplier<String> languageCode,
             Supplier<SortType> sortType,
-            Supplier<List<SortPriorityRule>> sortPriorityRules,
+            Supplier<List<SortPriorityRuleSetting>> sortPriorityRules,
             BooleanSupplier sortPlayerInventory
     ) {
         ClientServerSupport serverSupport = new ClientServerSupport();

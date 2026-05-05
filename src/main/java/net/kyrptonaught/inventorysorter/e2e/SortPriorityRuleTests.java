@@ -3,7 +3,7 @@ package net.kyrptonaught.inventorysorter.e2e;
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.kyrptonaught.inventorysorter.InventoryHelper;
 import net.kyrptonaught.inventorysorter.sort.SortPriorityPosition;
-import net.kyrptonaught.inventorysorter.SortPriorityRule;
+import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
 import net.kyrptonaught.inventorysorter.SortTarget;
 import net.kyrptonaught.inventorysorter.sort.SortType;
 import net.kyrptonaught.inventorysorter.e2e.TestUtils.Scenario;
@@ -37,7 +37,7 @@ public class SortPriorityRuleTests {
                 false,
                 true,
                 SortType.NAME,
-                List.of(new SortPriorityRule("minecraft:bundle", SortPriorityPosition.LAST))
+                List.of(new SortPriorityRuleSetting("minecraft:bundle", SortPriorityPosition.LAST))
         );
 
         InventoryHelper.sortInventory(scenario.player(), SortTarget.CONTAINER, settings);
@@ -64,7 +64,7 @@ public class SortPriorityRuleTests {
                         false,
                         true,
                         SortType.NAME,
-                        List.of(new SortPriorityRule("#minecraft:shulker_boxes", SortPriorityPosition.LAST))
+                        List.of(new SortPriorityRuleSetting("#minecraft:shulker_boxes", SortPriorityPosition.LAST))
                 )
         );
 
@@ -92,7 +92,7 @@ public class SortPriorityRuleTests {
                         false,
                         true,
                         SortType.NAME,
-                        List.of(new SortPriorityRule("minecraft:bundle", SortPriorityPosition.LAST))
+                        List.of(new SortPriorityRuleSetting("minecraft:bundle", SortPriorityPosition.LAST))
                 )
         );
 
@@ -263,7 +263,7 @@ public class SortPriorityRuleTests {
                 false,
                 true,
                 SortType.NAME,
-                List.of(new SortPriorityRule("name:\"*meza's*\"", SortPriorityPosition.FIRST))
+                List.of(new SortPriorityRuleSetting("name:\"*meza's*\"", SortPriorityPosition.FIRST))
         );
 
         InventoryHelper.sortInventory(scenario.player(), SortTarget.CONTAINER, settings);
@@ -290,7 +290,7 @@ public class SortPriorityRuleTests {
                 false,
                 true,
                 SortType.NAME,
-                List.of(new SortPriorityRule("name:\"Meza's\"", SortPriorityPosition.LAST))
+                List.of(new SortPriorityRuleSetting("name:\"Meza's\"", SortPriorityPosition.LAST))
         );
 
         InventoryHelper.sortInventory(scenario.player(), SortTarget.CONTAINER, settings);
@@ -317,7 +317,7 @@ public class SortPriorityRuleTests {
                 false,
                 true,
                 SortType.NAME,
-                List.of(new SortPriorityRule("name:\"Meza's *\" & !minecraft:diamond_pickaxe", SortPriorityPosition.LAST))
+                List.of(new SortPriorityRuleSetting("name:\"Meza's *\" & !minecraft:diamond_pickaxe", SortPriorityPosition.LAST))
         );
 
         InventoryHelper.sortInventory(scenario.player(), SortTarget.CONTAINER, settings);
@@ -347,8 +347,8 @@ public class SortPriorityRuleTests {
                 true,
                 SortType.NAME,
                 List.of(
-                        new SortPriorityRule("name:\"Meza's *\"", SortPriorityPosition.FIRST),
-                        new SortPriorityRule("name:\"*Vault*\"", SortPriorityPosition.IGNORE)
+                        new SortPriorityRuleSetting("name:\"Meza's *\"", SortPriorityPosition.FIRST),
+                        new SortPriorityRuleSetting("name:\"*Vault*\"", SortPriorityPosition.IGNORE)
                 )
         );
 
@@ -377,7 +377,7 @@ public class SortPriorityRuleTests {
                 false,
                 true,
                 SortType.NAME,
-                List.of(new SortPriorityRule("name:\"Bundle\"", SortPriorityPosition.LAST))
+                List.of(new SortPriorityRuleSetting("name:\"Bundle\"", SortPriorityPosition.LAST))
         );
 
         InventoryHelper.sortInventory(scenario.player(), SortTarget.CONTAINER, settings);
@@ -403,7 +403,7 @@ public class SortPriorityRuleTests {
                 false,
                 true,
                 SortType.NAME,
-                List.of(new SortPriorityRule("name:\"Meza's *", SortPriorityPosition.LAST))
+                List.of(new SortPriorityRuleSetting("name:\"Meza's *", SortPriorityPosition.LAST))
         );
 
         InventoryHelper.sortInventory(scenario.player(), SortTarget.CONTAINER, settings);

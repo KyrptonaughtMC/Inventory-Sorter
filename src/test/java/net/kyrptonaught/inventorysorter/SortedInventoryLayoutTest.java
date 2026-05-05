@@ -1,5 +1,6 @@
 package net.kyrptonaught.inventorysorter;
 
+import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
 import net.kyrptonaught.inventorysorter.sort.SortPriorityPosition;
 import net.kyrptonaught.inventorysorter.sort.SortType;
 import net.minecraft.SharedConstants;
@@ -104,7 +105,7 @@ public class SortedInventoryLayoutTest {
                 ),
                 SortType.NAME,
                 "en_us",
-                List.of(new SortPriorityRule("minecraft:bundle", SortPriorityPosition.FIRST))
+                List.of(new SortPriorityRuleSetting("minecraft:bundle", SortPriorityPosition.FIRST))
         );
 
         assertStack(layout.stacks().get(0), Items.BUNDLE, 1);
@@ -123,7 +124,7 @@ public class SortedInventoryLayoutTest {
                 ),
                 SortType.NAME,
                 "en_us",
-                List.of(new SortPriorityRule("minecraft:white_shulker_box", SortPriorityPosition.IGNORE))
+                List.of(new SortPriorityRuleSetting("minecraft:white_shulker_box", SortPriorityPosition.IGNORE))
         );
 
         assertStack(layout.stacks().get(0), Items.APPLE, 1);
@@ -142,7 +143,7 @@ public class SortedInventoryLayoutTest {
                 ),
                 SortType.NAME,
                 "en_us",
-                List.of(new SortPriorityRule("minecraft:diamond", SortPriorityPosition.IGNORE))
+                List.of(new SortPriorityRuleSetting("minecraft:diamond", SortPriorityPosition.IGNORE))
         );
 
         assertStack(layout.stacks().get(0), Items.DIAMOND, 32);

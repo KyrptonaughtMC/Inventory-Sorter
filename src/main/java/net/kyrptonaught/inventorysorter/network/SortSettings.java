@@ -2,7 +2,6 @@ package net.kyrptonaught.inventorysorter.network;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.kyrptonaught.inventorysorter.SortPriorityRule;
 import net.kyrptonaught.inventorysorter.sort.SortType;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.kyrptonaught.inventorysorter.platform.NetworkingPlatform;
@@ -22,7 +21,7 @@ public record SortSettings(
         boolean sortPlayerInventory,
         boolean enableDoubleClick,
         SortType sortType,
-        List<SortPriorityRule> sortPriorityRules
+        List<SortPriorityRuleSetting> sortPriorityRules
 ) implements CustomPacketPayload {
     public SortSettings(boolean sortHighlightedItem, boolean sortPlayerInventory, boolean enableDoubleClick, SortType sortType) {
         this(sortHighlightedItem, sortPlayerInventory, enableDoubleClick, sortType, List.of());
@@ -40,17 +39,17 @@ public record SortSettings(
                         buf.writeBoolean(value.enableDoubleClick());
                         buf.writeEnum(value.sortType());
                         buf.writeVarInt(value.sortPriorityRules().size());
-                        value.sortPriorityRules().forEach(rule -> SortPriorityRule.STREAM_CODEC.encode(buf, rule));
+                        value.sortPriorityRules().forEach(rule -> SortPriorityRuleSetting.STREAM_CODEC.encode(buf, rule));
                     },
                     buf -> {
                         boolean sortHighlightedItem = buf.readBoolean();
                         boolean sortPlayerInventory = buf.readBoolean();
                         boolean enableDoubleClick = buf.readBoolean();
                         SortType sortType = buf.readEnum(SortType.class);
-                        List<SortPriorityRule> sortPriorityRules = new java.util.ArrayList<>();
+                        List<SortPriorityRuleSetting> sortPriorityRules = new java.util.ArrayList<>();
                         int rulesCount = buf.readVarInt();
                         for (int i = 0; i < rulesCount; i++) {
-                            sortPriorityRules.add(SortPriorityRule.STREAM_CODEC.decode(buf));
+                            sortPriorityRules.add(SortPriorityRuleSetting.STREAM_CODEC.decode(buf));
                         }
                         return new SortSettings(
                                 sortHighlightedItem,
@@ -68,7 +67,7 @@ public record SortSettings(
             Codec.BOOL.fieldOf("enableDoubleClick").forGetter(SortSettings::enableDoubleClick),
             Codec.STRING.xmap(SortType::valueOf, SortType::name)
                     .fieldOf("sortType").forGetter(SortSettings::sortType),
-            SortPriorityRule.CODEC.listOf()
+            SortPriorityRuleSetting.CODEC.listOf()
                     .optionalFieldOf("sortPriorityRules", List.of())
                     .forGetter(SortSettings::sortPriorityRules)
     ).apply(instance, SortSettings::new));
@@ -108,7 +107,7 @@ public record SortSettings(
         return new SortSettings(enabled, this.sortPlayerInventory(), this.enableDoubleClick(), this.sortType(), this.sortPriorityRules());
     }
 
-    public SortSettings withSortPriorityRules(List<SortPriorityRule> sortPriorityRules) {
+    public SortSettings withSortPriorityRules(List<SortPriorityRuleSetting> sortPriorityRules) {
         return new SortSettings(this.sortHighlightedItem(), this.sortPlayerInventory(), this.enableDoubleClick(), this.sortType(), sortPriorityRules);
     }
 

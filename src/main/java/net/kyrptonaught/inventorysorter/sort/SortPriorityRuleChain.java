@@ -1,6 +1,6 @@
 package net.kyrptonaught.inventorysorter.sort;
 
-import net.kyrptonaught.inventorysorter.SortPriorityRule;
+import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
 import net.kyrptonaught.inventorysorter.sort.expression.SortRuleExpression;
 import net.kyrptonaught.inventorysorter.sort.expression.SortRuleExpressionContext;
 import net.kyrptonaught.inventorysorter.sort.expression.SortRuleExpressionParser;
@@ -26,7 +26,7 @@ public final class SortPriorityRuleChain {
         this.handlers = List.copyOf(handlers);
     }
 
-    public static SortPriorityRuleChain compile(List<SortPriorityRule> rules) {
+    public static SortPriorityRuleChain compile(List<SortPriorityRuleSetting> rules) {
         List<RuleHandler> handlers = new ArrayList<>();
         for (int i = 0; i < rules.size(); i++) {
             Optional<SortRuleExpression> expression = SortRuleExpressionParser.parse(rules.get(i).match());

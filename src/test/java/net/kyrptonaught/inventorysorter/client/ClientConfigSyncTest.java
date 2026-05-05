@@ -2,7 +2,7 @@ package net.kyrptonaught.inventorysorter.client;
 
 import net.kyrptonaught.inventorysorter.sort.SortType;
 import net.kyrptonaught.inventorysorter.sort.SortPriorityPosition;
-import net.kyrptonaught.inventorysorter.SortPriorityRule;
+import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.kyrptonaught.inventorysorter.network.*;
 import net.kyrptonaught.inventorysorter.platform.NetworkingPlatform;
@@ -25,7 +25,7 @@ public class ClientConfigSyncTest {
         config.sortPlayerInventory = true;
         config.enableDoubleClickSort = false;
         config.sortType = SortType.MOD;
-        config.sortPriorityRules = List.of(new SortPriorityRule("#minecraft:bundles", SortPriorityPosition.FIRST));
+        config.sortPriorityRules = List.of(new SortPriorityRuleSetting("#minecraft:bundles", SortPriorityPosition.FIRST));
         config.preventSortForScreens.add("minecraft:anvil");
         config.preventSortForScreens.add("minecraft:chest");
 

@@ -1,6 +1,6 @@
 package net.kyrptonaught.inventorysorter.sort;
 
-import net.kyrptonaught.inventorysorter.SortPriorityRule;
+import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
 import net.kyrptonaught.inventorysorter.sort.expression.SortRuleExpressionParser;
 import net.minecraft.world.item.ItemStack;
 
@@ -20,7 +20,7 @@ public final class SortPriorityRules {
         this.ruleChain = ruleChain;
     }
 
-    public static SortPriorityRules compile(List<SortPriorityRule> rules) {
+    public static SortPriorityRules compile(List<SortPriorityRuleSetting> rules) {
         SortPriorityRuleChain ruleChain = SortPriorityRuleChain.compile(rules);
         return ruleChain.isEmpty() ? EMPTY : new SortPriorityRules(ruleChain);
     }

@@ -5,7 +5,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import io.netty.buffer.Unpooled;
 import net.kyrptonaught.inventorysorter.sort.SortPriorityPosition;
-import net.kyrptonaught.inventorysorter.SortPriorityRule;
+import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
 import net.kyrptonaught.inventorysorter.SortTarget;
 import net.kyrptonaught.inventorysorter.sort.SortType;
 import net.minecraft.core.RegistryAccess;
@@ -34,8 +34,8 @@ public class PacketCodecTest {
                 false,
                 SortType.CATEGORY,
                 List.of(
-                        new SortPriorityRule("#minecraft:shulker_boxes", SortPriorityPosition.FIRST),
-                        new SortPriorityRule("@minecraft:bundle_contents", SortPriorityPosition.LAST)
+                        new SortPriorityRuleSetting("#minecraft:shulker_boxes", SortPriorityPosition.FIRST),
+                        new SortPriorityRuleSetting("@minecraft:bundle_contents", SortPriorityPosition.LAST)
                 )
         );
 

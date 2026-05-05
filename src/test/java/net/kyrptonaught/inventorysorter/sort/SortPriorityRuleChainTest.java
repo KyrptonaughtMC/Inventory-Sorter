@@ -1,6 +1,6 @@
 package net.kyrptonaught.inventorysorter.sort;
 
-import net.kyrptonaught.inventorysorter.SortPriorityRule;
+import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentPatch;
@@ -35,8 +35,8 @@ public class SortPriorityRuleChainTest {
     @Test
     void ignoresStackWhenAnyIgnoreRuleMatchesRegardlessOfRuleOrder() {
         SortPriorityRuleChain chain = SortPriorityRuleChain.compile(List.of(
-                new SortPriorityRule("minecraft:bundle", SortPriorityPosition.FIRST),
-                new SortPriorityRule("@minecraft:bundle_contents", SortPriorityPosition.IGNORE)
+                new SortPriorityRuleSetting("minecraft:bundle", SortPriorityPosition.FIRST),
+                new SortPriorityRuleSetting("@minecraft:bundle_contents", SortPriorityPosition.IGNORE)
         ));
 
         Assertions.assertTrue(chain.shouldIgnore(bundle()));
@@ -45,8 +45,8 @@ public class SortPriorityRuleChainTest {
     @Test
     void firstMatchingNonIgnoreRuleWinsPriorityDecision() {
         SortPriorityRuleChain chain = SortPriorityRuleChain.compile(List.of(
-                new SortPriorityRule("minecraft:bundle", SortPriorityPosition.LAST),
-                new SortPriorityRule("@minecraft:bundle_contents", SortPriorityPosition.FIRST)
+                new SortPriorityRuleSetting("minecraft:bundle", SortPriorityPosition.LAST),
+                new SortPriorityRuleSetting("@minecraft:bundle_contents", SortPriorityPosition.FIRST)
         ));
 
         SortPriorityDecision decision = chain.firstPriorityDecision(bundle()).orElseThrow();
@@ -58,8 +58,8 @@ public class SortPriorityRuleChainTest {
     @Test
     void ignoreRulesAreSkippedWhenAskingForPriorityDecision() {
         SortPriorityRuleChain chain = SortPriorityRuleChain.compile(List.of(
-                new SortPriorityRule("@minecraft:bundle_contents", SortPriorityPosition.IGNORE),
-                new SortPriorityRule("minecraft:bundle", SortPriorityPosition.FIRST)
+                new SortPriorityRuleSetting("@minecraft:bundle_contents", SortPriorityPosition.IGNORE),
+                new SortPriorityRuleSetting("minecraft:bundle", SortPriorityPosition.FIRST)
         ));
 
         SortPriorityDecision decision = chain.firstPriorityDecision(bundle()).orElseThrow();
@@ -71,7 +71,7 @@ public class SortPriorityRuleChainTest {
     @Test
     void invalidRulesDoNotEnterTheChain() {
         SortPriorityRuleChain chain = SortPriorityRuleChain.compile(List.of(
-                new SortPriorityRule("@", SortPriorityPosition.FIRST)
+                new SortPriorityRuleSetting("@", SortPriorityPosition.FIRST)
         ));
 
         Assertions.assertTrue(chain.isEmpty());

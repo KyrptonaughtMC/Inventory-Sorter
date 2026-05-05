@@ -9,7 +9,7 @@ import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import me.shedaniel.clothconfig2.gui.entries.SubCategoryListEntry;
 import me.shedaniel.clothconfig2.impl.builders.SubCategoryBuilder;
 import net.kyrptonaught.inventorysorter.InventoryHelper;
-import net.kyrptonaught.inventorysorter.SortPriorityRule;
+import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
 import net.kyrptonaught.inventorysorter.sort.SortType;
 import net.kyrptonaught.inventorysorter.client.clothconfig.ContainerEntry;
 import net.kyrptonaught.inventorysorter.client.clothconfig.SortPriorityRulesEntry;
@@ -222,10 +222,10 @@ public class ConfigScreen {
         ));
     }
 
-    static List<SortPriorityRule> saveableSortPriorityRules(List<SortPriorityRule> rules) {
+    static List<SortPriorityRuleSetting> saveableSortPriorityRules(List<SortPriorityRuleSetting> rules) {
         return rules.stream()
                 .filter(rule -> isNotBlank(rule.match()))
-                .map(rule -> new SortPriorityRule(rule.match().trim(), rule.position()))
+                .map(rule -> new SortPriorityRuleSetting(rule.match().trim(), rule.position()))
                 .toList();
     }
 

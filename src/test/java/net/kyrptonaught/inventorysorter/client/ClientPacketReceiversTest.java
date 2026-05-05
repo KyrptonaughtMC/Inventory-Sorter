@@ -2,7 +2,7 @@ package net.kyrptonaught.inventorysorter.client;
 
 import net.kyrptonaught.inventorysorter.sort.SortType;
 import net.kyrptonaught.inventorysorter.sort.SortPriorityPosition;
-import net.kyrptonaught.inventorysorter.SortPriorityRule;
+import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.kyrptonaught.inventorysorter.network.*;
 import net.kyrptonaught.inventorysorter.platform.NetworkingPlatform;
@@ -85,7 +85,7 @@ public class ClientPacketReceiversTest {
         TestConfig config = new TestConfig();
         ClientPacketReceivers receivers = newReceivers(config);
 
-        List<SortPriorityRule> rules = List.of(new SortPriorityRule("#minecraft:shulker_boxes", SortPriorityPosition.LAST));
+        List<SortPriorityRuleSetting> rules = List.of(new SortPriorityRuleSetting("#minecraft:shulker_boxes", SortPriorityPosition.LAST));
 
         receivers.applySortSettings(new SortSettings(false, true, false, SortType.CATEGORY, rules));
 

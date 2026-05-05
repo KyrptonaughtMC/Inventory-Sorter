@@ -2,7 +2,7 @@ package net.kyrptonaught.inventorysorter.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.kyrptonaught.inventorysorter.sort.SortPriorityPosition;
-import net.kyrptonaught.inventorysorter.SortPriorityRule;
+import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.resources.Identifier;
 import org.junit.jupiter.api.Assertions;
@@ -58,11 +58,11 @@ public class ConfigScreenTest {
     @Test
     void blankDraftSortPriorityRulesAreNotSaved() {
         Assertions.assertEquals(
-                List.of(new SortPriorityRule("minecraft:bundle", SortPriorityPosition.FIRST)),
+                List.of(new SortPriorityRuleSetting("minecraft:bundle", SortPriorityPosition.FIRST)),
                 ConfigScreen.saveableSortPriorityRules(List.of(
-                        new SortPriorityRule("", SortPriorityPosition.DEFAULT),
-                        new SortPriorityRule(" minecraft:bundle ", SortPriorityPosition.FIRST),
-                        new SortPriorityRule(" ", SortPriorityPosition.LAST)
+                        new SortPriorityRuleSetting("", SortPriorityPosition.DEFAULT),
+                        new SortPriorityRuleSetting(" minecraft:bundle ", SortPriorityPosition.FIRST),
+                        new SortPriorityRuleSetting(" ", SortPriorityPosition.LAST)
                 ))
         );
     }

@@ -1,7 +1,7 @@
 package net.kyrptonaught.inventorysorter.commands;
 
 import net.kyrptonaught.inventorysorter.sort.SortPriorityPosition;
-import net.kyrptonaught.inventorysorter.SortPriorityRule;
+import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -10,8 +10,8 @@ import java.util.List;
 public class SortPriorityRulesCommandTest {
     @Test
     void addRuleAppendsToExistingRules() {
-        List<SortPriorityRule> rules = List.of(new SortPriorityRule("#minecraft:bundles", SortPriorityPosition.FIRST));
-        SortPriorityRule shulkers = new SortPriorityRule("#minecraft:shulker_boxes", SortPriorityPosition.FIRST);
+        List<SortPriorityRuleSetting> rules = List.of(new SortPriorityRuleSetting("#minecraft:bundles", SortPriorityPosition.FIRST));
+        SortPriorityRuleSetting shulkers = new SortPriorityRuleSetting("#minecraft:shulker_boxes", SortPriorityPosition.FIRST);
 
         Assertions.assertEquals(
                 List.of(rules.getFirst(), shulkers),
@@ -21,9 +21,9 @@ public class SortPriorityRulesCommandTest {
 
     @Test
     void setRuleReplacesOneBasedIndex() {
-        SortPriorityRule bundles = new SortPriorityRule("#minecraft:bundles", SortPriorityPosition.FIRST);
-        SortPriorityRule shulkers = new SortPriorityRule("#minecraft:shulker_boxes", SortPriorityPosition.FIRST);
-        SortPriorityRule containers = new SortPriorityRule("@minecraft:container", SortPriorityPosition.LAST);
+        SortPriorityRuleSetting bundles = new SortPriorityRuleSetting("#minecraft:bundles", SortPriorityPosition.FIRST);
+        SortPriorityRuleSetting shulkers = new SortPriorityRuleSetting("#minecraft:shulker_boxes", SortPriorityPosition.FIRST);
+        SortPriorityRuleSetting containers = new SortPriorityRuleSetting("@minecraft:container", SortPriorityPosition.LAST);
 
         Assertions.assertEquals(
                 List.of(bundles, containers),
@@ -33,19 +33,19 @@ public class SortPriorityRulesCommandTest {
 
     @Test
     void setRulePositionKeepsExistingMatch() {
-        SortPriorityRule bundles = new SortPriorityRule("#minecraft:bundles", SortPriorityPosition.FIRST);
-        SortPriorityRule shulkers = new SortPriorityRule("#minecraft:shulker_boxes", SortPriorityPosition.FIRST);
+        SortPriorityRuleSetting bundles = new SortPriorityRuleSetting("#minecraft:bundles", SortPriorityPosition.FIRST);
+        SortPriorityRuleSetting shulkers = new SortPriorityRuleSetting("#minecraft:shulker_boxes", SortPriorityPosition.FIRST);
 
         Assertions.assertEquals(
-                List.of(bundles, new SortPriorityRule("#minecraft:shulker_boxes", SortPriorityPosition.LAST)),
+                List.of(bundles, new SortPriorityRuleSetting("#minecraft:shulker_boxes", SortPriorityPosition.LAST)),
                 SortPriorityRulesCommand.setRulePosition(List.of(bundles, shulkers), 2, SortPriorityPosition.LAST)
         );
     }
 
     @Test
     void removeRuleRemovesOneBasedIndex() {
-        SortPriorityRule bundles = new SortPriorityRule("#minecraft:bundles", SortPriorityPosition.FIRST);
-        SortPriorityRule shulkers = new SortPriorityRule("#minecraft:shulker_boxes", SortPriorityPosition.FIRST);
+        SortPriorityRuleSetting bundles = new SortPriorityRuleSetting("#minecraft:bundles", SortPriorityPosition.FIRST);
+        SortPriorityRuleSetting shulkers = new SortPriorityRuleSetting("#minecraft:shulker_boxes", SortPriorityPosition.FIRST);
 
         Assertions.assertEquals(
                 List.of(shulkers),
@@ -55,9 +55,9 @@ public class SortPriorityRulesCommandTest {
 
     @Test
     void moveRuleMovesWithinListWithoutChangingRule() {
-        SortPriorityRule bundles = new SortPriorityRule("#minecraft:bundles", SortPriorityPosition.FIRST);
-        SortPriorityRule shulkers = new SortPriorityRule("#minecraft:shulker_boxes", SortPriorityPosition.FIRST);
-        SortPriorityRule containers = new SortPriorityRule("@minecraft:container", SortPriorityPosition.LAST);
+        SortPriorityRuleSetting bundles = new SortPriorityRuleSetting("#minecraft:bundles", SortPriorityPosition.FIRST);
+        SortPriorityRuleSetting shulkers = new SortPriorityRuleSetting("#minecraft:shulker_boxes", SortPriorityPosition.FIRST);
+        SortPriorityRuleSetting containers = new SortPriorityRuleSetting("@minecraft:container", SortPriorityPosition.LAST);
 
         Assertions.assertEquals(
                 List.of(shulkers, bundles, containers),
@@ -71,7 +71,7 @@ public class SortPriorityRulesCommandTest {
 
     @Test
     void invalidIndexesAreRejected() {
-        List<SortPriorityRule> rules = List.of(new SortPriorityRule("#minecraft:bundles", SortPriorityPosition.FIRST));
+        List<SortPriorityRuleSetting> rules = List.of(new SortPriorityRuleSetting("#minecraft:bundles", SortPriorityPosition.FIRST));
 
         Assertions.assertThrows(IllegalArgumentException.class, () -> SortPriorityRulesCommand.removeRule(rules, 0));
         Assertions.assertThrows(IllegalArgumentException.class, () -> SortPriorityRulesCommand.removeRule(rules, 2));
