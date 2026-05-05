@@ -7,7 +7,7 @@ import io.netty.buffer.Unpooled;
 import net.kyrptonaught.inventorysorter.sort.SortPriorityPosition;
 import net.kyrptonaught.inventorysorter.SortPriorityRule;
 import net.kyrptonaught.inventorysorter.SortTarget;
-import net.kyrptonaught.inventorysorter.SortType;
+import net.kyrptonaught.inventorysorter.sort.SortType;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;

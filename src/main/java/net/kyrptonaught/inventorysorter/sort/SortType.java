@@ -1,4 +1,6 @@
-package net.kyrptonaught.inventorysorter;
+package net.kyrptonaught.inventorysorter.sort;
+
+import net.kyrptonaught.inventorysorter.InventorySorterMod;
 
 public enum SortType {
     NAME, CATEGORY, MOD, ID;

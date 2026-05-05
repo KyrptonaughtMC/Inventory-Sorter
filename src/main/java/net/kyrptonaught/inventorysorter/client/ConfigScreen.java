@@ -10,7 +10,7 @@ import me.shedaniel.clothconfig2.gui.entries.SubCategoryListEntry;
 import me.shedaniel.clothconfig2.impl.builders.SubCategoryBuilder;
 import net.kyrptonaught.inventorysorter.InventoryHelper;
 import net.kyrptonaught.inventorysorter.SortPriorityRule;
-import net.kyrptonaught.inventorysorter.SortType;
+import net.kyrptonaught.inventorysorter.sort.SortType;
 import net.kyrptonaught.inventorysorter.client.clothconfig.ContainerEntry;
 import net.kyrptonaught.inventorysorter.client.clothconfig.SortPriorityRulesEntry;
 import net.kyrptonaught.inventorysorter.client.platform.ClientPlatformServices;

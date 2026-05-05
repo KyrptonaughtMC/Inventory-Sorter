@@ -3,7 +3,7 @@ package net.kyrptonaught.inventorysorter.network;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.kyrptonaught.inventorysorter.SortPriorityRule;
-import net.kyrptonaught.inventorysorter.SortType;
+import net.kyrptonaught.inventorysorter.sort.SortType;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.kyrptonaught.inventorysorter.platform.NetworkingPlatform;
 import net.kyrptonaught.inventorysorter.platform.PlatformServices;

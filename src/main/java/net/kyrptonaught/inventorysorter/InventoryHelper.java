@@ -3,6 +3,7 @@ package net.kyrptonaught.inventorysorter;
 import net.kyrptonaught.inventorysorter.network.PlayerSortPrevention;
 import net.kyrptonaught.inventorysorter.network.SortSettings;
 import net.kyrptonaught.inventorysorter.platform.PlatformServices;
+import net.kyrptonaught.inventorysorter.sort.SortType;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;

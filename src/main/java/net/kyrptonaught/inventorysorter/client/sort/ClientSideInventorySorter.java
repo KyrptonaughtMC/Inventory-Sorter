@@ -3,7 +3,7 @@ package net.kyrptonaught.inventorysorter.client.sort;
 import net.kyrptonaught.inventorysorter.SortedInventoryLayout;
 import net.kyrptonaught.inventorysorter.SortPriorityRule;
 import net.kyrptonaught.inventorysorter.SortTarget;
-import net.kyrptonaught.inventorysorter.SortType;
+import net.kyrptonaught.inventorysorter.sort.SortType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
 

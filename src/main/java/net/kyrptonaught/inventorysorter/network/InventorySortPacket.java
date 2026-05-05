@@ -1,7 +1,7 @@
 package net.kyrptonaught.inventorysorter.network;
 
 import net.kyrptonaught.inventorysorter.SortTarget;
-import net.kyrptonaught.inventorysorter.SortType;
+import net.kyrptonaught.inventorysorter.sort.SortType;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.kyrptonaught.inventorysorter.platform.NetworkingPlatform;
 import net.kyrptonaught.inventorysorter.platform.PlatformServices;

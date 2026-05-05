@@ -7,7 +7,7 @@ import net.kyrptonaught.inventorysorter.ButtonType;
 import net.kyrptonaught.inventorysorter.InventorySorterMod;
 import net.kyrptonaught.inventorysorter.InventoryScreenId;
 import net.kyrptonaught.inventorysorter.SortTarget;
-import net.kyrptonaught.inventorysorter.SortType;
+import net.kyrptonaught.inventorysorter.sort.SortType;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.kyrptonaught.inventorysorter.config.ScrollBehaviour;
 import net.kyrptonaught.inventorysorter.client.platform.ClientPlatformServices;

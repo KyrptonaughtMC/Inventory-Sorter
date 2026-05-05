@@ -1,6 +1,8 @@
 package net.kyrptonaught.inventorysorter;
 
 import net.kyrptonaught.inventorysorter.sort.SortPriorityRules;
+import net.kyrptonaught.inventorysorter.sort.SortType;
+import net.kyrptonaught.inventorysorter.sort.ordering.StackOrderingStrategy;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
@@ -25,7 +27,8 @@ public record SortedInventoryLayout(List<ItemStack> stacks) {
             }
         }
 
-        mergedStacks.sort(priorityRules.applyTo(SortCases.getComparator(sortType, languageCode)));
+        StackOrderingStrategy orderingStrategy = StackOrderingStrategy.bySortType(sortType, languageCode);
+        mergedStacks.sort(priorityRules.applyTo(orderingStrategy.comparator()));
 
         int sortedIndex = 0;
         for (int i = 0; i < sortedStacks.size(); i++) {
