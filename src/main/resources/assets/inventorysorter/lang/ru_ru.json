@@ -5,7 +5,6 @@
   "inventorysorter.key.config": "Открыть настройки",
   "inventorysorter.key.modifier": "Клавиша-модификатор (для скрытия/переключения)",
   "modmenu.descriptionTranslation.inventorysorter": "Сортируйте инвентарь одним нажатием кнопки!",
-  "inventorysorter.warning.missing-server": "Не обнаружена поддержка на стороне сервера. \nСортировка НЕ будет работать!",
   "inventorysorter.toggle.enabled": "Включить",
   "inventorysorter.toggle.disabled": "Выключить",
   "inventorysorter.toggle.yes": "Да",

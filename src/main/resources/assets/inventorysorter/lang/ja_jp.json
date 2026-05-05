@@ -5,7 +5,6 @@
   "inventorysorter.key.config": "設定を開く",
   "inventorysorter.key.modifier": "修飾キー（表示/非表示 切り替え用）",
   "modmenu.descriptionTranslation.inventorysorter": "ボタンをクリックしてインベントリを整理します！",
-  "inventorysorter.warning.missing-server": "サーバー側のサポートが検出されません。\n整理は機能しません！",
   "inventorysorter.toggle.enabled": "オン",
   "inventorysorter.toggle.disabled": "オフ",
   "inventorysorter.toggle.yes": "はい",

@@ -5,7 +5,6 @@
   "inventorysorter.key.config": "설정 열기",
   "inventorysorter.key.modifier": "키 변경",
   "modmenu.descriptionTranslation.inventorysorter": "버튼 클릭으로 당신의 인벤토리를 정렬합니다!",
-  "inventorysorter.warning.missing-server": "서버에서는 기능을 지원하지 않습니다.\n아이템 정렬을 사용할 수 없습니다!",
   "inventorysorter.toggle.enabled": "켜짐",
   "inventorysorter.toggle.disabled": "꺼짐",
   "inventorysorter.toggle.yes": "네",

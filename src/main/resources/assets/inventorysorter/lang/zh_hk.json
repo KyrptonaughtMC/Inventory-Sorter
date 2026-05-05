@@ -5,7 +5,6 @@
   "inventorysorter.key.config": "開啟設定",
   "inventorysorter.key.modifier": "修飾鍵（用於隱藏/切換）",
   "modmenu.descriptionTranslation.inventorysorter": "點擊按鈕來整理你的物品欄和容器！",
-  "inventorysorter.warning.missing-server": "未偵測到伺服器端支援。\n整理功能將無法使用！",
   "inventorysorter.toggle.enabled": "開啟",
   "inventorysorter.toggle.disabled": "關閉",
   "inventorysorter.toggle.yes": "是",

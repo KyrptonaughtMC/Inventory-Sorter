@@ -5,7 +5,6 @@
   "inventorysorter.key.config": "Apri Impostazioni",
   "inventorysorter.key.modifier": "Tasto Modificatore (per nascondere/cambiare)",
   "modmenu.descriptionTranslation.inventorysorter": "Ordina il tuo inventario con il clic di un pulsante!",
-  "inventorysorter.warning.missing-server": "Nessun supporto lato server rilevato.\nL'ordinamento NON funzionerà!",
   "inventorysorter.toggle.enabled": "On",
   "inventorysorter.toggle.disabled": "Off",
   "inventorysorter.toggle.yes": "SÌ",
