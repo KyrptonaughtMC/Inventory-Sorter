@@ -1,6 +1,7 @@
 package net.kyrptonaught.inventorysorter;
 
 import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
+import net.kyrptonaught.inventorysorter.sort.SortedInventoryLayout;
 import net.kyrptonaught.inventorysorter.sort.SortPriorityPosition;
 import net.kyrptonaught.inventorysorter.sort.SortType;
 import net.minecraft.SharedConstants;
@@ -55,6 +56,21 @@ public class SortedInventoryLayoutTest {
         assertStack(layout.stacks().get(0), Items.DIAMOND, 64);
         assertStack(layout.stacks().get(1), Items.DIAMOND, 1);
         Assertions.assertTrue(layout.stacks().get(2).isEmpty());
+    }
+
+    @Test
+    void fullStacksAreSortedWithoutBeingMergeCandidates() {
+        SortedInventoryLayout layout = SortedInventoryLayout.from(
+                List.of(
+                        stack(Items.DIAMOND, 64, "Diamond"),
+                        stack(Items.APPLE, 1, "Apple")
+                ),
+                SortType.NAME,
+                "en_us"
+        );
+
+        assertStack(layout.stacks().get(0), Items.APPLE, 1);
+        assertStack(layout.stacks().get(1), Items.DIAMOND, 64);
     }
 
     @Test
