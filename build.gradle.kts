@@ -2,6 +2,7 @@ import gg.meza.stonecraft.mod
 
 plugins {
     id("gg.meza.stonecraft")
+    jacoco
 }
 
 stonecutter {
@@ -66,6 +67,22 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+
+    classDirectories.setFrom(files(classDirectories.files.map {
+        fileTree(it) {
+            exclude("**/e2e/**")
+        }
+    }))
+
+    reports {
+        html.required.set(true)
+        xml.required.set(true)
+    }
 }
 
 tasks.jar {
