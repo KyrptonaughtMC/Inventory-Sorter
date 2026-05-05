@@ -4,9 +4,7 @@ import net.kyrptonaught.inventorysorter.network.PlayerSortPrevention;
 import net.kyrptonaught.inventorysorter.platform.PlatformServices;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
@@ -33,7 +31,7 @@ public class InventoryHelper {
 
     public static final double MAX_LOOKUP_DISTANCE = 6.0D;
     private static final long TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes in milliseconds
-    private static Identifier lastCheckedId;
+    private static InventoryScreenId lastCheckedId;
     private static long lastCheckedTimestamp;
 
     public static <T> T withTargetedScreenHandler(ServerPlayer player, Function<ScreenContext, T> action) {
@@ -70,10 +68,10 @@ public class InventoryHelper {
         AbstractContainerMenu screenHandler = namedScreenHandlerFactory.createMenu(syncId.getAsInt(), player.getInventory(), player);
 
         try {
-            Identifier id = BuiltInRegistries.MENU.getKey(screenHandler.getType());
-            if (id == null) return null;
+            InventoryScreenId screenId = InventoryScreenId.fromMenu(screenHandler).orElse(null);
+            if (screenId == null) return null;
 
-            return action.apply(new ScreenContext(screenHandler, id, inventory));
+            return action.apply(new ScreenContext(screenHandler, screenId, inventory));
         } catch (Exception e) {
             return null;
         } finally {
@@ -156,13 +154,13 @@ public class InventoryHelper {
         }
 
         try {
-            Identifier id = BuiltInRegistries.MENU.getKey(player.containerMenu.getType());
+            InventoryScreenId screenId = InventoryScreenId.fromMenu(player.containerMenu).orElse(null);
 
-            if (id == null) {
+            if (screenId == null) {
                 return false;
             }
-            setLastChecked(id);
-            return compatibility.shouldShowSortButton(id);
+            setLastChecked(screenId);
+            return compatibility.shouldShowSortButton(screenId.value());
 
         } catch (UnsupportedOperationException e) {
             return false;
@@ -185,23 +183,23 @@ public class InventoryHelper {
         }
 
         try {
-            Identifier id = BuiltInRegistries.MENU.getKey(screenHandler.getType());
+            InventoryScreenId screenId = InventoryScreenId.fromMenu(screenHandler).orElse(null);
 
-            if (id == null) {
+            if (screenId == null) {
                 return false;
             }
-            return isSortableContainer(player, screenHandler, id);
+            return isSortableContainer(player, screenHandler, screenId);
 
         } catch (UnsupportedOperationException e) {
             return false;
         }
     }
 
-    private static boolean isSortableContainer(Player player, AbstractContainerMenu screenHandler, Identifier screenID) {
+    private static boolean isSortableContainer(Player player, AbstractContainerMenu screenHandler, InventoryScreenId screenId) {
         PlayerSortPrevention playerSortPrevention = player instanceof ServerPlayer serverPlayer
                 ? PlatformServices.PLAYER_DATA.getPlayerSortPrevention(serverPlayer)
                 : PlayerSortPrevention.DEFAULT;
-        if (!compatibility.isSortAllowed(screenID, playerSortPrevention.preventSortForScreens())) {
+        if (!compatibility.isSortAllowed(screenId.value(), playerSortPrevention.preventSortForScreens())) {
             return false;
         }
 
@@ -213,18 +211,18 @@ public class InventoryHelper {
         return numSlots - 36 >= 9;
     }
 
-    private static void setLastChecked(Identifier id) {
+    private static void setLastChecked(InventoryScreenId id) {
         lastCheckedId = id;
         lastCheckedTimestamp = System.currentTimeMillis();
     }
 
-    public static Optional<Identifier> getLastCheckedId() {
+    public static Optional<InventoryScreenId> getLastCheckedId() {
         if (lastCheckedId != null && System.currentTimeMillis() - lastCheckedTimestamp > TIMEOUT_MS) {
             lastCheckedId = null;
         }
         return Optional.ofNullable(lastCheckedId);
     }
 
-    public record ScreenContext(AbstractContainerMenu handler, Identifier screenId, Container inventory) {
+    public record ScreenContext(AbstractContainerMenu handler, InventoryScreenId screenId, Container inventory) {
     }
 }

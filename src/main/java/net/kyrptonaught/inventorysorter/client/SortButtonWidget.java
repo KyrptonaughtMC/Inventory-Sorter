@@ -4,8 +4,8 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.kyrptonaught.inventorysorter.ButtonType;
-import net.kyrptonaught.inventorysorter.InventoryHelper;
 import net.kyrptonaught.inventorysorter.InventorySorterMod;
+import net.kyrptonaught.inventorysorter.InventoryScreenId;
 import net.kyrptonaught.inventorysorter.SortTarget;
 import net.kyrptonaught.inventorysorter.SortType;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
@@ -24,11 +24,9 @@ import net.minecraft.client.gui.screens.inventory.AbstractRecipeBookScreen;
 import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
 import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraft.world.inventory.InventoryMenu;
 import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
@@ -40,7 +38,6 @@ import java.util.concurrent.TimeUnit;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.compatibility;
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.getConfig;
-import static net.kyrptonaught.inventorysorter.client.InventorySorterModClient.PLAYER_INVENTORY;
 
 @Environment(EnvType.CLIENT)
 public class SortButtonWidget extends ImageButton {
@@ -74,28 +71,22 @@ public class SortButtonWidget extends ImageButton {
     @Override
     public void onPress(InputWithModifiers input) {
         Minecraft instance = Minecraft.getInstance();
-        String screenID = null;
-        if (InventoryHelper.canSortInventory(instance.player)) {
-            screenID = BuiltInRegistries.MENU.getKey(instance.player.containerMenu.getType()).toString();
-        }
-        if (instance.player.containerMenu instanceof InventoryMenu) {
-            screenID = PLAYER_INVENTORY.toString();
-        }
+        InventoryScreenId screenId = InventoryScreenId.fromMenu(instance.player.containerMenu).orElse(null);
 
-        if (screenID == null) {
+        if (screenId == null) {
             ClientSorts.requestCurrentScreenSort(target);
             return;
         }
 
         if (isModifierPressed()) {
-            getConfig().disableButtonForScreen(screenID);
-            compatibility.addShouldHideSortButton(screenID);
+            getConfig().disableButtonForScreen(screenId.serialized());
+            compatibility.addShouldHideSortButton(screenId.serialized());
             getConfig().save();
             compatibility.reload();
             ClientConfigSync.syncConfigToServer();
             SystemToast.add(instance.getToastManager(), SystemToast.SystemToastId.PERIODIC_NOTIFICATION,
                     net.minecraft.network.chat.Component.translatable("inventorysorter.sortButton.toast.hide.success.title"),
-                    net.minecraft.network.chat.Component.translatable("inventorysorter.sortButton.toast.hide.success.description", screenID));
+                    net.minecraft.network.chat.Component.translatable("inventorysorter.sortButton.toast.hide.success.description", screenId.serialized()));
             this.visible = false;
 
         } else {

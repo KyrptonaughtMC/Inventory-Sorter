@@ -6,13 +6,10 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.kyrptonaught.inventorysorter.compat.sources.ConfigLoader;
 import net.kyrptonaught.inventorysorter.client.platform.ClientPlatformServices;
 import net.kyrptonaught.inventorysorter.platform.PlatformServices;
-import net.minecraft.resources.Identifier;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.*;
 
 public class InventorySorterModClient implements ClientModInitializer {
-
-    public static Identifier PLAYER_INVENTORY = Identifier.parse("player_inventory");
 
     @Override
     public void onInitializeClient() {

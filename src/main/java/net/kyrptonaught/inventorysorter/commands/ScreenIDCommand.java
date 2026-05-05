@@ -4,6 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.kyrptonaught.inventorysorter.InventoryHelper;
+import net.kyrptonaught.inventorysorter.InventoryScreenId;
 import net.kyrptonaught.inventorysorter.permissions.CommandPermission;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
@@ -12,7 +13,6 @@ import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 
 public class ScreenIDCommand {
@@ -30,7 +30,7 @@ public class ScreenIDCommand {
             return 0;
         }
 
-        Identifier screenID = InventoryHelper.withTargetedScreenHandler(player, InventoryHelper.ScreenContext::screenId);
+        InventoryScreenId screenID = InventoryHelper.withTargetedScreenHandler(player, InventoryHelper.ScreenContext::screenId);
 
         if (screenID == null) {
             commandContext.getSource().sendSuccess(() -> Component.translatable("inventorysorter.cmd.screenid.fail"), false);

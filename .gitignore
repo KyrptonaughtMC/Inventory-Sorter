@@ -3,6 +3,7 @@ tmp
 run/
 .tmp/
 .env
+.fabric
 
 # gradle
 secrets.gradle

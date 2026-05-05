@@ -5,6 +5,7 @@ import net.fabricmc.api.Environment;
 import net.kyrptonaught.inventorysorter.ButtonType;
 import net.kyrptonaught.inventorysorter.InventoryHelper;
 import net.kyrptonaught.inventorysorter.InventorySorterMod;
+import net.kyrptonaught.inventorysorter.InventoryScreenId;
 import net.kyrptonaught.inventorysorter.SortTarget;
 import net.kyrptonaught.inventorysorter.client.SortButtonWidget;
 import net.kyrptonaught.inventorysorter.client.SortableContainerScreen;
@@ -15,9 +16,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
@@ -32,7 +31,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.compatibility;
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.getConfig;
-import static net.kyrptonaught.inventorysorter.client.InventorySorterModClient.PLAYER_INVENTORY;
 
 @Environment(EnvType.CLIENT)
 @Mixin(AbstractContainerScreen.class)
@@ -73,7 +71,7 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
             boolean playerOnly = !InventoryHelper.canSortInventory(minecraft.player);
             if (playerOnly) {
                 invsort$PlayerSortBtn = new SortButtonWidget(ButtonType.PLAYER, this.leftPos + this.imageWidth - 20, this.topPos + (playerOnly ? (imageHeight - 95) : 6), SortTarget.PLAYER_INVENTORY, minecraft.screen);
-                invsort$PlayerSortBtn.visible = compatibility.shouldShowSortButton(PLAYER_INVENTORY);
+                invsort$PlayerSortBtn.visible = compatibility.shouldShowSortButton(InventoryScreenId.PLAYER_INVENTORY.value());
                 this.addRenderableWidget(invsort$PlayerSortBtn);
             } else {
                 invsort$SortBtn = new SortButtonWidget(ButtonType.INVENTORY, this.leftPos + this.imageWidth - 20, this.topPos + (playerOnly ? (imageHeight - 95) : 6), SortTarget.CONTAINER, minecraft.screen);
@@ -81,7 +79,7 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
 
                 if (getConfig().separateButton) { // If separate button is enabled, add a player inventory sort button
                     invsort$PlayerSortBtn = new SortButtonWidget(ButtonType.PLAYER, invsort$SortBtn.getX(), this.topPos + ((this)).getMiddleHeight(), SortTarget.PLAYER_INVENTORY, minecraft.screen);
-                    invsort$PlayerSortBtn.visible = compatibility.shouldShowSortButton(PLAYER_INVENTORY);
+                    invsort$PlayerSortBtn.visible = compatibility.shouldShowSortButton(InventoryScreenId.PLAYER_INVENTORY.value());
                     this.addRenderableWidget(invsort$PlayerSortBtn);
                 }
             }
@@ -148,25 +146,21 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
             return;
         }
 
-        try {
-            Identifier screen = BuiltInRegistries.MENU.getKey(minecraft.player.containerMenu.getType());
-            boolean shouldShow = compatibility.shouldShowSortButton(screen);
+        InventoryScreenId screenId = InventoryScreenId.fromMenu(menu).orElse(null);
+        boolean containerShouldShow = screenId != null && compatibility.shouldShowSortButton(screenId.value());
 
-            if (invsort$SortBtn != null) {
-                invsort$SortBtn.setX(this.leftPos + this.imageWidth - 20);
-                invsort$SortBtn.visible = shouldShow;
-            }
+        if (invsort$SortBtn != null) {
+            invsort$SortBtn.setX(this.leftPos + this.imageWidth - 20);
+            invsort$SortBtn.visible = containerShouldShow;
+        }
 
-            if (invsort$PlayerSortBtn != null) {
-                invsort$PlayerSortBtn.visible = shouldShow && compatibility.shouldShowSortButton(PLAYER_INVENTORY);
-            }
+        if (invsort$PlayerSortBtn != null) {
+            invsort$PlayerSortBtn.visible = (screenId == null || containerShouldShow)
+                    && compatibility.shouldShowSortButton(InventoryScreenId.PLAYER_INVENTORY.value());
+        }
 
-        } catch (UnsupportedOperationException e) {
-            InventorySorterMod.LOGGER.debug("Unable to get screen ID for sort button visibility check", e);
-
-            if (invsort$PlayerSortBtn != null) {
-                invsort$PlayerSortBtn.visible = compatibility.shouldShowSortButton(PLAYER_INVENTORY);
-            }
+        if (screenId == null) {
+            InventorySorterMod.LOGGER.debug("Unable to get screen ID for sort button visibility check");
         }
     }
 
