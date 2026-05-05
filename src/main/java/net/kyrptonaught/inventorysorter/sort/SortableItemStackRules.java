@@ -1,4 +1,4 @@
-package net.kyrptonaught.inventorysorter;
+package net.kyrptonaught.inventorysorter.sort;
 
 import net.minecraft.world.item.ItemStack;
 
@@ -22,7 +22,6 @@ public final class SortableItemStackRules {
     public static boolean canMerge(ItemStack source, ItemStack target) {
         return sameIdentity(source, target)
                 && source.isStackable()
-                && target.isStackable()
                 && source.getCount() < source.getMaxStackSize()
                 && target.getCount() < target.getMaxStackSize();
     }
@@ -32,7 +31,7 @@ public final class SortableItemStackRules {
     }
 
     public static int transferableAmount(ItemStack source, ItemStack target) {
-        if (!canMergeToward(source, target) || !target.isStackable() || target.getCount() >= target.getMaxStackSize()) {
+        if (!canMergeToward(source, target) || target.getCount() >= target.getMaxStackSize()) {
             return 0;
         }
         return Math.min(source.getCount(), target.getMaxStackSize() - target.getCount());

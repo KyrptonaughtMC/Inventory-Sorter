@@ -1,6 +1,6 @@
 package net.kyrptonaught.inventorysorter.client.sort;
 
-import net.kyrptonaught.inventorysorter.SortableItemStackRules;
+import net.kyrptonaught.inventorysorter.sort.SortableItemStackRules;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.ItemStack;
 

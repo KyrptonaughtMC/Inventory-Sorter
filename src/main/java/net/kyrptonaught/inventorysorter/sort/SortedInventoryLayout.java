@@ -1,6 +1,5 @@
 package net.kyrptonaught.inventorysorter.sort;
 
-import net.kyrptonaught.inventorysorter.SortableItemStackRules;
 import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
 import net.kyrptonaught.inventorysorter.sort.ordering.StackOrderingStrategy;
 import net.minecraft.world.item.ItemStack;
