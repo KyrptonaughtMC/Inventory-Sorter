@@ -5,7 +5,6 @@
   "inventorysorter.key.config": "Configurações",
   "inventorysorter.key.modifier": "Tecla modificadora (para ocultar/mudar)",
   "modmenu.descriptionTranslation.inventorysorter": "Classifica seu inventário com o clique de um botão!",
-  "inventorysorter.warning.missing-server": "Nenhum suporte no servidor detectado, a ordenação de itens não funcionará!",
   "inventorysorter.toggle.enabled": "Ativado",
   "inventorysorter.toggle.disabled": "Desativado",
   "inventorysorter.toggle.yes": "Sim",

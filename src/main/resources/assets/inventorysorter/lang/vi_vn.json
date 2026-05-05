@@ -5,7 +5,6 @@
   "inventorysorter.key.config": "Tùy chỉnh",
   "inventorysorter.key.modifier": "Phím bổ trợ (cho ẩn/bật tắt)",
   "modmenu.descriptionTranslation.inventorysorter": "Sắp xếp kho đồ của bạn chỉ với một cú nhấp chuột!",
-  "inventorysorter.warning.missing-server": "Không phát hiện được hộ trợ từ phía máy chủ. Việc sắp xếp sẽ KHÔNG hoạt động!",
   "inventorysorter.toggle.enabled": "Bật",
   "inventorysorter.toggle.disabled": "Tắt",
   "inventorysorter.toggle.yes": "Có",
@@ -20,5 +19,7 @@
   "inventorysorter.config.category.compat": "Khả năng tương thích",
   "inventorysorter.config.compat.lastOpened": "Lần mở kho đồ lần trước",
   "inventorysorter.config.compat.others": "Bổ trợ kho đồ",
-  "inventorysorter.config.compat.remoteUrl": "Cấu Hình Tương Thích URL Từ xa"
+  "inventorysorter.config.compat.remoteUrl": "Cấu Hình Tương Thích URL Từ xa",
+  "inventorysorter.config.compat.remoteUrl.reset": "Dọn URL từ xa",
+  "inventorysorter.config.compat.remoteUrl.tooltip": "Url đến một tệp cấu hình từ xa, thứ sẽ được tải xuống, sử dụng cho sự tương thích"
 }

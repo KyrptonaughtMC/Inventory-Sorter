@@ -5,7 +5,6 @@
   "inventorysorter.key.config": "Beállítások",
   "inventorysorter.key.modifier": "Módosító Billentyű (elrejtéshez/váltáshoz)",
   "modmenu.descriptionTranslation.inventorysorter": "Rendezi az eszköztáradat egy gombnyomásra!",
-  "inventorysorter.warning.missing-server": "Nem észlelhető szerveroldali támogatás.\nA rendezés NEM fog működni!",
   "inventorysorter.toggle.enabled": "Be",
   "inventorysorter.toggle.disabled": "Ki",
   "inventorysorter.toggle.yes": "Igen",
