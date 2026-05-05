@@ -1,4 +1,4 @@
-package net.kyrptonaught.inventorysorter;
+package net.kyrptonaught.inventorysorter.sort;
 
 public enum SortPriorityPosition {
     FIRST,
@@ -16,14 +16,5 @@ public enum SortPriorityPosition {
 
     public String getTranslationKey() {
         return "inventorysorter.config.sortPriorityRules.position." + configValue();
-    }
-
-    int sortBucket() {
-        return switch (this) {
-            case FIRST -> 0;
-            case DEFAULT -> 1;
-            case LAST -> 2;
-            case IGNORE -> throw new IllegalStateException("Ignore is not a sortable priority position");
-        };
     }
 }

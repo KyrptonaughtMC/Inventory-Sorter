@@ -1,6 +1,6 @@
 package net.kyrptonaught.inventorysorter.commands;
 
-import net.kyrptonaught.inventorysorter.SortPriorityPosition;
+import net.kyrptonaught.inventorysorter.sort.SortPriorityPosition;
 import net.kyrptonaught.inventorysorter.SortPriorityRule;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

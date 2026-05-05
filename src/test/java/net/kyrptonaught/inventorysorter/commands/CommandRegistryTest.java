@@ -5,7 +5,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.tree.ArgumentCommandNode;
 import com.mojang.brigadier.tree.CommandNode;
-import net.kyrptonaught.inventorysorter.SortPriorityPosition;
+import net.kyrptonaught.inventorysorter.sort.SortPriorityPosition;
 import net.kyrptonaught.inventorysorter.SortType;
 import net.minecraft.SharedConstants;
 import net.minecraft.commands.CommandBuildContext;

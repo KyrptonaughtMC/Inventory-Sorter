@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import io.netty.buffer.Unpooled;
-import net.kyrptonaught.inventorysorter.SortPriorityPosition;
+import net.kyrptonaught.inventorysorter.sort.SortPriorityPosition;
 import net.kyrptonaught.inventorysorter.SortPriorityRule;
 import net.kyrptonaught.inventorysorter.SortTarget;
 import net.kyrptonaught.inventorysorter.SortType;

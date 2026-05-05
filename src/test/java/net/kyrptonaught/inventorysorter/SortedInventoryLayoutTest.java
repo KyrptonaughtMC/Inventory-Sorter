@@ -1,5 +1,6 @@
 package net.kyrptonaught.inventorysorter;
 
+import net.kyrptonaught.inventorysorter.sort.SortPriorityPosition;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentPatch;

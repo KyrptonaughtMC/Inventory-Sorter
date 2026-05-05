@@ -2,7 +2,7 @@ package net.kyrptonaught.inventorysorter.e2e;
 
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.kyrptonaught.inventorysorter.InventoryHelper;
-import net.kyrptonaught.inventorysorter.SortPriorityPosition;
+import net.kyrptonaught.inventorysorter.sort.SortPriorityPosition;
 import net.kyrptonaught.inventorysorter.SortPriorityRule;
 import net.kyrptonaught.inventorysorter.SortTarget;
 import net.kyrptonaught.inventorysorter.SortType;

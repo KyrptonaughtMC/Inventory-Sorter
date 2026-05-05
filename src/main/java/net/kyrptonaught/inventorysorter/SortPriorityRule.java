@@ -2,6 +2,7 @@ package net.kyrptonaught.inventorysorter;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.kyrptonaught.inventorysorter.sort.SortPriorityPosition;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 

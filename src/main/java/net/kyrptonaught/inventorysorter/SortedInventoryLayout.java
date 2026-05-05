@@ -1,5 +1,6 @@
 package net.kyrptonaught.inventorysorter;
 
+import net.kyrptonaught.inventorysorter.sort.SortPriorityRules;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;

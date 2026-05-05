@@ -1,7 +1,7 @@
 package net.kyrptonaught.inventorysorter.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import net.kyrptonaught.inventorysorter.SortPriorityPosition;
+import net.kyrptonaught.inventorysorter.sort.SortPriorityPosition;
 import net.kyrptonaught.inventorysorter.SortPriorityRule;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.resources.Identifier;
