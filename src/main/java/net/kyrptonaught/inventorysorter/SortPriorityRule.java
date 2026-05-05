@@ -28,7 +28,7 @@ public record SortPriorityRule(String match, SortPriorityPosition position) {
     public static SortPriorityRule fromConfigValue(String value) {
         int separator = value.lastIndexOf('=');
         if (separator < 1 || separator == value.length() - 1) {
-            throw new IllegalArgumentException("Expected '<match>=<first|default|last>'");
+            throw new IllegalArgumentException("Expected '<match>=<first|default|last|ignore>'");
         }
         return new SortPriorityRule(
                 value.substring(0, separator).trim(),

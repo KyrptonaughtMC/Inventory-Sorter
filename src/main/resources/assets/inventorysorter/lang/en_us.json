@@ -76,6 +76,7 @@
   "inventorysorter.config.sortPriorityRules.position.first": "First",
   "inventorysorter.config.sortPriorityRules.position.default": "Default",
   "inventorysorter.config.sortPriorityRules.position.last": "Last",
+  "inventorysorter.config.sortPriorityRules.position.ignore": "Ignore",
   "inventorysorter.config.sortPriorityRules.error": "Invalid rule: %s",
   "inventorysorter.cmd.sortHovered.set": "Only sort the inventory under the mouse is now %s",
   "inventorysorter.cmd.sortHovered.get": "Only sort the inventory under the mouse is currently %s",

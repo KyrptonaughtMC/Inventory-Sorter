@@ -111,6 +111,44 @@ public class SortedInventoryLayoutTest {
     }
 
     @Test
+    void ignoredStacksKeepTheirSlotsWhileOtherStacksSortAroundThem() {
+        SortedInventoryLayout layout = SortedInventoryLayout.from(
+                List.of(
+                        stack(Items.DIAMOND, 1, "Diamond"),
+                        stack(Items.WHITE_SHULKER_BOX, 1, "Shulker Box"),
+                        stack(Items.APPLE, 1, "Apple"),
+                        stack(Items.FEATHER, 1, "Feather")
+                ),
+                SortType.NAME,
+                "en_us",
+                List.of(new SortPriorityRule("minecraft:white_shulker_box", SortPriorityPosition.IGNORE))
+        );
+
+        assertStack(layout.stacks().get(0), Items.APPLE, 1);
+        assertStack(layout.stacks().get(1), Items.WHITE_SHULKER_BOX, 1);
+        assertStack(layout.stacks().get(2), Items.DIAMOND, 1);
+        assertStack(layout.stacks().get(3), Items.FEATHER, 1);
+    }
+
+    @Test
+    void ignoredStacksDoNotMergeWithEachOther() {
+        SortedInventoryLayout layout = SortedInventoryLayout.from(
+                List.of(
+                        stack(Items.DIAMOND, 32),
+                        ItemStack.EMPTY,
+                        stack(Items.DIAMOND, 32)
+                ),
+                SortType.NAME,
+                "en_us",
+                List.of(new SortPriorityRule("minecraft:diamond", SortPriorityPosition.IGNORE))
+        );
+
+        assertStack(layout.stacks().get(0), Items.DIAMOND, 32);
+        Assertions.assertTrue(layout.stacks().get(1).isEmpty());
+        assertStack(layout.stacks().get(2), Items.DIAMOND, 32);
+    }
+
+    @Test
     void inputStacksAreCopiedBeforeMerging() {
         ItemStack first = stack(Items.DIAMOND, 32);
         ItemStack second = stack(Items.DIAMOND, 32);
@@ -122,8 +160,8 @@ public class SortedInventoryLayoutTest {
     }
 
     private static void assertStack(ItemStack stack, Item item, int count) {
-        Assertions.assertTrue(stack.is(item));
-        Assertions.assertEquals(count, stack.getCount());
+        Assertions.assertTrue(stack.is(item), "Expected " + item + " but got " + stack.getItem());
+        Assertions.assertEquals(count, stack.getCount(), "Expected " + count + " " + item + " but got " + stack.getCount() + " " + stack.getItem());
     }
 
     private static ItemStack stack(Item item, int count) {

@@ -215,6 +215,7 @@ public class ConfigScreen {
                 builder.startTextDescription(Component.translatable("inventorysorter.config.sortPriorityRules.header")).build(),
                 builder.startTextDescription(Component.translatable("inventorysorter.config.sortPriorityRules.description")).build(),
                 new SortPriorityRulesEntry(
+                builder,
                 Component.translatable("inventorysorter.config.sortPriorityRules"),
                 options.sortPriorityRules,
                 rules -> options.sortPriorityRules = saveableSortPriorityRules(rules)

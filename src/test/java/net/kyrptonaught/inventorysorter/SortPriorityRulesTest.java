@@ -83,6 +83,22 @@ public class SortPriorityRulesTest {
     }
 
     @Test
+    void anyMatchingIgnoreRuleExcludesAStackFromSorting() {
+        SortPriorityRules firstThenIgnore = SortPriorityRules.compile(List.of(
+                new SortPriorityRule("minecraft:bundle", SortPriorityPosition.FIRST),
+                new SortPriorityRule("@minecraft:bundle_contents", SortPriorityPosition.IGNORE)
+        ));
+        SortPriorityRules ignoreThenFirst = SortPriorityRules.compile(List.of(
+                new SortPriorityRule("@minecraft:bundle_contents", SortPriorityPosition.IGNORE),
+                new SortPriorityRule("minecraft:bundle", SortPriorityPosition.FIRST)
+        ));
+
+        Assertions.assertTrue(firstThenIgnore.shouldIgnore(bundle()));
+        Assertions.assertTrue(ignoreThenFirst.shouldIgnore(bundle()));
+        Assertions.assertFalse(ignoreThenFirst.shouldIgnore(stack(Items.APPLE)));
+    }
+
+    @Test
     void invalidExpressionsAreReportedForTheConfigUiAndIgnoredAtRuntime() {
         Assertions.assertTrue(SortPriorityRules.validationError("@").isPresent());
 

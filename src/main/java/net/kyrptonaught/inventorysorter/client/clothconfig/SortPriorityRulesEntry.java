@@ -1,5 +1,7 @@
 package net.kyrptonaught.inventorysorter.client.clothconfig;
 
+import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
+import me.shedaniel.clothconfig2.gui.entries.EnumListEntry;
 import me.shedaniel.clothconfig2.gui.entries.TooltipListEntry;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -28,18 +30,20 @@ public class SortPriorityRulesEntry extends TooltipListEntry<List<SortPriorityRu
     private static final int TEXT_COLOR = ARGB.opaque(0xE0E0E0);
     private static final int ERROR_TEXT_COLOR = ARGB.opaque(0xFF5555);
     private static final int GAP = 4;
-    private static final int POSITION_WIDTH = 88;
+    private static final int POSITION_WIDTH = 150;
     private static final int SMALL_BUTTON_WIDTH = 22;
     private static final int ADD_BUTTON_WIDTH = 52;
     private static final int ROW_HEIGHT = 24;
 
     private final List<RuleRow> rows;
-    private final RuleRow draftRow;
+    private RuleRow draftRow;
     private final List<SortPriorityRule> original;
+    private final ConfigEntryBuilder entryBuilder;
     private boolean isSelected;
 
-    public SortPriorityRulesEntry(Component fieldName, List<SortPriorityRule> rules, Consumer<List<SortPriorityRule>> saveConsumer) {
+    public SortPriorityRulesEntry(ConfigEntryBuilder entryBuilder, Component fieldName, List<SortPriorityRule> rules, Consumer<List<SortPriorityRule>> saveConsumer) {
         super(fieldName, null, false);
+        this.entryBuilder = entryBuilder;
         this.original = List.copyOf(rules);
         this.rows = new ArrayList<>();
         rules.stream()
@@ -139,7 +143,7 @@ public class SortPriorityRulesEntry extends TooltipListEntry<List<SortPriorityRu
             return;
         }
         this.rows.add(existingRow(this.draftRow.toRule()));
-        this.draftRow.reset();
+        this.draftRow = draftRow();
     }
 
     private RuleRow existingRow(SortPriorityRule rule) {
@@ -164,17 +168,16 @@ public class SortPriorityRulesEntry extends TooltipListEntry<List<SortPriorityRu
 
     private final class RuleRow {
         private final EditBox matchField;
+        private final EnumListEntry<SortPriorityPosition> positionEntry;
         private final Button positionButton;
         private final Button upButton;
         private final Button downButton;
         private final Button deleteButton;
         private final Button addButton;
         private final boolean draft;
-        private SortPriorityPosition position;
 
         private RuleRow(SortPriorityRule rule, boolean draft) {
             this.draft = draft;
-            this.position = rule.position();
             this.matchField = new EditBox(Minecraft.getInstance().font, 0, 0, 120, 18, SortPriorityRulesEntry.this.getFieldName()) {
                 public void extractWidgetRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
                     this.setFocused(SortPriorityRulesEntry.this.isSelected && SortPriorityRulesEntry.this.getFocused() == this);
@@ -186,10 +189,11 @@ public class SortPriorityRulesEntry extends TooltipListEntry<List<SortPriorityRu
             this.matchField.setValue(rule.match());
             this.matchField.moveCursorToStart(false);
 
-            this.positionButton = Button.builder(this.positionText(), button -> {
-                this.position = nextPosition(this.position);
-                button.setMessage(this.positionText());
-            }).bounds(0, 0, POSITION_WIDTH, 20).build();
+            this.positionEntry = SortPriorityRulesEntry.this.entryBuilder
+                    .startEnumSelector(Component.empty(), SortPriorityPosition.class, rule.position())
+                    .setEnumNameProvider(position -> Component.translatable(((SortPriorityPosition) position).getTranslationKey()))
+                    .build();
+            this.positionButton = (Button) this.positionEntry.children().getFirst();
             this.upButton = Button.builder(Component.literal("^"), button -> SortPriorityRulesEntry.this.moveUp(this)).bounds(0, 0, SMALL_BUTTON_WIDTH, 20).build();
             this.downButton = Button.builder(Component.literal("v"), button -> SortPriorityRulesEntry.this.moveDown(this)).bounds(0, 0, SMALL_BUTTON_WIDTH, 20).build();
             this.deleteButton = Button.builder(Component.literal("X"), button -> SortPriorityRulesEntry.this.delete(this)).bounds(0, 0, SMALL_BUTTON_WIDTH, 20).build();
@@ -208,8 +212,11 @@ public class SortPriorityRulesEntry extends TooltipListEntry<List<SortPriorityRu
             this.matchField.setWidth(matchWidth);
             this.matchField.setEditable(editable);
 
+            this.positionEntry.setEditable(editable);
             this.positionButton.setX(controlX);
             this.positionButton.setY(y);
+            this.positionButton.setWidth(POSITION_WIDTH);
+            this.positionButton.setMessage(Component.translatable(this.positionEntry.getValue().getTranslationKey()));
             this.positionButton.active = editable;
             controlX += POSITION_WIDTH + GAP;
 
@@ -249,25 +256,7 @@ public class SortPriorityRulesEntry extends TooltipListEntry<List<SortPriorityRu
         }
 
         private SortPriorityRule toRule() {
-            return new SortPriorityRule(this.matchField.getValue(), this.position);
+            return new SortPriorityRule(this.matchField.getValue(), this.positionEntry.getValue());
         }
-
-        private void reset() {
-            this.matchField.setValue("");
-            this.position = SortPriorityPosition.DEFAULT;
-            this.positionButton.setMessage(this.positionText());
-        }
-
-        private Component positionText() {
-            return Component.translatable(this.position.getTranslationKey());
-        }
-    }
-
-    private static SortPriorityPosition nextPosition(SortPriorityPosition position) {
-        return switch (position) {
-            case DEFAULT -> SortPriorityPosition.FIRST;
-            case FIRST -> SortPriorityPosition.LAST;
-            case LAST -> SortPriorityPosition.DEFAULT;
-        };
     }
 }

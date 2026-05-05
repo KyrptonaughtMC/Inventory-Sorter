@@ -15,7 +15,7 @@
         "type": "object",
         "properties": {
           "match": { "type": "string" },
-          "position": { "type": "string", "enum": ["FIRST", "DEFAULT", "LAST"] }
+          "position": { "type": "string", "enum": ["FIRST", "DEFAULT", "LAST", "IGNORE"] }
         },
         "required": ["match", "position"]
       }

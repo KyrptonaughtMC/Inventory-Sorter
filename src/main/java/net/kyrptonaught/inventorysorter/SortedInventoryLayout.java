@@ -11,16 +11,28 @@ public record SortedInventoryLayout(List<ItemStack> stacks) {
     }
 
     public static SortedInventoryLayout from(List<ItemStack> input, SortType sortType, String languageCode, List<SortPriorityRule> sortPriorityRules) {
+        SortPriorityRules priorityRules = SortPriorityRules.compile(sortPriorityRules);
         List<ItemStack> mergedStacks = new ArrayList<>();
-        for (ItemStack stack : input) {
-            addStackWithMerge(mergedStacks, stack.copy());
-        }
-
-        mergedStacks.sort(SortPriorityRules.compile(sortPriorityRules).applyTo(SortCases.getComparator(sortType, languageCode)));
-
         List<ItemStack> sortedStacks = new ArrayList<>(input.size());
         for (int i = 0; i < input.size(); i++) {
-            sortedStacks.add(i < mergedStacks.size() ? mergedStacks.get(i) : ItemStack.EMPTY);
+            ItemStack stack = input.get(i);
+            if (priorityRules.shouldIgnore(stack)) {
+                sortedStacks.add(stack.copy());
+            } else {
+                sortedStacks.add(ItemStack.EMPTY);
+                addStackWithMerge(mergedStacks, stack.copy());
+            }
+        }
+
+        mergedStacks.sort(priorityRules.applyTo(SortCases.getComparator(sortType, languageCode)));
+
+        int sortedIndex = 0;
+        for (int i = 0; i < sortedStacks.size(); i++) {
+            if (!sortedStacks.get(i).isEmpty()) {
+                continue;
+            }
+            sortedStacks.set(i, sortedIndex < mergedStacks.size() ? mergedStacks.get(sortedIndex) : ItemStack.EMPTY);
+            sortedIndex++;
         }
         return new SortedInventoryLayout(List.copyOf(sortedStacks));
     }

@@ -45,13 +45,36 @@ public final class SortPriorityRules {
         return Comparator.comparing(this::priority).thenComparing(comparator);
     }
 
-    private Priority priority(ItemStack stack) {
+    public boolean shouldIgnore(ItemStack stack) {
+        if (stack.isEmpty()) {
+            return false;
+        }
         for (CompiledRule rule : rules) {
-            if (rule.matches(stack)) {
-                return new Priority(rule.position().ordinal(), rule.order());
+            if (rule.position() == SortPriorityPosition.IGNORE && rule.matches(stack)) {
+                return true;
             }
         }
-        return new Priority(SortPriorityPosition.DEFAULT.ordinal(), Integer.MAX_VALUE);
+        return false;
+    }
+
+    private CompiledRule firstMatchingPriorityRule(ItemStack stack) {
+        for (CompiledRule rule : rules) {
+            if (rule.position() == SortPriorityPosition.IGNORE) {
+                continue;
+            }
+            if (rule.matches(stack)) {
+                return rule;
+            }
+        }
+        return null;
+    }
+
+    private Priority priority(ItemStack stack) {
+        CompiledRule rule = firstMatchingPriorityRule(stack);
+        if (rule != null) {
+            return new Priority(rule.position().sortBucket(), rule.order());
+        }
+        return new Priority(SortPriorityPosition.DEFAULT.sortBucket(), Integer.MAX_VALUE);
     }
 
     private record Priority(int bucket, int order) implements Comparable<Priority> {

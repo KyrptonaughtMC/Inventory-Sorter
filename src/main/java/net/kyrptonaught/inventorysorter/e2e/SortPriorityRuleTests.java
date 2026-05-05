@@ -196,6 +196,32 @@ public class SortPriorityRuleTests {
         ctx.succeed();
     }
 
+    @GameTest()
+    public void testPriorityIgnoreCommandLeavesMatchingChestSlotsInPlace(GameTestHelper ctx) {
+        Scenario scenario = setUpScene(ctx, Map.of(
+                0, new ItemStack(Items.FEATHER),
+                1, new ItemStack(Items.WHITE_SHULKER_BOX),
+                2, new ItemStack(Items.DIAMOND),
+                3, new ItemStack(Items.BUNDLE),
+                4, new ItemStack(Items.APPLE),
+                5, new ItemStack(Items.CRAFTING_TABLE)
+        ));
+        ServerPlayer player = scenario.player();
+
+        runCommand(player, "/invsort priority add ignore #minecraft:shulker_boxes");
+        runCommand(player, "/invsort sort");
+
+        assertContents(ctx, scenario, Map.of(
+                0, new ItemStack(Items.APPLE),
+                1, new ItemStack(Items.WHITE_SHULKER_BOX),
+                2, new ItemStack(Items.BUNDLE),
+                3, new ItemStack(Items.CRAFTING_TABLE),
+                4, new ItemStack(Items.DIAMOND),
+                5, new ItemStack(Items.FEATHER)
+        ));
+        ctx.succeed();
+    }
+
     private static Map<Integer, ItemStack> unsortedPriorityCommandChest() {
         return Map.of(
                 3, new ItemStack(Items.WHITE_SHULKER_BOX),
