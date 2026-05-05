@@ -66,7 +66,7 @@
   "inventorysorter.config.sortHovered.tooltip": "Only sort the inventory under the mouse when using the keybind or double-click sort",
   "inventorysorter.config.sortPriorityRules": "Sort Priority Rules",
   "inventorysorter.config.sortPriorityRules.header": "Sort Priority Rules",
-  "inventorysorter.config.sortPriorityRules.description": "Add match expressions to move item groups before or after the normal sort. Match item ids, #item_tags, or @data_components; combine them with !, &, |, and parentheses. Rules higher in the list win ties inside the same position.",
+  "inventorysorter.config.sortPriorityRules.description": "Add match expressions to move item groups before or after the normal sort. Match item ids, #item_tags, @data_components, or name:\"Display * Name\"; combine them with !, &, |, and parentheses. Rules higher in the list win ties inside the same position. Name rules use the server language.",
   "inventorysorter.config.sortPriorityRules.rule": "Rule %s",
   "inventorysorter.config.sortPriorityRules.newRule": "New Rule",
   "inventorysorter.config.sortPriorityRules.add": "Add",

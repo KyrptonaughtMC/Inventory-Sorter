@@ -13,6 +13,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 public final class SortPriorityRules {
     public static final SortPriorityRules EMPTY = new SortPriorityRules(List.of());
@@ -94,7 +95,7 @@ public final class SortPriorityRules {
         }
     }
 
-    private sealed interface Expression permits ItemExpression, TagExpression, ComponentExpression, NotExpression, AndExpression, OrExpression {
+    private sealed interface Expression permits ItemExpression, TagExpression, ComponentExpression, NameExpression, NotExpression, AndExpression, OrExpression {
         boolean matches(ItemStack stack);
     }
 
@@ -120,6 +121,13 @@ public final class SortPriorityRules {
         @Override
         public boolean matches(ItemStack stack) {
             return stack.has(componentType);
+        }
+    }
+
+    private record NameExpression(Pattern displayNamePattern) implements Expression {
+        @Override
+        public boolean matches(ItemStack stack) {
+            return displayNamePattern.matcher(stack.getHoverName().getString()).matches();
         }
     }
 
@@ -216,6 +224,11 @@ public final class SortPriorityRules {
                 throw error("Expected a rule atom");
             }
 
+            if (input.regionMatches(true, cursor, "name:", 0, "name:".length())) {
+                cursor += "name:".length();
+                return new NameExpression(parseQuotedGlobPattern());
+            }
+
             char prefix = input.charAt(cursor);
             if (prefix == '#') {
                 cursor++;
@@ -230,6 +243,40 @@ public final class SortPriorityRules {
                 return new ComponentExpression(componentType);
             }
             return new ItemExpression(parseIdentifier());
+        }
+
+        private Pattern parseQuotedGlobPattern() {
+            skipWhitespace();
+            if (cursor >= input.length() || input.charAt(cursor) != '"') {
+                throw error("Expected quoted name glob");
+            }
+            cursor++;
+
+            StringBuilder regex = new StringBuilder("^");
+            boolean closed = false;
+            while (cursor < input.length()) {
+                char value = input.charAt(cursor++);
+                if (value == '"') {
+                    closed = true;
+                    break;
+                }
+                if (value == '\\') {
+                    if (cursor >= input.length()) {
+                        throw error("Expected escaped character");
+                    }
+                    regex.append(Pattern.quote(String.valueOf(input.charAt(cursor++))));
+                } else if (value == '*') {
+                    regex.append(".*");
+                } else {
+                    regex.append(Pattern.quote(String.valueOf(value)));
+                }
+            }
+            if (!closed) {
+                throw error("Expected closing quote");
+            }
+
+            regex.append("$");
+            return Pattern.compile(regex.toString(), Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
         }
 
         private Identifier parseIdentifier() {

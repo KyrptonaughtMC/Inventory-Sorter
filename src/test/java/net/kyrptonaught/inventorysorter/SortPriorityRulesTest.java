@@ -5,6 +5,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -83,6 +84,67 @@ public class SortPriorityRulesTest {
     }
 
     @Test
+    void nameRulesMatchDisplayNamesWithFullStringGlobs() {
+        List<ItemStack> sorted = sort(
+                List.of(new SortPriorityRule("name:\"Meza's *\"", SortPriorityPosition.LAST)),
+                namedStack(Items.DIAMOND_PICKAXE, "Meza's Pickaxe"),
+                namedStack(Items.APPLE, "Apple"),
+                namedStack(Items.FEATHER, "Feather")
+        );
+
+        Assertions.assertTrue(sorted.get(0).is(Items.APPLE));
+        Assertions.assertTrue(sorted.get(1).is(Items.FEATHER));
+        Assertions.assertTrue(sorted.get(2).is(Items.DIAMOND_PICKAXE));
+    }
+
+    @Test
+    void nameRulesAreCaseInsensitiveAndDoNotTreatPlainTextAsContains() {
+        List<ItemStack> exactRuleSorted = sort(
+                List.of(new SortPriorityRule("name:\"meza's pickaxe\"", SortPriorityPosition.FIRST)),
+                namedStack(Items.APPLE, "Apple"),
+                namedStack(Items.DIAMOND_PICKAXE, "Meza's Pickaxe")
+        );
+        List<ItemStack> nonContainsRuleSorted = sort(
+                List.of(new SortPriorityRule("name:\"Meza's\"", SortPriorityPosition.FIRST)),
+                namedStack(Items.APPLE, "Apple"),
+                namedStack(Items.DIAMOND_PICKAXE, "Meza's Pickaxe")
+        );
+
+        Assertions.assertTrue(exactRuleSorted.get(0).is(Items.DIAMOND_PICKAXE));
+        Assertions.assertTrue(nonContainsRuleSorted.get(0).is(Items.APPLE));
+    }
+
+    @Test
+    void nameRulesCanEscapeWildcardCharacters() {
+        List<ItemStack> sorted = sort(
+                List.of(new SortPriorityRule("name:\"Meza's \\* Pickaxe\"", SortPriorityPosition.FIRST)),
+                namedStack(Items.APPLE, "Apple"),
+                namedStack(Items.DIAMOND_PICKAXE, "Meza's * Pickaxe"),
+                namedStack(Items.IRON_PICKAXE, "Meza's Fast Pickaxe")
+        );
+
+        Assertions.assertTrue(sorted.get(0).is(Items.DIAMOND_PICKAXE));
+        Assertions.assertTrue(sorted.get(1).is(Items.APPLE));
+        Assertions.assertTrue(sorted.get(2).is(Items.IRON_PICKAXE));
+    }
+
+    @Test
+    void invalidNameRulesAreReportedAndIgnoredAtRuntime() {
+        Assertions.assertTrue(SortPriorityRules.validationError("name:\"Meza's *").isPresent());
+
+        List<ItemStack> sorted = sort(
+                List.of(new SortPriorityRule("name:\"Meza's *", SortPriorityPosition.FIRST)),
+                namedStack(Items.FEATHER, "Feather"),
+                namedStack(Items.DIAMOND_PICKAXE, "Meza's Pickaxe"),
+                namedStack(Items.APPLE, "Apple")
+        );
+
+        Assertions.assertTrue(sorted.get(0).is(Items.APPLE));
+        Assertions.assertTrue(sorted.get(1).is(Items.DIAMOND_PICKAXE));
+        Assertions.assertTrue(sorted.get(2).is(Items.FEATHER));
+    }
+
+    @Test
     void anyMatchingIgnoreRuleExcludesAStackFromSorting() {
         SortPriorityRules firstThenIgnore = SortPriorityRules.compile(List.of(
                 new SortPriorityRule("minecraft:bundle", SortPriorityPosition.FIRST),
@@ -125,6 +187,12 @@ public class SortPriorityRulesTest {
                 1,
                 DataComponentPatch.builder().set(DataComponents.MAX_STACK_SIZE, 64).build()
         );
+    }
+
+    private static ItemStack namedStack(Item item, String name) {
+        ItemStack stack = stack(item);
+        stack.set(DataComponents.ITEM_NAME, Component.literal(name));
+        return stack;
     }
 
     private static ItemStack bundle() {
