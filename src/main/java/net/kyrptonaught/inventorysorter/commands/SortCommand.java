@@ -26,7 +26,7 @@ public class SortCommand {
         }
         SortSettings settings = PlatformServices.PLAYER_DATA.getSortSettings(player);
 
-        commandContext.getSource().sendSuccess(() -> InventoryHelper.sortTargetedBlock(player, settings.sortType()), false);
+        commandContext.getSource().sendSuccess(() -> InventoryHelper.sortTargetedBlock(player, settings), false);
         return 1;
     }
 }

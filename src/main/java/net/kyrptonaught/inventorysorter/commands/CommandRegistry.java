@@ -20,6 +20,7 @@ public class CommandRegistry {
         SortHighlightedInventoryCommand.register(dispatcher, rootCommand);
         SortMeCommand.register(dispatcher, rootCommand);
         SortTypeCommand.register(dispatcher, rootCommand);
+        SortPriorityRulesCommand.register(dispatcher, rootCommand);
         NoSortCommand.register(dispatcher, rootCommand);
         ReloadCommand.register(dispatcher, rootCommand);
         ScreenIDCommand.register(dispatcher, rootCommand);

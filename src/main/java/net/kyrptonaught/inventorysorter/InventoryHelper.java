@@ -1,6 +1,7 @@
 package net.kyrptonaught.inventorysorter;
 
 import net.kyrptonaught.inventorysorter.network.PlayerSortPrevention;
+import net.kyrptonaught.inventorysorter.network.SortSettings;
 import net.kyrptonaught.inventorysorter.platform.PlatformServices;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.core.BlockPos;
@@ -81,6 +82,10 @@ public class InventoryHelper {
     }
 
     public static Component sortTargetedBlock(ServerPlayer player, SortType sortType) {
+        return sortTargetedBlock(player, new SortSettings(true, false, true, sortType));
+    }
+
+    public static Component sortTargetedBlock(ServerPlayer player, SortSettings settings) {
 
         Boolean result = withTargetedScreenHandler(player, (context) -> {
             if (context.inventory == null) {
@@ -88,7 +93,7 @@ public class InventoryHelper {
             }
             if (canSortInventory(player, context.handler)) {
                 String languageCode = player.clientInformation().language().toLowerCase();
-                sortInventory(context.inventory, 0, context.inventory.getContainerSize(), sortType, languageCode);
+                sortInventory(context.inventory, 0, context.inventory.getContainerSize(), settings.sortType(), languageCode, settings.sortPriorityRules());
                 return true;
             }
             return false;
@@ -105,14 +110,18 @@ public class InventoryHelper {
     }
 
     public static boolean sortInventory(ServerPlayer player, SortTarget target, SortType sortType) {
+        return sortInventory(player, target, new SortSettings(true, false, true, sortType));
+    }
+
+    public static boolean sortInventory(ServerPlayer player, SortTarget target, SortSettings settings) {
         String languageCode = player.clientInformation().language().toLowerCase();
         if (target == SortTarget.PLAYER_INVENTORY) {
-            sortInventory(player.getInventory(), 9, 27, sortType, languageCode);
+            sortInventory(player.getInventory(), 9, 27, settings.sortType(), languageCode, settings.sortPriorityRules());
             return true;
         } else if (target == SortTarget.CONTAINER && canSortInventory(player)) {
             Container inv = getInventory(player.containerMenu);
             if (inv != null) {
-                sortInventory(inv, 0, inv.getContainerSize(), sortType, languageCode);
+                sortInventory(inv, 0, inv.getContainerSize(), settings.sortType(), languageCode, settings.sortPriorityRules());
                 return true;
             }
         }
@@ -124,13 +133,13 @@ public class InventoryHelper {
         return screenHandler.slots.getFirst().container;
     }
 
-    private static void sortInventory(Container inv, int startSlot, int invSize, SortType sortType, String languageCode) {
+    private static void sortInventory(Container inv, int startSlot, int invSize, SortType sortType, String languageCode, List<SortPriorityRule> sortPriorityRules) {
         List<ItemStack> stacks = new ArrayList<>();
         for (int i = 0; i < invSize; i++) {
             stacks.add(inv.getItem(startSlot + i));
         }
 
-        SortedInventoryLayout sortedInventoryLayout = SortedInventoryLayout.from(stacks, sortType, languageCode);
+        SortedInventoryLayout sortedInventoryLayout = SortedInventoryLayout.from(stacks, sortType, languageCode, sortPriorityRules);
         if (sortedInventoryLayout.stacks().stream().allMatch(ItemStack::isEmpty)) {
             return;
         }

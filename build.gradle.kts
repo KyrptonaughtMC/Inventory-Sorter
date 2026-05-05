@@ -51,8 +51,6 @@ dependencies {
     implementation("xyz.nucleoid:server-translations-api:${mod.prop("server_translations_api_version")}")
     include("xyz.nucleoid:server-translations-api:${mod.prop("server_translations_api_version")}")
 
-    add("localRuntime","maven.modrinth:cc-tweaked:1.118.1")
-
     try {
         api("com.terraformersmc:modmenu:${mod.prop("modmenu_version")}")
     } catch (e: Exception) {

@@ -9,8 +9,11 @@ import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import me.shedaniel.clothconfig2.gui.entries.SubCategoryListEntry;
 import me.shedaniel.clothconfig2.impl.builders.SubCategoryBuilder;
 import net.kyrptonaught.inventorysorter.InventoryHelper;
+import net.kyrptonaught.inventorysorter.SortPriorityRule;
+import net.kyrptonaught.inventorysorter.SortPriorityRules;
 import net.kyrptonaught.inventorysorter.SortType;
 import net.kyrptonaught.inventorysorter.client.clothconfig.ContainerEntry;
+import net.kyrptonaught.inventorysorter.client.clothconfig.SortPriorityRulesEntry;
 import net.kyrptonaught.inventorysorter.client.platform.ClientPlatformServices;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.kyrptonaught.inventorysorter.config.ScrollBehaviour;
@@ -140,24 +143,25 @@ public class ConfigScreen {
                         .setSaveConsumer(b -> options.showTooltips = b)
                         .build());
 
-        screenBuilder.getOrCreateCategory(Component.translatable("inventorysorter.config.category.logic"))
-                .addEntry(entryBuilder.startEnumSelector(Component.translatable("inventorysorter.config.sortType"), SortType.class, options.sortType)
+        ConfigCategory logicCategory = screenBuilder.getOrCreateCategory(Component.translatable("inventorysorter.config.category.logic"));
+        logicCategory.addEntry(entryBuilder.startEnumSelector(Component.translatable("inventorysorter.config.sortType"), SortType.class, options.sortType)
                         .setEnumNameProvider((sortType) -> Component.translatable(((SortType) sortType).getTranslationKey()))
                         .setDefaultValue(SortType.NAME)
                         .setSaveConsumer(val -> options.sortType = val)
-                        .build())
-                .addEntry(entryBuilder.startBooleanToggle(Component.translatable("inventorysorter.config.sortPlayerInventory"), options.sortPlayerInventory)
+                        .build());
+        logicCategory.addEntry(entryBuilder.startBooleanToggle(Component.translatable("inventorysorter.config.sortPlayerInventory"), options.sortPlayerInventory)
                         .setDefaultValue(false)
                         .setYesNoTextSupplier(ConfigScreen::toggleState)
                         .setTooltip(Component.translatable("inventorysorter.config.sortPlayerInventory.tooltip"))
                         .setSaveConsumer(val -> options.sortPlayerInventory = val)
-                        .build())
-                .addEntry(entryBuilder.startBooleanToggle(Component.translatable("inventorysorter.config.sortHovered"), options.sortHighlightedItem)
+                        .build());
+        logicCategory.addEntry(entryBuilder.startBooleanToggle(Component.translatable("inventorysorter.config.sortHovered"), options.sortHighlightedItem)
                         .setDefaultValue(true)
                         .setYesNoTextSupplier(ConfigScreen::toggleState)
                         .setTooltip(Component.translatable("inventorysorter.config.sortHovered.tooltip"))
                         .setSaveConsumer(val -> options.sortHighlightedItem = val)
                         .build());
+        buildSortPriorityRulesEditor(entryBuilder, options).forEach(logicCategory::addEntry);
 
         screenBuilder.getOrCreateCategory(Component.translatable("inventorysorter.config.category.activation"))
                 .addEntry(entryBuilder.startBooleanToggle(Component.translatable("inventorysorter.config.doubleClickSort"), options.enableDoubleClickSort)
@@ -205,4 +209,35 @@ public class ConfigScreen {
 
         return screenBuilder.build();
     }
+
+    private static List<AbstractConfigListEntry<?>> buildSortPriorityRulesEditor(ConfigEntryBuilder builder, NewConfigOptions options) {
+        return List.of(
+                builder.startTextDescription(Component.translatable("inventorysorter.config.sortPriorityRules.header")).build(),
+                builder.startTextDescription(Component.translatable("inventorysorter.config.sortPriorityRules.description")).build(),
+                new SortPriorityRulesEntry(
+                Component.translatable("inventorysorter.config.sortPriorityRules"),
+                options.sortPriorityRules,
+                rules -> options.sortPriorityRules = saveableSortPriorityRules(rules)
+        ));
+    }
+
+    static List<SortPriorityRule> saveableSortPriorityRules(List<SortPriorityRule> rules) {
+        return rules.stream()
+                .filter(rule -> isNotBlank(rule.match()))
+                .map(rule -> new SortPriorityRule(rule.match().trim(), rule.position()))
+                .toList();
+    }
+
+    static Optional<Component> sortPriorityMatchError(String value) {
+        if (!isNotBlank(value)) {
+            return Optional.empty();
+        }
+        return SortPriorityRules.validationError(value)
+                .map(message -> Component.translatable("inventorysorter.config.sortPriorityRules.error", message));
+    }
+
+    private static boolean isNotBlank(String value) {
+        return value != null && !value.isBlank();
+    }
+
 }

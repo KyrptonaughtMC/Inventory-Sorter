@@ -78,6 +78,7 @@ public class ClientPacketReceivers {
         NewConfigOptions currentConfig = config.get();
         currentConfig.enableDoubleClickSort = payload.enableDoubleClick();
         currentConfig.sortType = payload.sortType();
+        currentConfig.sortPriorityRules = payload.sortPriorityRules().stream().toList();
         currentConfig.save();
     }
 

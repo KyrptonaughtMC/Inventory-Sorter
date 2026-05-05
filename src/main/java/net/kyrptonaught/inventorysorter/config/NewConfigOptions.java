@@ -3,6 +3,7 @@ package net.kyrptonaught.inventorysorter.config;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.blaze3d.platform.InputConstants;
+import net.kyrptonaught.inventorysorter.SortPriorityRule;
 import net.kyrptonaught.inventorysorter.SortType;
 import net.kyrptonaught.inventorysorter.client.platform.ClientPlatformServices;
 import net.kyrptonaught.inventorysorter.compat.config.CompatConfig;
@@ -29,6 +30,7 @@ public class NewConfigOptions extends CompatConfig {
     public boolean enableDoubleClickSort = true;
     public boolean sortHighlightedItem = true;
     public ScrollBehaviour scrollBehaviour = ScrollBehaviour.FREE;
+    public List<SortPriorityRule> sortPriorityRules = new ArrayList<>();
     public List<String> missingServerWarningSuppressions = new ArrayList<>();
 
     public static NewConfigOptions load() throws IOException {

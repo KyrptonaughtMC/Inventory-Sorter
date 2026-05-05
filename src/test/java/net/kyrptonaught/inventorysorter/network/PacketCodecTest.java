@@ -4,6 +4,8 @@ import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import io.netty.buffer.Unpooled;
+import net.kyrptonaught.inventorysorter.SortPriorityPosition;
+import net.kyrptonaught.inventorysorter.SortPriorityRule;
 import net.kyrptonaught.inventorysorter.SortTarget;
 import net.kyrptonaught.inventorysorter.SortType;
 import net.minecraft.core.RegistryAccess;
@@ -12,6 +14,7 @@ import net.minecraft.network.codec.StreamCodec;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Set;
 
 public class PacketCodecTest {
@@ -25,10 +28,33 @@ public class PacketCodecTest {
 
     @Test
     public void sortSettingsCodecsRoundTripAllSettings() {
-        SortSettings settings = new SortSettings(false, true, false, SortType.CATEGORY);
+        SortSettings settings = new SortSettings(
+                false,
+                true,
+                false,
+                SortType.CATEGORY,
+                List.of(
+                        new SortPriorityRule("#minecraft:shulker_boxes", SortPriorityPosition.FIRST),
+                        new SortPriorityRule("@minecraft:bundle_contents", SortPriorityPosition.LAST)
+                )
+        );
 
         assertStreamRoundTrip(SortSettings.CODEC, settings);
         assertDataCodecRoundTrip(SortSettings.NBT_CODEC, settings);
+    }
+
+    @Test
+    public void sortSettingsNbtCodecReadsMissingPriorityRulesAsEmptyForExistingPlayerData() {
+        JsonElement encoded = SortSettings.NBT_CODEC.encodeStart(
+                JsonOps.INSTANCE,
+                new SortSettings(false, true, false, SortType.CATEGORY)
+        ).getOrThrow();
+        encoded.getAsJsonObject().remove("sortPriorityRules");
+
+        Assertions.assertEquals(
+                new SortSettings(false, true, false, SortType.CATEGORY),
+                SortSettings.NBT_CODEC.parse(JsonOps.INSTANCE, encoded).getOrThrow()
+        );
     }
 
     @Test

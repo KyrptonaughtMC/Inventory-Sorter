@@ -9,6 +9,7 @@ import net.minecraft.server.Bootstrap;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.BundleContents;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -92,6 +93,24 @@ public class SortedInventoryLayoutTest {
     }
 
     @Test
+    void priorityRulesWrapExistingComparatorWithoutChangingMergeRules() {
+        SortedInventoryLayout layout = SortedInventoryLayout.from(
+                List.of(
+                        stack(Items.DIAMOND, 32, "Diamond"),
+                        bundle(),
+                        stack(Items.DIAMOND, 32, "Diamond")
+                ),
+                SortType.NAME,
+                "en_us",
+                List.of(new SortPriorityRule("minecraft:bundle", SortPriorityPosition.FIRST))
+        );
+
+        assertStack(layout.stacks().get(0), Items.BUNDLE, 1);
+        assertStack(layout.stacks().get(1), Items.DIAMOND, 64);
+        Assertions.assertTrue(layout.stacks().get(2).isEmpty());
+    }
+
+    @Test
     void inputStacksAreCopiedBeforeMerging() {
         ItemStack first = stack(Items.DIAMOND, 32);
         ItemStack second = stack(Items.DIAMOND, 32);
@@ -119,5 +138,16 @@ public class SortedInventoryLayoutTest {
         ItemStack stack = stack(item, count);
         stack.set(ITEM_NAME, Component.literal(name));
         return stack;
+    }
+
+    private static ItemStack bundle() {
+        return new ItemStack(
+                Holder.direct(Items.BUNDLE),
+                1,
+                DataComponentPatch.builder()
+                        .set(DataComponents.MAX_STACK_SIZE, 1)
+                        .set(DataComponents.BUNDLE_CONTENTS, BundleContents.EMPTY)
+                        .build()
+        );
     }
 }

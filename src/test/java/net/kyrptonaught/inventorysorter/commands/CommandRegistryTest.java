@@ -1,9 +1,11 @@
 package net.kyrptonaught.inventorysorter.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.tree.ArgumentCommandNode;
 import com.mojang.brigadier.tree.CommandNode;
+import net.kyrptonaught.inventorysorter.SortPriorityPosition;
 import net.kyrptonaught.inventorysorter.SortType;
 import net.minecraft.SharedConstants;
 import net.minecraft.commands.CommandBuildContext;
@@ -38,6 +40,7 @@ public class CommandRegistryTest {
                 "sortHighlightedInventory",
                 "sortme",
                 "sortType",
+                "priority",
                 "nosort",
                 "reload",
                 "screenID"
@@ -92,6 +95,58 @@ public class CommandRegistryTest {
 
         Assertions.assertNotNull(sortType.getChild("NAME"));
         Assertions.assertNull(sortType.getChild("name"));
+    }
+
+    @Test
+    public void priorityCommandExposesListManagementActions() {
+        CommandNode<CommandSourceStack> priority = registeredInvsortCommand(Commands.CommandSelection.INTEGRATED)
+                .getChild("priority");
+
+        assertHasChildren(priority, "list", "add", "set", "remove", "move", "clear");
+        assertExecutable(priority.getChild("list"));
+        assertExecutable(priority.getChild("clear"));
+        assertExecutable(priority.getChild("remove").getChild("index"));
+    }
+
+    @Test
+    public void priorityAddAndSetUseLowercasePositionsAndGreedyMatchExpressions() {
+        CommandNode<CommandSourceStack> priority = registeredInvsortCommand(Commands.CommandSelection.INTEGRATED)
+                .getChild("priority");
+
+        assertHasChildren(priority.getChild("add"), Arrays.stream(SortPriorityPosition.values())
+                .map(SortPriorityPosition::configValue)
+                .toArray(String[]::new));
+        Assertions.assertNull(priority.getChild("add").getChild("FIRST"));
+
+        CommandNode<CommandSourceStack> addMatch = priority.getChild("add")
+                .getChild("first")
+                .getChild("match");
+        Assertions.assertInstanceOf(ArgumentCommandNode.class, addMatch);
+        StringArgumentType addArgumentType = (StringArgumentType) ((ArgumentCommandNode<?, ?>) addMatch).getType();
+        Assertions.assertEquals(StringArgumentType.StringType.GREEDY_PHRASE, addArgumentType.getType());
+        assertExecutable(addMatch);
+
+        CommandNode<CommandSourceStack> setIndex = priority.getChild("set").getChild("index");
+        Assertions.assertInstanceOf(ArgumentCommandNode.class, setIndex);
+        IntegerArgumentType setIndexType = (IntegerArgumentType) ((ArgumentCommandNode<?, ?>) setIndex).getType();
+        Assertions.assertEquals(1, setIndexType.getMinimum());
+        assertExecutable(setIndex.getChild("last"));
+        assertExecutable(setIndex.getChild("last").getChild("match"));
+    }
+
+    @Test
+    public void priorityMoveUsesOneBasedIndexAndDirectionLiterals() {
+        CommandNode<CommandSourceStack> moveIndex = registeredInvsortCommand(Commands.CommandSelection.INTEGRATED)
+                .getChild("priority")
+                .getChild("move")
+                .getChild("index");
+
+        Assertions.assertInstanceOf(ArgumentCommandNode.class, moveIndex);
+        IntegerArgumentType moveIndexType = (IntegerArgumentType) ((ArgumentCommandNode<?, ?>) moveIndex).getType();
+        Assertions.assertEquals(1, moveIndexType.getMinimum());
+        assertHasChildren(moveIndex, "up", "down");
+        assertExecutable(moveIndex.getChild("up"));
+        assertExecutable(moveIndex.getChild("down"));
     }
 
     @Test

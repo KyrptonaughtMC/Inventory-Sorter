@@ -1,10 +1,14 @@
 package net.kyrptonaught.inventorysorter.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import net.kyrptonaught.inventorysorter.SortPriorityPosition;
+import net.kyrptonaught.inventorysorter.SortPriorityRule;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.resources.Identifier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 public class ConfigScreenTest {
     private static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(Identifier.fromNamespaceAndPath("inventorysorter", "test"));
@@ -49,6 +53,29 @@ public class ConfigScreenTest {
         Assertions.assertFalse(ConfigScreen.consumeConfigScreenClick(configButton, sortButton, CONFIG_KEY, CONFIG_KEY));
         Assertions.assertEquals(1, configButton.consumeClicks);
         Assertions.assertEquals(1, sortButton.consumeClicks);
+    }
+
+    @Test
+    void blankDraftSortPriorityRulesAreNotSaved() {
+        Assertions.assertEquals(
+                List.of(new SortPriorityRule("minecraft:bundle", SortPriorityPosition.FIRST)),
+                ConfigScreen.saveableSortPriorityRules(List.of(
+                        new SortPriorityRule("", SortPriorityPosition.DEFAULT),
+                        new SortPriorityRule(" minecraft:bundle ", SortPriorityPosition.FIRST),
+                        new SortPriorityRule(" ", SortPriorityPosition.LAST)
+                ))
+        );
+    }
+
+    @Test
+    void blankSortPriorityRuleMatchesAreValidDrafts() {
+        Assertions.assertTrue(ConfigScreen.sortPriorityMatchError("").isEmpty());
+        Assertions.assertTrue(ConfigScreen.sortPriorityMatchError("   ").isEmpty());
+    }
+
+    @Test
+    void nonBlankInvalidSortPriorityRuleMatchesStillShowErrors() {
+        Assertions.assertTrue(ConfigScreen.sortPriorityMatchError("@").isPresent());
     }
 
     private static class RecordingKeyMapping extends KeyMapping {

@@ -28,7 +28,7 @@ public class SortMeCommand {
             return 0;
         }
         SortSettings settings = PlatformServices.PLAYER_DATA.getSortSettings(player);
-        InventoryHelper.sortInventory(player, SortTarget.PLAYER_INVENTORY, settings.sortType());
+        InventoryHelper.sortInventory(player, SortTarget.PLAYER_INVENTORY, settings);
 
         commandContext.getSource().sendSuccess(() -> Component.translatable("inventorysorter.cmd.sort.sorted"), false);
         return 1;

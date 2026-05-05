@@ -35,6 +35,7 @@ public class InventorySorterClientRuntime {
                 Minecraft::getInstance,
                 InventorySorterClientRuntime::languageCode,
                 () -> getConfig().sortType,
+                () -> getConfig().sortPriorityRules,
                 () -> getConfig().sortPlayerInventory
         );
         ClientSorts.configure(clientSortRuntime);

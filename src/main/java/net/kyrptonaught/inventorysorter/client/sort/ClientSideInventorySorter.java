@@ -1,6 +1,7 @@
 package net.kyrptonaught.inventorysorter.client.sort;
 
 import net.kyrptonaught.inventorysorter.SortedInventoryLayout;
+import net.kyrptonaught.inventorysorter.SortPriorityRule;
 import net.kyrptonaught.inventorysorter.SortTarget;
 import net.kyrptonaught.inventorysorter.SortType;
 import net.minecraft.client.Minecraft;
@@ -17,6 +18,7 @@ class ClientSideInventorySorter {
     private final Supplier<Minecraft> minecraft;
     private final Supplier<String> languageCode;
     private final Supplier<SortType> sortType;
+    private final Supplier<List<SortPriorityRule>> sortPriorityRules;
     private final BooleanSupplier sortPlayerInventory;
     private final ClientInventoryClickExecutor clickExecutor;
     private final ClientSortClickPlanner clickPlanner;
@@ -25,6 +27,7 @@ class ClientSideInventorySorter {
             Supplier<Minecraft> minecraft,
             Supplier<String> languageCode,
             Supplier<SortType> sortType,
+            Supplier<List<SortPriorityRule>> sortPriorityRules,
             BooleanSupplier sortPlayerInventory,
             ClientInventoryClickExecutor clickExecutor,
             ClientSortClickPlanner clickPlanner
@@ -32,6 +35,7 @@ class ClientSideInventorySorter {
         this.minecraft = minecraft;
         this.languageCode = languageCode;
         this.sortType = sortType;
+        this.sortPriorityRules = sortPriorityRules;
         this.sortPlayerInventory = sortPlayerInventory;
         this.clickExecutor = clickExecutor;
         this.clickPlanner = clickPlanner;
@@ -89,7 +93,8 @@ class ClientSideInventorySorter {
         List<ItemStack> desiredStacks = SortedInventoryLayout.from(
                 currentStacks,
                 sortType.get(),
-                languageCode.get()
+                languageCode.get(),
+                sortPriorityRules.get()
         ).stacks();
 
         Optional<List<ClientSortClickPlanner.PlannedContainerClick>> clicks = clickPlanner.plan(

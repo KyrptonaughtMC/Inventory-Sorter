@@ -50,14 +50,14 @@ public abstract class MixinContainer {
                         InventoryHelper.sortInventory(
                                 serverPlayer,
                                 target,
-                                settings.sortType()
+                                settings
                         );
 
                         if (target == SortTarget.CONTAINER && settings.sortPlayerInventory()) {
                             InventoryHelper.sortInventory(
                                     serverPlayer,
                                     SortTarget.PLAYER_INVENTORY,
-                                    settings.sortType()
+                                    settings
                             );
                         }
 
