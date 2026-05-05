@@ -15,5 +15,6 @@
   "fwaystones:waystone",
   "fwaystones:pocket_wormhole",
   "fwaystones:abyss",
-  "guild:quest_screen"
+  "guild:quest_screen",
+  "computercraft:turtle"
 ]
