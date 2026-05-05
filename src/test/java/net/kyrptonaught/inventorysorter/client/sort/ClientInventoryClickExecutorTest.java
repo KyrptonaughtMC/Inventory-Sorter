@@ -1,5 +1,6 @@
 package net.kyrptonaught.inventorysorter.client.sort;
 
+import net.kyrptonaught.inventorysorter.client.sort.plan.PlannedContainerClick;
 import net.minecraft.world.inventory.ContainerInput;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -82,18 +83,18 @@ public class ClientInventoryClickExecutorTest {
 
     private static ClientInventoryClickExecutor.QueuedSort sort(
             int menuId,
-            ClientSortClickPlanner.PlannedContainerClick... clicks
+            PlannedContainerClick... clicks
     ) {
         return new ClientInventoryClickExecutor.QueuedSort(menuId, List.of(clicks));
     }
 
-    private static ClientSortClickPlanner.PlannedContainerClick click(int slot) {
-        return new ClientSortClickPlanner.PlannedContainerClick(slot, 0, ContainerInput.PICKUP);
+    private static PlannedContainerClick click(int slot) {
+        return new PlannedContainerClick(slot, 0, ContainerInput.PICKUP);
     }
 
     private static class RecordingClickSender implements ClientInventoryClickExecutor.ClickSender {
         private final int currentMenuId;
-        private final List<ClientSortClickPlanner.PlannedContainerClick> sentClicks = new ArrayList<>();
+        private final List<PlannedContainerClick> sentClicks = new ArrayList<>();
         private int menuChangesAfterSentClicks = Integer.MAX_VALUE;
 
         private RecordingClickSender(int currentMenuId) {
@@ -106,7 +107,7 @@ public class ClientInventoryClickExecutorTest {
         }
 
         @Override
-        public void send(ClientSortClickPlanner.PlannedContainerClick click) {
+        public void send(PlannedContainerClick click) {
             sentClicks.add(click);
         }
     }

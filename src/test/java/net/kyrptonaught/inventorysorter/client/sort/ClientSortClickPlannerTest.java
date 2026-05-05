@@ -1,25 +1,34 @@
 package net.kyrptonaught.inventorysorter.client.sort;
 
+import net.kyrptonaught.inventorysorter.client.sort.plan.ClientSortClickPlanner;
+import net.kyrptonaught.inventorysorter.client.sort.plan.PlannedContainerClick;
+import net.kyrptonaught.inventorysorter.client.sort.plan.SlotState;
+import net.minecraft.SharedConstants;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.Bootstrap;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Optional;
 
 import static net.minecraft.core.component.DataComponents.ITEM_NAME;
-import static net.kyrptonaught.inventorysorter.client.sort.ClientSortClickPlanner.PlannedContainerClick;
-import static net.kyrptonaught.inventorysorter.client.sort.ClientSortClickPlanner.SlotState;
-
 public class ClientSortClickPlannerTest {
     private final ClientSortClickPlanner planner = new ClientSortClickPlanner();
+
+    @BeforeAll
+    static void setup() {
+        SharedConstants.tryDetectVersion();
+        Bootstrap.bootStrap();
+    }
 
     @Test
     void alreadySortedLayoutEmitsNoClicks() {
@@ -101,6 +110,37 @@ public class ClientSortClickPlannerTest {
     }
 
     @Test
+    void occupiedTargetCanMoveThroughLaterEmptySlot() {
+        ItemStack diamond = stack(Items.DIAMOND, 1);
+        ItemStack apple = stack(Items.APPLE, 1);
+        List<ItemStack> current = List.of(diamond, apple, ItemStack.EMPTY);
+        List<ItemStack> desired = List.of(apple.copy(), diamond.copy(), ItemStack.EMPTY);
+
+        Optional<List<PlannedContainerClick>> clicks = planner.plan(
+                slots(current),
+                desired
+        );
+
+        Assertions.assertTrue(clicks.isPresent());
+        assertClicksReachDesiredLayout(current, clicks.get(), desired);
+    }
+
+    @Test
+    void emptyDesiredTargetCanBeSwappedThroughCursor() {
+        ItemStack diamond = stack(Items.DIAMOND, 1);
+        List<ItemStack> current = List.of(diamond, ItemStack.EMPTY);
+        List<ItemStack> desired = List.of(ItemStack.EMPTY, diamond.copy());
+
+        Optional<List<PlannedContainerClick>> clicks = planner.plan(
+                slots(current),
+                desired
+        );
+
+        Assertions.assertTrue(clicks.isPresent());
+        assertClicksReachDesiredLayout(current, clicks.get(), desired);
+    }
+
+    @Test
     void partialCompatibleStacksMergeWithPickupClicks() {
         List<ItemStack> current = List.of(stack(Items.DIAMOND, 32), stack(Items.DIAMOND, 32));
         List<ItemStack> desired = List.of(stack(Items.DIAMOND, 64), ItemStack.EMPTY);
@@ -150,6 +190,46 @@ public class ClientSortClickPlannerTest {
         Assertions.assertTrue(clicks.isPresent());
         Assertions.assertEquals(List.of(click(0), click(1), click(0)), clicks.get());
         assertClicksReachDesiredLayout(current, clicks.get(), desired);
+    }
+
+    @Test
+    void mismatchedSlotCountsCannotBePlanned() {
+        Optional<List<PlannedContainerClick>> clicks = planner.plan(
+                slots(stack(Items.DIAMOND, 1)),
+                List.of(stack(Items.DIAMOND, 1), ItemStack.EMPTY)
+        );
+
+        Assertions.assertTrue(clicks.isEmpty());
+    }
+
+    @Test
+    void missingDesiredStackCannotBePlanned() {
+        Optional<List<PlannedContainerClick>> clicks = planner.plan(
+                slots(stack(Items.DIAMOND, 1), ItemStack.EMPTY),
+                List.of(stack(Items.APPLE, 1), ItemStack.EMPTY)
+        );
+
+        Assertions.assertTrue(clicks.isEmpty());
+    }
+
+    @Test
+    void emptyMergeTargetWithoutCompatibleOriginCannotBePlanned() {
+        Optional<List<PlannedContainerClick>> clicks = planner.plan(
+                slots(ItemStack.EMPTY, stack(Items.APPLE, 1)),
+                List.of(stack(Items.DIAMOND, 64), ItemStack.EMPTY)
+        );
+
+        Assertions.assertTrue(clicks.isEmpty());
+    }
+
+    @Test
+    void impossibleMergeCannotBePlanned() {
+        Optional<List<PlannedContainerClick>> clicks = planner.plan(
+                slots(stack(Items.DIAMOND, 32), ItemStack.EMPTY),
+                List.of(stack(Items.DIAMOND, 64), ItemStack.EMPTY)
+        );
+
+        Assertions.assertTrue(clicks.isEmpty());
     }
 
     private static List<SlotState> slots(ItemStack... stacks) {

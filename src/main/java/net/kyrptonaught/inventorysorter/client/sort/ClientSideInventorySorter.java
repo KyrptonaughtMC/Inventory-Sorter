@@ -1,6 +1,9 @@
 package net.kyrptonaught.inventorysorter.client.sort;
 
 import net.kyrptonaught.inventorysorter.SortTarget;
+import net.kyrptonaught.inventorysorter.client.sort.plan.ClientSortClickPlanner;
+import net.kyrptonaught.inventorysorter.client.sort.plan.PlannedContainerClick;
+import net.kyrptonaught.inventorysorter.client.sort.plan.SlotState;
 import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
 import net.kyrptonaught.inventorysorter.sort.SortedInventoryLayout;
 import net.kyrptonaught.inventorysorter.sort.SortType;
@@ -97,7 +100,7 @@ class ClientSideInventorySorter {
                 sortPriorityRules.get()
         ).stacks();
 
-        Optional<List<ClientSortClickPlanner.PlannedContainerClick>> clicks = clickPlanner.plan(
+        Optional<List<PlannedContainerClick>> clicks = clickPlanner.plan(
                 slotStates(scope.get().slots()),
                 desiredStacks
         );
@@ -108,10 +111,10 @@ class ClientSideInventorySorter {
         return Optional.of(new ClientInventoryClickExecutor.QueuedSort(scope.get().menuId(), clicks.get()));
     }
 
-    private static List<ClientSortClickPlanner.SlotState> slotStates(List<ClientSortScope.ScopedSlot> slots) {
-        List<ClientSortClickPlanner.SlotState> slotStates = new ArrayList<>();
+    private static List<SlotState> slotStates(List<ClientSortScope.ScopedSlot> slots) {
+        List<SlotState> slotStates = new ArrayList<>();
         for (ClientSortScope.ScopedSlot scopedSlot : slots) {
-            slotStates.add(new ClientSortClickPlanner.SlotState(
+            slotStates.add(new SlotState(
                     scopedSlot.menuSlotIndex(),
                     scopedSlot.slot().getItem().copy()
             ));

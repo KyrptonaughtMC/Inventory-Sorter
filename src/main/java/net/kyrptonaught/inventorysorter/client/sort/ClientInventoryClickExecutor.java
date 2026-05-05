@@ -1,6 +1,7 @@
 package net.kyrptonaught.inventorysorter.client.sort;
 
 import net.kyrptonaught.inventorysorter.InventorySorterMod;
+import net.kyrptonaught.inventorysorter.client.sort.plan.PlannedContainerClick;
 import net.minecraft.client.Minecraft;
 
 import java.util.ArrayDeque;
@@ -80,13 +81,13 @@ class ClientInventoryClickExecutor {
     interface ClickSender {
         boolean canSend(int menuId);
 
-        void send(ClientSortClickPlanner.PlannedContainerClick click);
+        void send(PlannedContainerClick click);
     }
 
-    record QueuedSort(int menuId, List<ClientSortClickPlanner.PlannedContainerClick> clicks) {
+    record QueuedSort(int menuId, List<PlannedContainerClick> clicks) {
     }
 
-    private record PlannedSort(int menuId, Queue<ClientSortClickPlanner.PlannedContainerClick> clicks) {
+    private record PlannedSort(int menuId, Queue<PlannedContainerClick> clicks) {
     }
 
     private record MinecraftClickSender(Minecraft minecraft) implements ClickSender {
@@ -100,7 +101,7 @@ class ClientInventoryClickExecutor {
         }
 
         @Override
-        public void send(ClientSortClickPlanner.PlannedContainerClick click) {
+        public void send(PlannedContainerClick click) {
             minecraft.gameMode.handleContainerInput(
                     minecraft.player.containerMenu.containerId,
                     click.slotIndex(),

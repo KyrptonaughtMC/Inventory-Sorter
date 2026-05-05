@@ -1,10 +1,11 @@
 package net.kyrptonaught.inventorysorter.client.sort;
 
 import net.kyrptonaught.inventorysorter.SortTarget;
-import net.kyrptonaught.inventorysorter.sort.SortType;
-import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
 import net.kyrptonaught.inventorysorter.client.ClientServerSupport;
 import net.kyrptonaught.inventorysorter.network.InventorySortPacket;
+import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
+import net.kyrptonaught.inventorysorter.client.sort.plan.ClientSortClickPlanner;
+import net.kyrptonaught.inventorysorter.sort.SortType;
 import net.minecraft.client.Minecraft;
 
 import java.util.List;

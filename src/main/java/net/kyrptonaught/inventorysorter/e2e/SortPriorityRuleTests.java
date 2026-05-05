@@ -454,4 +454,5 @@ public class SortPriorityRuleTests {
     private static void runCommand(ServerPlayer player, String command) {
         player.level().getServer().getCommands().performPrefixedCommand(player.createCommandSourceStack(), command);
     }
+
 }

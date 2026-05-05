@@ -1,6 +1,7 @@
 package net.kyrptonaught.inventorysorter.client.sort;
 
 import net.kyrptonaught.inventorysorter.SortTarget;
+import net.kyrptonaught.inventorysorter.client.sort.plan.PlannedContainerClick;
 import net.minecraft.world.inventory.ContainerInput;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -58,7 +59,7 @@ public class ClientSideInventorySorterTest {
     private static ClientInventoryClickExecutor.QueuedSort sort(int menuId, int slot) {
         return new ClientInventoryClickExecutor.QueuedSort(
                 menuId,
-                List.of(new ClientSortClickPlanner.PlannedContainerClick(slot, 0, ContainerInput.PICKUP))
+                List.of(new PlannedContainerClick(slot, 0, ContainerInput.PICKUP))
         );
     }
 }
