@@ -5,7 +5,6 @@
   "inventorysorter.key.config": "Åpne Innstillinger",
   "inventorysorter.key.modifier": "Modifikasjonstast (for å skjule/bytte)",
   "modmenu.descriptionTranslation.inventorysorter": "Sorterer beholdningen din med et klikk på en knapp!",
-  "inventorysorter.warning.missing-server": "Ingen serversidestøtte funnet. \nSortering vil IKKE fungere!",
   "inventorysorter.toggle.enabled": "På",
   "inventorysorter.toggle.disabled": "Av",
   "inventorysorter.toggle.yes": "Ja",

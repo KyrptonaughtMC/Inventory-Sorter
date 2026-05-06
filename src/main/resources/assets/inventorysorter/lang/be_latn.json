@@ -5,7 +5,6 @@
   "inventorysorter.key.config": "Adkryć nałady",
   "inventorysorter.key.modifier": "Knopka madyfikacyi (dla chavannia/zmianiennia)",
   "modmenu.descriptionTranslation.inventorysorter": "Sartuje invientar naciskanniem usiaho adnoj knopki!",
-  "inventorysorter.warning.missing-server": "Padtrymka z boku sierviera nie vyjaŭlena.\nSartavannie NIE budzie pracavać!",
   "inventorysorter.toggle.enabled": "Uklučana",
   "inventorysorter.toggle.disabled": "Vyklučana",
   "inventorysorter.toggle.yes": "Tak",

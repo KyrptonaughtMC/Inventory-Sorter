@@ -1,30 +1,30 @@
 package net.kyrptonaught.inventorysorter.commands;
 
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 public class CommandTranslations {
 
-    static Text getOffMessage(String key) {
+    static Component getOffMessage(String key) {
         return getFeedbackMessageForState(key, false);
     }
 
-    static Text getOnMessage(String key) {
+    static Component getOnMessage(String key) {
         return getFeedbackMessageForState(key, true);
     }
 
-    public static Text toggleState(boolean state) {
+    public static Component toggleState(boolean state) {
         if (state) {
-            return Text.translatable("inventorysorter.toggle.enabled");
+            return Component.translatable("inventorysorter.toggle.enabled");
         }
 
-        return Text.translatable("inventorysorter.toggle.disabled");
+        return Component.translatable("inventorysorter.toggle.disabled");
     }
 
-    public static Text getFeedbackMessageForState(String key, boolean state) {
-        return Text.translatable(key, toggleState(state));
+    public static Component getFeedbackMessageForState(String key, boolean state) {
+        return Component.translatable(key, toggleState(state));
     }
 
-    public static Text playerRequired() {
-        return Text.translatable("inventorysorter.cmd.player-required");
+    public static Component playerRequired() {
+        return Component.translatable("inventorysorter.cmd.player-required");
     }
 }

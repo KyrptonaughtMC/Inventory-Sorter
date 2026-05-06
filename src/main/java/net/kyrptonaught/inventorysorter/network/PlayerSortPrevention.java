@@ -2,14 +2,15 @@ package net.kyrptonaught.inventorysorter.network;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.kyrptonaught.inventorysorter.compat.config.CompatConfig;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
+import net.kyrptonaught.inventorysorter.platform.NetworkingPlatform;
+import net.kyrptonaught.inventorysorter.platform.PlatformServices;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerPlayer;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -19,18 +20,18 @@ import static net.kyrptonaught.inventorysorter.InventorySorterMod.MOD_ID;
 
 public record PlayerSortPrevention(
         Set<String> preventSortForScreens
-) implements CustomPayload {
+) implements CustomPacketPayload {
 
-    public static final CustomPayload.Id<PlayerSortPrevention> ID = new CustomPayload.Id<>(Identifier.of(MOD_ID, "sync_sort_prevention_packet"));
+    public static final CustomPacketPayload.Type<PlayerSortPrevention> ID = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(MOD_ID, "sync_sort_prevention_packet"));
     public static final PlayerSortPrevention DEFAULT = new PlayerSortPrevention(Set.of());
 
-    public static final PacketCodec<RegistryByteBuf, PlayerSortPrevention> CODEC =
-            PacketCodec.of(
+    public static final StreamCodec<RegistryFriendlyByteBuf, PlayerSortPrevention> CODEC =
+            StreamCodec.ofMember(
                     (value, buf) -> {
-                        buf.writeCollection(value.preventSortForScreens(), PacketByteBuf::writeString);
+                        buf.writeCollection(value.preventSortForScreens(), FriendlyByteBuf::writeUtf);
                     },
                     buf -> new PlayerSortPrevention(
-                            buf.readCollection(HashSet::new, PacketByteBuf::readString)
+                            buf.readCollection(HashSet::new, FriendlyByteBuf::readUtf)
                     )
             );
 
@@ -47,11 +48,15 @@ public record PlayerSortPrevention(
     }
 
     @Override
-    public Id<? extends CustomPayload> getId() {
+    public Type<? extends CustomPacketPayload> type() {
         return ID;
     }
 
-    public void sync(ServerPlayerEntity player) {
-        ServerPlayNetworking.send(player, this);
+    public void sync(ServerPlayer player) {
+        this.sync(player, PlatformServices.NETWORK);
+    }
+
+    void sync(ServerPlayer player, NetworkingPlatform networking) {
+        networking.sendToPlayer(player, this);
     }
 }

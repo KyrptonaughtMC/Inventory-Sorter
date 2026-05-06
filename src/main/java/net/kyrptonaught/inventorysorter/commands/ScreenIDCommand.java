@@ -4,60 +4,49 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.kyrptonaught.inventorysorter.InventoryHelper;
+import net.kyrptonaught.inventorysorter.InventoryScreenId;
 import net.kyrptonaught.inventorysorter.permissions.CommandPermission;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
+import net.minecraft.ChatFormatting;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.level.ServerPlayer;
 
 public class ScreenIDCommand {
-    public static void register(CommandDispatcher<ServerCommandSource> dispatcher, LiteralArgumentBuilder<ServerCommandSource> rootCommand) {
-        dispatcher.register(rootCommand.then(CommandManager.literal("screenID")
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher, LiteralArgumentBuilder<CommandSourceStack> rootCommand) {
+        dispatcher.register(rootCommand.then(Commands.literal("screenID")
                 .requires(CommandPermission.require("screenid", 0))
                 .executes(ScreenIDCommand::run)));
     }
 
-    public static int run(CommandContext<ServerCommandSource> commandContext) {
-        ServerPlayerEntity player = commandContext.getSource().getPlayer();
+    public static int run(CommandContext<CommandSourceStack> commandContext) {
+        ServerPlayer player = commandContext.getSource().getPlayer();
 
         if (player == null) {
-            commandContext.getSource().sendFeedback(CommandTranslations::playerRequired, false);
+            commandContext.getSource().sendSuccess(CommandTranslations::playerRequired, false);
             return 0;
         }
 
-        Identifier screenID = InventoryHelper.withTargetedScreenHandler(player, InventoryHelper.ScreenContext::screenId);
+        InventoryScreenId screenID = InventoryHelper.withTargetedScreenHandler(player, InventoryHelper.ScreenContext::screenId);
 
         if (screenID == null) {
-            commandContext.getSource().sendFeedback(() -> Text.translatable("inventorysorter.cmd.screenid.fail"), false);
+            commandContext.getSource().sendSuccess(() -> Component.translatable("inventorysorter.cmd.screenid.fail"), false);
             return 0;
         }
 
-        MutableText feedbackText = Text.translatable("inventorysorter.cmd.screenid.success", screenID.toString());
+        MutableComponent feedbackText = Component.translatable("inventorysorter.cmd.screenid.success", screenID.toString());
 
-        /*? if >=1.21.5 {*/
-        Text copyableText = feedbackText
-                .styled(style -> style
-                        .withColor(Formatting.GREEN)
+        Component copyableText = feedbackText
+                .withStyle(style -> style
+                        .withColor(ChatFormatting.GREEN)
                         .withClickEvent(new ClickEvent.CopyToClipboard(screenID.toString()))
-                        .withHoverEvent(new HoverEvent.ShowText(Text.translatable("inventorysorter.cmd.screenid.copy.hover")))
+                        .withHoverEvent(new HoverEvent.ShowText(Component.translatable("inventorysorter.cmd.screenid.copy.hover")))
                 );
-        /*?} else {*/
 
-        /*Text copyableText = feedbackText
-                .styled(style -> style
-                        .withColor(Formatting.GREEN)
-                        .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, screenID.toString()))
-                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("inventorysorter.cmd.screenid.copy.hover")))
-                );
-        *//*?}*/
-
-
-        commandContext.getSource().sendFeedback(() -> copyableText, false);
+        commandContext.getSource().sendSuccess(() -> copyableText, false);
         return 1;
     }
 }

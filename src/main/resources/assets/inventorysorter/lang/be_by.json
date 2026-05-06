@@ -5,7 +5,6 @@
   "inventorysorter.key.config": "Адкрыць налады",
   "inventorysorter.key.modifier": "Кнопка мадыфікацыя (для хавання/змянення)",
   "modmenu.descriptionTranslation.inventorysorter": "Сартуе інвентар націсканнем усяго адной кнопкі!",
-  "inventorysorter.warning.missing-server": "Падтрымка з боку сервера не выяўлена.\nСартаванне НЕ будзе працаваць!",
   "inventorysorter.toggle.enabled": "Уключана",
   "inventorysorter.toggle.disabled": "Выключана",
   "inventorysorter.toggle.yes": "Так",

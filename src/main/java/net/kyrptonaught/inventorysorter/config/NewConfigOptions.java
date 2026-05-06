@@ -2,41 +2,36 @@ package net.kyrptonaught.inventorysorter.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import net.kyrptonaught.inventorysorter.SortType;
-import net.kyrptonaught.inventorysorter.client.InventorySorterModClient;
+import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
+import net.kyrptonaught.inventorysorter.sort.SortType;
 import net.kyrptonaught.inventorysorter.compat.config.CompatConfig;
-import net.minecraft.client.util.InputUtil;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.LOGGER;
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.MOD_ID;
 
 public class NewConfigOptions extends CompatConfig {
 
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    private static final String CONFIG_FILE = MOD_ID + ".json";
     public boolean showSortButton = true;
     public boolean showTooltips = true;
     public boolean separateButton = true;
     public boolean sortPlayerInventory = false;
     public SortType sortType = SortType.NAME;
     public boolean enableDoubleClickSort = true;
+    public boolean sortIntoBundles = true;
+    public boolean sortIntoHotbarBundles = true;
     public boolean sortHighlightedItem = true;
     public ScrollBehaviour scrollBehaviour = ScrollBehaviour.FREE;
-
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private static final String CONFIG_FILE = MOD_ID + ".json";
-
-    public void save() {
-        Path filePath = ConfigPathResolver.getConfigPath(CONFIG_FILE);
-
-        try (FileWriter writer = new FileWriter(filePath.toFile(), StandardCharsets.UTF_8)) {
-            GSON.toJson(this, writer);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    public List<SortPriorityRuleSetting> sortPriorityRules = new ArrayList<>();
+    public List<String> missingServerWarningSuppressions = new ArrayList<>();
 
     public static NewConfigOptions load() throws IOException {
         Path filePath = ConfigPathResolver.getConfigPath(CONFIG_FILE);
@@ -72,12 +67,31 @@ public class NewConfigOptions extends CompatConfig {
         newOptions.enableDoubleClickSort = oldOptions.doubleClickSort;
         newOptions.sortHighlightedItem = oldOptions.sortMouseHighlighted;
 
-        if (oldOptions.keybinding != null) {
-            // @TODO come up with something for this
-            InputUtil.Key boundKey = InputUtil.fromTranslationKey(oldOptions.keybinding);
-            InventorySorterModClient.sortButton.setBoundKey(boundKey); // this doesn't seem to take effect
-        }
-
         return newOptions;
+    }
+
+    public void save() {
+        Path filePath = ConfigPathResolver.getConfigPath(CONFIG_FILE);
+
+        try (FileWriter writer = new FileWriter(filePath.toFile(), StandardCharsets.UTF_8)) {
+            GSON.toJson(this, writer);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean shouldShowMissingServerWarning(String serverAddress, String modVersion) {
+        return !missingServerWarningSuppressions.contains(missingServerWarningKey(serverAddress, modVersion));
+    }
+
+    public void markMissingServerWarningShown(String serverAddress, String modVersion) {
+        String warningKey = missingServerWarningKey(serverAddress, modVersion);
+        if (!missingServerWarningSuppressions.contains(warningKey)) {
+            missingServerWarningSuppressions.add(warningKey);
+        }
+    }
+
+    private static String missingServerWarningKey(String serverAddress, String modVersion) {
+        return serverAddress.trim().toLowerCase(Locale.ROOT) + "|" + modVersion;
     }
 }

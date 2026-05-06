@@ -1,25 +1,29 @@
 package net.kyrptonaught.inventorysorter;
 
 import net.kyrptonaught.inventorysorter.network.PlayerSortPrevention;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.HopperBlockEntity;
-import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.registry.Registries;
-import net.minecraft.screen.NamedScreenHandlerFactory;
-import net.minecraft.screen.PlayerScreenHandler;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
+import net.kyrptonaught.inventorysorter.network.SortSettings;
+import net.kyrptonaught.inventorysorter.platform.PlatformServices;
+import net.kyrptonaught.inventorysorter.sort.SortedInventoryLayout;
+import net.kyrptonaught.inventorysorter.sort.SortPriorityRules;
+import net.kyrptonaught.inventorysorter.sort.SortType;
+import net.kyrptonaught.inventorysorter.sort.bundle.BundleInsertionLayoutPass;
+import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.HopperBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,209 +31,208 @@ import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.function.Function;
 
-import static net.kyrptonaught.inventorysorter.InventorySorterMod.PLAYER_SORT_PREVENTION;
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.compatibility;
 
 public class InventoryHelper {
 
     public static final double MAX_LOOKUP_DISTANCE = 6.0D;
-    private static Identifier lastCheckedId;
-    private static long lastCheckedTimestamp;
     private static final long TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes in milliseconds
+    private static InventoryScreenId lastCheckedId;
+    private static long lastCheckedTimestamp;
 
-
-    public record ScreenContext(ScreenHandler handler, Identifier screenId, Inventory inventory) {}
-
-    public static <T> T withTargetedScreenHandler(ServerPlayerEntity player, Function<ScreenContext, T> action) {
-        HitResult hit = player.raycast(MAX_LOOKUP_DISTANCE, 1.0F, false);
+    public static <T> T withTargetedScreenHandler(ServerPlayer player, Function<ScreenContext, T> action) {
+        HitResult hit = player.pick(MAX_LOOKUP_DISTANCE, 1.0F, false);
         if (!(hit instanceof BlockHitResult blockHit)) return null;
 
         BlockPos blockPos = blockHit.getBlockPos();
-        /*? if >= 1.21.9 {*/
-        World world = player.getEntityWorld();
-        /*?} else {*/
-        /*World world = player.getWorld();
-        *//*?}*/
+        Level world = player.level();
         BlockState blockState = world.getBlockState(blockPos);
 
         // Inventory to sort
-        Inventory inventory = null;
+        Container inventory = null;
         // Screen to open and check
-        NamedScreenHandlerFactory namedScreenHandlerFactory = null;
+        MenuProvider namedScreenHandlerFactory = null;
 
 
         if (blockState.hasBlockEntity()) {
             BlockEntity blockEntity = world.getBlockEntity(blockPos);
-            inventory = HopperBlockEntity.getInventoryAt(world, blockPos);
-            namedScreenHandlerFactory = blockState.createScreenHandlerFactory(world, blockPos);
-            if (namedScreenHandlerFactory == null && blockEntity instanceof NamedScreenHandlerFactory)
-                namedScreenHandlerFactory = (NamedScreenHandlerFactory) blockEntity;
+            inventory = HopperBlockEntity.getContainerAt(world, blockPos);
+            namedScreenHandlerFactory = blockState.getMenuProvider(world, blockPos);
+            if (namedScreenHandlerFactory == null && blockEntity instanceof MenuProvider)
+                namedScreenHandlerFactory = (MenuProvider) blockEntity;
         } else {
-            namedScreenHandlerFactory = blockState.createScreenHandlerFactory(world, blockPos);
+            namedScreenHandlerFactory = blockState.getMenuProvider(world, blockPos);
         }
         // fail if either is not present
         if (namedScreenHandlerFactory == null) {
             return null;
         }
 
-        OptionalInt syncId = player.openHandledScreen(namedScreenHandlerFactory);
+        OptionalInt syncId = player.openMenu(namedScreenHandlerFactory);
         if (syncId.isEmpty()) return null;
 
-        ScreenHandler screenHandler = namedScreenHandlerFactory.createMenu(syncId.getAsInt(), player.getInventory(), player);
+        AbstractContainerMenu screenHandler = namedScreenHandlerFactory.createMenu(syncId.getAsInt(), player.getInventory(), player);
 
         try {
-            Identifier id = Registries.SCREEN_HANDLER.getId(screenHandler.getType());
-            if (id == null) return null;
+            InventoryScreenId screenId = InventoryScreenId.fromMenu(screenHandler).orElse(null);
+            if (screenId == null) return null;
 
-            return action.apply(new ScreenContext(screenHandler, id, inventory));
+            return action.apply(new ScreenContext(screenHandler, screenId, inventory));
         } catch (Exception e) {
             return null;
         } finally {
-            player.closeHandledScreen();
-            screenHandler.onClosed(player);
+            player.closeContainer();
+            screenHandler.removed(player);
         }
     }
 
+    public static Component sortTargetedBlock(ServerPlayer player, SortType sortType) {
+        return sortTargetedBlock(player, new SortSettings(true, false, true, sortType));
+    }
 
-    public static Text sortTargetedBlock(ServerPlayerEntity player, SortType sortType) {
+    public static Component sortTargetedBlock(ServerPlayer player, SortSettings settings) {
 
         Boolean result = withTargetedScreenHandler(player, (context) -> {
             if (context.inventory == null) {
                 return false;
             }
             if (canSortInventory(player, context.handler)) {
-                String languageCode = player.getClientOptions().language().toLowerCase();
-                sortInventory(context.inventory, 0, context.inventory.size(), sortType, languageCode);
+                String languageCode = player.clientInformation().language().toLowerCase();
+                sortInventory(context.inventory, 0, context.inventory.getContainerSize(), settings.sortType(), languageCode, settings.sortPriorityRules(), settings.sortIntoBundles());
                 return true;
             }
             return false;
         });
 
         if (result == null) {
-            return Text.translatable("inventorysorter.cmd.sort.error");
+            return Component.translatable("inventorysorter.cmd.sort.error");
         }
         if (result) {
-            return Text.translatable("inventorysorter.cmd.sort.sorted");
+            return Component.translatable("inventorysorter.cmd.sort.sorted");
         }
 
-        return Text.translatable("inventorysorter.cmd.sort.notsortable");
+        return Component.translatable("inventorysorter.cmd.sort.notsortable");
     }
 
-    public static boolean sortInventory(ServerPlayerEntity player, boolean shouldSortPlayerInventory, SortType sortType) {
-        String languageCode = player.getClientOptions().language().toLowerCase();
-        if (shouldSortPlayerInventory) {
-            sortInventory(player.getInventory(), 9, 27, sortType, languageCode);
+    public static boolean sortInventory(ServerPlayer player, SortTarget target, SortType sortType) {
+        return sortInventory(player, target, new SortSettings(true, false, true, sortType));
+    }
+
+    public static boolean sortInventory(ServerPlayer player, SortTarget target, SortSettings settings) {
+        String languageCode = player.clientInformation().language().toLowerCase();
+        if (target == SortTarget.PLAYER_INVENTORY) {
+            sortPlayerInventory(player, settings, languageCode);
             return true;
-        } else if (canSortInventory(player)) {
-            Inventory inv = getInventory(player.currentScreenHandler);
+        } else if (target == SortTarget.CONTAINER && canSortInventory(player)) {
+            Container inv = getInventory(player.containerMenu);
             if (inv != null) {
-                sortInventory(inv, 0, inv.size(), sortType, languageCode);
+                sortInventory(inv, 0, inv.getContainerSize(), settings.sortType(), languageCode, settings.sortPriorityRules(), settings.sortIntoBundles());
                 return true;
             }
         }
         return false;
     }
 
-    public static Inventory getInventory(ScreenHandler screenHandler) {
+    public static Container getInventory(AbstractContainerMenu screenHandler) {
         if (screenHandler.slots.isEmpty()) return null;
-        return screenHandler.slots.getFirst().inventory;
+        return screenHandler.slots.getFirst().container;
     }
 
-    private static void sortInventory(Inventory inv, int startSlot, int invSize, SortType sortType, String languageCode) {
+    private static void sortInventory(Container inv, int startSlot, int invSize, SortType sortType, String languageCode, List<SortPriorityRuleSetting> sortPriorityRules, boolean sortIntoBundles) {
         List<ItemStack> stacks = new ArrayList<>();
         for (int i = 0; i < invSize; i++) {
-            addStackWithMerge(stacks, inv.getStack(startSlot + i));
+            stacks.add(inv.getItem(startSlot + i));
         }
 
-        stacks.sort(SortCases.getComparator(sortType, languageCode));
-        if (stacks.size() == 0) {
+        SortedInventoryLayout sortedInventoryLayout = SortedInventoryLayout.from(stacks, sortType, languageCode, sortPriorityRules, sortIntoBundles);
+        if (sortedInventoryLayout.stacks().stream().allMatch(ItemStack::isEmpty)) {
             return;
         }
         for (int i = 0; i < invSize; i++)
-            inv.setStack(startSlot + i, i < stacks.size() ? stacks.get(i) : ItemStack.EMPTY);
-        inv.markDirty();
+            inv.setItem(startSlot + i, sortedInventoryLayout.stacks().get(i));
+        inv.setChanged();
     }
 
-    private static void addStackWithMerge(List<ItemStack> stacks, ItemStack newStack) {
-        if (newStack.getItem() == Items.AIR) {
+    private static void sortPlayerInventory(ServerPlayer player, SortSettings settings, String languageCode) {
+        if (!settings.sortIntoBundles()) {
+            sortInventory(player.getInventory(), 9, 27, settings.sortType(), languageCode, settings.sortPriorityRules(), false);
             return;
         }
-        if (newStack.isStackable() && newStack.getCount() != newStack.getMaxCount())
-            for (int j = stacks.size() - 1; j >= 0; j--) {
-                ItemStack oldStack = stacks.get(j);
-                if (canMergeItems(newStack, oldStack)) {
-                    combineStacks(newStack, oldStack);
-                    if (oldStack.getItem() == Items.AIR || oldStack.getCount() == 0) {
-                        stacks.remove(j);
-                    }
-                }
-            }
-        stacks.add(newStack);
+
+        List<ItemStack> mainInventoryStacks = getStacks(player.getInventory(), 9, 27);
+        List<ItemStack> hotbarStacks = settings.sortIntoHotbarBundles()
+                ? getStacks(player.getInventory(), 0, 9)
+                : List.of();
+        BundleInsertionLayoutPass.Result bundleInsertion = BundleInsertionLayoutPass.apply(
+                mainInventoryStacks,
+                hotbarStacks,
+                SortPriorityRules.compile(settings.sortPriorityRules())
+        );
+        SortedInventoryLayout sortedInventoryLayout = SortedInventoryLayout.fromBundleAdjusted(
+                bundleInsertion.layoutStacks(),
+                settings.sortType(),
+                languageCode,
+                settings.sortPriorityRules()
+        );
+
+        if (settings.sortIntoHotbarBundles()) {
+            setStacks(player.getInventory(), 0, bundleInsertion.extraTargetStacks());
+        }
+        setStacks(player.getInventory(), 9, sortedInventoryLayout.stacks());
+        player.getInventory().setChanged();
     }
 
-    private static void combineStacks(ItemStack stack, ItemStack stack2) {
-        if (stack.getMaxCount() >= stack.getCount() + stack2.getCount()) {
-            stack.increment(stack2.getCount());
-            stack2.setCount(0);
+    private static List<ItemStack> getStacks(Container inv, int startSlot, int invSize) {
+        List<ItemStack> stacks = new ArrayList<>();
+        for (int i = 0; i < invSize; i++) {
+            stacks.add(inv.getItem(startSlot + i));
         }
-        int maxInsertAmount = Math.min(stack.getMaxCount() - stack.getCount(), stack2.getCount());
-        stack.increment(maxInsertAmount);
-        stack2.decrement(maxInsertAmount);
+        return stacks;
     }
 
-    private static boolean canMergeItems(ItemStack itemStack_1, ItemStack itemStack_2) {
-        if (!itemStack_1.isStackable() || !itemStack_2.isStackable()) {
-            return false;
+    private static void setStacks(Container inv, int startSlot, List<ItemStack> stacks) {
+        for (int i = 0; i < stacks.size(); i++) {
+            inv.setItem(startSlot + i, stacks.get(i));
         }
-        if (itemStack_1.getCount() == itemStack_1.getMaxCount() || itemStack_2.getCount() == itemStack_2.getMaxCount()) {
-            return false;
-        }
-        if (itemStack_1.getItem() != itemStack_2.getItem()) {
-            return false;
-        }
-        if (itemStack_1.getDamage() != itemStack_2.getDamage()) {
-            return false;
-        }
-        return ItemStack.areItemsAndComponentsEqual(itemStack_1, itemStack_2);
     }
 
-    public static boolean shouldDisplayButtons(PlayerEntity player) {
+    public static boolean shouldDisplayButtons(Player player) {
 
-        if (player.currentScreenHandler == null || !player.currentScreenHandler.canUse(player)) {
+        if (player.containerMenu == null || !player.containerMenu.stillValid(player)) {
             return false;
         }
 
-        if (player.currentScreenHandler instanceof PlayerScreenHandler) {
+        if (player.containerMenu instanceof InventoryMenu) {
             return true;
         }
 
-        if (player.currentScreenHandler instanceof CreativeInventoryScreen.CreativeScreenHandler) {
+        if (player.containerMenu instanceof CreativeModeInventoryScreen.ItemPickerMenu) {
             return true;
         }
 
         try {
-            Identifier id = Registries.SCREEN_HANDLER.getId(player.currentScreenHandler.getType());
+            InventoryScreenId screenId = InventoryScreenId.fromMenu(player.containerMenu).orElse(null);
 
-            if (id == null) {
+            if (screenId == null) {
                 return false;
             }
-            setLastChecked(id);
-            return compatibility.shouldShowSortButton(id);
+            setLastChecked(screenId);
+            return compatibility.shouldShowSortButton(screenId.value());
 
         } catch (UnsupportedOperationException e) {
             return false;
         }
     }
 
-    public static boolean canSortInventory(PlayerEntity player) {
-        if (player.currentScreenHandler instanceof PlayerScreenHandler) {
+    public static boolean canSortInventory(Player player) {
+        if (player.containerMenu instanceof InventoryMenu) {
             return false;
         }
-        return canSortInventory(player, player.currentScreenHandler);
+        return canSortInventory(player, player.containerMenu);
     }
 
-    public static boolean canSortInventory(PlayerEntity player, ScreenHandler screenHandler) {
-        if (screenHandler == null || !screenHandler.canUse(player)) {
+    public static boolean canSortInventory(Player player, AbstractContainerMenu screenHandler) {
+        if (screenHandler == null || !screenHandler.stillValid(player)) {
             return false;
         }
         if (player.isSpectator()) {
@@ -237,22 +240,23 @@ public class InventoryHelper {
         }
 
         try {
-            Identifier id = Registries.SCREEN_HANDLER.getId(screenHandler.getType());
+            InventoryScreenId screenId = InventoryScreenId.fromMenu(screenHandler).orElse(null);
 
-            if (id == null) {
+            if (screenId == null) {
                 return false;
             }
-            return isSortableContainer(player, screenHandler, id);
+            return isSortableContainer(player, screenHandler, screenId);
 
         } catch (UnsupportedOperationException e) {
             return false;
         }
     }
 
-    private static boolean isSortableContainer(PlayerEntity player, ScreenHandler screenHandler, Identifier screenID) {
-        @SuppressWarnings("UnstableApiUsage")
-        PlayerSortPrevention playerSortPrevention = player.getAttachedOrCreate(PLAYER_SORT_PREVENTION);
-        if (!compatibility.isSortAllowed(screenID, playerSortPrevention.preventSortForScreens())) {
+    private static boolean isSortableContainer(Player player, AbstractContainerMenu screenHandler, InventoryScreenId screenId) {
+        PlayerSortPrevention playerSortPrevention = player instanceof ServerPlayer serverPlayer
+                ? PlatformServices.PLAYER_DATA.getPlayerSortPrevention(serverPlayer)
+                : PlayerSortPrevention.DEFAULT;
+        if (!compatibility.isSortAllowed(screenId.value(), playerSortPrevention.preventSortForScreens())) {
             return false;
         }
 
@@ -264,15 +268,18 @@ public class InventoryHelper {
         return numSlots - 36 >= 9;
     }
 
-    private static void setLastChecked(Identifier id) {
+    private static void setLastChecked(InventoryScreenId id) {
         lastCheckedId = id;
         lastCheckedTimestamp = System.currentTimeMillis();
     }
 
-    public static Optional<Identifier> getLastCheckedId() {
+    public static Optional<InventoryScreenId> getLastCheckedId() {
         if (lastCheckedId != null && System.currentTimeMillis() - lastCheckedTimestamp > TIMEOUT_MS) {
             lastCheckedId = null;
         }
         return Optional.ofNullable(lastCheckedId);
+    }
+
+    public record ScreenContext(AbstractContainerMenu handler, InventoryScreenId screenId, Container inventory) {
     }
 }

@@ -5,7 +5,6 @@
   "inventorysorter.key.config": "Ouvrir les paramètres",
   "inventorysorter.key.modifier": "Touche de modificateur (pour masquer/échanger)",
   "modmenu.descriptionTranslation.inventorysorter": "Trie votre inventaire en un clic !",
-  "inventorysorter.warning.missing-server": "Aucune prise en charge du serveur détectée.\nLe tri ne fonctionnera pas !",
   "inventorysorter.toggle.enabled": "Activé",
   "inventorysorter.toggle.disabled": "Désactivé",
   "inventorysorter.toggle.yes": "Oui",

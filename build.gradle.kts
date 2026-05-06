@@ -2,6 +2,7 @@ import gg.meza.stonecraft.mod
 
 plugins {
     id("gg.meza.stonecraft")
+    jacoco
 }
 
 stonecutter {
@@ -38,25 +39,25 @@ repositories {
 }
 
 dependencies {
-    modImplementation("com.github.erosb:everit-json-schema:1.14.4")
+    implementation("com.github.erosb:everit-json-schema:1.14.4")
     include("com.github.erosb:everit-json-schema:1.14.4")
     include("org.json:json:20231013")
 
-    modImplementation("me.lucko:fabric-permissions-api:${mod.prop("fabric_permissions_api_version")}")
+    implementation("me.lucko:fabric-permissions-api:${mod.prop("fabric_permissions_api_version")}")
     include("me.lucko:fabric-permissions-api:${mod.prop("fabric_permissions_api_version")}")
 
-    modImplementation("gg.meza:meza_core-${mod.loader}:${mod.prop("meza_core_version")}+${stonecutter.current.version}")
+    implementation("gg.meza:meza_core-${mod.loader}:${mod.prop("meza_core_version")}+${stonecutter.current.version}")
     include("gg.meza:meza_core-${mod.loader}:${mod.prop("meza_core_version")}+${stonecutter.current.version}")
 
-    modImplementation("xyz.nucleoid:server-translations-api:${mod.prop("server_translations_api_version")}")
+    implementation("xyz.nucleoid:server-translations-api:${mod.prop("server_translations_api_version")}")
     include("xyz.nucleoid:server-translations-api:${mod.prop("server_translations_api_version")}")
 
     try {
-        modApi("com.terraformersmc:modmenu:${mod.prop("modmenu_version")}")
+        api("com.terraformersmc:modmenu:${mod.prop("modmenu_version")}")
     } catch (e: Exception) {
         logger.warn("Modmenu not found, skipping dependency.")
     }
-    modApi("me.shedaniel.cloth:cloth-config-${mod.loader}:${mod.prop("cloth_version")}") {
+    api("me.shedaniel.cloth:cloth-config-${mod.loader}:${mod.prop("cloth_version")}") {
         exclude(group = "net.fabricmc.fabric-api")
     }
 
@@ -66,6 +67,22 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+
+    classDirectories.setFrom(files(classDirectories.files.map {
+        fileTree(it) {
+            exclude("**/e2e/**")
+        }
+    }))
+
+    reports {
+        html.required.set(true)
+        xml.required.set(true)
+    }
 }
 
 tasks.jar {
@@ -106,7 +123,7 @@ publishMods {
 
     curseforge {
         clientRequired = false
-        serverRequired = true
+        serverRequired = false
         if (mod.isFabric) {
             requires("fabric-api")
             optional("modmenu")

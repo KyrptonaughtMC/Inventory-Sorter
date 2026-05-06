@@ -23,7 +23,7 @@ jobs:
       - name: "⬇️ Checkout"
         uses: actions/checkout@v4
 
-      - name: "☕ Setup Jdk 21"
+      - name: "☕ Setup Jdk 25"
         uses: actions/setup-java@v4
         with:
           cache: 'gradle'
@@ -31,7 +31,7 @@ jobs:
             versions/*.properties
             *.properties
             *.gradle.kts
-          java-version: 21
+          java-version: 25
           check-latest: true
           distribution: 'temurin'
 
@@ -42,12 +42,18 @@ jobs:
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
       - name: "🛂 Setup Gradle"
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6
         with:
           validate-wrappers: true
+          cache-provider: basic
 
       - name: "🔓 Adjust the release permissions"
         run: chmod a+x ./scripts/release.sh && chmod +x ./gradlew
+
+      - name: Use Node.js
+        uses: actions/setup-node@v6.4.0
+        with:
+          node-version: 25
 
       - name: "🧵 Install semantic release"
         run: npm i --location=global @meza/mezas-conventional-changelog semantic-release semantic-release-discord-notifier conventional-changelog-conventionalcommits @semantic-release/github @semantic-release/changelog @semantic-release/exec semantic-release-export-data semantic-release-discord

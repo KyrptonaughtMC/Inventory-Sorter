@@ -2,22 +2,22 @@ package net.kyrptonaught.inventorysorter.network;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.Identifier;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.MOD_ID;
 
 public record ClientSync(
         boolean seenClient
-) implements CustomPayload {
+) implements CustomPacketPayload {
 
-    public static final CustomPayload.Id<ClientSync> ID = new CustomPayload.Id<>(Identifier.of(MOD_ID, "client_sync_packet"));
+    public static final CustomPacketPayload.Type<ClientSync> ID = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(MOD_ID, "client_sync_packet"));
     public static final ClientSync DEFAULT = new ClientSync(false);
 
-    public static final PacketCodec<RegistryByteBuf, ClientSync> CODEC =
-            PacketCodec.of(
+    public static final StreamCodec<RegistryFriendlyByteBuf, ClientSync> CODEC =
+            StreamCodec.ofMember(
                     (value, buf) -> {
                         buf.writeBoolean(value.seenClient());
                     },
@@ -29,7 +29,7 @@ public record ClientSync(
     ).apply(instance, ClientSync::new));
 
     @Override
-    public Id<? extends CustomPayload> getId() {
+    public Type<? extends CustomPacketPayload> type() {
         return ID;
     }
 }

@@ -1,6 +1,6 @@
 package net.kyrptonaught.inventorysorter.compat.sources;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,8 +14,8 @@ import static net.kyrptonaught.inventorysorter.compat.Compatibility.parseJson;
 
 public class LocalLoader implements CompatibilityLoader {
 
-    private static final String DO_NOT_SORT_DATA = "data/" + MOD_ID + "/do-not-sort.json";
-    private static final String HIDE_BUTTONS_DATA = "data/" + MOD_ID + "/hide-buttons.json";
+    private static final String DO_NOT_SORT_DATA = "/data/" + MOD_ID + "/do-not-sort.json";
+    private static final String HIDE_BUTTONS_DATA = "/data/" + MOD_ID + "/hide-buttons.json";
 
     public Set<Identifier> getPreventSort() {
         return load(DO_NOT_SORT_DATA);

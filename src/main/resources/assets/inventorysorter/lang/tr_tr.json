@@ -5,7 +5,6 @@
   "inventorysorter.key.config": "Ayarları Aç",
   "inventorysorter.key.modifier": "Değiştirici Tuş (gizlemek/değiştirmek için)",
   "modmenu.descriptionTranslation.inventorysorter": "Envanterini tek bir tuşla sıralar!",
-  "inventorysorter.warning.missing-server": "Sunucu taraflı destek bulunamadı. Envanter düzenleme ÇALIŞMAYACAK!",
   "inventorysorter.toggle.enabled": "Açık",
   "inventorysorter.toggle.disabled": "Kapalı",
   "inventorysorter.toggle.yes": "Evet",

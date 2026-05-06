@@ -1,88 +1,84 @@
 package net.kyrptonaught.inventorysorter.e2e;
 
 import com.mojang.authlib.GameProfile;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.embedded.EmbeddedChannel;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.entity.ChestBlockEntity;
-import net.minecraft.command.argument.EntityAnchorArgumentType;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.ClientConnection;
-import net.minecraft.network.NetworkSide;
-import net.minecraft.server.network.ConnectedClientData;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.test.TestContext;
-/*? if >=1.21.5 {*/import net.minecraft.text.Text;/*?}*/
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.commands.arguments.EntityAnchorArgument;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.network.Connection;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.CommonListenerCookie;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
 
 import java.util.Map;
 import java.util.UUID;
 
 public class TestUtils {
-    public static boolean IS_SPECTATOR=true;
-    private static ServerPlayerEntity player;
+    public static boolean IS_SPECTATOR = true;
+    private static ServerPlayer player;
 
-    public record Scenario(ServerPlayerEntity player, ChestBlockEntity chest) {
+    private static Component getMessage(String message) {
+        return Component.nullToEmpty(message);
     }
 
-    private static /*? if <1.21.5 {*//*String*//*?} else {*/Text/*?}*/ getMessage(String message) {
-        return /*? if <1.21.5 {*//*message*//*?} else {*/Text.of(message)/*?}*/;
-    }
+    public static void assertContents(GameTestHelper ctx, Scenario scenario, Map<Integer, ItemStack> expectedContents) {
 
-    public static void assertContents(TestContext ctx, Scenario scenario, Map<Integer, ItemStack> expectedContents) {
-
-        int slotCount = scenario.chest.size();
+        int slotCount = scenario.chest.getContainerSize();
 
         for (int i = 0; i < slotCount; i++) {
             if (!expectedContents.containsKey(i)) {
-                ItemStack stack = scenario.chest.getStack(i);
-                ctx.assertEquals(stack, ItemStack.EMPTY, getMessage("Slot " + i + " should be empty"));
+                ItemStack stack = scenario.chest.getItem(i);
+                ctx.assertValueEqual(stack, ItemStack.EMPTY, getMessage("Slot " + i + " should be empty"));
             }
         }
 
         for (Map.Entry<Integer, ItemStack> entry : expectedContents.entrySet()) {
-            ItemStack stack = scenario.chest.getStack(entry.getKey());
-            ctx.assertEquals(stack.getItem(), entry.getValue().getItem(), getMessage("Slot " + entry.getKey() + " does not have the expected item"));
-            ctx.assertEquals(stack.getCount(), entry.getValue().getCount(), getMessage("Slot " + entry.getKey() + " does not have the expected count"));
+            ItemStack stack = scenario.chest.getItem(entry.getKey());
+            ctx.assertValueEqual(stack.getItem(), entry.getValue().getItem(), getMessage("Slot " + entry.getKey() + " does not have the expected item"));
+            ctx.assertValueEqual(stack.getCount(), entry.getValue().getCount(), getMessage("Slot " + entry.getKey() + " does not have the expected count"));
 
-            int expectedDamage = entry.getValue().getDamage();
-            int actualDamage = stack.getDamage();
-            ctx.assertEquals(actualDamage, expectedDamage, getMessage("Slot " + entry.getKey() + " does not have the expected damage"));
+            int expectedDamage = entry.getValue().getDamageValue();
+            int actualDamage = stack.getDamageValue();
+            ctx.assertValueEqual(actualDamage, expectedDamage, getMessage("Slot " + entry.getKey() + " does not have the expected damage"));
 
-            if (entry.getValue().getComponents().contains(DataComponentTypes.OMINOUS_BOTTLE_AMPLIFIER)) {
-                int expectedAmplifier = entry.getValue().getComponents().get(DataComponentTypes.OMINOUS_BOTTLE_AMPLIFIER).value();
-                int actualAmplifier = stack.getComponents().get(DataComponentTypes.OMINOUS_BOTTLE_AMPLIFIER).value();
-                ctx.assertEquals(actualAmplifier, expectedAmplifier, getMessage("Slot " + entry.getKey() + " does not have the expected ominous bottle amplifier"));
+            if (entry.getValue().getComponents().has(DataComponents.OMINOUS_BOTTLE_AMPLIFIER)) {
+                int expectedAmplifier = entry.getValue().getComponents().get(DataComponents.OMINOUS_BOTTLE_AMPLIFIER).value();
+                int actualAmplifier = stack.getComponents().get(DataComponents.OMINOUS_BOTTLE_AMPLIFIER).value();
+                ctx.assertValueEqual(actualAmplifier, expectedAmplifier, getMessage("Slot " + entry.getKey() + " does not have the expected ominous bottle amplifier"));
             }
 
-            if (entry.getValue().getComponents().contains(DataComponentTypes.BLOCK_STATE)) {
-                Map<String, String> expectedBlockState = entry.getValue().getComponents().get(DataComponentTypes.BLOCK_STATE).properties();
-                Map<String, String> actualBlockState = stack.getComponents().get(DataComponentTypes.BLOCK_STATE).properties();
-                ctx.assertEquals(actualBlockState, expectedBlockState, getMessage("Slot " + entry.getKey() + " does not have the expected block state"));
+            if (entry.getValue().getComponents().has(DataComponents.BLOCK_STATE)) {
+                Map<String, String> expectedBlockState = entry.getValue().getComponents().get(DataComponents.BLOCK_STATE).properties();
+                Map<String, String> actualBlockState = stack.getComponents().get(DataComponents.BLOCK_STATE).properties();
+                ctx.assertValueEqual(actualBlockState, expectedBlockState, getMessage("Slot " + entry.getKey() + " does not have the expected block state"));
             }
 
         }
     }
 
-    public static Scenario setUpScene(TestContext ctx, Map<Integer, ItemStack> inventoryContents) {
+    public static Scenario setUpScene(GameTestHelper ctx, Map<Integer, ItemStack> inventoryContents) {
         return setUpScene(ctx, inventoryContents, false);
     }
 
-    public static Scenario setUpScene(TestContext ctx, Map<Integer, ItemStack> inventoryContents, boolean isSpectator) {
+    public static Scenario setUpScene(GameTestHelper ctx, Map<Integer, ItemStack> inventoryContents, boolean isSpectator) {
         player = createMockServerPlayer(ctx, isSpectator);
         BlockPos inventoryPosition = new BlockPos(0, 0, 0);
-        BlockPos abspos = ctx.getAbsolutePos(inventoryPosition);
-        ctx.setBlockState(inventoryPosition, Blocks.CHEST.getDefaultState());
+        BlockPos abspos = ctx.absolutePos(inventoryPosition);
+        ctx.setBlock(inventoryPosition, Blocks.CHEST.defaultBlockState());
 
-        player.teleport(abspos.getX() + 2, abspos.getY(), abspos.getZ() + 2, false);
-        player.lookAt(EntityAnchorArgumentType.EntityAnchor.EYES, abspos.toCenterPos());
+        player.randomTeleport(abspos.getX() + 2, abspos.getY(), abspos.getZ() + 2, false);
+        player.lookAt(EntityAnchorArgument.Anchor.EYES, abspos.getCenter());
 
-        ChestBlockEntity chest = (ChestBlockEntity) ctx.getBlockEntity(inventoryPosition/*? if >=1.21.5 {*/, ChestBlockEntity.class/*?}*/);
+        ChestBlockEntity chest = ctx.getBlockEntity(inventoryPosition, ChestBlockEntity.class);
 
         for (Map.Entry<Integer, ItemStack> entry : inventoryContents.entrySet()) {
-            chest.setStack(entry.getKey(), entry.getValue());
+            chest.setItem(entry.getKey(), entry.getValue());
         }
 
         ctx.useBlock(inventoryPosition, player);
@@ -90,9 +86,9 @@ public class TestUtils {
         return new Scenario(player, chest);
     }
 
-    public static ServerPlayerEntity createMockServerPlayer(TestContext ctx, boolean isSpectator) {
-        ConnectedClientData connectedClientData = ConnectedClientData.createDefault(new GameProfile(UUID.randomUUID(), "test-mock-player"), false);
-        ServerPlayerEntity serverPlayerEntity = new ServerPlayerEntity(ctx.getWorld().getServer(), ctx.getWorld(), connectedClientData.gameProfile(), connectedClientData.syncedOptions()) {
+    public static ServerPlayer createMockServerPlayer(GameTestHelper ctx, boolean isSpectator) {
+        CommonListenerCookie connectedClientData = CommonListenerCookie.createInitial(new GameProfile(UUID.randomUUID(), "test-mock-player"), false);
+        ServerPlayer serverPlayerEntity = new ServerPlayer(ctx.getLevel().getServer(), ctx.getLevel(), connectedClientData.gameProfile(), connectedClientData.clientInformation()) {
             public boolean isSpectator() {
                 return isSpectator;
             }
@@ -101,14 +97,17 @@ public class TestUtils {
                 return false;
             }
         };
-        ClientConnection clientConnection = new ClientConnection(NetworkSide.SERVERBOUND);
-        new EmbeddedChannel(new ChannelHandler[]{clientConnection});
-        ctx.getWorld().getServer().getPlayerManager().onPlayerConnect(clientConnection, serverPlayerEntity, connectedClientData);
+        Connection clientConnection = new Connection(PacketFlow.SERVERBOUND);
+        new EmbeddedChannel(clientConnection);
+        ctx.getLevel().getServer().getPlayerList().placeNewPlayer(clientConnection, serverPlayerEntity, connectedClientData);
         return serverPlayerEntity;
     }
 
     public static int damageForPercent(Item item, int percent) {
-        int maxDamage = item.getComponents().getOrDefault(DataComponentTypes.MAX_DAMAGE, 0);
+        int maxDamage = item.components().getOrDefault(DataComponents.MAX_DAMAGE, 0);
         return (int) Math.floor(maxDamage * (percent / 100.0));
+    }
+
+    public record Scenario(ServerPlayer player, ChestBlockEntity chest) {
     }
 }

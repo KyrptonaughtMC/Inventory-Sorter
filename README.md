@@ -68,6 +68,8 @@ described in the documentation.
 Icon and logo artwork by [Annarooma](https://www.twitch.tv/annarooma).  
 Thank you for the gorgeous design!
 
+### Project backers
+
 <!-- marker:patrons-start -->
 
 Schauweg
