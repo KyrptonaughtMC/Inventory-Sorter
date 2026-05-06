@@ -77,6 +77,8 @@ public class ClientPacketReceivers {
     void applySortSettings(SortSettings payload) {
         NewConfigOptions currentConfig = config.get();
         currentConfig.enableDoubleClickSort = payload.enableDoubleClick();
+        currentConfig.sortIntoBundles = payload.sortIntoBundles();
+        currentConfig.sortIntoHotbarBundles = payload.sortIntoHotbarBundles();
         currentConfig.sortType = payload.sortType();
         currentConfig.sortPriorityRules = payload.sortPriorityRules().stream().toList();
         currentConfig.save();

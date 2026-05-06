@@ -1,7 +1,10 @@
 package net.kyrptonaught.inventorysorter.client.sort;
 
 import net.kyrptonaught.inventorysorter.SortTarget;
+import net.kyrptonaught.inventorysorter.client.sort.plan.ClientFallbackSortPlanBuilder;
+import net.kyrptonaught.inventorysorter.client.sort.plan.ClientSortClickPlanner;
 import net.kyrptonaught.inventorysorter.client.sort.plan.PlannedContainerClick;
+import net.kyrptonaught.inventorysorter.sort.SortType;
 import net.minecraft.world.inventory.ContainerInput;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -54,6 +57,40 @@ public class ClientSideInventorySorterTest {
 
         Assertions.assertFalse(accepted);
         Assertions.assertEquals(1, executor.pendingSortCount());
+    }
+
+    @Test
+    void playerInventorySortDoesNotQueueAdditionalPlayerInventoryPlan() {
+        ClientInventoryClickExecutor executor = new ClientInventoryClickExecutor();
+
+        boolean accepted = ClientSideInventorySorter.enqueueSortPlans(
+                SortTarget.PLAYER_INVENTORY,
+                () -> true,
+                target -> Optional.of(sort(7, target.ordinal())),
+                executor
+        );
+
+        Assertions.assertTrue(accepted);
+        Assertions.assertEquals(1, executor.pendingSortCount());
+    }
+
+    @Test
+    void currentScreenSortIsRejectedWhenMinecraftStateCannotResolveScope() {
+        ClientInventoryClickExecutor executor = new ClientInventoryClickExecutor();
+        ClientSideInventorySorter sorter = new ClientSideInventorySorter(
+                () -> null,
+                () -> "en_us",
+                () -> SortType.NAME,
+                List::of,
+                () -> true,
+                () -> true,
+                () -> true,
+                executor,
+                new ClientFallbackSortPlanBuilder(new ClientSortClickPlanner())
+        );
+
+        Assertions.assertFalse(sorter.enqueueCurrentScreenSort(SortTarget.CONTAINER));
+        Assertions.assertEquals(0, executor.pendingSortCount());
     }
 
     private static ClientInventoryClickExecutor.QueuedSort sort(int menuId, int slot) {

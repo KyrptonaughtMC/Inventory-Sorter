@@ -13,9 +13,11 @@ import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.stream.IntStream;
 
-public record ClientSortScope(int menuId, List<ScopedSlot> slots) {
+public record ClientSortScope(int menuId, List<ScopedSlot> slots, List<ScopedSlot> hotbarBundleTargetSlots) {
     private static final int FIRST_MAIN_INVENTORY_SLOT = 9;
     private static final int LAST_MAIN_INVENTORY_SLOT = 35;
+    private static final int FIRST_HOTBAR_SLOT = 0;
+    private static final int LAST_HOTBAR_SLOT = 8;
 
     public static Optional<ClientSortScope> resolve(Minecraft minecraft, SortTarget target) {
         if (minecraft == null || minecraft.player == null || minecraft.gameMode == null) {
@@ -65,7 +67,11 @@ public record ClientSortScope(int menuId, List<ScopedSlot> slots) {
             return Optional.empty();
         }
 
-        return Optional.of(new ClientSortScope(menu.containerId, List.copyOf(slots)));
+        List<ScopedSlot> hotbarBundleTargetSlots = target == SortTarget.PLAYER_INVENTORY
+                ? hotbarSlots(menu, playerInventory, player)
+                : List.of();
+
+        return Optional.of(new ClientSortScope(menu.containerId, List.copyOf(slots), List.copyOf(hotbarBundleTargetSlots)));
     }
 
     private static List<ScopedSlot> playerInventorySlots(AbstractContainerMenu menu, Container playerInventory) {
@@ -74,6 +80,16 @@ public record ClientSortScope(int menuId, List<ScopedSlot> slots) {
                 .filter(slot -> slot.container() == playerInventory)
                 .filter(slot -> slot.getContainerSlot() >= FIRST_MAIN_INVENTORY_SLOT)
                 .filter(slot -> slot.getContainerSlot() <= LAST_MAIN_INVENTORY_SLOT)
+                .toList();
+    }
+
+    private static List<ScopedSlot> hotbarSlots(AbstractContainerMenu menu, Container playerInventory, Player player) {
+        return IntStream.range(0, menu.slots.size())
+                .mapToObj(index -> new ScopedSlot(index, menu.slots.get(index)))
+                .filter(slot -> slot.container() == playerInventory)
+                .filter(slot -> slot.getContainerSlot() >= FIRST_HOTBAR_SLOT)
+                .filter(slot -> slot.getContainerSlot() <= LAST_HOTBAR_SLOT)
+                .filter(slot -> canFallbackSort(slot.slot(), player))
                 .toList();
     }
 

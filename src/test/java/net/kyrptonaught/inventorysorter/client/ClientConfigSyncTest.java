@@ -24,6 +24,8 @@ public class ClientConfigSyncTest {
         config.sortHighlightedItem = false;
         config.sortPlayerInventory = true;
         config.enableDoubleClickSort = false;
+        config.sortIntoBundles = false;
+        config.sortIntoHotbarBundles = false;
         config.sortType = SortType.MOD;
         config.sortPriorityRules = List.of(new SortPriorityRuleSetting("#minecraft:bundles", SortPriorityPosition.FIRST));
         config.preventSortForScreens.add("minecraft:anvil");

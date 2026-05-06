@@ -1,6 +1,7 @@
 package net.kyrptonaught.inventorysorter.client.sort;
 
 import net.kyrptonaught.inventorysorter.client.sort.plan.ClientSortClickPlanner;
+import net.kyrptonaught.inventorysorter.client.sort.plan.ClientFallbackSortPlanBuilder;
 import net.kyrptonaught.inventorysorter.client.sort.plan.PlannedContainerClick;
 import net.kyrptonaught.inventorysorter.client.sort.plan.SlotState;
 import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
@@ -125,6 +126,99 @@ public class ClientFallbackPlanningTest {
                 screenshotInventoryWithRealBundle(),
                 List.of(new SortPriorityRuleSetting("bundle", SortPriorityPosition.IGNORE))
         );
+    }
+
+    @Test
+    void clientFallbackPlansBundleInsertionBeforeContainerLayoutSort() {
+        SimpleContainer chest = new SimpleContainer(9);
+        TestMenu menu = new TestMenu();
+        addSlots(menu, chest, 9);
+        chest.setItem(0, bundleContaining(stack(Items.APPLE, 8)));
+        chest.setItem(4, stack(Items.APPLE, 6));
+        chest.setItem(7, stack(Items.DIAMOND, 1));
+
+        ClientSortScope scope = ClientSortScope.resolve(menu, new SimpleContainer(36), net.kyrptonaught.inventorysorter.SortTarget.CONTAINER, null)
+                .orElseThrow();
+        Optional<List<PlannedContainerClick>> clicks = new ClientFallbackSortPlanBuilder(new ClientSortClickPlanner()).build(
+                scope,
+                SortType.NAME,
+                "en_us",
+                List.of(),
+                true,
+                true
+        );
+
+        Assertions.assertTrue(clicks.isPresent());
+        Assertions.assertEquals(List.of(click(4), click(0)), clicks.get().subList(0, 2));
+
+        List<ItemStack> expected = SortedInventoryLayout.from(
+                containerStacks(chest),
+                SortType.NAME,
+                "en_us",
+                List.of(),
+                true
+        ).stacks();
+        assertClicksReachDesiredLayout(containerStacks(chest), clicks.get(), expected);
+    }
+
+    @Test
+    void clientFallbackCanUseHotbarBundleWhenSortingPlayerInventory() {
+        SimpleContainer playerInventory = new SimpleContainer(36);
+        TestMenu menu = new TestMenu();
+        addSlots(menu, playerInventory, 36);
+        playerInventory.setItem(0, bundleContaining(stack(Items.APPLE, 8)));
+        playerInventory.setItem(10, stack(Items.APPLE, 6));
+        playerInventory.setItem(12, stack(Items.DIAMOND, 1));
+
+        ClientSortScope scope = ClientSortScope.resolve(menu, playerInventory, net.kyrptonaught.inventorysorter.SortTarget.PLAYER_INVENTORY, null)
+                .orElseThrow();
+        Optional<List<PlannedContainerClick>> clicks = new ClientFallbackSortPlanBuilder(new ClientSortClickPlanner()).build(
+                scope,
+                SortType.NAME,
+                "en_us",
+                List.of(),
+                true,
+                true
+        );
+
+        Assertions.assertTrue(clicks.isPresent());
+        Assertions.assertEquals(List.of(click(10), click(0)), clicks.get().subList(0, 2));
+
+        List<ItemStack> actual = containerStacks(playerInventory);
+        applyClicks(actual, clicks.get());
+        Assertions.assertEquals(Map.of(Items.APPLE, 14), bundleContents(actual.get(0)));
+        assertSameLayoutStack(stack(Items.DIAMOND, 1), actual.get(9));
+        Assertions.assertTrue(actual.subList(10, 36).stream().allMatch(ItemStack::isEmpty));
+    }
+
+    @Test
+    void clientFallbackDoesNotUseHotbarBundleWhenHotbarBundleSortingIsOff() {
+        SimpleContainer playerInventory = new SimpleContainer(36);
+        TestMenu menu = new TestMenu();
+        addSlots(menu, playerInventory, 36);
+        playerInventory.setItem(0, bundleContaining(stack(Items.APPLE, 8)));
+        playerInventory.setItem(10, stack(Items.APPLE, 6));
+        playerInventory.setItem(12, stack(Items.DIAMOND, 1));
+
+        ClientSortScope scope = ClientSortScope.resolve(menu, playerInventory, net.kyrptonaught.inventorysorter.SortTarget.PLAYER_INVENTORY, null)
+                .orElseThrow();
+        Optional<List<PlannedContainerClick>> clicks = new ClientFallbackSortPlanBuilder(new ClientSortClickPlanner()).build(
+                scope,
+                SortType.NAME,
+                "en_us",
+                List.of(),
+                true,
+                false
+        );
+
+        Assertions.assertTrue(clicks.isPresent());
+        Assertions.assertFalse(clicks.get().contains(click(0)));
+
+        List<ItemStack> actual = containerStacks(playerInventory);
+        applyClicks(actual, clicks.get());
+        Assertions.assertEquals(Map.of(Items.APPLE, 8), bundleContents(actual.get(0)));
+        assertSameLayoutStack(stack(Items.APPLE, 6), actual.get(9));
+        assertSameLayoutStack(stack(Items.DIAMOND, 1), actual.get(10));
     }
 
     @Test
@@ -371,6 +465,11 @@ public class ClientFallbackPlanningTest {
         List<ItemStack> actual = current.stream()
                 .map(ItemStack::copy)
                 .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+        applyClicks(actual, clicks);
+        assertSameLayout(actual, desired);
+    }
+
+    private static void applyClicks(List<ItemStack> actual, List<PlannedContainerClick> clicks) {
         ItemStack cursor = ItemStack.EMPTY;
 
         for (PlannedContainerClick click : clicks) {
@@ -380,7 +479,6 @@ public class ClientFallbackPlanningTest {
         }
 
         Assertions.assertTrue(cursor.isEmpty(), "planned clicks must leave the cursor empty");
-        assertSameLayout(actual, desired);
     }
 
     private static ItemStack applyPickupClick(List<ItemStack> slots, ItemStack cursor, int slotIndex) {
@@ -393,6 +491,16 @@ public class ClientFallbackPlanningTest {
         if (slot.isEmpty()) {
             slots.set(slotIndex, cursor);
             return ItemStack.EMPTY;
+        }
+
+        BundleContents contents = slot.get(DataComponents.BUNDLE_CONTENTS);
+        if (contents != null && slot.getCount() == 1) {
+            BundleContents.Mutable mutable = new BundleContents.Mutable(contents);
+            int inserted = mutable.tryInsert(cursor);
+            if (inserted > 0) {
+                slot.set(DataComponents.BUNDLE_CONTENTS, mutable.toImmutable());
+                return cursor.isEmpty() ? ItemStack.EMPTY : cursor;
+            }
         }
 
         if (canMergePickup(cursor, slot)) {
@@ -430,6 +538,23 @@ public class ClientFallbackPlanningTest {
         return first.getCount() == second.getCount() && ItemStack.isSameItemSameComponents(first, second);
     }
 
+    private static void assertSameLayoutStack(ItemStack expected, ItemStack actual) {
+        Assertions.assertTrue(
+                sameLayoutStack(expected, actual),
+                () -> "Expected " + expected + " but was " + actual
+        );
+    }
+
+    private static Map<Item, Integer> bundleContents(ItemStack bundle) {
+        return bundle.get(DataComponents.BUNDLE_CONTENTS)
+                .itemCopyStream()
+                .collect(java.util.stream.Collectors.toMap(ItemStack::getItem, ItemStack::getCount, Integer::sum));
+    }
+
+    private static PlannedContainerClick click(int slot) {
+        return new PlannedContainerClick(slot, 0, ContainerInput.PICKUP);
+    }
+
     private static ItemStack stack(Item item, int count) {
         return stack(item, count, 64);
     }
@@ -463,6 +588,17 @@ public class ClientFallbackPlanningTest {
                         .set(DataComponents.BUNDLE_CONTENTS, BundleContents.EMPTY)
                         .build()
         );
+    }
+
+    private static ItemStack bundleContaining(ItemStack... contents) {
+        BundleContents.Mutable mutable = new BundleContents.Mutable(BundleContents.EMPTY);
+        for (ItemStack content : contents) {
+            mutable.tryInsert(content.copy());
+        }
+
+        ItemStack bundle = bundle();
+        bundle.set(DataComponents.BUNDLE_CONTENTS, mutable.toImmutable());
+        return bundle;
     }
 
     private static class TestMenu extends AbstractContainerMenu {

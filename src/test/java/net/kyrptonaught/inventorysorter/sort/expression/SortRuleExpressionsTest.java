@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -54,6 +55,23 @@ public class SortRuleExpressionsTest {
             Assertions.assertFalse(matches(expression, stack(Items.APPLE)));
         } finally {
             applyItemTags(Map.of());
+        }
+    }
+
+    @Test
+    void tagExpressionReturnsFalseWhenMinecraftTagsAreNotBound() throws ReflectiveOperationException {
+        TagKey<Item> shulkerBoxes = TagKey.create(Registries.ITEM, Identifier.parse("minecraft:shulker_boxes"));
+        SortRuleExpression expression = new TagExpression(shulkerBoxes);
+        Holder<Item> holder = BuiltInRegistries.ITEM.wrapAsHolder(Items.WHITE_SHULKER_BOX);
+        Field tagsField = tagsField(holder);
+        Object boundTags = tagsField.get(holder);
+
+        try {
+            tagsField.set(holder, null);
+
+            Assertions.assertFalse(matches(expression, stack(Items.WHITE_SHULKER_BOX)));
+        } finally {
+            tagsField.set(holder, boundTags);
         }
     }
 
@@ -140,6 +158,12 @@ public class SortRuleExpressionsTest {
             itemRegistry.bindTags(tags);
             BuiltInRegistries.ITEM.freeze();
         }
+    }
+
+    private static Field tagsField(Holder<Item> holder) throws NoSuchFieldException {
+        Field field = holder.getClass().getDeclaredField("tags");
+        field.setAccessible(true);
+        return field;
     }
 
     private static ItemStack stack(Item item) {

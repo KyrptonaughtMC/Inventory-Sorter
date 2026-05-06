@@ -57,6 +57,13 @@
   "inventorysorter.cmd.sortPlayerInventory.set": "Sort Player Inventory is now %s",
   "inventorysorter.cmd.sortPlayerInventory.get": "Sort Player Inventory is currently %s",
 
+  "inventorysorter.config.sortIntoBundles": "Sort Into Bundles",
+  "inventorysorter.config.sortIntoBundles.tooltip": "Controls whether bundle-aware sorting may move matching items into bundles",
+  "inventorysorter.cmd.sortIntoBundles.set": "Sort Into Bundles is now %s",
+  "inventorysorter.cmd.sortIntoBundles.get": "Sort Into Bundles is currently %s",
+  "inventorysorter.config.sortIntoHotbarBundles": "Use Hotbar Bundles When Sorting Player Inventory",
+  "inventorysorter.config.sortIntoHotbarBundles.tooltip": "Allows player inventory sorting to move matching items into bundles on the hotbar",
+
   "inventorysorter.config.sortType": "Sort Type to Use",
 
   "inventorysorter.config.showTooltip": "Sort Button Tooltip",

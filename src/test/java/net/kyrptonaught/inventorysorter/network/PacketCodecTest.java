@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import io.netty.buffer.Unpooled;
+import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.kyrptonaught.inventorysorter.sort.SortPriorityPosition;
 import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
 import net.kyrptonaught.inventorysorter.SortTarget;
@@ -32,6 +33,8 @@ public class PacketCodecTest {
                 false,
                 true,
                 false,
+                false,
+                false,
                 SortType.CATEGORY,
                 List.of(
                         new SortPriorityRuleSetting("#minecraft:shulker_boxes", SortPriorityPosition.FIRST),
@@ -54,6 +57,102 @@ public class PacketCodecTest {
         Assertions.assertEquals(
                 new SortSettings(false, true, false, SortType.CATEGORY),
                 SortSettings.NBT_CODEC.parse(JsonOps.INSTANCE, encoded).getOrThrow()
+        );
+    }
+
+    @Test
+    public void sortSettingsNbtCodecReadsMissingSortIntoBundlesAsEnabledForExistingPlayerData() {
+        JsonElement encoded = SortSettings.NBT_CODEC.encodeStart(
+                JsonOps.INSTANCE,
+                new SortSettings(false, true, false, false, SortType.CATEGORY, List.of())
+        ).getOrThrow();
+        encoded.getAsJsonObject().remove("sortIntoBundles");
+
+        Assertions.assertEquals(
+                new SortSettings(false, true, false, true, SortType.CATEGORY, List.of()),
+                SortSettings.NBT_CODEC.parse(JsonOps.INSTANCE, encoded).getOrThrow()
+        );
+    }
+
+    @Test
+    public void sortSettingsNbtCodecReadsMissingSortIntoHotbarBundlesAsEnabledForExistingPlayerData() {
+        JsonElement encoded = SortSettings.NBT_CODEC.encodeStart(
+                JsonOps.INSTANCE,
+                new SortSettings(false, true, false, true, false, SortType.CATEGORY, List.of())
+        ).getOrThrow();
+        encoded.getAsJsonObject().remove("sortIntoHotbarBundles");
+
+        Assertions.assertEquals(
+                new SortSettings(false, true, false, true, true, SortType.CATEGORY, List.of()),
+                SortSettings.NBT_CODEC.parse(JsonOps.INSTANCE, encoded).getOrThrow()
+        );
+    }
+
+    @Test
+    public void sortSettingsFromConfigIncludesSortIntoBundles() {
+        NewConfigOptions config = new NewConfigOptions();
+        config.sortIntoBundles = false;
+
+        Assertions.assertFalse(SortSettings.fromConfig(config).sortIntoBundles());
+    }
+
+    @Test
+    public void sortSettingsFromConfigIncludesSortIntoHotbarBundles() {
+        NewConfigOptions config = new NewConfigOptions();
+        config.sortIntoHotbarBundles = false;
+
+        Assertions.assertFalse(SortSettings.fromConfig(config).sortIntoHotbarBundles());
+    }
+
+    @Test
+    public void sortSettingsWithSortIntoBundlesOnlyChangesBundleSetting() {
+        SortSettings settings = new SortSettings(
+                false,
+                true,
+                false,
+                true,
+                true,
+                SortType.CATEGORY,
+                List.of(new SortPriorityRuleSetting("#minecraft:shulker_boxes", SortPriorityPosition.FIRST))
+        );
+
+        Assertions.assertEquals(
+                new SortSettings(
+                        false,
+                        true,
+                        false,
+                        false,
+                        true,
+                        SortType.CATEGORY,
+                        List.of(new SortPriorityRuleSetting("#minecraft:shulker_boxes", SortPriorityPosition.FIRST))
+                ),
+                settings.withSortIntoBundles(false)
+        );
+    }
+
+    @Test
+    public void sortSettingsWithSortIntoHotbarBundlesOnlyChangesHotbarBundleSetting() {
+        SortSettings settings = new SortSettings(
+                false,
+                true,
+                false,
+                true,
+                true,
+                SortType.CATEGORY,
+                List.of(new SortPriorityRuleSetting("#minecraft:shulker_boxes", SortPriorityPosition.FIRST))
+        );
+
+        Assertions.assertEquals(
+                new SortSettings(
+                        false,
+                        true,
+                        false,
+                        true,
+                        false,
+                        SortType.CATEGORY,
+                        List.of(new SortPriorityRuleSetting("#minecraft:shulker_boxes", SortPriorityPosition.FIRST))
+                ),
+                settings.withSortIntoHotbarBundles(false)
         );
     }
 

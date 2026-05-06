@@ -18,6 +18,7 @@ public class CommandRegistry {
         DoubleClickSortCommand.register(dispatcher, rootCommand);
         SortPlayerInventoryCommand.register(dispatcher, rootCommand);
         SortHighlightedInventoryCommand.register(dispatcher, rootCommand);
+        SortIntoBundlesCommand.register(dispatcher, rootCommand);
         SortMeCommand.register(dispatcher, rootCommand);
         SortTypeCommand.register(dispatcher, rootCommand);
         SortPriorityRulesCommand.register(dispatcher, rootCommand);

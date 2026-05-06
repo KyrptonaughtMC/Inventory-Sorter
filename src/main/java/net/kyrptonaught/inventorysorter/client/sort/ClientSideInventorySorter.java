@@ -1,14 +1,11 @@
 package net.kyrptonaught.inventorysorter.client.sort;
 
 import net.kyrptonaught.inventorysorter.SortTarget;
-import net.kyrptonaught.inventorysorter.client.sort.plan.ClientSortClickPlanner;
+import net.kyrptonaught.inventorysorter.client.sort.plan.ClientFallbackSortPlanBuilder;
 import net.kyrptonaught.inventorysorter.client.sort.plan.PlannedContainerClick;
-import net.kyrptonaught.inventorysorter.client.sort.plan.SlotState;
 import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
-import net.kyrptonaught.inventorysorter.sort.SortedInventoryLayout;
 import net.kyrptonaught.inventorysorter.sort.SortType;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +20,10 @@ class ClientSideInventorySorter {
     private final Supplier<SortType> sortType;
     private final Supplier<List<SortPriorityRuleSetting>> sortPriorityRules;
     private final BooleanSupplier sortPlayerInventory;
+    private final BooleanSupplier sortIntoBundles;
+    private final BooleanSupplier sortIntoHotbarBundles;
     private final ClientInventoryClickExecutor clickExecutor;
-    private final ClientSortClickPlanner clickPlanner;
+    private final ClientFallbackSortPlanBuilder sortPlanBuilder;
 
     ClientSideInventorySorter(
             Supplier<Minecraft> minecraft,
@@ -32,16 +31,20 @@ class ClientSideInventorySorter {
             Supplier<SortType> sortType,
             Supplier<List<SortPriorityRuleSetting>> sortPriorityRules,
             BooleanSupplier sortPlayerInventory,
+            BooleanSupplier sortIntoBundles,
+            BooleanSupplier sortIntoHotbarBundles,
             ClientInventoryClickExecutor clickExecutor,
-            ClientSortClickPlanner clickPlanner
+            ClientFallbackSortPlanBuilder sortPlanBuilder
     ) {
         this.minecraft = minecraft;
         this.languageCode = languageCode;
         this.sortType = sortType;
         this.sortPriorityRules = sortPriorityRules;
         this.sortPlayerInventory = sortPlayerInventory;
+        this.sortIntoBundles = sortIntoBundles;
+        this.sortIntoHotbarBundles = sortIntoHotbarBundles;
         this.clickExecutor = clickExecutor;
-        this.clickPlanner = clickPlanner;
+        this.sortPlanBuilder = sortPlanBuilder;
     }
 
     /**
@@ -89,36 +92,19 @@ class ClientSideInventorySorter {
             return Optional.empty();
         }
 
-        List<ItemStack> currentStacks = scope.get().slots().stream()
-                .map(scopedSlot -> scopedSlot.slot().getItem())
-                .map(ItemStack::copy)
-                .toList();
-        List<ItemStack> desiredStacks = SortedInventoryLayout.from(
-                currentStacks,
+        ClientSortScope sortScope = scope.get();
+        Optional<List<PlannedContainerClick>> plannedClicks = sortPlanBuilder.build(
+                sortScope,
                 sortType.get(),
                 languageCode.get(),
-                sortPriorityRules.get()
-        ).stacks();
-
-        Optional<List<PlannedContainerClick>> clicks = clickPlanner.plan(
-                slotStates(scope.get().slots()),
-                desiredStacks
+                sortPriorityRules.get(),
+                sortIntoBundles.getAsBoolean(),
+                sortIntoHotbarBundles.getAsBoolean()
         );
-        if (clicks.isEmpty()) {
+        if (plannedClicks.isEmpty()) {
             return Optional.empty();
         }
 
-        return Optional.of(new ClientInventoryClickExecutor.QueuedSort(scope.get().menuId(), clicks.get()));
-    }
-
-    private static List<SlotState> slotStates(List<ClientSortScope.ScopedSlot> slots) {
-        List<SlotState> slotStates = new ArrayList<>();
-        for (ClientSortScope.ScopedSlot scopedSlot : slots) {
-            slotStates.add(new SlotState(
-                    scopedSlot.menuSlotIndex(),
-                    scopedSlot.slot().getItem().copy()
-            ));
-        }
-        return slotStates;
+        return Optional.of(new ClientInventoryClickExecutor.QueuedSort(sortScope.menuId(), plannedClicks.get()));
     }
 }

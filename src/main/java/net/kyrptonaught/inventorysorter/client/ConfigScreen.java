@@ -161,6 +161,18 @@ public class ConfigScreen {
                         .setTooltip(Component.translatable("inventorysorter.config.sortHovered.tooltip"))
                         .setSaveConsumer(val -> options.sortHighlightedItem = val)
                         .build());
+        logicCategory.addEntry(entryBuilder.startBooleanToggle(Component.translatable("inventorysorter.config.sortIntoBundles"), options.sortIntoBundles)
+                        .setDefaultValue(true)
+                        .setYesNoTextSupplier(ConfigScreen::toggleState)
+                        .setTooltip(Component.translatable("inventorysorter.config.sortIntoBundles.tooltip"))
+                        .setSaveConsumer(val -> options.sortIntoBundles = val)
+                        .build());
+        logicCategory.addEntry(entryBuilder.startBooleanToggle(Component.translatable("inventorysorter.config.sortIntoHotbarBundles"), options.sortIntoHotbarBundles)
+                        .setDefaultValue(true)
+                        .setYesNoTextSupplier(ConfigScreen::toggleState)
+                        .setTooltip(Component.translatable("inventorysorter.config.sortIntoHotbarBundles.tooltip"))
+                        .setSaveConsumer(val -> options.sortIntoHotbarBundles = val)
+                        .build());
         buildSortPriorityRulesEditor(entryBuilder, options).forEach(logicCategory::addEntry);
 
         screenBuilder.getOrCreateCategory(Component.translatable("inventorysorter.config.category.activation"))

@@ -5,7 +5,9 @@ import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
 import net.kyrptonaught.inventorysorter.network.SortSettings;
 import net.kyrptonaught.inventorysorter.platform.PlatformServices;
 import net.kyrptonaught.inventorysorter.sort.SortedInventoryLayout;
+import net.kyrptonaught.inventorysorter.sort.SortPriorityRules;
 import net.kyrptonaught.inventorysorter.sort.SortType;
+import net.kyrptonaught.inventorysorter.sort.bundle.BundleInsertionLayoutPass;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -96,7 +98,7 @@ public class InventoryHelper {
             }
             if (canSortInventory(player, context.handler)) {
                 String languageCode = player.clientInformation().language().toLowerCase();
-                sortInventory(context.inventory, 0, context.inventory.getContainerSize(), settings.sortType(), languageCode, settings.sortPriorityRules());
+                sortInventory(context.inventory, 0, context.inventory.getContainerSize(), settings.sortType(), languageCode, settings.sortPriorityRules(), settings.sortIntoBundles());
                 return true;
             }
             return false;
@@ -119,12 +121,12 @@ public class InventoryHelper {
     public static boolean sortInventory(ServerPlayer player, SortTarget target, SortSettings settings) {
         String languageCode = player.clientInformation().language().toLowerCase();
         if (target == SortTarget.PLAYER_INVENTORY) {
-            sortInventory(player.getInventory(), 9, 27, settings.sortType(), languageCode, settings.sortPriorityRules());
+            sortPlayerInventory(player, settings, languageCode);
             return true;
         } else if (target == SortTarget.CONTAINER && canSortInventory(player)) {
             Container inv = getInventory(player.containerMenu);
             if (inv != null) {
-                sortInventory(inv, 0, inv.getContainerSize(), settings.sortType(), languageCode, settings.sortPriorityRules());
+                sortInventory(inv, 0, inv.getContainerSize(), settings.sortType(), languageCode, settings.sortPriorityRules(), settings.sortIntoBundles());
                 return true;
             }
         }
@@ -136,19 +138,62 @@ public class InventoryHelper {
         return screenHandler.slots.getFirst().container;
     }
 
-    private static void sortInventory(Container inv, int startSlot, int invSize, SortType sortType, String languageCode, List<SortPriorityRuleSetting> sortPriorityRules) {
+    private static void sortInventory(Container inv, int startSlot, int invSize, SortType sortType, String languageCode, List<SortPriorityRuleSetting> sortPriorityRules, boolean sortIntoBundles) {
         List<ItemStack> stacks = new ArrayList<>();
         for (int i = 0; i < invSize; i++) {
             stacks.add(inv.getItem(startSlot + i));
         }
 
-        SortedInventoryLayout sortedInventoryLayout = SortedInventoryLayout.from(stacks, sortType, languageCode, sortPriorityRules);
+        SortedInventoryLayout sortedInventoryLayout = SortedInventoryLayout.from(stacks, sortType, languageCode, sortPriorityRules, sortIntoBundles);
         if (sortedInventoryLayout.stacks().stream().allMatch(ItemStack::isEmpty)) {
             return;
         }
         for (int i = 0; i < invSize; i++)
             inv.setItem(startSlot + i, sortedInventoryLayout.stacks().get(i));
         inv.setChanged();
+    }
+
+    private static void sortPlayerInventory(ServerPlayer player, SortSettings settings, String languageCode) {
+        if (!settings.sortIntoBundles()) {
+            sortInventory(player.getInventory(), 9, 27, settings.sortType(), languageCode, settings.sortPriorityRules(), false);
+            return;
+        }
+
+        List<ItemStack> mainInventoryStacks = getStacks(player.getInventory(), 9, 27);
+        List<ItemStack> hotbarStacks = settings.sortIntoHotbarBundles()
+                ? getStacks(player.getInventory(), 0, 9)
+                : List.of();
+        BundleInsertionLayoutPass.Result bundleInsertion = BundleInsertionLayoutPass.apply(
+                mainInventoryStacks,
+                hotbarStacks,
+                SortPriorityRules.compile(settings.sortPriorityRules())
+        );
+        SortedInventoryLayout sortedInventoryLayout = SortedInventoryLayout.fromBundleAdjusted(
+                bundleInsertion.layoutStacks(),
+                settings.sortType(),
+                languageCode,
+                settings.sortPriorityRules()
+        );
+
+        if (settings.sortIntoHotbarBundles()) {
+            setStacks(player.getInventory(), 0, bundleInsertion.extraTargetStacks());
+        }
+        setStacks(player.getInventory(), 9, sortedInventoryLayout.stacks());
+        player.getInventory().setChanged();
+    }
+
+    private static List<ItemStack> getStacks(Container inv, int startSlot, int invSize) {
+        List<ItemStack> stacks = new ArrayList<>();
+        for (int i = 0; i < invSize; i++) {
+            stacks.add(inv.getItem(startSlot + i));
+        }
+        return stacks;
+    }
+
+    private static void setStacks(Container inv, int startSlot, List<ItemStack> stacks) {
+        for (int i = 0; i < stacks.size(); i++) {
+            inv.setItem(startSlot + i, stacks.get(i));
+        }
     }
 
     public static boolean shouldDisplayButtons(Player player) {

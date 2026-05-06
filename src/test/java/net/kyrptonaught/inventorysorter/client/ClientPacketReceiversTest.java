@@ -87,9 +87,11 @@ public class ClientPacketReceiversTest {
 
         List<SortPriorityRuleSetting> rules = List.of(new SortPriorityRuleSetting("#minecraft:shulker_boxes", SortPriorityPosition.LAST));
 
-        receivers.applySortSettings(new SortSettings(false, true, false, SortType.CATEGORY, rules));
+        receivers.applySortSettings(new SortSettings(false, true, false, false, false, SortType.CATEGORY, rules));
 
         Assertions.assertFalse(config.enableDoubleClickSort);
+        Assertions.assertFalse(config.sortIntoBundles);
+        Assertions.assertFalse(config.sortIntoHotbarBundles);
         Assertions.assertEquals(SortType.CATEGORY, config.sortType);
         Assertions.assertEquals(rules, config.sortPriorityRules);
         Assertions.assertEquals(1, config.saveCalls);

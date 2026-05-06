@@ -54,7 +54,12 @@ flowchart TD
     ExecutionPath -->|no server support| ClientPath["Use client fallback"]
 
     ServerPath --> ServerGate["Server checks menu validity,<br/>screen id, compatibility, and prevention settings"]
-    ServerGate --> ServerSnapshot["Read stacks from server inventory<br/>or player inventory"]
+    ServerGate --> ServerTarget{"Resolved server target?"}
+    ServerTarget -->|container| ServerSnapshot["Read target container slots"]
+    ServerTarget -->|player inventory| ServerPlayerSnapshot["Read player main inventory slots"]
+    ServerTarget -->|player inventory| HotbarBundleSetting{"Hotbar bundle targets<br/>setting enabled?"}
+    HotbarBundleSetting -->|yes| HotbarBundleTargets["Read player hotbar slots<br/>as extra bundle targets"]
+    HotbarBundleSetting -->|no| NoExtraBundleTargets["Use no extra bundle targets"]
     ServerGate --> ServerSettings["Read server-stored player settings<br/>with requested sort type"]
 
     ClientPath --> ClientGate["Client checks menu validity,<br/>spectator state, carried stack,<br/>slot activity, fake slots, and modification permission"]
@@ -62,8 +67,13 @@ flowchart TD
     ClientScope --> ClientSnapshot["Read stacks from scoped client slots"]
     ClientScope --> ClientSettings["Read local client sort settings"]
 
-    ServerSnapshot --> Snapshot["Stack snapshot"]
+    ServerSnapshot --> Snapshot["Layout snapshot"]
+    ServerPlayerSnapshot --> Snapshot
     ClientSnapshot --> Snapshot
+    HotbarBundleTargets --> ExtraBundleTargets["Extra bundle target snapshot"]
+    NoExtraBundleTargets --> ExtraBundleTargets
+    ClientSnapshot --> NoExtraBundleTargets
+    ServerSnapshot --> NoExtraBundleTargets
     ServerSettings --> Settings["Sort settings"]
     ClientSettings --> Settings
 
@@ -75,7 +85,26 @@ flowchart TD
     ExpressionTree --> CompiledRules["Compiled rule:<br/>expression + position + list index"]
     DropRule --> CompiledRules
 
-    Snapshot --> VisitStacks["Visit snapshot slots in order"]
+    Settings --> BundleSetting{"Sort into bundles<br/>setting enabled?"}
+    Snapshot --> BundleSetting
+    ExtraBundleTargets --> BundleSetting
+    BundleSetting -->|no| OriginalSnapshot["Use original snapshot"]
+    BundleSetting -->|yes| FindBundleTargets["Find bundle targets<br/>in layout snapshot plus<br/>extra bundle target snapshot"]
+    FindBundleTargets --> ReadBundleContents["Read direct bundle contents<br/>using Minecraft bundle data"]
+    ReadBundleContents --> BundleTargets{"Any non-full bundle<br/>with direct contents?"}
+    BundleTargets -->|no| OriginalSnapshot
+    BundleTargets -->|yes| BundleCandidates["Find loose stacks matching<br/>direct bundle contents"]
+    CompiledRules --> BundleCandidates
+    BundleCandidates --> IgnoreBundleCandidate{"Any IGNORE rule matches<br/>candidate stack?"}
+    IgnoreBundleCandidate -->|yes| ExcludeBundleCandidate["Leave candidate in<br/>top-level snapshot"]
+    IgnoreBundleCandidate -->|no| OrderBundleCandidates["Order bundle candidates<br/>by lowest stack count first"]
+    OrderBundleCandidates --> InsertIntoBundles["Try insertion into matching bundles<br/>with Minecraft bundle rules"]
+    InsertIntoBundles --> AdjustedSnapshot["Use layout snapshot adjusted by<br/>bundle insertion pass"]
+    ExcludeBundleCandidate --> AdjustedSnapshot
+    OriginalSnapshot --> BundleReady["Snapshot ready for<br/>top-level layout"]
+    AdjustedSnapshot --> BundleReady
+
+    BundleReady --> VisitStacks["Visit snapshot slots in order"]
     CompiledRules --> VisitStacks
     VisitStacks --> EmptySlot{"Slot empty?"}
     EmptySlot -->|yes| FillableSlot["Mark output position<br/>as fillable"]
@@ -210,15 +239,16 @@ The ordering strategy must not know about ignored slots, rule parsing, client cl
 
 ## Inventory Layout
 
-Inventory layout owns the transformation from current stacks to desired stacks.
+Inventory layout owns the transformation from current stacks to desired stacks. Bundle insertion is part of that transformation because it changes the desired item distribution before the top-level inventory layout is filled.
 
 Its job is:
 
 1. Ask priority policy to compile valid rule expressions.
-2. Copy ignored stacks into their original slots.
-3. Merge sortable stacks using the shared stack-equivalence rules.
-4. Sort the merged sortable stacks using the selected ordering strategy and priority policy.
-5. Fill the non-ignored slots with the sorted result.
+2. If enabled, apply bundle insertion with Minecraft bundle rules before normal top-level sorting.
+3. Copy ignored stacks into their original slots.
+4. Merge sortable stacks using the shared stack-equivalence rules.
+5. Sort the merged sortable stacks using the selected ordering strategy and priority policy.
+6. Fill the non-ignored slots with the sorted result.
 
 This is the functional core of sorting. It should stay deterministic and side-effect free: input stacks are copied, and the result is returned as a new layout.
 

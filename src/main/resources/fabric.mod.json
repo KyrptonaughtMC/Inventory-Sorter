@@ -38,7 +38,8 @@
     ],
     "fabric-gametest": [
       "net.kyrptonaught.${id}.e2e.SortingTests",
-      "net.kyrptonaught.${id}.e2e.SortPriorityRuleTests"
+      "net.kyrptonaught.${id}.e2e.SortPriorityRuleTests",
+      "net.kyrptonaught.${id}.e2e.BundleSortingTests"
     ],
     "modmenu": [
       "net.kyrptonaught.${id}.client.modmenu.ModMenuIntegration"

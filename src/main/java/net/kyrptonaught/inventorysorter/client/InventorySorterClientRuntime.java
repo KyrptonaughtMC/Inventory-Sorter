@@ -36,7 +36,9 @@ public class InventorySorterClientRuntime {
                 InventorySorterClientRuntime::languageCode,
                 () -> getConfig().sortType,
                 () -> getConfig().sortPriorityRules,
-                () -> getConfig().sortPlayerInventory
+                () -> getConfig().sortPlayerInventory,
+                () -> getConfig().sortIntoBundles,
+                () -> getConfig().sortIntoHotbarBundles
         );
         ClientSorts.configure(clientSortRuntime);
 

@@ -28,6 +28,8 @@ public class NewConfigOptions extends CompatConfig {
     public boolean sortPlayerInventory = false;
     public SortType sortType = SortType.NAME;
     public boolean enableDoubleClickSort = true;
+    public boolean sortIntoBundles = true;
+    public boolean sortIntoHotbarBundles = true;
     public boolean sortHighlightedItem = true;
     public ScrollBehaviour scrollBehaviour = ScrollBehaviour.FREE;
     public List<SortPriorityRuleSetting> sortPriorityRules = new ArrayList<>();

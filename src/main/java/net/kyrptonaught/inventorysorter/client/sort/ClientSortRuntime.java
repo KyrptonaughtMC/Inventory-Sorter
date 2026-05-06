@@ -4,6 +4,7 @@ import net.kyrptonaught.inventorysorter.SortTarget;
 import net.kyrptonaught.inventorysorter.client.ClientServerSupport;
 import net.kyrptonaught.inventorysorter.network.InventorySortPacket;
 import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
+import net.kyrptonaught.inventorysorter.client.sort.plan.ClientFallbackSortPlanBuilder;
 import net.kyrptonaught.inventorysorter.client.sort.plan.ClientSortClickPlanner;
 import net.kyrptonaught.inventorysorter.sort.SortType;
 import net.minecraft.client.Minecraft;
@@ -39,7 +40,9 @@ public final class ClientSortRuntime {
             Supplier<String> languageCode,
             Supplier<SortType> sortType,
             Supplier<List<SortPriorityRuleSetting>> sortPriorityRules,
-            BooleanSupplier sortPlayerInventory
+            BooleanSupplier sortPlayerInventory,
+            BooleanSupplier sortIntoBundles,
+            BooleanSupplier sortIntoHotbarBundles
     ) {
         ClientServerSupport serverSupport = new ClientServerSupport();
         ClientInventoryClickExecutor clickExecutor = new ClientInventoryClickExecutor();
@@ -49,8 +52,10 @@ public final class ClientSortRuntime {
                 sortType,
                 sortPriorityRules,
                 sortPlayerInventory,
+                sortIntoBundles,
+                sortIntoHotbarBundles,
                 clickExecutor,
-                new ClientSortClickPlanner()
+                new ClientFallbackSortPlanBuilder(new ClientSortClickPlanner())
         );
         ClientSortRequests sortRequests = new ClientSortRequests(
                 serverSupport,

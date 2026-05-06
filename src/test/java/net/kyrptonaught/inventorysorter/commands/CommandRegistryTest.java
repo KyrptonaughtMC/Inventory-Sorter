@@ -38,6 +38,7 @@ public class CommandRegistryTest {
                 "doubleClickSort",
                 "sortPlayerInventory",
                 "sortHighlightedInventory",
+                "sortIntoBundles",
                 "sortme",
                 "sortType",
                 "priority",
@@ -65,6 +66,7 @@ public class CommandRegistryTest {
         assertToggleCommand(invsort.getChild("doubleClickSort"));
         assertToggleCommand(invsort.getChild("sortPlayerInventory"));
         assertToggleCommand(invsort.getChild("sortHighlightedInventory"));
+        assertToggleCommand(invsort.getChild("sortIntoBundles"));
     }
 
     @Test

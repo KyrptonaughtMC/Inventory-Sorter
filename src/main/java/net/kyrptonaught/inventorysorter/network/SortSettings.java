@@ -20,11 +20,21 @@ public record SortSettings(
         boolean sortHighlightedItem,
         boolean sortPlayerInventory,
         boolean enableDoubleClick,
+        boolean sortIntoBundles,
+        boolean sortIntoHotbarBundles,
         SortType sortType,
         List<SortPriorityRuleSetting> sortPriorityRules
 ) implements CustomPacketPayload {
     public SortSettings(boolean sortHighlightedItem, boolean sortPlayerInventory, boolean enableDoubleClick, SortType sortType) {
         this(sortHighlightedItem, sortPlayerInventory, enableDoubleClick, sortType, List.of());
+    }
+
+    public SortSettings(boolean sortHighlightedItem, boolean sortPlayerInventory, boolean enableDoubleClick, SortType sortType, List<SortPriorityRuleSetting> sortPriorityRules) {
+        this(sortHighlightedItem, sortPlayerInventory, enableDoubleClick, false, sortType, sortPriorityRules);
+    }
+
+    public SortSettings(boolean sortHighlightedItem, boolean sortPlayerInventory, boolean enableDoubleClick, boolean sortIntoBundles, SortType sortType, List<SortPriorityRuleSetting> sortPriorityRules) {
+        this(sortHighlightedItem, sortPlayerInventory, enableDoubleClick, sortIntoBundles, true, sortType, sortPriorityRules);
     }
 
     public SortSettings {
@@ -37,6 +47,8 @@ public record SortSettings(
                         buf.writeBoolean(value.sortHighlightedItem());
                         buf.writeBoolean(value.sortPlayerInventory());
                         buf.writeBoolean(value.enableDoubleClick());
+                        buf.writeBoolean(value.sortIntoBundles());
+                        buf.writeBoolean(value.sortIntoHotbarBundles());
                         buf.writeEnum(value.sortType());
                         buf.writeVarInt(value.sortPriorityRules().size());
                         value.sortPriorityRules().forEach(rule -> SortPriorityRuleSetting.STREAM_CODEC.encode(buf, rule));
@@ -45,6 +57,8 @@ public record SortSettings(
                         boolean sortHighlightedItem = buf.readBoolean();
                         boolean sortPlayerInventory = buf.readBoolean();
                         boolean enableDoubleClick = buf.readBoolean();
+                        boolean sortIntoBundles = buf.readBoolean();
+                        boolean sortIntoHotbarBundles = buf.readBoolean();
                         SortType sortType = buf.readEnum(SortType.class);
                         List<SortPriorityRuleSetting> sortPriorityRules = new java.util.ArrayList<>();
                         int rulesCount = buf.readVarInt();
@@ -55,6 +69,8 @@ public record SortSettings(
                                 sortHighlightedItem,
                                 sortPlayerInventory,
                                 enableDoubleClick,
+                                sortIntoBundles,
+                                sortIntoHotbarBundles,
                                 sortType,
                                 sortPriorityRules
                         );
@@ -65,6 +81,8 @@ public record SortSettings(
             Codec.BOOL.fieldOf("sortHighlightedItem").forGetter(SortSettings::sortHighlightedItem),
             Codec.BOOL.fieldOf("sortPlayerInventory").forGetter(SortSettings::sortPlayerInventory),
             Codec.BOOL.fieldOf("enableDoubleClick").forGetter(SortSettings::enableDoubleClick),
+            Codec.BOOL.optionalFieldOf("sortIntoBundles", true).forGetter(SortSettings::sortIntoBundles),
+            Codec.BOOL.optionalFieldOf("sortIntoHotbarBundles", true).forGetter(SortSettings::sortIntoHotbarBundles),
             Codec.STRING.xmap(SortType::valueOf, SortType::name)
                     .fieldOf("sortType").forGetter(SortSettings::sortType),
             SortPriorityRuleSetting.CODEC.listOf()
@@ -74,13 +92,15 @@ public record SortSettings(
 
     public static final CustomPacketPayload.Type<SortSettings> ID = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(MOD_ID, "sync_settings_packet"));
 
-    public static final SortSettings DEFAULT = new SortSettings(true, false, true, SortType.NAME, List.of());
+    public static final SortSettings DEFAULT = new SortSettings(true, false, true, true, true, SortType.NAME, List.of());
 
     public static SortSettings fromConfig(NewConfigOptions config) {
         return new SortSettings(
                 config.sortHighlightedItem,
                 config.sortPlayerInventory,
                 config.enableDoubleClickSort,
+                config.sortIntoBundles,
+                config.sortIntoHotbarBundles,
                 config.sortType,
                 config.sortPriorityRules
         );
@@ -92,23 +112,31 @@ public record SortSettings(
     }
 
     public SortSettings withDoubleClick(boolean enabled) {
-        return new SortSettings(this.sortHighlightedItem(), this.sortPlayerInventory(), enabled, this.sortType(), this.sortPriorityRules());
+        return new SortSettings(this.sortHighlightedItem(), this.sortPlayerInventory(), enabled, this.sortIntoBundles(), this.sortIntoHotbarBundles(), this.sortType(), this.sortPriorityRules());
     }
 
     public SortSettings withSortType(SortType sortType) {
-        return new SortSettings(this.sortHighlightedItem(), this.sortPlayerInventory(), this.enableDoubleClick(), sortType, this.sortPriorityRules());
+        return new SortSettings(this.sortHighlightedItem(), this.sortPlayerInventory(), this.enableDoubleClick(), this.sortIntoBundles(), this.sortIntoHotbarBundles(), sortType, this.sortPriorityRules());
     }
 
     public SortSettings withSortPlayerInventory(boolean enabled) {
-        return new SortSettings(this.sortHighlightedItem(), enabled, this.enableDoubleClick(), this.sortType(), this.sortPriorityRules());
+        return new SortSettings(this.sortHighlightedItem(), enabled, this.enableDoubleClick(), this.sortIntoBundles(), this.sortIntoHotbarBundles(), this.sortType(), this.sortPriorityRules());
     }
 
     public SortSettings withSortHighlightedInventory(boolean enabled) {
-        return new SortSettings(enabled, this.sortPlayerInventory(), this.enableDoubleClick(), this.sortType(), this.sortPriorityRules());
+        return new SortSettings(enabled, this.sortPlayerInventory(), this.enableDoubleClick(), this.sortIntoBundles(), this.sortIntoHotbarBundles(), this.sortType(), this.sortPriorityRules());
+    }
+
+    public SortSettings withSortIntoBundles(boolean enabled) {
+        return new SortSettings(this.sortHighlightedItem(), this.sortPlayerInventory(), this.enableDoubleClick(), enabled, this.sortIntoHotbarBundles(), this.sortType(), this.sortPriorityRules());
+    }
+
+    public SortSettings withSortIntoHotbarBundles(boolean enabled) {
+        return new SortSettings(this.sortHighlightedItem(), this.sortPlayerInventory(), this.enableDoubleClick(), this.sortIntoBundles(), enabled, this.sortType(), this.sortPriorityRules());
     }
 
     public SortSettings withSortPriorityRules(List<SortPriorityRuleSetting> sortPriorityRules) {
-        return new SortSettings(this.sortHighlightedItem(), this.sortPlayerInventory(), this.enableDoubleClick(), this.sortType(), sortPriorityRules);
+        return new SortSettings(this.sortHighlightedItem(), this.sortPlayerInventory(), this.enableDoubleClick(), this.sortIntoBundles(), this.sortIntoHotbarBundles(), this.sortType(), sortPriorityRules);
     }
 
     public void sync(ServerPlayer player) {
