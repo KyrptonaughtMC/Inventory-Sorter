@@ -2,10 +2,8 @@ package net.kyrptonaught.inventorysorter.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.mojang.blaze3d.platform.InputConstants;
 import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
 import net.kyrptonaught.inventorysorter.sort.SortType;
-import net.kyrptonaught.inventorysorter.client.platform.ClientPlatformServices;
 import net.kyrptonaught.inventorysorter.compat.config.CompatConfig;
 
 import java.io.*;
@@ -68,12 +66,6 @@ public class NewConfigOptions extends CompatConfig {
         newOptions.sortType = oldOptions.sortType;
         newOptions.enableDoubleClickSort = oldOptions.doubleClickSort;
         newOptions.sortHighlightedItem = oldOptions.sortMouseHighlighted;
-
-        if (oldOptions.keybinding != null) {
-            // @TODO come up with something for this
-            InputConstants.Key boundKey = InputConstants.getKey(oldOptions.keybinding);
-            ClientPlatformServices.KEY_MAPPINGS.sortKeyMapping().setKey(boundKey); // this doesn't seem to take effect
-        }
 
         return newOptions;
     }

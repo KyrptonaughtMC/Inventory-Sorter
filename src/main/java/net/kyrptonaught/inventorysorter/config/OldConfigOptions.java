@@ -33,6 +33,6 @@ public class OldConfigOptions {
     }
 
     public void save() throws IOException {
-        LOGGER.info("Saving config to " + CONFIG_FILE + "is deprecated, please use the new config system.");
+        LOGGER.info("Saving config to " + CONFIG_FILE + " is deprecated, please use the new config system.");
     }
 }
