@@ -123,7 +123,7 @@ publishMods {
 
     curseforge {
         clientRequired = false
-        serverRequired = true
+        serverRequired = false
         if (mod.isFabric) {
             requires("fabric-api")
             optional("modmenu")
