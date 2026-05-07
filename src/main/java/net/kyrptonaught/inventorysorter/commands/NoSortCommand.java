@@ -3,7 +3,7 @@ package net.kyrptonaught.inventorysorter.commands;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import net.kyrptonaught.inventorysorter.InventoryHelper;
+import net.kyrptonaught.inventorysorter.screen.TargetedInventoryResolver;
 import net.kyrptonaught.inventorysorter.network.PlayerSortPrevention;
 import net.kyrptonaught.inventorysorter.platform.PlatformServices;
 import net.kyrptonaught.inventorysorter.permissions.CommandPermission;
@@ -37,7 +37,7 @@ public class NoSortCommand {
         }
         PlayerSortPrevention playerSortPrevention = PlatformServices.PLAYER_DATA.getPlayerSortPrevention(player);
 
-        Boolean success = InventoryHelper.withTargetedScreenHandler(player, context -> {
+        Boolean success = TargetedInventoryResolver.withTargetedScreen(player, context -> {
             playerSortPrevention.preventSortForScreens().add(context.screenId().toString());
             PlatformServices.PLAYER_DATA.setPlayerSortPrevention(player, playerSortPrevention);
             return true;
@@ -62,7 +62,7 @@ public class NoSortCommand {
         }
         PlayerSortPrevention playerSortPrevention = PlatformServices.PLAYER_DATA.getPlayerSortPrevention(player);
 
-        Boolean success = InventoryHelper.withTargetedScreenHandler(player, context -> {
+        Boolean success = TargetedInventoryResolver.withTargetedScreen(player, context -> {
             playerSortPrevention.preventSortForScreens().remove(context.screenId().toString());
             PlatformServices.PLAYER_DATA.setPlayerSortPrevention(player, playerSortPrevention);
             return true;

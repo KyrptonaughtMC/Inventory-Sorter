@@ -45,6 +45,18 @@ class BundleTargetSlotsTest {
         assertSameLayoutStack(stack(Items.IRON_INGOT), trinkets.getItem(1));
     }
 
+    @Test
+    void rejectsMismatchedStackCountWhenWritingBack() {
+        SimpleContainer hotbar = new SimpleContainer(stack(Items.APPLE), stack(Items.DIAMOND));
+
+        BundleTargetSlots targets = BundleTargetSlots.fromContainers(List.of(hotbar));
+
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> targets.setStacks(List.of(stack(Items.GOLD_INGOT)))
+        );
+    }
+
     private static void assertSameLayoutStacks(List<ItemStack> expected, List<ItemStack> actual) {
         Assertions.assertEquals(expected.size(), actual.size());
         for (int i = 0; i < expected.size(); i++) {

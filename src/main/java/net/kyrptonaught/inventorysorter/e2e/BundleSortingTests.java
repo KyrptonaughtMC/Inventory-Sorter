@@ -7,7 +7,7 @@ import eu.pb4.trinkets.impl.SlotGroupImpl;
 import eu.pb4.trinkets.impl.SlotTypeImpl;
 import eu.pb4.trinkets.impl.data.EntitySlotLoader;
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
-import net.kyrptonaught.inventorysorter.InventoryHelper;
+import net.kyrptonaught.inventorysorter.inventory.ServerInventorySorter;
 import net.kyrptonaught.inventorysorter.SortTarget;
 import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
 import net.kyrptonaught.inventorysorter.network.SortSettings;
@@ -352,7 +352,7 @@ public class BundleSortingTests {
                 List.of(new SortPriorityRuleSetting("#minecraft:shulker_boxes", SortPriorityPosition.FIRST))
         );
 
-        InventoryHelper.sortInventory(scenario.player(), SortTarget.CONTAINER, settings);
+        ServerInventorySorter.sort(scenario.player(), SortTarget.CONTAINER, settings);
 
         assertContents(ctx, scenario, Map.of(
                 0, new ItemStack(Items.WHITE_SHULKER_BOX),
@@ -380,7 +380,7 @@ public class BundleSortingTests {
                 List.of(new SortPriorityRuleSetting("minecraft:apple", SortPriorityPosition.IGNORE))
         );
 
-        InventoryHelper.sortInventory(scenario.player(), SortTarget.CONTAINER, settings);
+        ServerInventorySorter.sort(scenario.player(), SortTarget.CONTAINER, settings);
 
         assertContents(ctx, scenario, Map.of(
                 0, appleBundle,
@@ -534,7 +534,7 @@ public class BundleSortingTests {
         player.getInventory().setItem(14, new ItemStack(Items.APPLE, 12));
         player.getInventory().setItem(18, new ItemStack(Items.DIAMOND, 1));
 
-        InventoryHelper.sortInventory(player, SortTarget.PLAYER_INVENTORY, new SortSettings(
+        ServerInventorySorter.sort(player, SortTarget.PLAYER_INVENTORY, new SortSettings(
                 true,
                 false,
                 true,
@@ -562,7 +562,7 @@ public class BundleSortingTests {
         player.getInventory().setItem(14, new ItemStack(Items.APPLE, 12));
         player.getInventory().setItem(18, new ItemStack(Items.DIAMOND, 1));
 
-        InventoryHelper.sortInventory(player, SortTarget.PLAYER_INVENTORY, new SortSettings(
+        ServerInventorySorter.sort(player, SortTarget.PLAYER_INVENTORY, new SortSettings(
                 true,
                 false,
                 true,
@@ -620,7 +620,7 @@ public class BundleSortingTests {
     }
 
     private static void sortWithBundles(ServerPlayer player) {
-        InventoryHelper.sortInventory(player, SortTarget.CONTAINER, new SortSettings(
+        ServerInventorySorter.sort(player, SortTarget.CONTAINER, new SortSettings(
                 true,
                 false,
                 true,
@@ -631,7 +631,7 @@ public class BundleSortingTests {
     }
 
     private static void sortPlayerInventoryWithBundles(ServerPlayer player) {
-        InventoryHelper.sortInventory(player, SortTarget.PLAYER_INVENTORY, new SortSettings(
+        ServerInventorySorter.sort(player, SortTarget.PLAYER_INVENTORY, new SortSettings(
                 true,
                 false,
                 true,

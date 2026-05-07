@@ -1,6 +1,7 @@
 package net.kyrptonaught.inventorysorter.client.sort;
 
-import net.kyrptonaught.inventorysorter.InventoryHelper;
+import net.kyrptonaught.inventorysorter.inventory.SortabilityPolicy;
+import net.kyrptonaught.inventorysorter.inventory.container.ScreenInventory;
 import net.kyrptonaught.inventorysorter.SortTarget;
 import net.kyrptonaught.inventorysorter.compat.TrinketsBundleTargets;
 import net.minecraft.client.Minecraft;
@@ -42,7 +43,7 @@ public record ClientSortScope(
                 player.getInventory(),
                 target,
                 player,
-                () -> InventoryHelper.canSortInventory(player, menu),
+                () -> SortabilityPolicy.canSortInventory(player, menu),
                 TrinketsBundleTargets::isTrinketInventory
         );
     }
@@ -149,7 +150,7 @@ public record ClientSortScope(
     }
 
     private static List<ScopedSlot> containerSlots(AbstractContainerMenu menu) {
-        Container inventory = InventoryHelper.getInventory(menu);
+        Container inventory = ScreenInventory.fromMenu(menu);
         if (inventory == null) {
             return List.of();
         }

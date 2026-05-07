@@ -4,7 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import net.kyrptonaught.inventorysorter.InventoryHelper;
+import net.kyrptonaught.inventorysorter.screen.TargetedInventoryResolver;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.kyrptonaught.inventorysorter.network.HideButton;
 import net.kyrptonaught.inventorysorter.permissions.CommandPermission;
@@ -124,7 +124,7 @@ public class AdminCommands {
             return 0;
         }
 
-        Boolean success = InventoryHelper.withTargetedScreenHandler(player, context -> {
+        Boolean success = TargetedInventoryResolver.withTargetedScreen(player, context -> {
             NewConfigOptions config = getConfig();
             config.disableSortForScreen(context.screenId().toString());
             config.save();
@@ -148,7 +148,7 @@ public class AdminCommands {
             return 0;
         }
 
-        Boolean success = InventoryHelper.withTargetedScreenHandler(player, context -> {
+        Boolean success = TargetedInventoryResolver.withTargetedScreen(player, context -> {
             NewConfigOptions config = getConfig();
             config.enableSortForScreen(context.screenId().toString());
             config.save();
@@ -183,7 +183,7 @@ public class AdminCommands {
             return 0;
         }
 
-        Boolean success = InventoryHelper.withTargetedScreenHandler(player, context -> {
+        Boolean success = TargetedInventoryResolver.withTargetedScreen(player, context -> {
             NewConfigOptions config = getConfig();
             config.disableButtonForScreen(context.screenId().toString());
             config.save();
@@ -208,7 +208,7 @@ public class AdminCommands {
             return 0;
         }
 
-        Boolean success = InventoryHelper.withTargetedScreenHandler(player, context -> {
+        Boolean success = TargetedInventoryResolver.withTargetedScreen(player, context -> {
             NewConfigOptions config = getConfig();
             config.enableButtonForScreen(context.screenId().toString());
             config.save();

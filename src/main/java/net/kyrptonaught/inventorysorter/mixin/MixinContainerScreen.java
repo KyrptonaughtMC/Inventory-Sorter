@@ -3,7 +3,8 @@ package net.kyrptonaught.inventorysorter.mixin;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.kyrptonaught.inventorysorter.ButtonType;
-import net.kyrptonaught.inventorysorter.InventoryHelper;
+import net.kyrptonaught.inventorysorter.client.SortButtonDisplayPolicy;
+import net.kyrptonaught.inventorysorter.inventory.SortabilityPolicy;
 import net.kyrptonaught.inventorysorter.InventorySorterMod;
 import net.kyrptonaught.inventorysorter.InventoryScreenId;
 import net.kyrptonaught.inventorysorter.SortTarget;
@@ -67,8 +68,8 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
             return;
         }
 
-        if (getConfig().showSortButton && InventoryHelper.shouldDisplayButtons(minecraft.player)) {
-            boolean playerOnly = !InventoryHelper.canSortInventory(minecraft.player);
+        if (getConfig().showSortButton && SortButtonDisplayPolicy.shouldDisplayButtons(minecraft.player)) {
+            boolean playerOnly = !SortabilityPolicy.canSortInventory(minecraft.player);
             if (playerOnly) {
                 invsort$PlayerSortBtn = new SortButtonWidget(ButtonType.PLAYER, this.leftPos + this.imageWidth - 20, this.topPos + (playerOnly ? (imageHeight - 95) : 6), SortTarget.PLAYER_INVENTORY, minecraft.screen);
                 invsort$PlayerSortBtn.visible = compatibility.shouldShowSortButton(InventoryScreenId.PLAYER_INVENTORY.value());
@@ -131,7 +132,7 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
 
     @Unique
     private void sortInventory(CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
-        SortTarget target = InventoryHelper.canSortInventory(minecraft.player) ? SortTarget.CONTAINER : SortTarget.PLAYER_INVENTORY;
+        SortTarget target = SortabilityPolicy.canSortInventory(minecraft.player) ? SortTarget.CONTAINER : SortTarget.PLAYER_INVENTORY;
         if (target == SortTarget.CONTAINER && getConfig().sortHighlightedItem) {
             if (hoveredSlot != null)
                 target = hoveredSlot.container instanceof Inventory ? SortTarget.PLAYER_INVENTORY : SortTarget.CONTAINER;
