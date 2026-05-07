@@ -2,7 +2,6 @@ package net.kyrptonaught.inventorysorter.compat.plugins;
 
 import eu.pb4.trinkets.api.TrinketSlotAccess;
 import eu.pb4.trinkets.api.TrinketsApi;
-import eu.pb4.trinkets.impl.TrinketSlot;
 import java.util.ArrayList;
 import java.util.List;
 import net.kyrptonaught.inventorysorter.compat.CompatibilityPlugin;
@@ -15,6 +14,8 @@ import net.minecraft.world.item.Items;
 
 public final class TrinketsPlugin implements CompatibilityPlugin {
     private static final String TRINKETS_MOD_ID = "trinkets";
+    private static final String TRINKET_SLOT_CLASS = "eu.pb4.trinkets.impl.TrinketSlot";
+    private static final String TRINKETS_CLIENT_CLASS = "eu.pb4.trinkets.impl.client.TrinketsClient";
 
     @Override
     public List<BundleTargetSlot> serverBundleSlots(ServerPlayer player, SortSettings settings) {
@@ -32,18 +33,16 @@ public final class TrinketsPlugin implements CompatibilityPlugin {
 
     @Override
     public boolean isClientBundleSlot(Slot slot) {
-        return isLoaded()
-                && slot instanceof TrinketSlot trinketSlot
-                && isBundleSlot(trinketSlot.getAccess());
+        return isLoaded() && isBundleSlot(trinketAccess(slot));
     }
 
     @Override
     public void prepareClientBundleSlotClick(Slot slot) {
-        if (!isLoaded() || !(slot instanceof TrinketSlot trinketSlot)) {
+        if (!isLoaded()) {
             return;
         }
 
-        ClientSlotFocus.prepare(trinketSlot);
+        ClientSlotFocus.prepare(trinketAccess(slot));
     }
 
     private static boolean isBundleSlot(TrinketSlotAccess slot) {
@@ -54,22 +53,43 @@ public final class TrinketsPlugin implements CompatibilityPlugin {
         return PlatformServices.PLATFORM.isModLoaded(TRINKETS_MOD_ID);
     }
 
+    private static TrinketSlotAccess trinketAccess(Slot slot) {
+        try {
+            Class<?> trinketSlotClass = Class.forName(TRINKET_SLOT_CLASS, false, slot.getClass().getClassLoader());
+            if (!trinketSlotClass.isInstance(slot)) {
+                return null;
+            }
+            Object access = trinketSlotClass.getMethod("getAccess").invoke(slot);
+            return access instanceof TrinketSlotAccess trinketSlotAccess ? trinketSlotAccess : null;
+        } catch (ReflectiveOperationException | LinkageError e) {
+            return null;
+        }
+    }
+
     private static final class ClientSlotFocus {
         private ClientSlotFocus() {
         }
 
-        private static void prepare(TrinketSlot slot) {
+        private static void prepare(TrinketSlotAccess access) {
+            if (access == null) {
+                return;
+            }
+
             net.minecraft.client.Minecraft minecraft = net.minecraft.client.Minecraft.getInstance();
             if (minecraft.player == null) {
                 return;
             }
 
-            TrinketSlotAccess access = slot.getAccess();
-            eu.pb4.trinkets.impl.client.TrinketsClient.activeGroup =
-                    TrinketsApi.getPlayerSlots(minecraft.player).get(access.slotType().group());
-            eu.pb4.trinkets.impl.client.TrinketsClient.activeType = slot.getType();
-            eu.pb4.trinkets.impl.client.TrinketsClient.quickMoveGroup = null;
-            eu.pb4.trinkets.impl.client.TrinketsClient.quickMoveType = null;
+            try {
+                Class<?> trinketsClientClass = Class.forName(TRINKETS_CLIENT_CLASS);
+                trinketsClientClass.getField("activeGroup").set(null,
+                        TrinketsApi.getPlayerSlots(minecraft.player).get(access.slotType().group()));
+                trinketsClientClass.getField("activeType").set(null, access.slotType());
+                trinketsClientClass.getField("quickMoveGroup").set(null, null);
+                trinketsClientClass.getField("quickMoveType").set(null, null);
+            } catch (ReflectiveOperationException | LinkageError e) {
+                // Trinkets exposes no public API for focusing hidden client slots.
+            }
         }
     }
 }
