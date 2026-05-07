@@ -16,4 +16,9 @@ public class FabricInventorySorterPlatform implements InventorySorterPlatform {
     public boolean isDedicatedServer(MinecraftServer server) {
         return server.isDedicatedServer();
     }
+
+    @Override
+    public boolean isModLoaded(String modId) {
+        return FabricLoader.getInstance().isModLoaded(modId);
+    }
 }

@@ -34,6 +34,34 @@ public class ClientSortScopeTest {
     }
 
     @Test
+    void playerInventoryScopeIncludesHotbarAndTrinketsAsExtraBundleTargets() {
+        TestMenu menu = new TestMenu();
+        Container container = new SimpleContainer(9);
+        Container playerInventory = new SimpleContainer(36);
+        Container trinketsInventory = new SimpleContainer(2);
+        addSlots(menu, container, 0, 9);
+        addSlots(menu, playerInventory, 0, 36);
+        addSlots(menu, trinketsInventory, 0, 2);
+
+        Optional<ClientSortScope> scope = ClientSortScope.resolve(
+                menu,
+                playerInventory,
+                SortTarget.PLAYER_INVENTORY,
+                null,
+                () -> true,
+                candidate -> candidate == trinketsInventory
+        );
+
+        Assertions.assertTrue(scope.isPresent());
+        Assertions.assertEquals(9, scope.get().hotbarBundleTargetSlots().size());
+        Assertions.assertEquals(0, scope.get().hotbarBundleTargetSlots().getFirst().slot().getContainerSlot());
+        Assertions.assertEquals(2, scope.get().trinketsBundleTargetSlots().size());
+        Assertions.assertEquals(0, scope.get().trinketsBundleTargetSlots().getFirst().slot().getContainerSlot());
+        Assertions.assertEquals(45, scope.get().trinketsBundleTargetSlots().get(0).menuSlotIndex());
+        Assertions.assertEquals(46, scope.get().trinketsBundleTargetSlots().get(1).menuSlotIndex());
+    }
+
+    @Test
     void containerScopeUsesOnlyTheFirstBackingContainer() {
         TestMenu menu = new TestMenu();
         Container container = new SimpleContainer(9);

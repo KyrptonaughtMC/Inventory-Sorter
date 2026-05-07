@@ -52,6 +52,11 @@ dependencies {
     implementation("xyz.nucleoid:server-translations-api:${mod.prop("server_translations_api_version")}")
     include("xyz.nucleoid:server-translations-api:${mod.prop("server_translations_api_version")}")
 
+    compileOnly("maven.modrinth:trinkets-updated:${mod.prop("trinkets_version")}")
+    localRuntime("maven.modrinth:trinkets-updated:${mod.prop("trinkets_version")}")
+    testCompileOnly("maven.modrinth:trinkets-updated:${mod.prop("trinkets_version")}")
+    testRuntimeOnly("maven.modrinth:trinkets-updated:${mod.prop("trinkets_version")}")
+
     try {
         api("com.terraformersmc:modmenu:${mod.prop("modmenu_version")}")
     } catch (e: Exception) {
@@ -63,6 +68,7 @@ dependencies {
 
     testImplementation("net.fabricmc:fabric-loader-junit:${mod.prop("loader_version")}")
     testImplementation("com.google.jimfs:jimfs:1.1")
+
 }
 
 tasks.test {

@@ -109,6 +109,24 @@ class ClientFallbackSortPlanBuilderTest {
     }
 
     @Test
+    void canUseTrinketsBundleTargetsWhenHotbarTargetsAreDisabled() {
+        SimpleContainer mainInventory = new SimpleContainer(1);
+        mainInventory.setItem(0, stack(Items.APPLE, 6));
+        SimpleContainer trinkets = new SimpleContainer(bundleContaining(stack(Items.APPLE, 8)));
+
+        List<PlannedContainerClick> clicks = builder.build(
+                scope(mainInventory, new SimpleContainer(0), trinkets),
+                SortType.NAME,
+                "en_us",
+                List.of(),
+                true,
+                false
+        ).orElseThrow();
+
+        Assertions.assertEquals(List.of(pickupClick(10), pickupClick(30)), clicks);
+    }
+
+    @Test
     void returnsEmptyWhenLayoutClicksCannotBePlanned() {
         ClientFallbackSortPlanBuilder rejectingBuilder = new ClientFallbackSortPlanBuilder(new RejectingClickPlanner());
         SimpleContainer container = new SimpleContainer(namedStack(Items.DIAMOND, "Diamond"), namedStack(Items.APPLE, "Apple"));
@@ -124,10 +142,14 @@ class ClientFallbackSortPlanBuilderTest {
     }
 
     private static ClientSortScope scope(Container layout) {
-        return scope(layout, new SimpleContainer(0));
+        return scope(layout, new SimpleContainer(0), new SimpleContainer(0));
     }
 
     private static ClientSortScope scope(Container layout, Container hotbar) {
+        return scope(layout, hotbar, new SimpleContainer(0));
+    }
+
+    private static ClientSortScope scope(Container layout, Container hotbar, Container trinkets) {
         List<ClientSortScope.ScopedSlot> layoutSlots = new ArrayList<>();
         for (int i = 0; i < layout.getContainerSize(); i++) {
             layoutSlots.add(new ClientSortScope.ScopedSlot(10 + i, new Slot(layout, i, 0, 0)));
@@ -137,7 +159,12 @@ class ClientFallbackSortPlanBuilderTest {
         for (int i = 0; i < hotbar.getContainerSize(); i++) {
             hotbarSlots.add(new ClientSortScope.ScopedSlot(20 + i, new Slot(hotbar, i, 0, 0)));
         }
-        return new ClientSortScope(4, layoutSlots, hotbarSlots);
+
+        List<ClientSortScope.ScopedSlot> trinketsSlots = new ArrayList<>();
+        for (int i = 0; i < trinkets.getContainerSize(); i++) {
+            trinketsSlots.add(new ClientSortScope.ScopedSlot(30 + i, new Slot(trinkets, i, 0, 0)));
+        }
+        return new ClientSortScope(4, layoutSlots, hotbarSlots, trinketsSlots);
     }
 
     private static List<ItemStack> stacks(Container container) {

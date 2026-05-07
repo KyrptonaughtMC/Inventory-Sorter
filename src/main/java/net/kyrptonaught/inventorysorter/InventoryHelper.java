@@ -3,11 +3,13 @@ package net.kyrptonaught.inventorysorter;
 import net.kyrptonaught.inventorysorter.network.PlayerSortPrevention;
 import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
 import net.kyrptonaught.inventorysorter.network.SortSettings;
+import net.kyrptonaught.inventorysorter.compat.TrinketsBundleTargets;
 import net.kyrptonaught.inventorysorter.platform.PlatformServices;
 import net.kyrptonaught.inventorysorter.sort.SortedInventoryLayout;
 import net.kyrptonaught.inventorysorter.sort.SortPriorityRules;
 import net.kyrptonaught.inventorysorter.sort.SortType;
 import net.kyrptonaught.inventorysorter.sort.bundle.BundleInsertionLayoutPass;
+import net.kyrptonaught.inventorysorter.sort.bundle.BundleTargetSlots;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -160,12 +162,10 @@ public class InventoryHelper {
         }
 
         List<ItemStack> mainInventoryStacks = getStacks(player.getInventory(), 9, 27);
-        List<ItemStack> hotbarStacks = settings.sortIntoHotbarBundles()
-                ? getStacks(player.getInventory(), 0, 9)
-                : List.of();
+        BundleTargetSlots extraBundleTargets = BundleTargetSlots.fromContainers(extraBundleTargetContainers(player, settings));
         BundleInsertionLayoutPass.Result bundleInsertion = BundleInsertionLayoutPass.apply(
                 mainInventoryStacks,
-                hotbarStacks,
+                extraBundleTargets.stacks(),
                 SortPriorityRules.compile(settings.sortPriorityRules())
         );
         SortedInventoryLayout sortedInventoryLayout = SortedInventoryLayout.fromBundleAdjusted(
@@ -175,11 +175,18 @@ public class InventoryHelper {
                 settings.sortPriorityRules()
         );
 
-        if (settings.sortIntoHotbarBundles()) {
-            setStacks(player.getInventory(), 0, bundleInsertion.extraTargetStacks());
-        }
+        extraBundleTargets.setStacks(bundleInsertion.extraTargetStacks());
         setStacks(player.getInventory(), 9, sortedInventoryLayout.stacks());
         player.getInventory().setChanged();
+    }
+
+    private static List<Container> extraBundleTargetContainers(ServerPlayer player, SortSettings settings) {
+        List<Container> containers = new ArrayList<>();
+        if (settings.sortIntoHotbarBundles()) {
+            containers.add(new InventorySlice(player.getInventory(), 0, 9));
+        }
+        containers.addAll(TrinketsBundleTargets.containers(player));
+        return containers;
     }
 
     private static List<ItemStack> getStacks(Container inv, int startSlot, int invSize) {
@@ -193,6 +200,60 @@ public class InventoryHelper {
     private static void setStacks(Container inv, int startSlot, List<ItemStack> stacks) {
         for (int i = 0; i < stacks.size(); i++) {
             inv.setItem(startSlot + i, stacks.get(i));
+        }
+    }
+
+    private record InventorySlice(Container container, int startSlot, int size) implements Container {
+        @Override
+        public int getContainerSize() {
+            return size;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            for (int i = 0; i < size; i++) {
+                if (!getItem(i).isEmpty()) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        @Override
+        public ItemStack getItem(int slot) {
+            return container.getItem(startSlot + slot);
+        }
+
+        @Override
+        public ItemStack removeItem(int slot, int amount) {
+            return container.removeItem(startSlot + slot, amount);
+        }
+
+        @Override
+        public ItemStack removeItemNoUpdate(int slot) {
+            return container.removeItemNoUpdate(startSlot + slot);
+        }
+
+        @Override
+        public void setItem(int slot, ItemStack stack) {
+            container.setItem(startSlot + slot, stack);
+        }
+
+        @Override
+        public void setChanged() {
+            container.setChanged();
+        }
+
+        @Override
+        public boolean stillValid(Player player) {
+            return container.stillValid(player);
+        }
+
+        @Override
+        public void clearContent() {
+            for (int i = 0; i < size; i++) {
+                setItem(i, ItemStack.EMPTY);
+            }
         }
     }
 
