@@ -26,6 +26,9 @@ The mod is designed to run server-side.
 Sorting actions like middle-click, double-click, and commands work even if the client has no mods installed. 
 If you're using the optional client mod, you'll also get visual buttons, keybind support, and in-game configuration menus.
 
+When sorting into bundles is enabled, Inventory Sorter can move matching loose items into existing bundles.
+For player inventory sorting, bundles in the hotbar and in compatible mod slots can also be used.
+
 ## Compatibility and Configuration
 
 Inventory Sorter supports **all inventories**, including those from other mods. 
@@ -34,6 +37,10 @@ You can control where sorting is enabled, customize how it behaves, and hide UI 
 All configuration options are documented at:
 
 [https://inventorysorter.meza.gg](https://inventorysorter.meza.gg)
+
+### Compatible Mods
+
+- Trinkets: bundles equipped in Trinkets slots can be used when sorting the player inventory.
 
 ## Before and After
 Before  
