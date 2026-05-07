@@ -34,6 +34,58 @@ public class ClientSortScopeTest {
     }
 
     @Test
+    void playerInventoryScopeIncludesHotbarAndCompatibilitySlotsAsExtraBundleTargets() {
+        TestMenu menu = new TestMenu();
+        Container container = new SimpleContainer(9);
+        Container playerInventory = new SimpleContainer(36);
+        Container compatibilityInventory = new SimpleContainer(2);
+        addSlots(menu, container, 0, 9);
+        addSlots(menu, playerInventory, 0, 36);
+        addSlots(menu, compatibilityInventory, 0, 2);
+
+        Optional<ClientSortScope> scope = ClientSortScope.resolve(
+                menu,
+                playerInventory,
+                SortTarget.PLAYER_INVENTORY,
+                null,
+                () -> true,
+                candidate -> candidate.container == compatibilityInventory
+        );
+
+        Assertions.assertTrue(scope.isPresent());
+        Assertions.assertEquals(9, scope.get().hotbarBundleTargetSlots().size());
+        Assertions.assertEquals(0, scope.get().hotbarBundleTargetSlots().getFirst().slot().getContainerSlot());
+        Assertions.assertEquals(2, scope.get().compatibilityBundleTargetSlots().size());
+        Assertions.assertEquals(0, scope.get().compatibilityBundleTargetSlots().getFirst().slot().getContainerSlot());
+        Assertions.assertEquals(45, scope.get().compatibilityBundleTargetSlots().get(0).menuSlotIndex());
+        Assertions.assertEquals(46, scope.get().compatibilityBundleTargetSlots().get(1).menuSlotIndex());
+    }
+
+    @Test
+    void playerInventoryScopeIncludesInactiveCompatibilitySlotsBecausePluginsCanPrepareThemBeforeClicking() {
+        TestMenu menu = new TestMenu();
+        Container container = new SimpleContainer(9);
+        Container playerInventory = new SimpleContainer(36);
+        Container compatibilityInventory = new SimpleContainer(1);
+        addSlots(menu, container, 0, 9);
+        addSlots(menu, playerInventory, 0, 36);
+        menu.add(new InactiveSlot(compatibilityInventory, 0));
+
+        Optional<ClientSortScope> scope = ClientSortScope.resolve(
+                menu,
+                playerInventory,
+                SortTarget.PLAYER_INVENTORY,
+                null,
+                () -> true,
+                candidate -> candidate.container == compatibilityInventory
+        );
+
+        Assertions.assertTrue(scope.isPresent());
+        Assertions.assertEquals(1, scope.get().compatibilityBundleTargetSlots().size());
+        Assertions.assertEquals(45, scope.get().compatibilityBundleTargetSlots().getFirst().menuSlotIndex());
+    }
+
+    @Test
     void containerScopeUsesOnlyTheFirstBackingContainer() {
         TestMenu menu = new TestMenu();
         Container container = new SimpleContainer(9);

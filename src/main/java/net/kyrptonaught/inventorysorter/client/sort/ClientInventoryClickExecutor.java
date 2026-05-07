@@ -2,7 +2,9 @@ package net.kyrptonaught.inventorysorter.client.sort;
 
 import net.kyrptonaught.inventorysorter.InventorySorterMod;
 import net.kyrptonaught.inventorysorter.client.sort.plan.PlannedContainerClick;
+import net.kyrptonaught.inventorysorter.compat.CompatibilityPlugins;
 import net.minecraft.client.Minecraft;
+import net.minecraft.world.inventory.Slot;
 
 import java.util.ArrayDeque;
 import java.util.List;
@@ -102,6 +104,10 @@ class ClientInventoryClickExecutor {
 
         @Override
         public void send(PlannedContainerClick click) {
+            if (click.slotIndex() >= 0 && click.slotIndex() < minecraft.player.containerMenu.slots.size()) {
+                Slot slot = minecraft.player.containerMenu.slots.get(click.slotIndex());
+                CompatibilityPlugins.prepareClientBundleSlotClick(slot);
+            }
             minecraft.gameMode.handleContainerInput(
                     minecraft.player.containerMenu.containerId,
                     click.slotIndex(),

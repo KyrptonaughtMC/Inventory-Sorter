@@ -8,7 +8,6 @@ import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import me.shedaniel.clothconfig2.gui.entries.SubCategoryListEntry;
 import me.shedaniel.clothconfig2.impl.builders.SubCategoryBuilder;
-import net.kyrptonaught.inventorysorter.InventoryHelper;
 import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
 import net.kyrptonaught.inventorysorter.sort.SortType;
 import net.kyrptonaught.inventorysorter.client.clothconfig.ContainerEntry;
@@ -80,9 +79,9 @@ public class ConfigScreen {
         allScreens.addAll(config.preventSortForScreens);
         List<AbstractConfigListEntry<?>> entries = new ArrayList<>();
 
-        if (InventoryHelper.getLastCheckedId().isPresent()) {
+        if (SortButtonDisplayPolicy.getLastCheckedId().isPresent()) {
             entries.add(builder.startTextDescription(Component.literal(" ")).build());
-            String screenId = InventoryHelper.getLastCheckedId().get().toString();
+            String screenId = SortButtonDisplayPolicy.getLastCheckedId().get().toString();
             SubCategoryListEntry lastOpenedRow = ContainerEntry.build(builder, config, screenId, true);
             SubCategoryBuilder lastOpened = builder.startSubCategory(Component.translatable("inventorysorter.config.compat.lastOpened"))
                     .setExpanded(true);
@@ -94,7 +93,7 @@ public class ConfigScreen {
         SubCategoryBuilder otherScreens = builder.startSubCategory(Component.translatable("inventorysorter.config.compat.others"))
                 .setExpanded(false);
         for (String screenId : allScreens) {
-            if (InventoryHelper.getLastCheckedId().isPresent() && InventoryHelper.getLastCheckedId().get().toString().equals(screenId)) {
+            if (SortButtonDisplayPolicy.getLastCheckedId().isPresent() && SortButtonDisplayPolicy.getLastCheckedId().get().toString().equals(screenId)) {
                 continue;
             }
             SubCategoryListEntry screenRow = ContainerEntry.build(builder, config, screenId, false);

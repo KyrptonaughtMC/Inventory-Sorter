@@ -39,7 +39,8 @@ class BundleInsertionClickAdapterTest {
                 ))
         );
 
-        List<PlannedContainerClick> clicks = adapter.clicks(scope(), insertion);
+        ClientSortScope scope = scope();
+        List<PlannedContainerClick> clicks = adapter.clicks(scope, scope.extraBundleTargetSlots(true), insertion);
 
         Assertions.assertEquals(List.of(pickupClick(10), pickupClick(11)), clicks);
     }
@@ -55,7 +56,8 @@ class BundleInsertionClickAdapterTest {
                 ))
         );
 
-        List<PlannedContainerClick> clicks = adapter.clicks(scope(), insertion);
+        ClientSortScope scope = scope();
+        List<PlannedContainerClick> clicks = adapter.clicks(scope, scope.extraBundleTargetSlots(true), insertion);
 
         Assertions.assertEquals(List.of(pickupClick(10), pickupClick(20), pickupClick(10)), clicks);
     }
@@ -68,7 +70,8 @@ class BundleInsertionClickAdapterTest {
                 List.of()
         );
 
-        Assertions.assertTrue(adapter.clicks(scope(), insertion).isEmpty());
+        ClientSortScope scope = scope();
+        Assertions.assertTrue(adapter.clicks(scope, scope.extraBundleTargetSlots(true), insertion).isEmpty());
     }
 
     private static ClientSortScope scope() {
@@ -80,7 +83,8 @@ class BundleInsertionClickAdapterTest {
                         new ClientSortScope.ScopedSlot(10, new Slot(layout, 0, 0, 0)),
                         new ClientSortScope.ScopedSlot(11, new Slot(layout, 1, 0, 0))
                 ),
-                List.of(new ClientSortScope.ScopedSlot(20, new Slot(hotbar, 0, 0, 0)))
+                List.of(new ClientSortScope.ScopedSlot(20, new Slot(hotbar, 0, 0, 0))),
+                List.of()
         );
     }
 

@@ -3,7 +3,7 @@ package net.kyrptonaught.inventorysorter.commands;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import net.kyrptonaught.inventorysorter.InventoryHelper;
+import net.kyrptonaught.inventorysorter.inventory.ServerInventorySorter;
 import net.kyrptonaught.inventorysorter.SortTarget;
 import net.kyrptonaught.inventorysorter.network.SortSettings;
 import net.kyrptonaught.inventorysorter.platform.PlatformServices;
@@ -28,7 +28,7 @@ public class SortMeCommand {
             return 0;
         }
         SortSettings settings = PlatformServices.PLAYER_DATA.getSortSettings(player);
-        InventoryHelper.sortInventory(player, SortTarget.PLAYER_INVENTORY, settings);
+        ServerInventorySorter.sort(player, SortTarget.PLAYER_INVENTORY, settings);
 
         commandContext.getSource().sendSuccess(() -> Component.translatable("inventorysorter.cmd.sort.sorted"), false);
         return 1;

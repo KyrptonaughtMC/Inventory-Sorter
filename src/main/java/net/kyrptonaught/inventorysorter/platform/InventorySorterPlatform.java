@@ -8,4 +8,8 @@ public interface InventorySorterPlatform {
     Path getConfigDir();
 
     boolean isDedicatedServer(MinecraftServer server);
+
+    default boolean isModLoaded(String modId) {
+        return false;
+    }
 }

@@ -3,7 +3,6 @@ package net.kyrptonaught.inventorysorter.commands;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import net.kyrptonaught.inventorysorter.InventoryHelper;
 import net.kyrptonaught.inventorysorter.network.SortSettings;
 import net.kyrptonaught.inventorysorter.platform.PlatformServices;
 import net.kyrptonaught.inventorysorter.permissions.CommandPermission;
@@ -26,7 +25,7 @@ public class SortCommand {
         }
         SortSettings settings = PlatformServices.PLAYER_DATA.getSortSettings(player);
 
-        commandContext.getSource().sendSuccess(() -> InventoryHelper.sortTargetedBlock(player, settings), false);
+        commandContext.getSource().sendSuccess(() -> TargetedSortCommand.sort(player, settings), false);
         return 1;
     }
 }

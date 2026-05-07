@@ -41,12 +41,13 @@ public class ClientFallbackSortPlanBuilder {
         List<PlannedContainerClick> bundleInsertionClicks = List.of();
         List<ItemStack> layoutInput = currentStacks;
         if (sortIntoBundles) {
+            List<ClientSortScope.ScopedSlot> extraBundleTargetSlots = sortScope.extraBundleTargetSlots(sortIntoHotbarBundles);
             BundleInsertionLayoutPass.Result bundleInsertion = BundleInsertionLayoutPass.apply(
                     currentStacks,
-                    extraBundleTargetStacks(sortScope, sortIntoHotbarBundles),
+                    stacks(extraBundleTargetSlots),
                     SortPriorityRules.compile(rules)
             );
-            bundleInsertionClicks = bundleInsertionClickAdapter.clicks(sortScope, bundleInsertion);
+            bundleInsertionClicks = bundleInsertionClickAdapter.clicks(sortScope, extraBundleTargetSlots, bundleInsertion);
             layoutInput = bundleInsertion.layoutStacks();
         }
 
@@ -77,13 +78,6 @@ public class ClientFallbackSortPlanBuilder {
             ));
         }
         return slotStates;
-    }
-
-    private static List<ItemStack> extraBundleTargetStacks(ClientSortScope scope, boolean sortIntoHotbarBundles) {
-        if (!sortIntoHotbarBundles) {
-            return List.of();
-        }
-        return stacks(scope.hotbarBundleTargetSlots());
     }
 
     private static List<ItemStack> stacks(List<ClientSortScope.ScopedSlot> slots) {

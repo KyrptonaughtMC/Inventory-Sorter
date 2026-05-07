@@ -3,7 +3,8 @@ package net.kyrptonaught.inventorysorter.commands;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import net.kyrptonaught.inventorysorter.InventoryHelper;
+import net.kyrptonaught.inventorysorter.screen.TargetedInventoryResolver;
+import net.kyrptonaught.inventorysorter.screen.TargetedScreenContext;
 import net.kyrptonaught.inventorysorter.InventoryScreenId;
 import net.kyrptonaught.inventorysorter.permissions.CommandPermission;
 import net.minecraft.ChatFormatting;
@@ -30,7 +31,7 @@ public class ScreenIDCommand {
             return 0;
         }
 
-        InventoryScreenId screenID = InventoryHelper.withTargetedScreenHandler(player, InventoryHelper.ScreenContext::screenId);
+        InventoryScreenId screenID = TargetedInventoryResolver.withTargetedScreen(player, TargetedScreenContext::screenId);
 
         if (screenID == null) {
             commandContext.getSource().sendSuccess(() -> Component.translatable("inventorysorter.cmd.screenid.fail"), false);

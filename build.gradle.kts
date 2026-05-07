@@ -18,19 +18,20 @@ modSettings {
         fov = 90
     }
 
-    variableReplacements = mapOf(
-        "schema" to "\$schema",
-        "clothVersion" to mod.prop("cloth_version"),
-        "modmenuVersion" to mod.prop("modmenu_version", "*"),
-        "fabricPermissionsApiVersion" to mod.prop("fabric_permissions_api_version"),
-        "fabricVersion" to mod.prop("fabric_version"),
-        "minecraftVersionVirtual" to mod.prop("minecraft_version_virtual", stonecutter.current.version),
-    )
+    variableReplacements =
+        mapOf(
+            "schema" to "\$schema",
+            "clothVersion" to mod.prop("cloth_version"),
+            "modmenuVersion" to mod.prop("modmenu_version", "*"),
+            "fabricPermissionsApiVersion" to mod.prop("fabric_permissions_api_version"),
+            "fabricVersion" to mod.prop("fabric_version"),
+            "minecraftVersionVirtual" to mod.prop("minecraft_version_virtual", stonecutter.current.version),
+        )
 }
 
 repositories {
     mavenLocal()
-	maven("https://maven.terraformersmc.com/releases")
+    maven("https://maven.terraformersmc.com/releases")
     maven("https://maven.shedaniel.me")
     maven("https://maven.meza.gg/releases")
     maven("https://maven.meza.gg/snapshots")
@@ -52,9 +53,14 @@ dependencies {
     implementation("xyz.nucleoid:server-translations-api:${mod.prop("server_translations_api_version")}")
     include("xyz.nucleoid:server-translations-api:${mod.prop("server_translations_api_version")}")
 
+    compileOnly("maven.modrinth:trinkets-updated:${mod.prop("trinkets_version")}")
+    localRuntime("maven.modrinth:trinkets-updated:${mod.prop("trinkets_version")}")
+    testCompileOnly("maven.modrinth:trinkets-updated:${mod.prop("trinkets_version")}")
+    testRuntimeOnly("maven.modrinth:trinkets-updated:${mod.prop("trinkets_version")}")
+
     try {
         api("com.terraformersmc:modmenu:${mod.prop("modmenu_version")}")
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         logger.warn("Modmenu not found, skipping dependency.")
     }
     api("me.shedaniel.cloth:cloth-config-${mod.loader}:${mod.prop("cloth_version")}") {
@@ -73,11 +79,15 @@ tasks.test {
 tasks.jacocoTestReport {
     dependsOn(tasks.test)
 
-    classDirectories.setFrom(files(classDirectories.files.map {
-        fileTree(it) {
-            exclude("**/e2e/**")
-        }
-    }))
+    classDirectories.setFrom(
+        files(
+            classDirectories.files.map {
+                fileTree(it) {
+                    exclude("**/e2e/**")
+                }
+            },
+        ),
+    )
 
     reports {
         html.required.set(true)
@@ -86,9 +96,9 @@ tasks.jacocoTestReport {
 }
 
 tasks.jar {
-	from("LICENSE") {
-		rename { "${it}_${project.base.archivesName.get()}"}
-	}
+    from("LICENSE") {
+        rename { "${it}_${project.base.archivesName.get()}" }
+    }
     exclude("**/e2e/**")
 }
 

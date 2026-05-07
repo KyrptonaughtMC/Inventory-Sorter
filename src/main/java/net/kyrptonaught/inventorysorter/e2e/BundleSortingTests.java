@@ -1,12 +1,19 @@
 package net.kyrptonaught.inventorysorter.e2e;
 
+import eu.pb4.trinkets.api.TrinketDropRule;
+import eu.pb4.trinkets.api.TrinketInventory;
+import eu.pb4.trinkets.api.TrinketsApi;
+import eu.pb4.trinkets.impl.SlotGroupImpl;
+import eu.pb4.trinkets.impl.SlotTypeImpl;
+import eu.pb4.trinkets.impl.data.EntitySlotLoader;
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
-import net.kyrptonaught.inventorysorter.InventoryHelper;
+import net.kyrptonaught.inventorysorter.inventory.ServerInventorySorter;
 import net.kyrptonaught.inventorysorter.SortTarget;
 import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
 import net.kyrptonaught.inventorysorter.network.SortSettings;
 import net.kyrptonaught.inventorysorter.sort.SortPriorityPosition;
 import net.kyrptonaught.inventorysorter.sort.SortType;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
@@ -19,6 +26,7 @@ import net.minecraft.world.item.component.BundleContents;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static net.kyrptonaught.inventorysorter.e2e.TestUtils.assertContents;
 import static net.kyrptonaught.inventorysorter.e2e.TestUtils.setUpScene;
@@ -344,7 +352,7 @@ public class BundleSortingTests {
                 List.of(new SortPriorityRuleSetting("#minecraft:shulker_boxes", SortPriorityPosition.FIRST))
         );
 
-        InventoryHelper.sortInventory(scenario.player(), SortTarget.CONTAINER, settings);
+        ServerInventorySorter.sort(scenario.player(), SortTarget.CONTAINER, settings);
 
         assertContents(ctx, scenario, Map.of(
                 0, new ItemStack(Items.WHITE_SHULKER_BOX),
@@ -372,7 +380,7 @@ public class BundleSortingTests {
                 List.of(new SortPriorityRuleSetting("minecraft:apple", SortPriorityPosition.IGNORE))
         );
 
-        InventoryHelper.sortInventory(scenario.player(), SortTarget.CONTAINER, settings);
+        ServerInventorySorter.sort(scenario.player(), SortTarget.CONTAINER, settings);
 
         assertContents(ctx, scenario, Map.of(
                 0, appleBundle,
@@ -493,6 +501,30 @@ public class BundleSortingTests {
     }
 
     @GameTest()
+    public void testServerPlayerInventorySortCanUseTrinketsBundleAsTarget(GameTestHelper ctx) {
+        configureTrinketsRingSlot();
+        TestUtils.Scenario scenario = setUpScene(ctx, Map.of());
+        ServerPlayer player = scenario.player();
+        TrinketInventory ring = TrinketsApi.getAttachment(player).getInventory("hand/ring");
+        ItemStack appleBundle = bundleContaining(new ItemStack(Items.APPLE, 8));
+
+        ctx.assertValueEqual(ring != null, true, Component.nullToEmpty("Expected Trinkets hand/ring inventory"));
+        ring.setItem(0, appleBundle);
+        player.getInventory().setItem(12, new ItemStack(Items.STICK, 6));
+        player.getInventory().setItem(14, new ItemStack(Items.APPLE, 12));
+        player.getInventory().setItem(18, new ItemStack(Items.DIAMOND, 1));
+
+        sortPlayerInventoryWithBundles(player);
+
+        assertBundleContents(ctx, ring.getItem(0), Map.of(Items.APPLE, 20));
+        assertPlayerMainInventoryContents(ctx, player, Map.of(
+                9, new ItemStack(Items.DIAMOND, 1),
+                10, new ItemStack(Items.STICK, 6)
+        ));
+        ctx.succeed();
+    }
+
+    @GameTest()
     public void testServerPlayerInventorySortDoesNotMoveItemsIntoHotbarBundleWhenBundleSortingIsOff(GameTestHelper ctx) {
         TestUtils.Scenario scenario = setUpScene(ctx, Map.of());
         ServerPlayer player = scenario.player();
@@ -502,7 +534,7 @@ public class BundleSortingTests {
         player.getInventory().setItem(14, new ItemStack(Items.APPLE, 12));
         player.getInventory().setItem(18, new ItemStack(Items.DIAMOND, 1));
 
-        InventoryHelper.sortInventory(player, SortTarget.PLAYER_INVENTORY, new SortSettings(
+        ServerInventorySorter.sort(player, SortTarget.PLAYER_INVENTORY, new SortSettings(
                 true,
                 false,
                 true,
@@ -530,7 +562,7 @@ public class BundleSortingTests {
         player.getInventory().setItem(14, new ItemStack(Items.APPLE, 12));
         player.getInventory().setItem(18, new ItemStack(Items.DIAMOND, 1));
 
-        InventoryHelper.sortInventory(player, SortTarget.PLAYER_INVENTORY, new SortSettings(
+        ServerInventorySorter.sort(player, SortTarget.PLAYER_INVENTORY, new SortSettings(
                 true,
                 false,
                 true,
@@ -588,7 +620,7 @@ public class BundleSortingTests {
     }
 
     private static void sortWithBundles(ServerPlayer player) {
-        InventoryHelper.sortInventory(player, SortTarget.CONTAINER, new SortSettings(
+        ServerInventorySorter.sort(player, SortTarget.CONTAINER, new SortSettings(
                 true,
                 false,
                 true,
@@ -599,7 +631,7 @@ public class BundleSortingTests {
     }
 
     private static void sortPlayerInventoryWithBundles(ServerPlayer player) {
-        InventoryHelper.sortInventory(player, SortTarget.PLAYER_INVENTORY, new SortSettings(
+        ServerInventorySorter.sort(player, SortTarget.PLAYER_INVENTORY, new SortSettings(
                 true,
                 false,
                 true,
@@ -607,6 +639,27 @@ public class BundleSortingTests {
                 SortType.NAME,
                 List.of()
         ));
+    }
+
+    private static void configureTrinketsRingSlot() {
+        SlotTypeImpl ring = new SlotTypeImpl(
+                "hand/ring",
+                "hand",
+                0,
+                1,
+                Optional.empty(),
+                new SlotTypeImpl.ConstantCondition(true),
+                new SlotTypeImpl.ConstantCondition(true),
+                new SlotTypeImpl.ConstantCondition(true),
+                TrinketDropRule.DEFAULT,
+                false,
+                false,
+                1
+        );
+        SlotGroupImpl hand = new SlotGroupImpl.Builder("hand", -1, 0)
+                .addSlot("ring", ring)
+                .build();
+        EntitySlotLoader.SERVER.setSlots(Map.of(EntityType.PLAYER, Map.of("hand", hand)));
     }
 
     private static void assertHotbarContents(GameTestHelper ctx, ServerPlayer player, Map<Integer, ItemStack> expectedContents) {

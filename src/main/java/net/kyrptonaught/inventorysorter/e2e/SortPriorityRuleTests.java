@@ -1,7 +1,7 @@
 package net.kyrptonaught.inventorysorter.e2e;
 
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
-import net.kyrptonaught.inventorysorter.InventoryHelper;
+import net.kyrptonaught.inventorysorter.inventory.ServerInventorySorter;
 import net.kyrptonaught.inventorysorter.sort.SortPriorityPosition;
 import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
 import net.kyrptonaught.inventorysorter.SortTarget;
@@ -40,7 +40,7 @@ public class SortPriorityRuleTests {
                 List.of(new SortPriorityRuleSetting("minecraft:bundle", SortPriorityPosition.LAST))
         );
 
-        InventoryHelper.sortInventory(scenario.player(), SortTarget.CONTAINER, settings);
+        ServerInventorySorter.sort(scenario.player(), SortTarget.CONTAINER, settings);
 
         assertContents(ctx, scenario, Map.of(
                 0, new ItemStack(Items.APPLE),
@@ -266,7 +266,7 @@ public class SortPriorityRuleTests {
                 List.of(new SortPriorityRuleSetting("name:\"*meza's*\"", SortPriorityPosition.FIRST))
         );
 
-        InventoryHelper.sortInventory(scenario.player(), SortTarget.CONTAINER, settings);
+        ServerInventorySorter.sort(scenario.player(), SortTarget.CONTAINER, settings);
 
         assertNamedContents(ctx, scenario, Map.of(
                 0, namedStack(Items.DIAMOND_AXE, "MEZA'S Axe"),
@@ -293,7 +293,7 @@ public class SortPriorityRuleTests {
                 List.of(new SortPriorityRuleSetting("name:\"Meza's\"", SortPriorityPosition.LAST))
         );
 
-        InventoryHelper.sortInventory(scenario.player(), SortTarget.CONTAINER, settings);
+        ServerInventorySorter.sort(scenario.player(), SortTarget.CONTAINER, settings);
 
         assertNamedContents(ctx, scenario, Map.of(
                 0, namedStack(Items.APPLE, "Alpha"),
@@ -320,7 +320,7 @@ public class SortPriorityRuleTests {
                 List.of(new SortPriorityRuleSetting("name:\"Meza's *\" & !minecraft:diamond_pickaxe", SortPriorityPosition.LAST))
         );
 
-        InventoryHelper.sortInventory(scenario.player(), SortTarget.CONTAINER, settings);
+        ServerInventorySorter.sort(scenario.player(), SortTarget.CONTAINER, settings);
 
         assertNamedContents(ctx, scenario, Map.of(
                 0, namedStack(Items.APPLE, "Apple"),
@@ -352,7 +352,7 @@ public class SortPriorityRuleTests {
                 )
         );
 
-        InventoryHelper.sortInventory(scenario.player(), SortTarget.CONTAINER, settings);
+        ServerInventorySorter.sort(scenario.player(), SortTarget.CONTAINER, settings);
 
         assertNamedContents(ctx, scenario, Map.of(
                 0, namedStack(Items.IRON_AXE, "Meza's Axe"),
@@ -380,7 +380,7 @@ public class SortPriorityRuleTests {
                 List.of(new SortPriorityRuleSetting("name:\"Bundle\"", SortPriorityPosition.LAST))
         );
 
-        InventoryHelper.sortInventory(scenario.player(), SortTarget.CONTAINER, settings);
+        ServerInventorySorter.sort(scenario.player(), SortTarget.CONTAINER, settings);
 
         assertContents(ctx, scenario, Map.of(
                 0, new ItemStack(Items.APPLE),
@@ -406,7 +406,7 @@ public class SortPriorityRuleTests {
                 List.of(new SortPriorityRuleSetting("name:\"Meza's *", SortPriorityPosition.LAST))
         );
 
-        InventoryHelper.sortInventory(scenario.player(), SortTarget.CONTAINER, settings);
+        ServerInventorySorter.sort(scenario.player(), SortTarget.CONTAINER, settings);
 
         assertNamedContents(ctx, scenario, Map.of(
                 0, namedStack(Items.APPLE, "Alpha"),

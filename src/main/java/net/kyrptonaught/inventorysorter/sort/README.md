@@ -56,24 +56,25 @@ flowchart TD
     ServerPath --> ServerGate["Server checks menu validity,<br/>screen id, compatibility, and prevention settings"]
     ServerGate --> ServerTarget{"Resolved server target?"}
     ServerTarget -->|container| ServerSnapshot["Read target container slots"]
+    ServerTarget -->|container| NoExtraBundleTargets["Use no extra bundle targets"]
     ServerTarget -->|player inventory| ServerPlayerSnapshot["Read player main inventory slots"]
-    ServerTarget -->|player inventory| HotbarBundleSetting{"Hotbar bundle targets<br/>setting enabled?"}
-    HotbarBundleSetting -->|yes| HotbarBundleTargets["Read player hotbar slots<br/>as extra bundle targets"]
-    HotbarBundleSetting -->|no| NoExtraBundleTargets["Use no extra bundle targets"]
+    ServerTarget -->|player inventory| ServerExtraBundleTargets["Read server extra bundle targets<br/>from hotbar and compatibility plugins"]
     ServerGate --> ServerSettings["Read server-stored player settings<br/>with requested sort type"]
 
     ClientPath --> ClientGate["Client checks menu validity,<br/>spectator state, carried stack,<br/>slot activity, fake slots, and modification permission"]
     ClientGate --> ClientScope["Resolve sortable client slot scope<br/>container slots or player main inventory slots"]
     ClientScope --> ClientSnapshot["Read stacks from scoped client slots"]
+    ClientScope --> ClientExtraTargetScope{"Client target is<br/>player inventory?"}
+    ClientExtraTargetScope -->|yes| ClientExtraBundleTargets["Read client extra bundle targets<br/>from hotbar and compatibility plugins"]
+    ClientExtraTargetScope -->|no| NoExtraBundleTargets
     ClientScope --> ClientSettings["Read local client sort settings"]
 
     ServerSnapshot --> Snapshot["Layout snapshot"]
     ServerPlayerSnapshot --> Snapshot
     ClientSnapshot --> Snapshot
-    HotbarBundleTargets --> ExtraBundleTargets["Extra bundle target snapshot"]
+    ServerExtraBundleTargets --> ExtraBundleTargets["Extra bundle target snapshot"]
+    ClientExtraBundleTargets --> ExtraBundleTargets
     NoExtraBundleTargets --> ExtraBundleTargets
-    ClientSnapshot --> NoExtraBundleTargets
-    ServerSnapshot --> NoExtraBundleTargets
     ServerSettings --> Settings["Sort settings"]
     ClientSettings --> Settings
 
@@ -150,9 +151,13 @@ flowchart TD
     ClickPlan --> Clicks{"Can vanilla clicks<br/>realize the layout?"}
     Clicks -->|no| Abort
     Clicks -->|yes| QueueClicks["Queue container clicks<br/>for later client ticks"]
+    QueueClicks --> PrepareCompatibilitySlot["Compatibility plugins may prepare<br/>extra target slots before clicks"]
+    PrepareCompatibilitySlot --> SendClicks["Send queued container clicks"]
 ```
 
 The core owns the flow from `Snapshot` through `Layout`. Server sorting and client fallback must both enter through that same path. Everything before it is target selection, authorization, and snapshot/settings collection. Everything after it is application: direct server mutation for server sorting, or vanilla click planning and execution for client fallback.
+
+Extra bundle targets are not part of the sorted layout. Player-inventory sorting may supply hotbar bundle targets, and compatibility plugins may supply additional slot-backed targets. The layout algorithm consumes all of them through the same bundle target snapshot so ordering rules stay independent of where the bundle was found. Client fallback keeps the same target model, then lets compatibility plugins prepare those slots before click replay when the screen needs it.
 
 ## Responsibility Model
 

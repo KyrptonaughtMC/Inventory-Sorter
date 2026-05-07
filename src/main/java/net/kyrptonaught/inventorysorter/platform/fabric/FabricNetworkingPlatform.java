@@ -3,7 +3,7 @@ package net.kyrptonaught.inventorysorter.platform.fabric;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.kyrptonaught.inventorysorter.InventoryHelper;
+import net.kyrptonaught.inventorysorter.inventory.ServerInventorySorter;
 import net.kyrptonaught.inventorysorter.network.*;
 import net.kyrptonaught.inventorysorter.platform.NetworkingPlatform;
 import net.kyrptonaught.inventorysorter.platform.PlatformServices;
@@ -36,7 +36,7 @@ public class FabricNetworkingPlatform implements NetworkingPlatform {
         ServerPlayNetworking.registerGlobalReceiver(InventorySortPacket.ID, ((payload, context) -> {
             ServerPlayer player = context.player();
             MinecraftServer server = player.level().getServer();
-            server.execute(() -> InventoryHelper.sortInventory(
+            server.execute(() -> ServerInventorySorter.sort(
                     player,
                     payload.target(),
                     PlatformServices.PLAYER_DATA.getSortSettings(player).withSortType(payload.sortType())

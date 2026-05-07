@@ -32,6 +32,11 @@ There is an ongoing effort to support client-only usage, but this is not current
 - Fully configurable
 - Focused feature set with minimal overhead
 
+## Compatible Mods
+
+- Trinkets: bundles equipped in Trinkets slots can be used when sorting the player inventory.
+
+
 ## Project status
 
 The mod was originally developed by [Kyrptonaught](http://github.com/kyrptonaught). 
