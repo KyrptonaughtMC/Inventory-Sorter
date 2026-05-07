@@ -109,13 +109,13 @@ class ClientFallbackSortPlanBuilderTest {
     }
 
     @Test
-    void canUseTrinketsBundleTargetsWhenHotbarTargetsAreDisabled() {
+    void canUseCompatibilityBundleTargetsWhenHotbarTargetsAreDisabled() {
         SimpleContainer mainInventory = new SimpleContainer(1);
         mainInventory.setItem(0, stack(Items.APPLE, 6));
-        SimpleContainer trinkets = new SimpleContainer(bundleContaining(stack(Items.APPLE, 8)));
+        SimpleContainer compatibilitySlots = new SimpleContainer(bundleContaining(stack(Items.APPLE, 8)));
 
         List<PlannedContainerClick> clicks = builder.build(
-                scope(mainInventory, new SimpleContainer(0), trinkets),
+                scope(mainInventory, new SimpleContainer(0), compatibilitySlots),
                 SortType.NAME,
                 "en_us",
                 List.of(),
@@ -149,7 +149,7 @@ class ClientFallbackSortPlanBuilderTest {
         return scope(layout, hotbar, new SimpleContainer(0));
     }
 
-    private static ClientSortScope scope(Container layout, Container hotbar, Container trinkets) {
+    private static ClientSortScope scope(Container layout, Container hotbar, Container compatibilitySlots) {
         List<ClientSortScope.ScopedSlot> layoutSlots = new ArrayList<>();
         for (int i = 0; i < layout.getContainerSize(); i++) {
             layoutSlots.add(new ClientSortScope.ScopedSlot(10 + i, new Slot(layout, i, 0, 0)));
@@ -160,11 +160,11 @@ class ClientFallbackSortPlanBuilderTest {
             hotbarSlots.add(new ClientSortScope.ScopedSlot(20 + i, new Slot(hotbar, i, 0, 0)));
         }
 
-        List<ClientSortScope.ScopedSlot> trinketsSlots = new ArrayList<>();
-        for (int i = 0; i < trinkets.getContainerSize(); i++) {
-            trinketsSlots.add(new ClientSortScope.ScopedSlot(30 + i, new Slot(trinkets, i, 0, 0)));
+        List<ClientSortScope.ScopedSlot> compatibilityBundleSlots = new ArrayList<>();
+        for (int i = 0; i < compatibilitySlots.getContainerSize(); i++) {
+            compatibilityBundleSlots.add(new ClientSortScope.ScopedSlot(30 + i, new Slot(compatibilitySlots, i, 0, 0)));
         }
-        return new ClientSortScope(4, layoutSlots, hotbarSlots, trinketsSlots);
+        return new ClientSortScope(4, layoutSlots, hotbarSlots, compatibilityBundleSlots);
     }
 
     private static List<ItemStack> stacks(Container container) {

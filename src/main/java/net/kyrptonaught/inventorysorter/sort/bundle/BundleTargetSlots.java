@@ -4,9 +4,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 public final class BundleTargetSlots {
     private final List<TargetSlot> targetSlots;
@@ -22,10 +20,16 @@ public final class BundleTargetSlots {
         List<TargetSlot> targetSlots = new ArrayList<>();
         for (Container container : containers) {
             for (int slot = 0; slot < container.getContainerSize(); slot++) {
-                targetSlots.add(new TargetSlot(container, slot));
+                targetSlots.add(new TargetSlot(BundleTargetSlot.fromContainer(container, slot)));
             }
         }
         return new BundleTargetSlots(List.copyOf(targetSlots));
+    }
+
+    public static BundleTargetSlots fromSlots(List<BundleTargetSlot> slots) {
+        return new BundleTargetSlots(slots.stream()
+                .map(TargetSlot::new)
+                .toList());
     }
 
     public List<ItemStack> stacks() {
@@ -44,20 +48,22 @@ public final class BundleTargetSlots {
         for (int i = 0; i < targetSlots.size(); i++) {
             targetSlots.get(i).setStack(stacks.get(i));
         }
-        Set<Container> containers = new LinkedHashSet<>();
         for (TargetSlot targetSlot : targetSlots) {
-            containers.add(targetSlot.container());
+            targetSlot.setChanged();
         }
-        containers.forEach(Container::setChanged);
     }
 
-    private record TargetSlot(Container container, int slot) {
+    private record TargetSlot(BundleTargetSlot slot) {
         ItemStack stack() {
-            return container.getItem(slot);
+            return slot.stack();
         }
 
         void setStack(ItemStack stack) {
-            container.setItem(slot, stack);
+            slot.setStack(stack);
+        }
+
+        void setChanged() {
+            slot.setChanged().run();
         }
     }
 }

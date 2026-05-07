@@ -7,6 +7,7 @@ import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.junit.jupiter.api.Assertions;
@@ -46,6 +47,18 @@ class BundleTargetSlotsTest {
     }
 
     @Test
+    void writesAdjustedStacksBackToSlotAccessTargets() {
+        MutableSlotAccess target = new MutableSlotAccess(stack(Items.APPLE));
+        boolean[] changed = {false};
+
+        BundleTargetSlots targets = BundleTargetSlots.fromSlots(List.of(new BundleTargetSlot(target, () -> changed[0] = true)));
+        targets.setStacks(List.of(stack(Items.GOLD_INGOT)));
+
+        assertSameLayoutStack(stack(Items.GOLD_INGOT), target.stack);
+        Assertions.assertTrue(changed[0]);
+    }
+
+    @Test
     void rejectsMismatchedStackCountWhenWritingBack() {
         SimpleContainer hotbar = new SimpleContainer(stack(Items.APPLE), stack(Items.DIAMOND));
 
@@ -77,5 +90,24 @@ class BundleTargetSlotsTest {
                 1,
                 DataComponentPatch.builder().set(DataComponents.MAX_STACK_SIZE, 64).build()
         );
+    }
+
+    private static class MutableSlotAccess implements SlotAccess {
+        private ItemStack stack;
+
+        private MutableSlotAccess(ItemStack stack) {
+            this.stack = stack;
+        }
+
+        @Override
+        public ItemStack get() {
+            return stack;
+        }
+
+        @Override
+        public boolean set(ItemStack stack) {
+            this.stack = stack;
+            return true;
+        }
     }
 }

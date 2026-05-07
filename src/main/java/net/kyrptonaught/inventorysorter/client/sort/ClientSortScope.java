@@ -3,7 +3,7 @@ package net.kyrptonaught.inventorysorter.client.sort;
 import net.kyrptonaught.inventorysorter.inventory.SortabilityPolicy;
 import net.kyrptonaught.inventorysorter.inventory.container.ScreenInventory;
 import net.kyrptonaught.inventorysorter.SortTarget;
-import net.kyrptonaught.inventorysorter.compat.TrinketsBundleTargets;
+import net.kyrptonaught.inventorysorter.compat.CompatibilityPlugins;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
@@ -20,7 +20,7 @@ public record ClientSortScope(
         int menuId,
         List<ScopedSlot> slots,
         List<ScopedSlot> hotbarBundleTargetSlots,
-        List<ScopedSlot> trinketsBundleTargetSlots
+        List<ScopedSlot> compatibilityBundleTargetSlots
 ) {
     private static final int FIRST_MAIN_INVENTORY_SLOT = 9;
     private static final int LAST_MAIN_INVENTORY_SLOT = 35;
@@ -44,7 +44,7 @@ public record ClientSortScope(
                 target,
                 player,
                 () -> SortabilityPolicy.canSortInventory(player, menu),
-                TrinketsBundleTargets::isTrinketInventory
+                CompatibilityPlugins::isClientBundleSlot
         );
     }
 
@@ -73,7 +73,7 @@ public record ClientSortScope(
             SortTarget target,
             Player player,
             BooleanSupplier canSortContainer,
-            Predicate<Container> extraBundleTargetContainer
+            Predicate<Slot> extraBundleTargetSlot
     ) {
         if (target == SortTarget.CONTAINER && !canSortContainer.getAsBoolean()) {
             return Optional.empty();
@@ -90,15 +90,15 @@ public record ClientSortScope(
         List<ScopedSlot> hotbarBundleTargetSlots = target == SortTarget.PLAYER_INVENTORY
                 ? hotbarSlots(menu, playerInventory, player)
                 : List.of();
-        List<ScopedSlot> trinketsBundleTargetSlots = target == SortTarget.PLAYER_INVENTORY
-                ? trinketsSlots(menu, player, extraBundleTargetContainer)
+        List<ScopedSlot> compatibilityBundleTargetSlots = target == SortTarget.PLAYER_INVENTORY
+                ? additionalBundleSlots(menu, player, extraBundleTargetSlot)
                 : List.of();
 
         return Optional.of(new ClientSortScope(
                 menu.containerId,
                 List.copyOf(slots),
                 List.copyOf(hotbarBundleTargetSlots),
-                List.copyOf(trinketsBundleTargetSlots)
+                List.copyOf(compatibilityBundleTargetSlots)
         ));
     }
 
@@ -110,7 +110,7 @@ public record ClientSortScope(
         if (sortIntoHotbarBundles) {
             targets.addAll(hotbarBundleTargetSlots);
         }
-        targets.addAll(trinketsBundleTargetSlots);
+        targets.addAll(compatibilityBundleTargetSlots);
         return List.copyOf(targets);
     }
 
@@ -131,15 +131,15 @@ public record ClientSortScope(
                 .toList();
     }
 
-    private static List<ScopedSlot> trinketsSlots(
+    private static List<ScopedSlot> additionalBundleSlots(
             AbstractContainerMenu menu,
             Player player,
-            Predicate<Container> extraBundleTargetContainer
+            Predicate<Slot> extraBundleTargetSlot
     ) {
         return IntStream.range(0, menu.slots.size())
                 .mapToObj(index -> new ScopedSlot(index, menu.slots.get(index)))
-                .filter(slot -> extraBundleTargetContainer.test(slot.container()))
-                .filter(slot -> canFallbackSort(slot.slot(), player))
+                .filter(slot -> extraBundleTargetSlot.test(slot.slot()))
+                .filter(slot -> canClickAfterPreparation(slot.slot(), player))
                 .toList();
     }
 
@@ -163,6 +163,10 @@ public record ClientSortScope(
 
     private static boolean canFallbackSort(Slot slot, Player player) {
         return slot.isActive() && !slot.isFake() && slot.allowModification(player);
+    }
+
+    private static boolean canClickAfterPreparation(Slot slot, Player player) {
+        return !slot.isFake() && slot.allowModification(player);
     }
 
     public record ScopedSlot(int menuSlotIndex, Slot slot) {
