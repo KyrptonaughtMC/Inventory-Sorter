@@ -18,19 +18,20 @@ modSettings {
         fov = 90
     }
 
-    variableReplacements = mapOf(
-        "schema" to "\$schema",
-        "clothVersion" to mod.prop("cloth_version"),
-        "modmenuVersion" to mod.prop("modmenu_version", "*"),
-        "fabricPermissionsApiVersion" to mod.prop("fabric_permissions_api_version"),
-        "fabricVersion" to mod.prop("fabric_version"),
-        "minecraftVersionVirtual" to mod.prop("minecraft_version_virtual", stonecutter.current.version),
-    )
+    variableReplacements =
+        mapOf(
+            "schema" to "\$schema",
+            "clothVersion" to mod.prop("cloth_version"),
+            "modmenuVersion" to mod.prop("modmenu_version", "*"),
+            "fabricPermissionsApiVersion" to mod.prop("fabric_permissions_api_version"),
+            "fabricVersion" to mod.prop("fabric_version"),
+            "minecraftVersionVirtual" to mod.prop("minecraft_version_virtual", stonecutter.current.version),
+        )
 }
 
 repositories {
     mavenLocal()
-	maven("https://maven.terraformersmc.com/releases")
+    maven("https://maven.terraformersmc.com/releases")
     maven("https://maven.shedaniel.me")
     maven("https://maven.meza.gg/releases")
     maven("https://maven.meza.gg/snapshots")
@@ -59,7 +60,7 @@ dependencies {
 
     try {
         api("com.terraformersmc:modmenu:${mod.prop("modmenu_version")}")
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         logger.warn("Modmenu not found, skipping dependency.")
     }
     api("me.shedaniel.cloth:cloth-config-${mod.loader}:${mod.prop("cloth_version")}") {
@@ -68,7 +69,6 @@ dependencies {
 
     testImplementation("net.fabricmc:fabric-loader-junit:${mod.prop("loader_version")}")
     testImplementation("com.google.jimfs:jimfs:1.1")
-
 }
 
 tasks.test {
@@ -79,11 +79,15 @@ tasks.test {
 tasks.jacocoTestReport {
     dependsOn(tasks.test)
 
-    classDirectories.setFrom(files(classDirectories.files.map {
-        fileTree(it) {
-            exclude("**/e2e/**")
-        }
-    }))
+    classDirectories.setFrom(
+        files(
+            classDirectories.files.map {
+                fileTree(it) {
+                    exclude("**/e2e/**")
+                }
+            },
+        ),
+    )
 
     reports {
         html.required.set(true)
@@ -92,9 +96,9 @@ tasks.jacocoTestReport {
 }
 
 tasks.jar {
-	from("LICENSE") {
-		rename { "${it}_${project.base.archivesName.get()}"}
-	}
+    from("LICENSE") {
+        rename { "${it}_${project.base.archivesName.get()}" }
+    }
     exclude("**/e2e/**")
 }
 
