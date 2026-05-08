@@ -29,10 +29,10 @@ jobs:
             version: latest
             run_install: false
 
-        - name: Use Node.js ${{ inputs.node-version }}
+        - name: Use Node.js 25
           uses: actions/setup-node@v4.3.0
           with:
-            node-version: ${{ inputs.node-version }}
+            node-version: 25
 
         - name: "📚 Build documentation"
           working-directory: ./docs
