@@ -1,3 +1,4 @@
+//? if fabric {
 package net.kyrptonaught.inventorysorter.platform.fabric;
 
 import net.fabricmc.loader.api.FabricLoader;
@@ -22,3 +23,4 @@ public class FabricInventorySorterPlatform implements InventorySorterPlatform {
         return FabricLoader.getInstance().isModLoaded(modId);
     }
 }
+//?}
