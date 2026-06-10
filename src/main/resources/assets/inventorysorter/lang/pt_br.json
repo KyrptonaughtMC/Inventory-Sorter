@@ -73,6 +73,7 @@
   "inventorysorter.cmd.sort.notsortable": "Este contêiner não pode ser ordenado",
   "inventorysorter.cmd.sort.error": "A classificação falhou, por favor verifique os logs e reporte o erro",
   "inventorysorter.cmd.sorttype.success": "Atualizado o modo de classificação para %s",
+  "inventorysorter.cmd.priority.error": "Não foi possível aplicar a regra de prioridade de organização %s",
   "inventorysorter.sorttype.name": "Nome",
   "inventorysorter.sorttype.category": "Categoria",
   "inventorysorter.sorttype.mod": "Mod",
