@@ -48,7 +48,7 @@
   "inventorysorter.config.sortIntoBundles": "整理到收纳袋",
   "inventorysorter.config.sortIntoBundles.tooltip": "控制能否将匹配的物品移动到收纳袋中",
   "inventorysorter.cmd.sortIntoBundles.set": "整理到收纳袋现在已%s",
-  "inventorysorter.cmd.sortIntoBundles.get": "整理到收纳袋当前为%s",
+  "inventorysorter.cmd.sortIntoBundles.get": "整理到收纳袋现在已%s",
   "inventorysorter.config.sortIntoHotbarBundles": "整理玩家物品栏时使用快捷栏中的收纳袋",
   "inventorysorter.config.sortIntoHotbarBundles.tooltip": "允许将玩家物品栏中匹配的物品移动到快捷栏中的收纳袋",
   "inventorysorter.config.sortType": "排序方式",
