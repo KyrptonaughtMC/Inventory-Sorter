@@ -1,5 +1,6 @@
 package net.kyrptonaught.inventorysorter.e2e;
 
+//? if fabric
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.kyrptonaught.inventorysorter.inventory.ServerInventorySorter;
 import net.kyrptonaught.inventorysorter.sort.SortPriorityPosition;
@@ -25,7 +26,8 @@ import static net.kyrptonaught.inventorysorter.e2e.TestUtils.assertContents;
 import static net.kyrptonaught.inventorysorter.e2e.TestUtils.setUpScene;
 
 public class SortPriorityRuleTests {
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testServerSortUsesPlayerPriorityRules(GameTestHelper ctx) {
         Scenario scenario = setUpScene(ctx, Map.of(
                 0, new ItemStack(Items.BUNDLE),
@@ -50,7 +52,8 @@ public class SortPriorityRuleTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testSortCommandUsesStoredPlayerPriorityRules(GameTestHelper ctx) {
         Scenario scenario = setUpScene(ctx, Map.of(
                 0, new ItemStack(Items.WHITE_SHULKER_BOX),
@@ -78,7 +81,8 @@ public class SortPriorityRuleTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testPriorityRulesStayScopedToThePlayerSettings(GameTestHelper ctx) {
         Scenario customSettingsScenario = setUpScene(ctx, Map.of(
                 0, new ItemStack(Items.BUNDLE),
@@ -120,7 +124,8 @@ public class SortPriorityRuleTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testPriorityCommandsChangeChestSortOrderOnTheFly(GameTestHelper ctx) {
         Scenario scenario = setUpScene(ctx, unsortedPriorityCommandChest());
         ServerPlayer player = scenario.player();
@@ -166,7 +171,8 @@ public class SortPriorityRuleTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testPrioritySetCommandChangesExistingRuleBeforeSortingChest(GameTestHelper ctx) {
         Scenario scenario = setUpScene(ctx, unsortedPriorityCommandChest());
         ServerPlayer player = scenario.player();
@@ -199,7 +205,8 @@ public class SortPriorityRuleTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testPriorityIgnoreCommandLeavesMatchingChestSlotsInPlace(GameTestHelper ctx) {
         Scenario scenario = setUpScene(ctx, Map.of(
                 0, new ItemStack(Items.FEATHER),
@@ -225,7 +232,8 @@ public class SortPriorityRuleTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testNamePriorityCommandSupportsPrefixGlobForNamedTools(GameTestHelper ctx) {
         Scenario scenario = setUpScene(ctx, Map.of(
                 0, namedStack(Items.DIAMOND_PICKAXE, "Meza's Fortune Pickaxe"),
@@ -249,7 +257,8 @@ public class SortPriorityRuleTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testNamePriorityRuleSupportsContainsGlobAndCaseInsensitiveMatching(GameTestHelper ctx) {
         Scenario scenario = setUpScene(ctx, Map.of(
                 0, namedStack(Items.IRON_PICKAXE, "backup pickaxe"),
@@ -278,7 +287,8 @@ public class SortPriorityRuleTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testNamePriorityRuleDoesNotTreatPlainTextAsContainsMatch(GameTestHelper ctx) {
         Scenario scenario = setUpScene(ctx, Map.of(
                 0, namedStack(Items.FEATHER, "Zeta"),
@@ -303,7 +313,8 @@ public class SortPriorityRuleTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testNamePriorityRuleCanComposeWithItemRules(GameTestHelper ctx) {
         Scenario scenario = setUpScene(ctx, Map.of(
                 0, namedStack(Items.IRON_AXE, "Meza's Axe"),
@@ -332,7 +343,8 @@ public class SortPriorityRuleTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testNameIgnoreRuleKeepsMatchingNamedStacksInTheirSlots(GameTestHelper ctx) {
         Scenario scenario = setUpScene(ctx, Map.of(
                 0, namedStack(Items.FEATHER, "Feather"),
@@ -364,7 +376,8 @@ public class SortPriorityRuleTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testNamePriorityRuleCanMatchLocalizedVanillaDisplayNames(GameTestHelper ctx) {
         Scenario scenario = setUpScene(ctx, Map.of(
                 0, new ItemStack(Items.BUNDLE),
@@ -391,7 +404,8 @@ public class SortPriorityRuleTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testInvalidNamePriorityRuleIsIgnoredAtRuntime(GameTestHelper ctx) {
         Scenario scenario = setUpScene(ctx, Map.of(
                 0, namedStack(Items.FEATHER, "Zeta"),

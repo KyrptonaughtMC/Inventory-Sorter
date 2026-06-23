@@ -1,4 +1,4 @@
-/*? if hasModMenu {*/
+/*? if fabric && hasModMenu {*/
 package net.kyrptonaught.inventorysorter.client.modmenu;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;

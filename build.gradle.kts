@@ -1,4 +1,5 @@
 import gg.meza.stonecraft.mod
+import java.io.File
 
 plugins {
     id("gg.meza.stonecraft")
@@ -44,35 +45,72 @@ dependencies {
     include("com.github.erosb:everit-json-schema:1.14.4")
     include("org.json:json:20231013")
 
-    implementation("me.lucko:fabric-permissions-api:${mod.prop("fabric_permissions_api_version")}")
-    include("me.lucko:fabric-permissions-api:${mod.prop("fabric_permissions_api_version")}")
+    if (mod.isFabric) {
+        implementation("me.lucko:fabric-permissions-api:${mod.prop("fabric_permissions_api_version")}")
+        include("me.lucko:fabric-permissions-api:${mod.prop("fabric_permissions_api_version")}")
+    }
 
     implementation("gg.meza:meza_core-${mod.loader}:${mod.prop("meza_core_version")}+${stonecutter.current.version}")
     include("gg.meza:meza_core-${mod.loader}:${mod.prop("meza_core_version")}+${stonecutter.current.version}")
 
-    implementation("xyz.nucleoid:server-translations-api:${mod.prop("server_translations_api_version")}")
-    include("xyz.nucleoid:server-translations-api:${mod.prop("server_translations_api_version")}")
+    if (mod.isFabric) {
+        implementation("xyz.nucleoid:server-translations-api:${mod.prop("server_translations_api_version")}")
+        include("xyz.nucleoid:server-translations-api:${mod.prop("server_translations_api_version")}")
+    }
 
     compileOnly("maven.modrinth:trinkets-updated:${mod.prop("trinkets_version")}")
     localRuntime("maven.modrinth:trinkets-updated:${mod.prop("trinkets_version")}")
     testCompileOnly("maven.modrinth:trinkets-updated:${mod.prop("trinkets_version")}")
     testRuntimeOnly("maven.modrinth:trinkets-updated:${mod.prop("trinkets_version")}")
 
-    try {
-        api("com.terraformersmc:modmenu:${mod.prop("modmenu_version")}")
-    } catch (_: Exception) {
-        logger.warn("Modmenu not found, skipping dependency.")
+    if (mod.isFabric) {
+        try {
+            api("com.terraformersmc:modmenu:${mod.prop("modmenu_version")}")
+        } catch (_: Exception) {
+            logger.warn("Modmenu not found, skipping dependency.")
+        }
     }
     api("me.shedaniel.cloth:cloth-config-${mod.loader}:${mod.prop("cloth_version")}") {
         exclude(group = "net.fabricmc.fabric-api")
     }
 
-    testImplementation("net.fabricmc:fabric-loader-junit:${mod.prop("loader_version")}")
+    if (mod.isFabric) {
+        testImplementation("net.fabricmc:fabric-loader-junit:${mod.prop("loader_version")}")
+    } else {
+        testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
+        testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+        testRuntimeOnly("net.neoforged.fancymodloader:junit-fml:11.0.13")
+    }
     testImplementation("com.google.jimfs:jimfs:1.1")
 }
 
 tasks.test {
     useJUnitPlatform()
+    if (!mod.isFabric) {
+        val junitGameDirectory = layout.buildDirectory.dir("minecraft-junit")
+        val junitArgsFile = junitGameDirectory.map { it.file("programArgs.txt") }
+        val modFolders =
+            listOf(
+                layout.buildDirectory.dir("classes/java/main"),
+                layout.buildDirectory.dir("resources/main"),
+                layout.buildDirectory.dir("classes/java/test"),
+            ).joinToString(File.pathSeparator) { directory ->
+                "${mod.id}%%${directory.get().asFile.absolutePath}"
+            }
+
+        workingDir = junitGameDirectory.get().asFile
+        systemProperty("fml.junit.argsfile", junitArgsFile.get().asFile.absolutePath)
+        jvmArgs(
+            "--add-opens=java.base/java.lang.invoke=ALL-UNNAMED",
+            "-Dfml.modFolders=$modFolders",
+        )
+        doFirst {
+            junitArgsFile.get().asFile.apply {
+                parentFile.mkdirs()
+                writeText("")
+            }
+        }
+    }
     finalizedBy(tasks.jacocoTestReport)
 }
 
@@ -123,6 +161,10 @@ tasks.processResources {
 }
 
 publishMods {
+    if (project.mod.isNeoforge) {
+        type.set(BETA)
+    }
+
     modrinth {
         if (mod.isFabric) {
             requires("fabric-api")

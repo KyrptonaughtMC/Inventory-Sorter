@@ -13,7 +13,7 @@ import net.minecraft.server.level.ServerPlayer;
 public class ReloadCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, LiteralArgumentBuilder<CommandSourceStack> rootCommand) {
         dispatcher.register(rootCommand.then(Commands.literal("reload")
-                .requires(CommandPermission.require("reload", 0))
+                .requires(CommandPermission.require(CommandRegistry.RELOAD, 0))
                 .executes(ReloadCommand::run)));
     }
 

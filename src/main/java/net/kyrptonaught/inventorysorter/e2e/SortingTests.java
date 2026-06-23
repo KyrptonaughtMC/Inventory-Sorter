@@ -2,6 +2,7 @@ package net.kyrptonaught.inventorysorter.e2e;
 
 import com.mojang.authlib.GameProfile;
 import it.unimi.dsi.fastutil.booleans.Boolean2ObjectFunction;
+//? if fabric
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.kyrptonaught.inventorysorter.inventory.ServerInventorySorter;
 import net.kyrptonaught.inventorysorter.SortTarget;
@@ -37,7 +38,8 @@ import java.util.function.IntFunction;
 import static net.kyrptonaught.inventorysorter.e2e.TestUtils.*;
 
 public class SortingTests {
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testSortCommandSortsTargetInventory(GameTestHelper ctx) {
         Scenario scenario = setUpScene(ctx, Map.of(
                 5, new ItemStack(Items.DIAMOND, 32),
@@ -51,7 +53,8 @@ public class SortingTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testSortMeCommandSortsPlayerInventory(GameTestHelper ctx) {
         Scenario scenario = setUpScene(ctx, Map.of());
         ServerPlayer player = scenario.player();
@@ -66,7 +69,8 @@ public class SortingTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testPlayerDataPlatformStoresPlayerData(GameTestHelper ctx) {
         Scenario scenario = setUpScene(ctx, Map.of());
         ServerPlayer player = scenario.player();
@@ -89,7 +93,8 @@ public class SortingTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testSimpleStackable(GameTestHelper ctx) {
         Scenario scenario = setUpScene(ctx, Map.of(
                 5, new ItemStack(Items.DIAMOND, 32),
@@ -103,7 +108,8 @@ public class SortingTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testSimpleStackableWithLeftovers(GameTestHelper ctx) {
 
         Scenario scenario = setUpScene(ctx, Map.of(
@@ -121,7 +127,8 @@ public class SortingTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testSpectatorsCannotSort(GameTestHelper ctx) {
         Scenario scenario = setUpScene(ctx, Map.of(
                 5, new ItemStack(Items.DIAMOND, 32),
@@ -141,7 +148,8 @@ public class SortingTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testSortWithStackables(GameTestHelper ctx) {
         Scenario scenario = setUpScene(ctx, Map.ofEntries(
                 Map.entry(0, new ItemStack(Items.ACACIA_LEAVES, 12)),
@@ -176,7 +184,8 @@ public class SortingTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testCustomMaxStackSizeSorting(GameTestHelper ctx) {
 
         DataComponentPatch changes = DataComponentPatch.builder().set(DataComponents.MAX_STACK_SIZE, 99).build();
@@ -209,7 +218,8 @@ public class SortingTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testSameItemDifferentName(GameTestHelper ctx) {
 
         DataComponentPatch changes = DataComponentPatch.builder()
@@ -236,7 +246,8 @@ public class SortingTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testSimplePickaxes(GameTestHelper ctx) {
         Scenario scenario = setUpScene(ctx, Map.of(
                 0, new ItemStack(Items.NETHERITE_PICKAXE, 1),
@@ -261,7 +272,8 @@ public class SortingTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testDamagedPickaxes(GameTestHelper ctx) {
         ItemStack diamondPick80PercentDamaged = new ItemStack(
                 Items.DIAMOND_PICKAXE, 1);
@@ -306,7 +318,8 @@ public class SortingTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testPlayerHeads(GameTestHelper ctx) {
         ResolvableProfile houseofmeza = ResolvableProfile.createResolved(new GameProfile(UUID.randomUUID(), "houseofmeza"));
         ResolvableProfile kyrptonaught = ResolvableProfile.createResolved(new GameProfile(UUID.randomUUID(), "Kyrptonaught"));
@@ -349,7 +362,8 @@ public class SortingTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testEnchantedBooks(GameTestHelper ctx) {
         Registry<Enchantment> registry = ctx.getLevel().registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
 
@@ -403,7 +417,8 @@ public class SortingTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testCategorySort(GameTestHelper ctx) {
         ItemStack coloredBlockStack = new ItemStack(Items.WHITE_WOOL, 64);
         ItemStack naturalBlockStack = new ItemStack(Items.DIRT, 64);
@@ -448,7 +463,8 @@ public class SortingTests {
 
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testOminousPotions(GameTestHelper ctx) {
 
         IntFunction<DataComponentPatch> potionLevel = (int level) -> DataComponentPatch.builder()
@@ -484,7 +500,8 @@ public class SortingTests {
 
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testVaults(GameTestHelper ctx) {
         Boolean2ObjectFunction<DataComponentPatch> setOminous = (boolean isOminous) -> DataComponentPatch.builder()
                 .set(DataComponents.BLOCK_STATE, new BlockItemStateProperties(Map.of("ominous", String.valueOf(isOminous))))

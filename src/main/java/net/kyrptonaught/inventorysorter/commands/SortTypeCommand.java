@@ -17,7 +17,7 @@ public class SortTypeCommand {
         for (SortType sortType : SortType.values()) {
             dispatcher.register(rootCommand
                     .then(Commands.literal("sortType")
-                            .requires(CommandPermission.require("sorttype", 0))
+                            .requires(CommandPermission.require(CommandRegistry.SORT_TYPE, 0))
                             .then(Commands.literal(sortType.name())
                                     .executes(context -> SortTypeCommand.run(context, sortType))))
             );

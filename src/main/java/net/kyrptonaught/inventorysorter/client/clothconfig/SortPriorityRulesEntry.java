@@ -3,8 +3,10 @@ package net.kyrptonaught.inventorysorter.client.clothconfig;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import me.shedaniel.clothconfig2.gui.entries.EnumListEntry;
 import me.shedaniel.clothconfig2.gui.entries.TooltipListEntry;
+//? if fabric {
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+//? }
 import net.kyrptonaught.inventorysorter.sort.SortPriorityPosition;
 import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
 import net.kyrptonaught.inventorysorter.sort.SortPriorityRules;
@@ -25,6 +27,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+//? if fabric
 @Environment(EnvType.CLIENT)
 public class SortPriorityRulesEntry extends TooltipListEntry<List<SortPriorityRuleSetting>> {
     private static final int TEXT_COLOR = ARGB.opaque(0xE0E0E0);

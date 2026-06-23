@@ -48,13 +48,24 @@ class BundleTargetSlotsTest {
 
     @Test
     void writesAdjustedStacksBackToSlotAccessTargets() {
-        MutableSlotAccess target = new MutableSlotAccess(stack(Items.APPLE));
+        ItemStack[] targetStack = {stack(Items.APPLE)};
+        //? if fabric {
+        MutableSlotAccess target = new MutableSlotAccess(targetStack[0]);
+        //?}
+        //? if neoforge {
+        /*SlotAccess target = SlotAccess.of(() -> targetStack[0], stack -> targetStack[0] = stack);
+        *///?}
         boolean[] changed = {false};
 
         BundleTargetSlots targets = BundleTargetSlots.fromSlots(List.of(new BundleTargetSlot(target, () -> changed[0] = true)));
         targets.setStacks(List.of(stack(Items.GOLD_INGOT)));
 
+        //? if fabric {
         assertSameLayoutStack(stack(Items.GOLD_INGOT), target.stack);
+        //?}
+        //? if neoforge {
+        /*assertSameLayoutStack(stack(Items.GOLD_INGOT), targetStack[0]);
+        *///?}
         Assertions.assertTrue(changed[0]);
     }
 
@@ -92,6 +103,7 @@ class BundleTargetSlotsTest {
         );
     }
 
+    //? if fabric {
     private static class MutableSlotAccess implements SlotAccess {
         private ItemStack stack;
 
@@ -110,4 +122,5 @@ class BundleTargetSlotsTest {
             return true;
         }
     }
+    //? }
 }

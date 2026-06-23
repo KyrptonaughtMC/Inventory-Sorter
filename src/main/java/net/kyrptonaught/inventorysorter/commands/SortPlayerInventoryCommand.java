@@ -18,7 +18,7 @@ public class SortPlayerInventoryCommand {
 
         dispatcher.register(rootCommand
                 .then(Commands.literal("sortPlayerInventory")
-                        .requires(CommandPermission.require("sortplayerinventory", 0))
+                        .requires(CommandPermission.require(CommandRegistry.SORT_PLAYER_INVENTORY, 0))
                         .executes(SortPlayerInventoryCommand::showState)
                         .then(Commands.literal("on")
                                 .executes(SortPlayerInventoryCommand::turnOn)

@@ -1,8 +1,10 @@
 package net.kyrptonaught.inventorysorter.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
+//? if fabric {
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+//?}
 import net.kyrptonaught.inventorysorter.ButtonType;
 import net.kyrptonaught.inventorysorter.InventorySorterMod;
 import net.kyrptonaught.inventorysorter.InventoryScreenId;
@@ -39,6 +41,7 @@ import java.util.concurrent.TimeUnit;
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.compatibility;
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.getConfig;
 
+//? if fabric
 @Environment(EnvType.CLIENT)
 public class SortButtonWidget extends ImageButton {
     private static final int BUTTON_WIDTH = 10;

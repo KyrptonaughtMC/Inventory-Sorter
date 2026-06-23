@@ -3,6 +3,8 @@ package net.kyrptonaught.inventorysorter.compat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import net.kyrptonaught.inventorysorter.compat.plugins.TrinketsPlugin;
 import net.kyrptonaught.inventorysorter.network.SortSettings;
 import net.kyrptonaught.inventorysorter.platform.PlatformServices;
 import net.kyrptonaught.inventorysorter.sort.bundle.BundleTargetSlot;
@@ -13,7 +15,7 @@ import static net.kyrptonaught.inventorysorter.InventorySorterMod.LOGGER;
 
 public final class CompatibilityPlugins {
     private static final List<PluginRegistration> REGISTRATIONS = List.of(
-            new PluginRegistration("trinkets", "net.kyrptonaught.inventorysorter.compat.plugins.TrinketsPlugin")
+            new PluginRegistration(TrinketsPlugin.TRINKETS_MOD_ID, "net.kyrptonaught.inventorysorter.compat.plugins.TrinketsPlugin")
     );
     private static List<CompatibilityPlugin> plugins;
 

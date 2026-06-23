@@ -1,3 +1,4 @@
+//? if fabric {
 package net.kyrptonaught.inventorysorter.client.platform.fabric;
 
 import com.mojang.blaze3d.platform.InputConstants;
@@ -30,3 +31,5 @@ public class FabricClientKeyMappingsTest {
         Assertions.assertEquals(InputConstants.KEY_LCONTROL, keyMappings.modifierKey().getValue());
     }
 }
+
+//? }

@@ -17,7 +17,7 @@ public class SortMeCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, LiteralArgumentBuilder<CommandSourceStack> rootCommand) {
         dispatcher.register(rootCommand.then(
                 Commands.literal("sortme")
-                        .requires(CommandPermission.require("sortme", 0))
+                        .requires(CommandPermission.require(CommandRegistry.SORT_ME, 0))
                         .executes(SortMeCommand::run)));
     }
 
