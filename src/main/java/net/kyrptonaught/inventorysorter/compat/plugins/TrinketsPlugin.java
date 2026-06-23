@@ -1,5 +1,6 @@
 package net.kyrptonaught.inventorysorter.compat.plugins;
 
+import eu.pb4.trinkets.api.TrinketInventory;
 import eu.pb4.trinkets.api.TrinketSlotAccess;
 import eu.pb4.trinkets.api.TrinketsApi;
 import java.util.ArrayList;
@@ -9,11 +10,15 @@ import net.kyrptonaught.inventorysorter.network.SortSettings;
 import net.kyrptonaught.inventorysorter.platform.PlatformServices;
 import net.kyrptonaught.inventorysorter.sort.bundle.BundleTargetSlot;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import org.jspecify.annotations.NonNull;
 
 public final class TrinketsPlugin implements CompatibilityPlugin {
-    private static final String TRINKETS_MOD_ID = "trinkets";
+    //~ if neoforge 'trinkets' -> 'trinkets_updated'
+    public static final String TRINKETS_MOD_ID = "trinkets";
     private static final String TRINKET_SLOT_CLASS = "eu.pb4.trinkets.impl.TrinketSlot";
     private static final String TRINKETS_CLIENT_CLASS = "eu.pb4.trinkets.impl.client.TrinketsClient";
 
@@ -25,7 +30,21 @@ public final class TrinketsPlugin implements CompatibilityPlugin {
         List<BundleTargetSlot> slots = new ArrayList<>();
         TrinketsApi.getAttachment(player).forEach((slot, stack) -> {
             if (slot != null && stack.is(Items.BUNDLE)) {
-                slots.add(new BundleTargetSlot(slot, slot.inventory()::setChanged));
+                TrinketInventory inventory = slot.inventory();
+                int index = slot.index();
+
+                slots.add(new BundleTargetSlot(new SlotAccess() {
+                    @Override
+                    public @NonNull ItemStack get() {
+                        return inventory.getItem(index);
+                    }
+
+                    @Override
+                    public boolean set(@NonNull ItemStack stack) {
+                        inventory.setItem(index, stack);
+                        return true;
+                    }
+                }, inventory::setChanged));
             }
         });
         return List.copyOf(slots);

@@ -18,7 +18,7 @@ public class SortIntoBundlesCommand {
 
         dispatcher.register(rootCommand
                 .then(Commands.literal("sortIntoBundles")
-                        .requires(CommandPermission.require("sortintobundles", 0))
+                        .requires(CommandPermission.require(CommandRegistry.SORT_INTO_BUNDLES, 0))
                         .executes(SortIntoBundlesCommand::showState)
                         .then(Commands.literal("on")
                                 .executes(SortIntoBundlesCommand::turnOn)

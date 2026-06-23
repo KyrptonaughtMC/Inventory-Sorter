@@ -26,70 +26,55 @@ public class AdminCommands {
                     This way, the admin command still shows up for people who only have a single admin command
                     permission, but they can't access the other commands.
                  */
-                .requires(CommandPermission.hasAny(
-                                        "admin.reload",
-                                        "admin.nosort",
-                                        "admin.nosort.add",
-                                        "admin.nosort.remove",
-                                        "admin.nosort.list",
-                                        "admin.hidebutton",
-                                        "admin.hidebutton.add",
-                                        "admin.hidebutton.remove",
-                                        "admin.hidebutton.list",
-                                        "admin.remote",
-                                        "admin.remote.set",
-                                        "admin.remote.clear",
-                                        "admin.remote.show"
-
-                                )
-                                .or(CommandPermission.require("admin", 2))
+                .requires(CommandPermission.hasAny(CommandRegistry.ADMIN_CHILD_PERMISSIONS)
+                                .or(CommandPermission.require(CommandRegistry.ADMIN, 2))
                 );
 
         dispatcher.register(rootCommand.then(admin.then(
                 Commands.literal("nosort")
                         .then(Commands.literal("add")
-                                .requires(CommandPermission.require("admin.nosort.add", 2))
+                                .requires(CommandPermission.require(CommandRegistry.ADMIN_NOSORT_ADD, 2))
                                 .executes(AdminCommands::nosortAdd))
         )));
 
         dispatcher.register(rootCommand.then(admin.then(
                 Commands.literal("nosort")
                         .then(Commands.literal("remove")
-                                .requires(CommandPermission.require("admin.nosort.remove", 2))
+                                .requires(CommandPermission.require(CommandRegistry.ADMIN_NOSORT_REMOVE, 2))
                                 .executes(AdminCommands::nosortRemove))
         )));
 
         dispatcher.register(rootCommand.then(admin.then(
                 Commands.literal("nosort")
                         .then(Commands.literal("list")
-                                .requires(CommandPermission.require("admin.nosort.list", 2))
+                                .requires(CommandPermission.require(CommandRegistry.ADMIN_NOSORT_LIST, 2))
                                 .executes(AdminCommands::nosortList))
         )));
 
         dispatcher.register(rootCommand.then(admin.then(
                 Commands.literal("hidebutton")
                         .then(Commands.literal("add")
-                                .requires(CommandPermission.require("admin.hidebutton.add", 2))
+                                .requires(CommandPermission.require(CommandRegistry.ADMIN_HIDEBUTTON_ADD, 2))
                                 .executes(AdminCommands::hidebuttonAdd))
         )));
 
         dispatcher.register(rootCommand.then(admin.then(
                 Commands.literal("hidebutton")
                         .then(Commands.literal("remove")
-                                .requires(CommandPermission.require("admin.hidebutton.remove", 2))
+                                .requires(CommandPermission.require(CommandRegistry.ADMIN_HIDEBUTTON_REMOVE, 2))
                                 .executes(AdminCommands::hidebuttonRemove))
         )));
 
         dispatcher.register(rootCommand.then(admin.then(
                 Commands.literal("hidebutton")
                         .then(Commands.literal("list")
-                                .requires(CommandPermission.require("admin.hidebutton.list", 2))
+                                .requires(CommandPermission.require(CommandRegistry.ADMIN_HIDEBUTTON_LIST, 2))
                                 .executes(AdminCommands::hidebuttonList))
         )));
 
         dispatcher.register(rootCommand.then(admin.then(
                 Commands.literal("reload")
-                        .requires(CommandPermission.require("admin.reload", 2))
+                        .requires(CommandPermission.require(CommandRegistry.ADMIN_RELOAD, 2))
                         .executes(AdminCommands::reload))
         ));
 
@@ -97,21 +82,21 @@ public class AdminCommands {
                 Commands.literal("remote")
                         .then(Commands.literal("set")
                                 .then(Commands.argument("url", StringArgumentType.string())
-                                        .requires(CommandPermission.require("admin.remote.set", 2))
+                                        .requires(CommandPermission.require(CommandRegistry.ADMIN_REMOTE_SET, 2))
                                         .executes(AdminCommands::remoteSet))
                         ))));
 
         dispatcher.register(rootCommand.then(admin.then(
                 Commands.literal("remote")
                         .then(Commands.literal("clear")
-                                .requires(CommandPermission.require("admin.remote.clear", 2))
+                                .requires(CommandPermission.require(CommandRegistry.ADMIN_REMOTE_CLEAR, 2))
                                 .executes(AdminCommands::remoteClear))
         )));
 
         dispatcher.register(rootCommand.then(admin.then(
                 Commands.literal("remote")
                         .then(Commands.literal("show")
-                                .requires(CommandPermission.require("admin.remote.show", 2))
+                                .requires(CommandPermission.require(CommandRegistry.ADMIN_REMOTE_SHOW, 2))
                                 .executes(AdminCommands::remoteShow))
         )));
 

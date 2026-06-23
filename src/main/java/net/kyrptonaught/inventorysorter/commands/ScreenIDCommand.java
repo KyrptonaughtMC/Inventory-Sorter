@@ -19,7 +19,7 @@ import net.minecraft.server.level.ServerPlayer;
 public class ScreenIDCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, LiteralArgumentBuilder<CommandSourceStack> rootCommand) {
         dispatcher.register(rootCommand.then(Commands.literal("screenID")
-                .requires(CommandPermission.require("screenid", 0))
+                .requires(CommandPermission.require(CommandRegistry.SCREEN_ID, 0))
                 .executes(ScreenIDCommand::run)));
     }
 

@@ -18,7 +18,7 @@ public class DoubleClickSortCommand {
 
         dispatcher.register(rootCommand
                 .then(Commands.literal("doubleClickSort")
-                        .requires(CommandPermission.require("doubleclicksort", 0))
+                        .requires(CommandPermission.require(CommandRegistry.DOUBLE_CLICK_SORT, 0))
                         .executes(DoubleClickSortCommand::showState)
                         .then(Commands.literal("on")
                                 .executes(DoubleClickSortCommand::turnOn)

@@ -2,8 +2,10 @@ package net.kyrptonaught.inventorysorter.client;
 
 import com.google.common.collect.Lists;
 import me.shedaniel.clothconfig2.gui.entries.TooltipListEntry;
+//? if fabric {
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+//? }
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -26,6 +28,7 @@ import java.util.function.Supplier;
   All of this is a copy of the original TextFieldEntry class, but with the width set to the full width of the screen.
   That's it...
  */
+//? if fabric
 @Environment(EnvType.CLIENT)
 public abstract class FullWidthTextFieldEntry<T> extends TooltipListEntry<T> {
     private static final int ERROR_TEXT_COLOR = ARGB.opaque(0xFF5555);

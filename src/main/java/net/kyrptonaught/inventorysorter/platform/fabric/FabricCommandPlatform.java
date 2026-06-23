@@ -1,3 +1,4 @@
+//? if fabric {
 package net.kyrptonaught.inventorysorter.platform.fabric;
 
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -10,3 +11,4 @@ public class FabricCommandPlatform implements CommandPlatform {
         CommandRegistrationCallback.EVENT.register(CommandRegistry::register);
     }
 }
+//? }

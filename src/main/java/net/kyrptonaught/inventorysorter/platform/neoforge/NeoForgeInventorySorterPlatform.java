@@ -1,16 +1,17 @@
-//? if fabric {
-package net.kyrptonaught.inventorysorter.platform.fabric;
+/*? if neoforge {*/
+/*package net.kyrptonaught.inventorysorter.platform.neoforge;
 
-import net.fabricmc.loader.api.FabricLoader;
 import net.kyrptonaught.inventorysorter.platform.InventorySorterPlatform;
 import net.minecraft.server.MinecraftServer;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.loading.FMLPaths;
 
 import java.nio.file.Path;
 
-public class FabricInventorySorterPlatform implements InventorySorterPlatform {
+public class NeoForgeInventorySorterPlatform implements InventorySorterPlatform {
     @Override
     public Path getConfigDir() {
-        return FabricLoader.getInstance().getConfigDir();
+        return FMLPaths.CONFIGDIR.get();
     }
 
     @Override
@@ -20,7 +21,7 @@ public class FabricInventorySorterPlatform implements InventorySorterPlatform {
 
     @Override
     public boolean isModLoaded(String modId) {
-        return FabricLoader.getInstance().isModLoaded(modId);
+        return ModList.get().isLoaded(modId);
     }
 }
-//?}
+*//*?}*/

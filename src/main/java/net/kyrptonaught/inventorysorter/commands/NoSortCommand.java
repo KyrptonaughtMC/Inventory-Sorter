@@ -15,7 +15,7 @@ import net.minecraft.server.level.ServerPlayer;
 public class NoSortCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, LiteralArgumentBuilder<CommandSourceStack> rootCommand) {
         LiteralArgumentBuilder<CommandSourceStack> nosort = Commands.literal("nosort")
-                .requires(CommandPermission.require("nosort", 0));
+                .requires(CommandPermission.require(CommandRegistry.NO_SORT, 0));
 
         dispatcher.register(rootCommand.then(nosort.then(
                 Commands.literal("add").executes(NoSortCommand::add)

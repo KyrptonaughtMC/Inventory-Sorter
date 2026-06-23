@@ -6,6 +6,7 @@ import eu.pb4.trinkets.api.TrinketsApi;
 import eu.pb4.trinkets.impl.SlotGroupImpl;
 import eu.pb4.trinkets.impl.SlotTypeImpl;
 import eu.pb4.trinkets.impl.data.EntitySlotLoader;
+//? if fabric
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.kyrptonaught.inventorysorter.inventory.ServerInventorySorter;
 import net.kyrptonaught.inventorysorter.SortTarget;
@@ -32,7 +33,8 @@ import static net.kyrptonaught.inventorysorter.e2e.TestUtils.assertContents;
 import static net.kyrptonaught.inventorysorter.e2e.TestUtils.setUpScene;
 
 public class BundleSortingTests {
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testServerSortMovesMatchingItemsIntoExistingBundle(GameTestHelper ctx) {
         ItemStack appleBundle = bundleContaining(new ItemStack(Items.APPLE, 8));
         TestUtils.Scenario scenario = setUpScene(ctx, Map.of(
@@ -53,7 +55,8 @@ public class BundleSortingTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testServerSortFillsBundleWithSmallestMatchingStackFirst(GameTestHelper ctx) {
         ItemStack appleBundle = bundleContaining(new ItemStack(Items.APPLE, 44));
         TestUtils.Scenario scenario = setUpScene(ctx, Map.of(
@@ -74,7 +77,8 @@ public class BundleSortingTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testServerSortSplitsMatchingItemsAcrossMultipleExistingBundles(GameTestHelper ctx) {
         ItemStack firstAppleBundle = bundleContaining(new ItemStack(Items.APPLE, 60));
         ItemStack secondAppleBundle = bundleContaining(new ItemStack(Items.APPLE, 48));
@@ -97,7 +101,8 @@ public class BundleSortingTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testServerSortOnlyMergesItemsIntoBundlesThatAlreadyContainThatItem(GameTestHelper ctx) {
         ItemStack appleBundle = bundleContaining(new ItemStack(Items.APPLE, 8));
         ItemStack featherBundle = bundleContaining(new ItemStack(Items.FEATHER, 10));
@@ -123,7 +128,8 @@ public class BundleSortingTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testServerSortDoesNotMergeDifferentItemComponentsIntoBundle(GameTestHelper ctx) {
         ItemStack namedApple = namedStack(Items.APPLE, "Lunch");
         ItemStack appleBundle = bundleContaining(namedApple.copyWithCount(4));
@@ -150,7 +156,8 @@ public class BundleSortingTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testSortCommandUsesStoredSortIntoBundlesSetting(GameTestHelper ctx) {
         ItemStack appleBundle = bundleContaining(new ItemStack(Items.APPLE, 8));
         TestUtils.Scenario scenario = setUpScene(ctx, Map.of(
@@ -171,7 +178,8 @@ public class BundleSortingTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testServerSortDoesNotTreatNestedBundleContentsAsDirectBundleContents(GameTestHelper ctx) {
         ItemStack directStringBundle = bundleContaining(new ItemStack(Items.STRING, 4));
         ItemStack nestedStringBundle = bundleContaining(bundleContaining(new ItemStack(Items.STRING, 5)));
@@ -195,7 +203,8 @@ public class BundleSortingTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testServerSortDoesNotMoveNonEmptyBundleIntoAnotherBundle(GameTestHelper ctx) {
         ItemStack targetStringBundle = bundleContaining(new ItemStack(Items.STRING, 8));
         ItemStack nonEmptyBundle = bundleContaining(new ItemStack(Items.STRING, 3));
@@ -218,7 +227,8 @@ public class BundleSortingTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testServerSortDoesNotUseEmptyBundleAsATarget(GameTestHelper ctx) {
         ItemStack emptyBundle = bundleContaining();
         ItemStack appleBundle = bundleContaining(new ItemStack(Items.APPLE, 8));
@@ -241,7 +251,8 @@ public class BundleSortingTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testServerSortIgnoresFullBundleAsATarget(GameTestHelper ctx) {
         ItemStack fullAppleBundle = bundleContaining(new ItemStack(Items.APPLE, 64));
         ItemStack partialAppleBundle = bundleContaining(new ItemStack(Items.APPLE, 8));
@@ -264,7 +275,8 @@ public class BundleSortingTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testServerSortMergesMultipleDirectItemTypesIntoOneBundle(GameTestHelper ctx) {
         ItemStack mixedBundle = bundleContaining(
                 new ItemStack(Items.APPLE, 8),
@@ -290,7 +302,8 @@ public class BundleSortingTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testServerSortFillsMatchingBundlesInChestSlotOrder(GameTestHelper ctx) {
         ItemStack firstAppleBundle = bundleContaining(new ItemStack(Items.APPLE, 62));
         ItemStack secondAppleBundle = bundleContaining(new ItemStack(Items.APPLE, 40));
@@ -313,7 +326,8 @@ public class BundleSortingTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testServerSortUsesVanillaBundleWeightForLowStackSizeItems(GameTestHelper ctx) {
         ItemStack eggBundle = bundleContaining(new ItemStack(Items.EGG, 12));
         TestUtils.Scenario scenario = setUpScene(ctx, Map.of(
@@ -334,7 +348,8 @@ public class BundleSortingTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testServerSortAppliesPriorityRulesAfterBundleInsertion(GameTestHelper ctx) {
         ItemStack appleBundle = bundleContaining(new ItemStack(Items.APPLE, 8));
         TestUtils.Scenario scenario = setUpScene(ctx, Map.of(
@@ -363,7 +378,8 @@ public class BundleSortingTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testServerSortDoesNotMoveIgnoredItemsIntoBundles(GameTestHelper ctx) {
         ItemStack appleBundle = bundleContaining(new ItemStack(Items.APPLE, 8));
         TestUtils.Scenario scenario = setUpScene(ctx, Map.of(
@@ -391,7 +407,8 @@ public class BundleSortingTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testServerSortPrioritizesSmallestMatchingComponentStackWhenBundleSpaceIsLimited(GameTestHelper ctx) {
         ItemStack smallNamedApples = namedStack(Items.APPLE, "Small");
         ItemStack largeNamedApples = namedStack(Items.APPLE, "Large");
@@ -421,7 +438,8 @@ public class BundleSortingTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testServerSortPrioritizesSmallestMatchingStackAcrossMixedBundleContents(GameTestHelper ctx) {
         ItemStack mixedBundle = bundleContaining(
                 new ItemStack(Items.APPLE, 10),
@@ -448,7 +466,8 @@ public class BundleSortingTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testServerSortPrioritizesSmallestMatchingLowStackSizeItemWhenBundleSpaceIsLimited(GameTestHelper ctx) {
         ItemStack smallNamedEggs = namedStack(Items.EGG, "Small Eggs");
         ItemStack largeNamedEggs = namedStack(Items.EGG, "Large Eggs");
@@ -478,7 +497,8 @@ public class BundleSortingTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testServerPlayerInventorySortCanUseHotbarBundleAsTarget(GameTestHelper ctx) {
         TestUtils.Scenario scenario = setUpScene(ctx, Map.of());
         ServerPlayer player = scenario.player();
@@ -500,7 +520,8 @@ public class BundleSortingTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testServerPlayerInventorySortCanUseTrinketsBundleAsTarget(GameTestHelper ctx) {
         configureTrinketsRingSlot();
         TestUtils.Scenario scenario = setUpScene(ctx, Map.of());
@@ -524,7 +545,8 @@ public class BundleSortingTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testServerPlayerInventorySortDoesNotMoveItemsIntoHotbarBundleWhenBundleSortingIsOff(GameTestHelper ctx) {
         TestUtils.Scenario scenario = setUpScene(ctx, Map.of());
         ServerPlayer player = scenario.player();
@@ -552,7 +574,8 @@ public class BundleSortingTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testServerPlayerInventorySortDoesNotMoveItemsIntoHotbarBundleWhenHotbarBundleSortingIsOff(GameTestHelper ctx) {
         TestUtils.Scenario scenario = setUpScene(ctx, Map.of());
         ServerPlayer player = scenario.player();
@@ -581,7 +604,8 @@ public class BundleSortingTests {
         ctx.succeed();
     }
 
-    @GameTest()
+    //? if fabric
+    @GameTest
     public void testServerContainerSortDoesNotUsePlayerHotbarBundleAsTarget(GameTestHelper ctx) {
         TestUtils.Scenario scenario = setUpScene(ctx, Map.of(
                 4, new ItemStack(Items.APPLE, 12),

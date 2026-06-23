@@ -1,7 +1,9 @@
 package net.kyrptonaught.inventorysorter.mixin;
 
+//? if fabric {
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+//?}
 import net.kyrptonaught.inventorysorter.ButtonType;
 import net.kyrptonaught.inventorysorter.client.SortButtonDisplayPolicy;
 import net.kyrptonaught.inventorysorter.inventory.SortabilityPolicy;
@@ -33,6 +35,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.compatibility;
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.getConfig;
 
+//? if fabric
 @Environment(EnvType.CLIENT)
 @Mixin(AbstractContainerScreen.class)
 public abstract class MixinContainerScreen extends Screen implements SortableContainerScreen {

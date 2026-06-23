@@ -1,14 +1,14 @@
-//? if fabric {
-package net.kyrptonaught.inventorysorter.client.platform.fabric;
+/*? if neoforge {*/
+/*package net.kyrptonaught.inventorysorter.client.platform.neoforge;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.kyrptonaught.inventorysorter.InventorySorterMod;
 import net.kyrptonaught.inventorysorter.client.platform.ClientKeyMappings;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.resources.Identifier;
+import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 
-public class FabricClientKeyMappings implements ClientKeyMappings {
+public class NeoForgeClientKeyMappings implements ClientKeyMappings {
     private static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(Identifier.fromNamespaceAndPath(InventorySorterMod.MOD_ID, "main"));
 
     private final InputConstants.Key modifierKey = InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_LCONTROL);
@@ -40,18 +40,22 @@ public class FabricClientKeyMappings implements ClientKeyMappings {
 
     @Override
     public InputConstants.Key boundConfigKey() {
-        return KeyMappingHelper.getBoundKeyOf(configKeyMapping);
+        return configKeyMapping.getKey();
     }
 
     @Override
     public InputConstants.Key boundSortKey() {
-        return KeyMappingHelper.getBoundKeyOf(sortKeyMapping);
+        return sortKeyMapping.getKey();
     }
 
     @Override
     public void register() {
-        KeyMappingHelper.registerKeyMapping(configKeyMapping);
-        KeyMappingHelper.registerKeyMapping(sortKeyMapping);
+    }
+
+    public void register(RegisterKeyMappingsEvent event) {
+        event.registerCategory(CATEGORY);
+        event.register(configKeyMapping);
+        event.register(sortKeyMapping);
     }
 }
-//?}
+*//*?}*/

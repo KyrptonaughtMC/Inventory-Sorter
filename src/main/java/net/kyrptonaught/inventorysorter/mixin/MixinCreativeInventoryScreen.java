@@ -1,7 +1,9 @@
 package net.kyrptonaught.inventorysorter.mixin;
 
+//? if fabric {
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+//?}
 import net.kyrptonaught.inventorysorter.client.SortButtonWidget;
 import net.kyrptonaught.inventorysorter.client.SortableContainerScreen;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -14,6 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.getConfig;
 
+//? if fabric
 @Environment(EnvType.CLIENT)
 @Mixin(CreativeModeInventoryScreen.class)
 public abstract class MixinCreativeInventoryScreen implements SortableContainerScreen {

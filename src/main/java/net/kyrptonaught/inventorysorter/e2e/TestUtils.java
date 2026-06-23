@@ -9,12 +9,16 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
+/*? if neoforge {*/
+/*import net.neoforged.neoforge.network.registration.ChannelAttributes;
+*//*?}*/
 
 import java.util.Map;
 import java.util.UUID;
@@ -81,7 +85,14 @@ public class TestUtils {
             chest.setItem(entry.getKey(), entry.getValue());
         }
 
+        //? if fabric
         ctx.useBlock(inventoryPosition, player);
+
+        //? if neoforge {
+        /*player.snapTo(abspos.getX() + 2.5, abspos.getY(), abspos.getZ() + 2.5, player.getYRot(), player.getXRot());
+        player.lookAt(EntityAnchorArgument.Anchor.EYES, abspos.getCenter());
+        player.openMenu(chest);
+        *///? }
 
         return new Scenario(player, chest);
     }
@@ -99,9 +110,31 @@ public class TestUtils {
         };
         Connection clientConnection = new Connection(PacketFlow.SERVERBOUND);
         new EmbeddedChannel(clientConnection);
+        allowGameTestConnectionPayloads(clientConnection);
         ctx.getLevel().getServer().getPlayerList().placeNewPlayer(clientConnection, serverPlayerEntity, connectedClientData);
         return serverPlayerEntity;
     }
+
+    /**
+     * Patch the Trinkets connections so that neoforge doesn't freak out during the tests
+     */
+    private static void allowGameTestConnectionPayloads(Connection clientConnection) {
+        //? if neoforge {
+        /*allowGameTestConnectionPayload(clientConnection, "trinkets", "sync_slots");
+        allowGameTestConnectionPayload(clientConnection, "trinkets", "sync_inventory");
+        allowGameTestConnectionPayload(clientConnection, "inventorysorter", "server_presence_packet");
+        allowGameTestConnectionPayload(clientConnection, "inventorysorter", "last_seen_version_packet");
+        allowGameTestConnectionPayload(clientConnection, "inventorysorter", "sync_hide_button_packet");
+        allowGameTestConnectionPayload(clientConnection, "inventorysorter", "sync_sort_prevention_packet");
+        allowGameTestConnectionPayload(clientConnection, "inventorysorter", "sync_settings_packet");
+        *///? }
+    }
+
+    /*? if neoforge {*/
+    /*private static void allowGameTestConnectionPayload(Connection clientConnection, String namespace, String path) {
+        ChannelAttributes.getOrCreateAdHocChannels(clientConnection).add(Identifier.fromNamespaceAndPath(namespace, path));
+    }
+    *//*?}*/
 
     public static int damageForPercent(Item item, int percent) {
         int maxDamage = item.components().getOrDefault(DataComponents.MAX_DAMAGE, 0);

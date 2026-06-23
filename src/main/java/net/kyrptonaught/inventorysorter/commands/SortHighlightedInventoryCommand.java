@@ -18,7 +18,7 @@ public class SortHighlightedInventoryCommand {
 
         dispatcher.register(rootCommand
                 .then(Commands.literal("sortHighlightedInventory")
-                        .requires(CommandPermission.require("sorthighlightedinventory", 0))
+                        .requires(CommandPermission.require(CommandRegistry.SORT_HIGHLIGHTED_INVENTORY, 0))
                         .executes(SortHighlightedInventoryCommand::showState)
                         .then(Commands.literal("on")
                                 .executes(SortHighlightedInventoryCommand::turnOn)

@@ -1,3 +1,4 @@
+//? if fabric {
 package net.kyrptonaught.inventorysorter.platform.fabric;
 
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
@@ -88,3 +89,4 @@ public class FabricPlayerDataPlatform implements PlayerDataPlatform {
         player.setAttached(LAST_SEEN_VERSION, value);
     }
 }
+//?}

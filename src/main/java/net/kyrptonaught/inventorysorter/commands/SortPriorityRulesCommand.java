@@ -22,7 +22,7 @@ import java.util.List;
 public class SortPriorityRulesCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, LiteralArgumentBuilder<CommandSourceStack> rootCommand) {
         LiteralArgumentBuilder<CommandSourceStack> priority = Commands.literal("priority")
-                .requires(CommandPermission.require("priority", 0))
+                .requires(CommandPermission.require(CommandRegistry.PRIORITY, 0))
                 .then(Commands.literal("list")
                         .executes(SortPriorityRulesCommand::list))
                 .then(Commands.literal("remove")

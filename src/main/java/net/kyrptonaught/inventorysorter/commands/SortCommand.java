@@ -13,7 +13,7 @@ import net.minecraft.server.level.ServerPlayer;
 public class SortCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, LiteralArgumentBuilder<CommandSourceStack> rootCommand) {
         dispatcher.register(rootCommand.then(Commands.literal("sort")
-                .requires(CommandPermission.require("sort", 0))
+                .requires(CommandPermission.require(CommandRegistry.SORT, 0))
                 .executes(SortCommand::run)));
     }
 

@@ -1,3 +1,4 @@
+//? if fabric {
 package net.kyrptonaught.inventorysorter.platform.fabric;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -83,3 +84,4 @@ public class FabricNetworkingPlatform implements NetworkingPlatform {
         ServerPlayNetworking.send(player, payload);
     }
 }
+//?}
