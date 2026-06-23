@@ -87,7 +87,12 @@ public class SortButtonWidget extends ImageButton {
             getConfig().save();
             compatibility.reload();
             ClientConfigSync.syncConfigToServer();
-            SystemToast.add(instance.getToastManager(), SystemToast.SystemToastId.PERIODIC_NOTIFICATION,
+            SystemToast.add(
+                    //? >= 26.2
+                    instance.gui.toastManager(),
+                    //? < 26.2
+                    //instance.getToastManager(),
+                    SystemToast.SystemToastId.PERIODIC_NOTIFICATION,
                     net.minecraft.network.chat.Component.translatable("inventorysorter.sortButton.toast.hide.success.title"),
                     net.minecraft.network.chat.Component.translatable("inventorysorter.sortButton.toast.hide.success.description", screenId.serialized()));
             this.visible = false;

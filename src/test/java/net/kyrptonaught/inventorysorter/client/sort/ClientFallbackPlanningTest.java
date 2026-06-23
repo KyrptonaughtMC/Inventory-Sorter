@@ -73,7 +73,7 @@ public class ClientFallbackPlanningTest {
                 Map.of(
                         0, stack(Items.STICK, 1),
                         1, stack(Items.CHEST, 1),
-                        2, stack(Items.PURPLE_SHULKER_BOX, 1, 1),
+                        2, stack(Items.DYED_SHULKER_BOX.purple(), 1, 1),
                         3, stack(Items.REDSTONE, 1)
                 ),
                 shulkerRule(SortPriorityPosition.FIRST)
@@ -328,7 +328,7 @@ public class ClientFallbackPlanningTest {
                 Map.entry(6, stack(Items.DARK_OAK_PLANKS, 64)),
                 Map.entry(10, stack(Items.OAK_LOG, 32)),
                 Map.entry(11, stack(Items.OAK_LOG, 32)),
-                Map.entry(13, stack(Items.PURPLE_SHULKER_BOX, 1, 1)),
+                Map.entry(13, stack(Items.DYED_SHULKER_BOX.purple(), 1, 1)),
                 Map.entry(14, stack(Items.DARK_OAK_PLANKS, 1)),
                 Map.entry(16, stack(Items.OAK_WOOD, 32)),
                 Map.entry(21, stack(Items.BUNDLE, 1, 1)),
@@ -345,7 +345,7 @@ public class ClientFallbackPlanningTest {
                 Map.entry(6, stack(Items.DARK_OAK_PLANKS, 64)),
                 Map.entry(10, stack(Items.OAK_LOG, 32)),
                 Map.entry(11, stack(Items.OAK_LOG, 32)),
-                Map.entry(13, stack(Items.PURPLE_SHULKER_BOX, 1, 1)),
+                Map.entry(13, stack(Items.DYED_SHULKER_BOX.purple(), 1, 1)),
                 Map.entry(14, stack(Items.DARK_OAK_PLANKS, 1)),
                 Map.entry(16, stack(Items.OAK_WOOD, 32)),
                 Map.entry(21, bundle()),
@@ -412,8 +412,8 @@ public class ClientFallbackPlanningTest {
         TagKey<Item> shulkerBoxes = TagKey.create(Registries.ITEM, Identifier.parse("minecraft:shulker_boxes"));
         try {
             applyItemTags(Map.of(shulkerBoxes, List.of(
-                    BuiltInRegistries.ITEM.wrapAsHolder(Items.PURPLE_SHULKER_BOX),
-                    BuiltInRegistries.ITEM.wrapAsHolder(Items.WHITE_SHULKER_BOX)
+                    BuiltInRegistries.ITEM.wrapAsHolder(Items.DYED_SHULKER_BOX.purple()),
+                    BuiltInRegistries.ITEM.wrapAsHolder(Items.DYED_SHULKER_BOX.white())
             )));
 
             return SortedInventoryLayout.from(

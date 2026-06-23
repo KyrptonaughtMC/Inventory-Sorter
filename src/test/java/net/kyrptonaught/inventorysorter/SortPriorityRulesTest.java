@@ -48,7 +48,7 @@ public class SortPriorityRulesTest {
                 ),
                 bundle(),
                 stack(Items.APPLE),
-                stack(Items.WHITE_SHULKER_BOX)
+                stack(Items.DYED_SHULKER_BOX.white())
         );
 
         Assertions.assertTrue(sorted.get(2).is(Items.BUNDLE));
@@ -63,7 +63,7 @@ public class SortPriorityRulesTest {
     void logicalOperatorsCanExcludeSpecificMatches() {
         List<ItemStack> sorted = sort(
                 List.of(new SortPriorityRuleSetting("@minecraft:bundle_contents & !minecraft:apple", SortPriorityPosition.FIRST)),
-                stack(Items.WHITE_SHULKER_BOX),
+                stack(Items.DYED_SHULKER_BOX.white()),
                 bundle(),
                 stack(Items.APPLE)
         );
@@ -78,12 +78,12 @@ public class SortPriorityRulesTest {
                         new SortPriorityRuleSetting("minecraft:bundle", SortPriorityPosition.FIRST),
                         new SortPriorityRuleSetting("minecraft:white_shulker_box", SortPriorityPosition.FIRST)
                 ),
-                stack(Items.WHITE_SHULKER_BOX),
+                stack(Items.DYED_SHULKER_BOX.white()),
                 bundle()
         );
 
         Assertions.assertTrue(sorted.get(0).is(Items.BUNDLE));
-        Assertions.assertTrue(sorted.get(1).is(Items.WHITE_SHULKER_BOX));
+        Assertions.assertTrue(sorted.get(1).is(Items.DYED_SHULKER_BOX.white()));
     }
 
     @Test

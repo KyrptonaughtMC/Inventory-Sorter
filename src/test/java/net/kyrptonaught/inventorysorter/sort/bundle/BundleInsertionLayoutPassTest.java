@@ -253,14 +253,14 @@ class BundleInsertionLayoutPassTest {
         ItemStack appleBundle = bundleContaining(stack(Items.APPLE, 8));
 
         List<ItemStack> output = SortedInventoryLayout.from(
-                List.of(appleBundle, stack(Items.WHITE_SHULKER_BOX, 1), stack(Items.APPLE, 5), stack(Items.DIAMOND, 1)),
+                List.of(appleBundle, stack(Items.DYED_SHULKER_BOX.white(), 1), stack(Items.APPLE, 5), stack(Items.DIAMOND, 1)),
                 SortType.NAME,
                 "en_us",
                 List.of(new SortPriorityRuleSetting("minecraft:white_shulker_box", SortPriorityPosition.FIRST)),
                 true
         ).stacks();
 
-        assertSameLayoutStack(stack(Items.WHITE_SHULKER_BOX, 1), output.get(0));
+        assertSameLayoutStack(stack(Items.DYED_SHULKER_BOX.white(), 1), output.get(0));
         Assertions.assertEquals(Map.of(Items.APPLE, 13), bundleContents(output.get(1)));
         assertSameLayoutStack(stack(Items.DIAMOND, 1), output.get(2));
     }

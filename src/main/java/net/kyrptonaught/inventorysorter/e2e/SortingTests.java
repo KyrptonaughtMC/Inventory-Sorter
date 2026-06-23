@@ -420,7 +420,10 @@ public class SortingTests {
     //? if fabric
     @GameTest
     public void testCategorySort(GameTestHelper ctx) {
-        ItemStack coloredBlockStack = new ItemStack(Items.WHITE_WOOL, 64);
+        //? >= 26.2
+        ItemStack coloredBlockStack = new ItemStack(Items.WOOL.white(), 64);
+        //? < 26.2
+        //ItemStack coloredBlockStack = new ItemStack(Items.WHITE_WOOL, 64);
         ItemStack naturalBlockStack = new ItemStack(Items.DIRT, 64);
         ItemStack functionalBlockStack = new ItemStack(Items.CRAFTING_TABLE, 64);
         ItemStack redstoneBlockStack = new ItemStack(Items.REDSTONE_BLOCK, 64);

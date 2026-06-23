@@ -61,7 +61,11 @@ public class ConfigScreen {
                 ClientPlatformServices.KEY_MAPPINGS.boundConfigKey(),
                 ClientPlatformServices.KEY_MAPPINGS.boundSortKey()
         )) {
-            client.setScreen(getConfigScreen(client.screen));
+
+            //? >= 26.2
+            client.gui.setScreen(getConfigScreen(client.gui.screen()));
+            //? < 26.2
+            //client.setScreen(getConfigScreen(client.screen));
         }
     }
 

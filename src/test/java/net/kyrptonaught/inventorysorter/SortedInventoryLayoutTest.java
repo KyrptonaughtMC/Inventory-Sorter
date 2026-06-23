@@ -134,7 +134,7 @@ public class SortedInventoryLayoutTest {
         SortedInventoryLayout layout = SortedInventoryLayout.from(
                 List.of(
                         stack(Items.DIAMOND, 1, "Diamond"),
-                        stack(Items.WHITE_SHULKER_BOX, 1, "Shulker Box"),
+                        stack(Items.DYED_SHULKER_BOX.white(), 1, "Shulker Box"),
                         stack(Items.APPLE, 1, "Apple"),
                         stack(Items.FEATHER, 1, "Feather")
                 ),
@@ -144,7 +144,7 @@ public class SortedInventoryLayoutTest {
         );
 
         assertStack(layout.stacks().get(0), Items.APPLE, 1);
-        assertStack(layout.stacks().get(1), Items.WHITE_SHULKER_BOX, 1);
+        assertStack(layout.stacks().get(1), Items.DYED_SHULKER_BOX.white(), 1);
         assertStack(layout.stacks().get(2), Items.DIAMOND, 1);
         assertStack(layout.stacks().get(3), Items.FEATHER, 1);
     }

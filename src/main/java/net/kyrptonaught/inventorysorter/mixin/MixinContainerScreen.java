@@ -74,15 +74,15 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
         if (getConfig().showSortButton && SortButtonDisplayPolicy.shouldDisplayButtons(minecraft.player)) {
             boolean playerOnly = !SortabilityPolicy.canSortInventory(minecraft.player);
             if (playerOnly) {
-                invsort$PlayerSortBtn = new SortButtonWidget(ButtonType.PLAYER, this.leftPos + this.imageWidth - 20, this.topPos + (playerOnly ? (imageHeight - 95) : 6), SortTarget.PLAYER_INVENTORY, minecraft.screen);
+                invsort$PlayerSortBtn = new SortButtonWidget(ButtonType.PLAYER, this.leftPos + this.imageWidth - 20, this.topPos + (playerOnly ? (imageHeight - 95) : 6), SortTarget.PLAYER_INVENTORY, minecraft.gui.screen());
                 invsort$PlayerSortBtn.visible = compatibility.shouldShowSortButton(InventoryScreenId.PLAYER_INVENTORY.value());
                 this.addRenderableWidget(invsort$PlayerSortBtn);
             } else {
-                invsort$SortBtn = new SortButtonWidget(ButtonType.INVENTORY, this.leftPos + this.imageWidth - 20, this.topPos + (playerOnly ? (imageHeight - 95) : 6), SortTarget.CONTAINER, minecraft.screen);
+                invsort$SortBtn = new SortButtonWidget(ButtonType.INVENTORY, this.leftPos + this.imageWidth - 20, this.topPos + (playerOnly ? (imageHeight - 95) : 6), SortTarget.CONTAINER, minecraft.gui.screen());
                 this.addRenderableWidget(invsort$SortBtn);
 
                 if (getConfig().separateButton) { // If separate button is enabled, add a player inventory sort button
-                    invsort$PlayerSortBtn = new SortButtonWidget(ButtonType.PLAYER, invsort$SortBtn.getX(), this.topPos + ((this)).getMiddleHeight(), SortTarget.PLAYER_INVENTORY, minecraft.screen);
+                    invsort$PlayerSortBtn = new SortButtonWidget(ButtonType.PLAYER, invsort$SortBtn.getX(), this.topPos + ((this)).getMiddleHeight(), SortTarget.PLAYER_INVENTORY, minecraft.gui.screen());
                     invsort$PlayerSortBtn.visible = compatibility.shouldShowSortButton(InventoryScreenId.PLAYER_INVENTORY.value());
                     this.addRenderableWidget(invsort$PlayerSortBtn);
                 }

@@ -8,6 +8,13 @@ plugins {
 
 stonecutter {
     constants["hasModMenu"] = mod.prop("modmenu_version", "0") != "0"
+
+    replacements.string(stonecutter.current.parsed < "26.2") {
+        replace("Minecraft.getInstance().gui.screen()", "Minecraft.getInstance().screen")
+        replace("minecraft.gui.screen()", "minecraft.screen")
+        replace("DYED_SHULKER_BOX.white()", "WHITE_SHULKER_BOX")
+        replace("DYED_SHULKER_BOX.purple()", "PURPLE_SHULKER_BOX")
+    }
 }
 
 modSettings {

@@ -56,7 +56,7 @@ public class SortPriorityRuleTests {
     @GameTest
     public void testSortCommandUsesStoredPlayerPriorityRules(GameTestHelper ctx) {
         Scenario scenario = setUpScene(ctx, Map.of(
-                0, new ItemStack(Items.WHITE_SHULKER_BOX),
+                0, new ItemStack(Items.DYED_SHULKER_BOX.white()),
                 1, new ItemStack(Items.APPLE),
                 2, new ItemStack(Items.DIAMOND)
         ));
@@ -76,7 +76,7 @@ public class SortPriorityRuleTests {
         assertContents(ctx, scenario, Map.of(
                 0, new ItemStack(Items.APPLE),
                 1, new ItemStack(Items.DIAMOND),
-                2, new ItemStack(Items.WHITE_SHULKER_BOX)
+                2, new ItemStack(Items.DYED_SHULKER_BOX.white())
         ));
         ctx.succeed();
     }
@@ -138,7 +138,7 @@ public class SortPriorityRuleTests {
                 2, new ItemStack(Items.CRAFTING_TABLE),
                 3, new ItemStack(Items.DIAMOND),
                 4, new ItemStack(Items.FEATHER),
-                5, new ItemStack(Items.WHITE_SHULKER_BOX)
+                5, new ItemStack(Items.DYED_SHULKER_BOX.white())
         ));
 
         refillChest(scenario.chest(), unsortedPriorityCommandChest());
@@ -146,7 +146,7 @@ public class SortPriorityRuleTests {
         runCommand(player, "/invsort sort");
 
         assertContents(ctx, scenario, Map.of(
-                0, new ItemStack(Items.WHITE_SHULKER_BOX),
+                0, new ItemStack(Items.DYED_SHULKER_BOX.white()),
                 1, new ItemStack(Items.APPLE),
                 2, new ItemStack(Items.BUNDLE),
                 3, new ItemStack(Items.CRAFTING_TABLE),
@@ -161,7 +161,7 @@ public class SortPriorityRuleTests {
 
         assertContents(ctx, scenario, Map.of(
                 0, new ItemStack(Items.BUNDLE),
-                1, new ItemStack(Items.WHITE_SHULKER_BOX),
+                1, new ItemStack(Items.DYED_SHULKER_BOX.white()),
                 2, new ItemStack(Items.APPLE),
                 3, new ItemStack(Items.CRAFTING_TABLE),
                 4, new ItemStack(Items.DIAMOND),
@@ -181,7 +181,7 @@ public class SortPriorityRuleTests {
         runCommand(player, "/invsort sort");
 
         assertContents(ctx, scenario, Map.of(
-                0, new ItemStack(Items.WHITE_SHULKER_BOX),
+                0, new ItemStack(Items.DYED_SHULKER_BOX.white()),
                 1, new ItemStack(Items.APPLE),
                 2, new ItemStack(Items.BUNDLE),
                 3, new ItemStack(Items.CRAFTING_TABLE),
@@ -199,7 +199,7 @@ public class SortPriorityRuleTests {
                 2, new ItemStack(Items.CRAFTING_TABLE),
                 3, new ItemStack(Items.DIAMOND),
                 4, new ItemStack(Items.FEATHER),
-                5, new ItemStack(Items.WHITE_SHULKER_BOX)
+                5, new ItemStack(Items.DYED_SHULKER_BOX.white())
         ));
 
         ctx.succeed();
@@ -210,7 +210,7 @@ public class SortPriorityRuleTests {
     public void testPriorityIgnoreCommandLeavesMatchingChestSlotsInPlace(GameTestHelper ctx) {
         Scenario scenario = setUpScene(ctx, Map.of(
                 0, new ItemStack(Items.FEATHER),
-                1, new ItemStack(Items.WHITE_SHULKER_BOX),
+                1, new ItemStack(Items.DYED_SHULKER_BOX.white()),
                 2, new ItemStack(Items.DIAMOND),
                 3, new ItemStack(Items.BUNDLE),
                 4, new ItemStack(Items.APPLE),
@@ -223,7 +223,7 @@ public class SortPriorityRuleTests {
 
         assertContents(ctx, scenario, Map.of(
                 0, new ItemStack(Items.APPLE),
-                1, new ItemStack(Items.WHITE_SHULKER_BOX),
+                1, new ItemStack(Items.DYED_SHULKER_BOX.white()),
                 2, new ItemStack(Items.BUNDLE),
                 3, new ItemStack(Items.CRAFTING_TABLE),
                 4, new ItemStack(Items.DIAMOND),
@@ -432,7 +432,7 @@ public class SortPriorityRuleTests {
 
     private static Map<Integer, ItemStack> unsortedPriorityCommandChest() {
         return Map.of(
-                3, new ItemStack(Items.WHITE_SHULKER_BOX),
+                3, new ItemStack(Items.DYED_SHULKER_BOX.white()),
                 8, new ItemStack(Items.DIAMOND),
                 12, new ItemStack(Items.BUNDLE),
                 17, new ItemStack(Items.APPLE),

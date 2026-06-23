@@ -46,12 +46,12 @@ public class SortRuleExpressionsTest {
         TagKey<Item> shulkerBoxes = TagKey.create(Registries.ITEM, Identifier.parse("minecraft:shulker_boxes"));
         SortRuleExpression expression = new TagExpression(shulkerBoxes);
 
-        Assertions.assertFalse(matches(expression, stack(Items.WHITE_SHULKER_BOX)));
+        Assertions.assertFalse(matches(expression, stack(Items.DYED_SHULKER_BOX.white())));
 
         try {
-            applyItemTags(Map.of(shulkerBoxes, List.of(BuiltInRegistries.ITEM.wrapAsHolder(Items.WHITE_SHULKER_BOX))));
+            applyItemTags(Map.of(shulkerBoxes, List.of(BuiltInRegistries.ITEM.wrapAsHolder(Items.DYED_SHULKER_BOX.white()))));
 
-            Assertions.assertTrue(matches(expression, stack(Items.WHITE_SHULKER_BOX)));
+            Assertions.assertTrue(matches(expression, stack(Items.DYED_SHULKER_BOX.white())));
             Assertions.assertFalse(matches(expression, stack(Items.APPLE)));
         } finally {
             applyItemTags(Map.of());
@@ -62,14 +62,14 @@ public class SortRuleExpressionsTest {
     void tagExpressionReturnsFalseWhenMinecraftTagsAreNotBound() throws ReflectiveOperationException {
         TagKey<Item> shulkerBoxes = TagKey.create(Registries.ITEM, Identifier.parse("minecraft:shulker_boxes"));
         SortRuleExpression expression = new TagExpression(shulkerBoxes);
-        Holder<Item> holder = BuiltInRegistries.ITEM.wrapAsHolder(Items.WHITE_SHULKER_BOX);
+        Holder<Item> holder = BuiltInRegistries.ITEM.wrapAsHolder(Items.DYED_SHULKER_BOX.white());
         Field tagsField = tagsField(holder);
         Object boundTags = tagsField.get(holder);
 
         try {
             tagsField.set(holder, null);
 
-            Assertions.assertFalse(matches(expression, stack(Items.WHITE_SHULKER_BOX)));
+            Assertions.assertFalse(matches(expression, stack(Items.DYED_SHULKER_BOX.white())));
         } finally {
             tagsField.set(holder, boundTags);
         }

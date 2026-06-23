@@ -12,6 +12,13 @@ DO NOT ASSUME THAT COMMENTED OUT CODE IS DEAD CODE.
 
 It's more likely to be a different Minecraft version/loader path managed by Stonecutter.
 
+## Adding support for a new Minecraft version
+
+The good people at Neoforge publish excellent porting guides.
+Find the version corresponding to the Minecraft version you want to port to, and follow the instructions there. [Minecraft Porting Guide](https://github.com/ChampionAsh5357/neoforged-github/tree/port/26.2/primers)
+
+Alternatively also check the Fabric change posts: https://fabricmc.net/blog/
+
 ## Working on specific Minecraft version/loader
 
 We're using [Stonecutter](https://stonecutter.kikugie.dev/wiki/) to manage multiple Minecraft versions and loaders.
@@ -61,3 +68,4 @@ Do not run traditional gradle compile tasks. The project uses a custom build pro
 - For Minecraft: use the embedded code itself
 - For Stonecraft: https://stonecraft.meza.gg/
 - For Stonecutter: https://stonecutter.kikugie.dev/wiki/
+- Minecraft version porting guides: https://github.com/ChampionAsh5357/neoforged-github/tree/port/26.2/primers

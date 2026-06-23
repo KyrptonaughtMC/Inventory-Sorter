@@ -14,11 +14,14 @@ import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
 import net.kyrptonaught.inventorysorter.network.SortSettings;
 import net.kyrptonaught.inventorysorter.sort.SortPriorityPosition;
 import net.kyrptonaught.inventorysorter.sort.SortType;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+//? >= 26.2
+import net.minecraft.world.entity.EntityTypes;
+//? < 26.2
+//import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -355,7 +358,7 @@ public class BundleSortingTests {
         TestUtils.Scenario scenario = setUpScene(ctx, Map.of(
                 0, appleBundle,
                 4, new ItemStack(Items.APPLE, 5),
-                8, new ItemStack(Items.WHITE_SHULKER_BOX),
+                8, new ItemStack(Items.DYED_SHULKER_BOX.white()),
                 12, new ItemStack(Items.DIAMOND, 1)
         ));
         SortSettings settings = new SortSettings(
@@ -370,7 +373,7 @@ public class BundleSortingTests {
         ServerInventorySorter.sort(scenario.player(), SortTarget.CONTAINER, settings);
 
         assertContents(ctx, scenario, Map.of(
-                0, new ItemStack(Items.WHITE_SHULKER_BOX),
+                0, new ItemStack(Items.DYED_SHULKER_BOX.white()),
                 1, appleBundle,
                 2, new ItemStack(Items.DIAMOND, 1)
         ));
@@ -672,9 +675,19 @@ public class BundleSortingTests {
                 0,
                 1,
                 Optional.empty(),
+                //? >= 26.2 {
+                new SlotTypeImpl.Predicates(
+                        new SlotTypeImpl.ConstantCondition(true),
+                        new SlotTypeImpl.ConstantCondition(true),
+                        new SlotTypeImpl.ConstantCondition(true),
+                        new SlotTypeImpl.ConstantCondition(true)
+                ),
+                //? }
+                //? < 26.2 {
+                /*new SlotTypeImpl.ConstantCondition(true),
                 new SlotTypeImpl.ConstantCondition(true),
                 new SlotTypeImpl.ConstantCondition(true),
-                new SlotTypeImpl.ConstantCondition(true),
+                *///? }
                 TrinketDropRule.DEFAULT,
                 false,
                 false,
@@ -683,7 +696,11 @@ public class BundleSortingTests {
         SlotGroupImpl hand = new SlotGroupImpl.Builder("hand", -1, 0)
                 .addSlot("ring", ring)
                 .build();
-        EntitySlotLoader.SERVER.setSlots(Map.of(EntityType.PLAYER, Map.of("hand", hand)));
+
+        //? >= 26.2
+        EntitySlotLoader.SERVER.setGroupsLegacy(Map.of(EntityTypes.PLAYER, Map.of("hand", hand)));
+        //? < 26.2
+        //EntitySlotLoader.SERVER.setSlots(Map.of(EntityType.PLAYER, Map.of("hand", hand)));
     }
 
     private static void assertHotbarContents(GameTestHelper ctx, ServerPlayer player, Map<Integer, ItemStack> expectedContents) {

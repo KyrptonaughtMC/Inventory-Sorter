@@ -16,6 +16,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.phys.Vec3;
 /*? if neoforge {*/
 /*import net.neoforged.neoforge.network.registration.ChannelAttributes;
 *//*?}*/
@@ -77,7 +78,13 @@ public class TestUtils {
         ctx.setBlock(inventoryPosition, Blocks.CHEST.defaultBlockState());
 
         player.randomTeleport(abspos.getX() + 2, abspos.getY(), abspos.getZ() + 2, false);
-        player.lookAt(EntityAnchorArgument.Anchor.EYES, abspos.getCenter());
+        player.lookAt(
+                EntityAnchorArgument.Anchor.EYES,
+                //? >= 26.2
+                Vec3.atCenterOf(abspos)
+                //? < 26.2
+                //abspos.getCenter()
+        );
 
         ChestBlockEntity chest = ctx.getBlockEntity(inventoryPosition, ChestBlockEntity.class);
 
@@ -90,7 +97,13 @@ public class TestUtils {
 
         //? if neoforge {
         /*player.snapTo(abspos.getX() + 2.5, abspos.getY(), abspos.getZ() + 2.5, player.getYRot(), player.getXRot());
-        player.lookAt(EntityAnchorArgument.Anchor.EYES, abspos.getCenter());
+        player.lookAt(
+                EntityAnchorArgument.Anchor.EYES,
+                //? >= 26.2
+                Vec3.atCenterOf(abspos)
+                //? < 26.2
+                //abspos.getCenter()
+        );
         player.openMenu(chest);
         *///? }
 
