@@ -1,50 +1,35 @@
 package net.kyrptonaught.inventorysorter.client;
-import net.kyrptonaught.inventorysorter.ButtonType;
-import net.kyrptonaught.inventorysorter.mixin.RecipeBookScreenAccessor;
 
-/*? if <1.21.5 {*/
-/*import com.mojang.blaze3d.systems.RenderSystem;
-*//*?}*/
-
-/*? if >=1.21.6 {*/
-import net.minecraft.client.gl.RenderPipelines;
-/*?}*/
+import com.mojang.blaze3d.platform.InputConstants;
+//? if fabric {
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.kyrptonaught.inventorysorter.InventoryHelper;
+//?}
+import net.kyrptonaught.inventorysorter.ButtonType;
 import net.kyrptonaught.inventorysorter.InventorySorterMod;
-import net.kyrptonaught.inventorysorter.SortType;
+import net.kyrptonaught.inventorysorter.InventoryScreenId;
+import net.kyrptonaught.inventorysorter.SortTarget;
+import net.kyrptonaught.inventorysorter.sort.SortType;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.kyrptonaught.inventorysorter.config.ScrollBehaviour;
-import net.kyrptonaught.inventorysorter.network.InventorySortPacket;
-import net.minecraft.client.MinecraftClient;
-/*? if <1.21.5 {*/
-/*import net.minecraft.client.gl.ShaderProgramKeys;
- *//*?}*/
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.ButtonTextures;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ingame.RecipeBookScreen;
-import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget;
-import net.minecraft.client.gui.tooltip.HoveredTooltipPositioner;
-import net.minecraft.client.gui.tooltip.TooltipPositioner;
-
-import net.minecraft.client.gui.widget.TexturedButtonWidget;
-/*? if <1.21.6 {*/
-/*import net.minecraft.client.render.RenderLayer;
-*//*?}*/
-/*? if >= 1.21.9 {*/
-import net.minecraft.client.input.AbstractInput;
-/*?}*/
-import net.minecraft.client.toast.SystemToast;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.registry.Registries;
-import net.minecraft.screen.PlayerScreenHandler;
-import net.minecraft.text.OrderedText;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
+import net.kyrptonaught.inventorysorter.client.platform.ClientPlatformServices;
+import net.kyrptonaught.inventorysorter.client.sort.ClientSorts;
+import net.kyrptonaught.inventorysorter.mixin.RecipeBookScreenAccessor;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.ImageButton;
+import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.client.gui.components.toasts.SystemToast;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.AbstractRecipeBookScreen;
+import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
+import net.minecraft.client.input.InputWithModifiers;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.Mth;
+import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,106 +38,83 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import static net.kyrptonaught.inventorysorter.InventorySorterMod.*;
-import static net.kyrptonaught.inventorysorter.client.InventorySorterModClient.PLAYER_INVENTORY;
-import static net.kyrptonaught.inventorysorter.client.InventorySorterModClient.modifierButton;
+import static net.kyrptonaught.inventorysorter.InventorySorterMod.compatibility;
+import static net.kyrptonaught.inventorysorter.InventorySorterMod.getConfig;
 
+//? if fabric
 @Environment(EnvType.CLIENT)
-public class SortButtonWidget extends TexturedButtonWidget {
-    private static final ButtonTextures TEXTURES = new ButtonTextures(
-            Identifier.of(InventorySorterMod.MOD_ID, "textures/gui/button_unfocused.png"),
-            Identifier.of(InventorySorterMod.MOD_ID, "textures/gui/button_focused.png"));
-    private final ButtonType buttonType;
-    private final boolean playerInv;
-    private final TooltipPositioner widgetTooltipPositioner = HoveredTooltipPositioner.INSTANCE;
-    private final InputUtil.Key modifierKey;
-    private Screen parentScreen;
+public class SortButtonWidget extends ImageButton {
+    private static final int BUTTON_WIDTH = 10;
+    private static final int BUTTON_HEIGHT = 9;
+    private static final int TEXTURE_WIDTH = 20;
+    private static final int TEXTURE_HEIGHT = 18;
+    private static final WidgetSprites TEXTURES = new WidgetSprites(
+            Identifier.fromNamespaceAndPath(InventorySorterMod.MOD_ID, "textures/gui/button_unfocused.png"),
+            Identifier.fromNamespaceAndPath(InventorySorterMod.MOD_ID, "textures/gui/button_focused.png"));
     // Offset used to align the sort button with the recipe book in the UI.
     // The value 77 was determined based on the default layout of the Minecraft inventory screen.
     private static final int RECIPE_BOOK_OFFSET = 77;
-    private int initialX;
-
     private static final ScheduledExecutorService debounceExecutor = Executors.newSingleThreadScheduledExecutor();
     private static ScheduledFuture<?> debounceTask;
+    private final ButtonType buttonType;
+    private final SortTarget target;
+    private final InputConstants.Key modifierKey;
+    private final Screen parentScreen;
+    private final int initialX;
 
-    public SortButtonWidget(ButtonType buttonType, int x, int y, boolean playerInv, Screen parent) {
-        super(x, y, 10, 9, TEXTURES, null, net.minecraft.text.Text.literal(""));
+    public SortButtonWidget(ButtonType buttonType, int x, int y, SortTarget target, Screen parent) {
+        super(x, y, BUTTON_WIDTH, BUTTON_HEIGHT, TEXTURES, null, net.minecraft.network.chat.Component.literal(""));
         this.buttonType = buttonType;
-        this.playerInv = playerInv;
-        this.modifierKey = modifierButton;
+        this.target = target;
+        this.modifierKey = ClientPlatformServices.KEY_MAPPINGS.modifierKey();
         this.parentScreen = parent;
         this.initialX = x;
     }
 
     @Override
-    public void onPress(/*? if >= 1.21.9 {*/AbstractInput input/*?}*/) {
-        MinecraftClient instance = MinecraftClient.getInstance();
-        String screenID = null;
-        if (InventoryHelper.canSortInventory(instance.player)) {
-            screenID = Registries.SCREEN_HANDLER.getId(instance.player.currentScreenHandler.getType()).toString();
-        }
-        if (instance.player.currentScreenHandler instanceof PlayerScreenHandler) {
-            screenID = PLAYER_INVENTORY.toString();
-        }
+    public void onPress(InputWithModifiers input) {
+        Minecraft instance = Minecraft.getInstance();
+        InventoryScreenId screenId = InventoryScreenId.fromMenu(instance.player.containerMenu).orElse(null);
 
-        if (screenID == null) {
-            InventorySortPacket.sendSortPacket(playerInv);
+        if (screenId == null) {
+            ClientSorts.requestCurrentScreenSort(target);
             return;
         }
 
         if (isModifierPressed()) {
-                getConfig().disableButtonForScreen(screenID);
-                compatibility.addShouldHideSortButton(screenID);
-                getConfig().save();
-                compatibility.reload();
-                InventorySorterModClient.syncConfig();
-                SystemToast.add(instance.getToastManager(), SystemToast.Type.PERIODIC_NOTIFICATION,
-                        net.minecraft.text.Text.translatable("inventorysorter.sortButton.toast.hide.success.title"),
-                        net.minecraft.text.Text.translatable("inventorysorter.sortButton.toast.hide.success.description", screenID));
-                this.visible = false;
+            getConfig().disableButtonForScreen(screenId.serialized());
+            compatibility.addShouldHideSortButton(screenId.serialized());
+            getConfig().save();
+            compatibility.reload();
+            ClientConfigSync.syncConfigToServer();
+            SystemToast.add(
+                    //? >= 26.2
+                    instance.gui.toastManager(),
+                    //? < 26.2
+                    //instance.getToastManager(),
+                    SystemToast.SystemToastId.PERIODIC_NOTIFICATION,
+                    net.minecraft.network.chat.Component.translatable("inventorysorter.sortButton.toast.hide.success.title"),
+                    net.minecraft.network.chat.Component.translatable("inventorysorter.sortButton.toast.hide.success.description", screenId.serialized()));
+            this.visible = false;
 
         } else {
-            InventorySortPacket.sendSortPacket(playerInv);
+            ClientSorts.requestCurrentScreenSort(target);
         }
     }
 
     @Override
-    /*? if >= 1.21.11 {*/
-    public void drawIcon(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
-    /*?} else {*/
-    /*public void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
-    *//*?}*/
+    public void extractContents(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {
         int offset = 0;
         if (!this.visible) return;
 
-        if (this.parentScreen != null && this.parentScreen instanceof RecipeBookScreen<?>) {
-            RecipeBookScreen<?> s = (RecipeBookScreen<?>) this.parentScreen;
-            RecipeBookWidget<?> widget = ((RecipeBookScreenAccessor) s).getRecipeBook();
-            offset = widget.isOpen() ? RECIPE_BOOK_OFFSET : 0;
+        if (this.parentScreen != null && this.parentScreen instanceof AbstractRecipeBookScreen<?> s) {
+            RecipeBookComponent<?> widget = ((RecipeBookScreenAccessor) s).getRecipeBook();
+            offset = widget.isVisible() ? RECIPE_BOOK_OFFSET : 0;
         }
 
         setX(this.initialX + offset);
-
-        /*? if <1.21.5 {*/
-        /*RenderSystem.setShader(ShaderProgramKeys.POSITION);
-        RenderSystem.enableDepthTest();
-        *//*?}*/
-        /*? if >=1.21.6 {*/
-
-        context.getMatrices().pushMatrix();
-        context.getMatrices().scale(.5f, .5f);
-        context.getMatrices().translate(getX(), getY());
         Identifier identifier = TEXTURES.get(true, isHovered());
-        context.drawTexture(RenderPipelines.GUI_TEXTURED, identifier, getX(), getY(), 0, 0, 20, 18, 20, 18);
-        context.getMatrices().popMatrix();
-        /*?} else {*/
-        /*context.getMatrices().push();
-        context.getMatrices().scale(.5f, .5f, 1);
-        context.getMatrices().translate(getX(), getY(), 0);
-        Identifier identifier = TEXTURES.get(true, isHovered());
-        context.drawTexture(RenderLayer::getGuiTextured, identifier, getX(), getY(), 0, 0, 20, 18, 20, 18);
-        context.getMatrices().pop();
-        *//*?}*/
+        context.blit(RenderPipelines.GUI_TEXTURED, identifier, getX(), getY(), 0, 0, BUTTON_WIDTH, BUTTON_HEIGHT, TEXTURE_WIDTH, TEXTURE_HEIGHT, TEXTURE_WIDTH, TEXTURE_HEIGHT);
         this.renderTooltip(context, mouseX, mouseY);
     }
 
@@ -171,17 +133,10 @@ public class SortButtonWidget extends TexturedButtonWidget {
             return false;
         }
 
-        int current = config.sortType.ordinal();
-        if (verticalAmount > 0) {
-            current++;
-            if (current >= SortType.values().length)
-                current = 0;
-        } else {
-            current--;
-            if (current < 0)
-                current = SortType.values().length - 1;
-        }
-        config.sortType = SortType.values()[current];
+        SortType[] sortTypes = SortType.values();
+        int direction = verticalAmount > 0 ? 1 : -1;
+        int current = Mth.positiveModulo(config.sortType.ordinal() + direction, sortTypes.length);
+        config.sortType = sortTypes[current];
 
         if (debounceTask != null) {
             debounceTask.cancel(false);
@@ -189,67 +144,57 @@ public class SortButtonWidget extends TexturedButtonWidget {
 
         debounceTask = debounceExecutor.schedule(() -> {
             config.save();
-            InventorySorterModClient.syncConfig();
+            ClientConfigSync.syncConfigToServer();
         }, 300, TimeUnit.MILLISECONDS);
 
         return true;
 
     }
 
-    private boolean isModifierPressed() {
-        /*? if >= 1.21.9 {*/
-        return InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow(), modifierKey.getCode());
-        /*?} else {*/
-        /*return InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), modifierKey.getCode());
-        *//*?}*/
+    public static boolean scrollIfHovered(SortButtonWidget button, double x, double y, double verticalAmount, double horizontalAmount) {
+        if (button == null || !button.visible || !button.isHovered()) {
+            return false;
+        }
 
+        return button.mouseScrolled(x, y, verticalAmount, horizontalAmount);
+    }
+
+    private boolean isModifierPressed() {
+        return InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), modifierKey.getValue());
     }
 
 
-    public void renderTooltip(DrawContext context, int mouseX, int mouseY) {
+    public void renderTooltip(GuiGraphicsExtractor context, int mouseX, int mouseY) {
         NewConfigOptions config = getConfig();
         if (config.showTooltips && this.isHovered()) {
-            MinecraftClient instance = MinecraftClient.getInstance();
-            TextRenderer textRenderer = instance.textRenderer;
+            boolean modifierPressed = isModifierPressed();
+            ScrollBehaviour scrollBehaviour = config.scrollBehaviour;
+            Component sortType = Component.translatable(config.sortType.getTranslationKey()).withStyle(ChatFormatting.BOLD);
+            List<Component> lines = new ArrayList<>();
 
-            List<OrderedText> lines = new ArrayList<>();
-
-            if ((config.scrollBehaviour == ScrollBehaviour.FREE || config.scrollBehaviour == ScrollBehaviour.DISABLED) && isModifierPressed()) {
-                lines.add(net.minecraft.text.Text.translatable("inventorysorter.sortButton.tooltip.hide").asOrderedText());
+            if ((scrollBehaviour == ScrollBehaviour.FREE || scrollBehaviour == ScrollBehaviour.DISABLED) && modifierPressed) {
+                lines.add(Component.translatable("inventorysorter.sortButton.tooltip.hide"));
             }
 
-            if ((config.scrollBehaviour == ScrollBehaviour.MODIFIER) && isModifierPressed()) {
-                lines.add(net.minecraft.text.Text.translatable("inventorysorter.sortButton.tooltip.sortType", net.minecraft.text.Text.translatable(getConfig().sortType.getTranslationKey()).formatted(Formatting.BOLD)).asOrderedText());
-                lines.add(net.minecraft.text.Text.translatable("inventorysorter.sortButton.tooltip.help.sortType").formatted(Formatting.GRAY).asOrderedText());
-                lines.add(net.minecraft.text.Text.translatable("inventorysorter.sortButton.tooltip.hide").formatted(Formatting.GRAY).asOrderedText());
+            if (scrollBehaviour == ScrollBehaviour.MODIFIER && modifierPressed) {
+                lines.add(Component.translatable("inventorysorter.sortButton.tooltip.sortType", sortType));
+                lines.add(Component.translatable("inventorysorter.sortButton.tooltip.help.sortType").withStyle(ChatFormatting.GRAY));
+                lines.add(Component.translatable("inventorysorter.sortButton.tooltip.hide").withStyle(ChatFormatting.GRAY));
             }
 
-            if (!isModifierPressed()) {
-                lines.add(net.minecraft.text.Text.translatable("inventorysorter.sortButton.tooltip.sortType", net.minecraft.text.Text.translatable(getConfig().sortType.getTranslationKey()).formatted(Formatting.BOLD)).asOrderedText());
-                if (config.scrollBehaviour == ScrollBehaviour.MODIFIER) {
-                    lines.add(net.minecraft.text.Text.translatable("inventorysorter.sortButton.tooltip.help.sortType.modifier", modifierKey.getLocalizedText()).formatted(Formatting.DARK_GRAY).asOrderedText());
-                } else if (config.scrollBehaviour != ScrollBehaviour.DISABLED) {
-                    lines.add(net.minecraft.text.Text.translatable("inventorysorter.sortButton.tooltip.help.sortType").formatted(Formatting.DARK_GRAY).asOrderedText());
+            if (!modifierPressed) {
+                lines.add(Component.translatable("inventorysorter.sortButton.tooltip.sortType", sortType));
+                if (scrollBehaviour == ScrollBehaviour.MODIFIER) {
+                    lines.add(Component.translatable("inventorysorter.sortButton.tooltip.help.sortType.modifier", modifierKey.getDisplayName()).withStyle(ChatFormatting.DARK_GRAY));
+                } else if (scrollBehaviour != ScrollBehaviour.DISABLED) {
+                    lines.add(Component.translatable("inventorysorter.sortButton.tooltip.help.sortType").withStyle(ChatFormatting.DARK_GRAY));
                 }
-                lines.add(net.minecraft.text.Text.translatable("inventorysorter.sortButton.tooltip.help.hide", modifierKey.getLocalizedText()).formatted(Formatting.DARK_GRAY).asOrderedText());
+                lines.add(Component.translatable("inventorysorter.sortButton.tooltip.help.hide", modifierKey.getDisplayName()).withStyle(ChatFormatting.DARK_GRAY));
 
             }
 
-            /*? if >=1.21.6 {*/
-            context.drawTooltip(
-                    textRenderer,
-                    lines,
-                    widgetTooltipPositioner,
-                    mouseX, mouseY, true
-            );
-            /*?} else {*/
-            /*context.drawTooltip(
-                    textRenderer,
-                    lines,
-                    widgetTooltipPositioner,
-                    mouseX, mouseY
-            );
-            *//*?}*/
+            context.setComponentTooltipForNextFrame(Minecraft.getInstance().font, lines, mouseX, mouseY);
+
         }
     }
 }

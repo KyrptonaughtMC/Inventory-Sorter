@@ -2,14 +2,17 @@ package net.kyrptonaught.inventorysorter.network;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.kyrptonaught.inventorysorter.SortType;
+import net.kyrptonaught.inventorysorter.sort.SortType;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
+import net.kyrptonaught.inventorysorter.platform.NetworkingPlatform;
+import net.kyrptonaught.inventorysorter.platform.PlatformServices;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerPlayer;
+
+import java.util.List;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.MOD_ID;
 
@@ -17,68 +20,130 @@ public record SortSettings(
         boolean sortHighlightedItem,
         boolean sortPlayerInventory,
         boolean enableDoubleClick,
-        SortType sortType
-) implements CustomPayload {
+        boolean sortIntoBundles,
+        boolean sortIntoHotbarBundles,
+        SortType sortType,
+        List<SortPriorityRuleSetting> sortPriorityRules
+) implements CustomPacketPayload {
+    public SortSettings(boolean sortHighlightedItem, boolean sortPlayerInventory, boolean enableDoubleClick, SortType sortType) {
+        this(sortHighlightedItem, sortPlayerInventory, enableDoubleClick, sortType, List.of());
+    }
 
-    public static final PacketCodec<RegistryByteBuf, SortSettings> CODEC =
-            PacketCodec.of(
+    public SortSettings(boolean sortHighlightedItem, boolean sortPlayerInventory, boolean enableDoubleClick, SortType sortType, List<SortPriorityRuleSetting> sortPriorityRules) {
+        this(sortHighlightedItem, sortPlayerInventory, enableDoubleClick, false, sortType, sortPriorityRules);
+    }
+
+    public SortSettings(boolean sortHighlightedItem, boolean sortPlayerInventory, boolean enableDoubleClick, boolean sortIntoBundles, SortType sortType, List<SortPriorityRuleSetting> sortPriorityRules) {
+        this(sortHighlightedItem, sortPlayerInventory, enableDoubleClick, sortIntoBundles, true, sortType, sortPriorityRules);
+    }
+
+    public SortSettings {
+        sortPriorityRules = List.copyOf(sortPriorityRules);
+    }
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, SortSettings> CODEC =
+            StreamCodec.ofMember(
                     (value, buf) -> {
                         buf.writeBoolean(value.sortHighlightedItem());
                         buf.writeBoolean(value.sortPlayerInventory());
                         buf.writeBoolean(value.enableDoubleClick());
-                        buf.writeEnumConstant(value.sortType());
+                        buf.writeBoolean(value.sortIntoBundles());
+                        buf.writeBoolean(value.sortIntoHotbarBundles());
+                        buf.writeEnum(value.sortType());
+                        buf.writeVarInt(value.sortPriorityRules().size());
+                        value.sortPriorityRules().forEach(rule -> SortPriorityRuleSetting.STREAM_CODEC.encode(buf, rule));
                     },
-                    buf -> new SortSettings(
-                            buf.readBoolean(),
-                            buf.readBoolean(),
-                            buf.readBoolean(),
-                            buf.readEnumConstant(SortType.class)
-                    )
+                    buf -> {
+                        boolean sortHighlightedItem = buf.readBoolean();
+                        boolean sortPlayerInventory = buf.readBoolean();
+                        boolean enableDoubleClick = buf.readBoolean();
+                        boolean sortIntoBundles = buf.readBoolean();
+                        boolean sortIntoHotbarBundles = buf.readBoolean();
+                        SortType sortType = buf.readEnum(SortType.class);
+                        List<SortPriorityRuleSetting> sortPriorityRules = new java.util.ArrayList<>();
+                        int rulesCount = buf.readVarInt();
+                        for (int i = 0; i < rulesCount; i++) {
+                            sortPriorityRules.add(SortPriorityRuleSetting.STREAM_CODEC.decode(buf));
+                        }
+                        return new SortSettings(
+                                sortHighlightedItem,
+                                sortPlayerInventory,
+                                enableDoubleClick,
+                                sortIntoBundles,
+                                sortIntoHotbarBundles,
+                                sortType,
+                                sortPriorityRules
+                        );
+                    }
             );
 
     public static final Codec<SortSettings> NBT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.BOOL.fieldOf("sortHighlightedItem").forGetter(SortSettings::sortHighlightedItem),
             Codec.BOOL.fieldOf("sortPlayerInventory").forGetter(SortSettings::sortPlayerInventory),
             Codec.BOOL.fieldOf("enableDoubleClick").forGetter(SortSettings::enableDoubleClick),
+            Codec.BOOL.optionalFieldOf("sortIntoBundles", true).forGetter(SortSettings::sortIntoBundles),
+            Codec.BOOL.optionalFieldOf("sortIntoHotbarBundles", true).forGetter(SortSettings::sortIntoHotbarBundles),
             Codec.STRING.xmap(SortType::valueOf, SortType::name)
-                    .fieldOf("sortType").forGetter(SortSettings::sortType)
+                    .fieldOf("sortType").forGetter(SortSettings::sortType),
+            SortPriorityRuleSetting.CODEC.listOf()
+                    .optionalFieldOf("sortPriorityRules", List.of())
+                    .forGetter(SortSettings::sortPriorityRules)
     ).apply(instance, SortSettings::new));
 
-    public static final CustomPayload.Id<SortSettings> ID = new CustomPayload.Id<>(Identifier.of(MOD_ID, "sync_settings_packet"));
+    public static final CustomPacketPayload.Type<SortSettings> ID = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(MOD_ID, "sync_settings_packet"));
 
-    public static final SortSettings DEFAULT = new SortSettings(true, false, true, SortType.NAME);
-
-    @Override
-    public Id<? extends CustomPayload> getId() {
-        return ID;
-    }
-
-    public SortSettings withDoubleClick(boolean enabled) {
-        return new SortSettings(this.sortHighlightedItem(), this.sortPlayerInventory(), enabled, this.sortType());
-    }
-
-    public SortSettings withSortType(SortType sortType) {
-        return new SortSettings(this.sortHighlightedItem(), this.sortPlayerInventory(), this.enableDoubleClick(), sortType);
-    }
-
-    public SortSettings withSortPlayerInventory(boolean enabled) {
-        return new SortSettings(this.sortHighlightedItem(), enabled, this.enableDoubleClick(), this.sortType());
-    }
-
-    public SortSettings withSortHighlightedInventory(boolean enabled) {
-        return new SortSettings(enabled, this.sortPlayerInventory(), this.enableDoubleClick(), this.sortType());
-    }
+    public static final SortSettings DEFAULT = new SortSettings(true, false, true, true, true, SortType.NAME, List.of());
 
     public static SortSettings fromConfig(NewConfigOptions config) {
         return new SortSettings(
                 config.sortHighlightedItem,
                 config.sortPlayerInventory,
                 config.enableDoubleClickSort,
-                config.sortType
+                config.sortIntoBundles,
+                config.sortIntoHotbarBundles,
+                config.sortType,
+                config.sortPriorityRules
         );
     }
 
-    public void sync(ServerPlayerEntity player) {
-        ServerPlayNetworking.send(player, this);
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return ID;
+    }
+
+    public SortSettings withDoubleClick(boolean enabled) {
+        return new SortSettings(this.sortHighlightedItem(), this.sortPlayerInventory(), enabled, this.sortIntoBundles(), this.sortIntoHotbarBundles(), this.sortType(), this.sortPriorityRules());
+    }
+
+    public SortSettings withSortType(SortType sortType) {
+        return new SortSettings(this.sortHighlightedItem(), this.sortPlayerInventory(), this.enableDoubleClick(), this.sortIntoBundles(), this.sortIntoHotbarBundles(), sortType, this.sortPriorityRules());
+    }
+
+    public SortSettings withSortPlayerInventory(boolean enabled) {
+        return new SortSettings(this.sortHighlightedItem(), enabled, this.enableDoubleClick(), this.sortIntoBundles(), this.sortIntoHotbarBundles(), this.sortType(), this.sortPriorityRules());
+    }
+
+    public SortSettings withSortHighlightedInventory(boolean enabled) {
+        return new SortSettings(enabled, this.sortPlayerInventory(), this.enableDoubleClick(), this.sortIntoBundles(), this.sortIntoHotbarBundles(), this.sortType(), this.sortPriorityRules());
+    }
+
+    public SortSettings withSortIntoBundles(boolean enabled) {
+        return new SortSettings(this.sortHighlightedItem(), this.sortPlayerInventory(), this.enableDoubleClick(), enabled, this.sortIntoHotbarBundles(), this.sortType(), this.sortPriorityRules());
+    }
+
+    public SortSettings withSortIntoHotbarBundles(boolean enabled) {
+        return new SortSettings(this.sortHighlightedItem(), this.sortPlayerInventory(), this.enableDoubleClick(), this.sortIntoBundles(), enabled, this.sortType(), this.sortPriorityRules());
+    }
+
+    public SortSettings withSortPriorityRules(List<SortPriorityRuleSetting> sortPriorityRules) {
+        return new SortSettings(this.sortHighlightedItem(), this.sortPlayerInventory(), this.enableDoubleClick(), this.sortIntoBundles(), this.sortIntoHotbarBundles(), this.sortType(), sortPriorityRules);
+    }
+
+    public void sync(ServerPlayer player) {
+        this.sync(player, PlatformServices.NETWORK);
+    }
+
+    void sync(ServerPlayer player, NetworkingPlatform networking) {
+        networking.sendToPlayer(player, this);
     }
 }

@@ -1,39 +1,39 @@
 package net.kyrptonaught.inventorysorter.compat.sources;
 
-import net.minecraft.registry.Registries;
-import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.inventory.MenuType;
 
 import java.util.Objects;
 import java.util.Set;
 
-public class PredefinedLoader implements CompatibilityLoader{
+public class PredefinedLoader implements CompatibilityLoader {
     @Override
     public Set<Identifier> getPreventSort() {
         return Set.of(
-                Objects.requireNonNull(Registries.SCREEN_HANDLER.getId(ScreenHandlerType.CRAFTING)),
-                Objects.requireNonNull(Registries.SCREEN_HANDLER.getId(ScreenHandlerType.ANVIL)),
-                Objects.requireNonNull(Registries.SCREEN_HANDLER.getId(ScreenHandlerType.BEACON)),
-                Objects.requireNonNull(Registries.SCREEN_HANDLER.getId(ScreenHandlerType.BLAST_FURNACE)),
-                Objects.requireNonNull(Registries.SCREEN_HANDLER.getId(ScreenHandlerType.BREWING_STAND)),
-                Objects.requireNonNull(Registries.SCREEN_HANDLER.getId(ScreenHandlerType.CARTOGRAPHY_TABLE)),
-                Objects.requireNonNull(Registries.SCREEN_HANDLER.getId(ScreenHandlerType.CRAFTER_3X3)),
-                Objects.requireNonNull(Registries.SCREEN_HANDLER.getId(ScreenHandlerType.ENCHANTMENT)),
-                Objects.requireNonNull(Registries.SCREEN_HANDLER.getId(ScreenHandlerType.FURNACE)),
-                Objects.requireNonNull(Registries.SCREEN_HANDLER.getId(ScreenHandlerType.GRINDSTONE)),
-                Objects.requireNonNull(Registries.SCREEN_HANDLER.getId(ScreenHandlerType.LECTERN)),
-                Objects.requireNonNull(Registries.SCREEN_HANDLER.getId(ScreenHandlerType.LOOM)),
-                Objects.requireNonNull(Registries.SCREEN_HANDLER.getId(ScreenHandlerType.MERCHANT)),
-                Objects.requireNonNull(Registries.SCREEN_HANDLER.getId(ScreenHandlerType.SMOKER)),
-                Objects.requireNonNull(Registries.SCREEN_HANDLER.getId(ScreenHandlerType.STONECUTTER))
+                Objects.requireNonNull(BuiltInRegistries.MENU.getKey(MenuType.CRAFTING)),
+                Objects.requireNonNull(BuiltInRegistries.MENU.getKey(MenuType.ANVIL)),
+                Objects.requireNonNull(BuiltInRegistries.MENU.getKey(MenuType.BEACON)),
+                Objects.requireNonNull(BuiltInRegistries.MENU.getKey(MenuType.BLAST_FURNACE)),
+                Objects.requireNonNull(BuiltInRegistries.MENU.getKey(MenuType.BREWING_STAND)),
+                Objects.requireNonNull(BuiltInRegistries.MENU.getKey(MenuType.CARTOGRAPHY_TABLE)),
+                Objects.requireNonNull(BuiltInRegistries.MENU.getKey(MenuType.CRAFTER_3x3)),
+                Objects.requireNonNull(BuiltInRegistries.MENU.getKey(MenuType.ENCHANTMENT)),
+                Objects.requireNonNull(BuiltInRegistries.MENU.getKey(MenuType.FURNACE)),
+                Objects.requireNonNull(BuiltInRegistries.MENU.getKey(MenuType.GRINDSTONE)),
+                Objects.requireNonNull(BuiltInRegistries.MENU.getKey(MenuType.LECTERN)),
+                Objects.requireNonNull(BuiltInRegistries.MENU.getKey(MenuType.LOOM)),
+                Objects.requireNonNull(BuiltInRegistries.MENU.getKey(MenuType.MERCHANT)),
+                Objects.requireNonNull(BuiltInRegistries.MENU.getKey(MenuType.SMOKER)),
+                Objects.requireNonNull(BuiltInRegistries.MENU.getKey(MenuType.STONECUTTER))
         );
     }
 
     @Override
     public Set<Identifier> getShouldHideSortButtons() {
         return Set.of(
-                Objects.requireNonNull(Registries.SCREEN_HANDLER.getId(ScreenHandlerType.BEACON)),
-                Objects.requireNonNull(Registries.SCREEN_HANDLER.getId(ScreenHandlerType.LOOM))
+                Objects.requireNonNull(BuiltInRegistries.MENU.getKey(MenuType.BEACON)),
+                Objects.requireNonNull(BuiltInRegistries.MENU.getKey(MenuType.LOOM))
         );
     }
 }

@@ -1,7 +1,9 @@
+tmp
 # minecraft
 run/
-
+.tmp/
 .env
+.fabric
 
 # gradle
 secrets.gradle

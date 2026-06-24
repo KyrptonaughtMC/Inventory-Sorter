@@ -1,0 +1,32 @@
+modLoader = "javafml"
+loaderVersion = "*"
+issueTrackerURL = "https://github.com/KyrptonaughtMC/Inventory-Sorter/issues"
+license = "MIT"
+
+[[mods]]
+modId = "${id}"
+version = "${version}"
+displayName = "${name}"
+authors = "Meza, kyrptonaught"
+description = '''
+${description}
+'''
+logoFile = "assets/${id}/icon.png"
+logoBlur = false
+
+[[mixins]]
+config = "net.kyrptonaught.inventorysorter.json"
+
+[[dependencies.${id}]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[${minecraftVersionVirtual},)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.${id}]]
+modId = "cloth_config"
+mandatory = true
+versionRange = "[${clothVersion},)"
+ordering = "NONE"
+side = "CLIENT"

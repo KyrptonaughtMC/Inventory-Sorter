@@ -3,7 +3,7 @@ package net.kyrptonaught.inventorysorter.compat.sources;
 import com.google.gson.Gson;
 import net.kyrptonaught.inventorysorter.compat.config.CompatConfig;
 import net.kyrptonaught.inventorysorter.config.SchemaValidator;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -17,10 +17,10 @@ import java.util.stream.Collectors;
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.LOGGER;
 
 public class RemoteConfigLoader implements CompatibilityLoader {
+    private static final long CACHE_TTL_MILLIS = 2 * 1000; // 2 seconds small cache TTL
     private final Supplier<String> customCompatibilityListDownloadUrl;
     private CompatConfig config = new CompatConfig();
     private long lastRemoteConfigFetch = 0;
-    private static final long CACHE_TTL_MILLIS = 2 * 1000; // 2 seconds small cache TTL
 
     public RemoteConfigLoader(Supplier<String> customCompatibilityListDownloadUrl) {
         this.customCompatibilityListDownloadUrl = customCompatibilityListDownloadUrl;
@@ -66,7 +66,7 @@ public class RemoteConfigLoader implements CompatibilityLoader {
     public Set<Identifier> getPreventSort() {
         loadRemoteConfig();
         return config.preventSortForScreens.stream()
-                .map(Identifier::of)
+                .map(Identifier::parse)
                 .collect(Collectors.toSet());
     }
 
@@ -74,7 +74,7 @@ public class RemoteConfigLoader implements CompatibilityLoader {
     public Set<Identifier> getShouldHideSortButtons() {
         loadRemoteConfig();
         return config.hideButtonsForScreens.stream()
-                .map(Identifier::of)
+                .map(Identifier::parse)
                 .collect(Collectors.toSet());
     }
 }

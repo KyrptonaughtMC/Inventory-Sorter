@@ -1,6 +1,7 @@
 {
   "inventorysorter.discord": "Discord",
   "key.category.inventorysorter.main": "Inventarie sorterare",
+  "inventorysorter.config.compat.remoteUrl.tooltip": "",
   "inventorysorter.config.showTooltip.tooltip": "Verktygstipen visar sorteringstypen vid svävning över sorteringsknappen",
   "inventorysorter.cmd.remote.show": "Aktuell fjärrkonfigurations-URL: %s"
 }

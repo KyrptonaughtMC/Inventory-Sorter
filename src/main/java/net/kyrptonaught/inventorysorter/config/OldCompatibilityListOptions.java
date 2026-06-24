@@ -13,11 +13,10 @@ import static net.kyrptonaught.inventorysorter.InventorySorterMod.MOD_ID;
 
 public class OldCompatibilityListOptions {
 
+    public static final String CONFIG_FILE = MOD_ID + "/blacklist.json5";
     public String blacklistDownloadURL;
     public List<String> doNotSortList = new ArrayList<>();
     public List<String> hideSortBtnsList = new ArrayList<>();
-
-    public static final String CONFIG_FILE = MOD_ID + "/blacklist.json5";
 
     public static OldCompatibilityListOptions load() {
         try {

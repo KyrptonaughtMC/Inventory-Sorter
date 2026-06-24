@@ -2,30 +2,31 @@ package net.kyrptonaught.inventorysorter.network;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
+import net.kyrptonaught.inventorysorter.platform.NetworkingPlatform;
+import net.kyrptonaught.inventorysorter.platform.PlatformServices;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerPlayer;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.MOD_ID;
 
 public record LastSeenVersionPacket(
         String lastSeenVersion,
         String lastSeenLanguage
-) implements CustomPayload {
+) implements CustomPacketPayload {
 
-    public static final Id<LastSeenVersionPacket> ID = new Id<>(Identifier.of(MOD_ID, "last_seen_version_packet"));
+    public static final Type<LastSeenVersionPacket> ID = new Type<>(Identifier.fromNamespaceAndPath(MOD_ID, "last_seen_version_packet"));
     public static final LastSeenVersionPacket DEFAULT = new LastSeenVersionPacket("", "");
 
-    public static final PacketCodec<RegistryByteBuf, LastSeenVersionPacket> CODEC =
-            PacketCodec.of(
+    public static final StreamCodec<RegistryFriendlyByteBuf, LastSeenVersionPacket> CODEC =
+            StreamCodec.ofMember(
                     (value, buf) -> {
-                        buf.writeString(value.lastSeenVersion());
-                        buf.writeString(value.lastSeenLanguage());
+                        buf.writeUtf(value.lastSeenVersion());
+                        buf.writeUtf(value.lastSeenLanguage());
                     },
-                    buf -> new LastSeenVersionPacket(buf.readString(), buf.readString())
+                    buf -> new LastSeenVersionPacket(buf.readUtf(), buf.readUtf())
             );
 
     public static final Codec<LastSeenVersionPacket> NBT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -34,11 +35,15 @@ public record LastSeenVersionPacket(
     ).apply(instance, LastSeenVersionPacket::new));
 
     @Override
-    public Id<? extends CustomPayload> getId() {
+    public Type<? extends CustomPacketPayload> type() {
         return ID;
     }
 
-    public void send(ServerPlayerEntity player) {
-        ServerPlayNetworking.send(player, this);
+    public void send(ServerPlayer player) {
+        this.send(player, PlatformServices.NETWORK);
+    }
+
+    void send(ServerPlayer player, NetworkingPlatform networking) {
+        networking.sendToPlayer(player, this);
     }
 }

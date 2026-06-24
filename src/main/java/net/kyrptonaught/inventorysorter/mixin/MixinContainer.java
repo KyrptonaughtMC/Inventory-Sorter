@@ -1,15 +1,17 @@
 package net.kyrptonaught.inventorysorter.mixin;
 
-import net.kyrptonaught.inventorysorter.InventoryHelper;
+import net.kyrptonaught.inventorysorter.inventory.ServerInventorySorter;
+import net.kyrptonaught.inventorysorter.SortTarget;
 import net.kyrptonaught.inventorysorter.network.SortSettings;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.screen.slot.SlotActionType;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.collection.DefaultedList;
+import net.kyrptonaught.inventorysorter.platform.PlatformServices;
+import net.minecraft.core.NonNullList;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -18,48 +20,44 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.LOGGER;
-import static net.kyrptonaught.inventorysorter.InventorySorterMod.SORT_SETTINGS;
 
-@Mixin(ScreenHandler.class)
+@Mixin(AbstractContainerMenu.class)
 public abstract class MixinContainer {
     @Shadow
     @Final
-    public DefaultedList<Slot> slots;
+    public NonNullList<Slot> slots;
 
     @Shadow
-    private ItemStack cursorStack;
+    private ItemStack carried;
 
-    @Inject(method = "onSlotClick", at = @At("HEAD"), cancellable = true)
-    public void sortOnDoubleClickEmpty(int slotIndex, int button, SlotActionType actionType, PlayerEntity player, CallbackInfo ci) {
+    @Inject(method = "clicked", at = @At("HEAD"), cancellable = true)
+    public void sortOnDoubleClickEmpty(int slotIndex, int buttonNum, ContainerInput containerInput, Player player, CallbackInfo ci) {
         // Server side only
-        /*? if >= 1.21.9 {*/
-        if (!player.getEntityWorld().isClient()) {
-        /*?} else {*/
-        /*if (!player.getWorld().isClient) {
-        *//*?}*/
-            if (!(player instanceof ServerPlayerEntity)) {
+        if (!player.level().isClientSide()) {
+            if (!(player instanceof ServerPlayer)) {
                 // Heuristics, just to be on the safe side
                 LOGGER.debug("Player is not a ServerPlayerEntity, skipping sort on double click");
                 return;
             }
+            ServerPlayer serverPlayer = (ServerPlayer) player;
+            SortSettings settings = PlatformServices.PLAYER_DATA.getSortSettings(serverPlayer);
 
-            SortSettings settings = player.getAttachedOrCreate(SORT_SETTINGS);
-
-            if (settings.enableDoubleClick() && button == 0 && actionType.equals(SlotActionType.PICKUP_ALL))
-                if (cursorStack.isEmpty())
-                    if (slotIndex >= 0 && slotIndex < this.slots.size() && this.slots.get(slotIndex).getStack().isEmpty()) {
-                        boolean isPlayerInventory = slots.get(slotIndex).inventory instanceof PlayerInventory;
-                        InventoryHelper.sortInventory(
-                                (ServerPlayerEntity) player,
-                                isPlayerInventory,
-                                settings.sortType()
+            if (settings.enableDoubleClick() && buttonNum == 0 && containerInput.equals(ContainerInput.PICKUP_ALL))
+                if (carried.isEmpty())
+                    if (slotIndex >= 0 && slotIndex < this.slots.size() && this.slots.get(slotIndex).getItem().isEmpty()) {
+                        boolean isPlayerInventory = slots.get(slotIndex).container instanceof Inventory;
+                        SortTarget target = isPlayerInventory ? SortTarget.PLAYER_INVENTORY : SortTarget.CONTAINER;
+                        ServerInventorySorter.sort(
+                                serverPlayer,
+                                target,
+                                settings
                         );
 
-                        if (!isPlayerInventory && settings.sortPlayerInventory()) {
-                            InventoryHelper.sortInventory(
-                                    (ServerPlayerEntity) player,
-                                    true,
-                                    settings.sortType()
+                        if (target == SortTarget.CONTAINER && settings.sortPlayerInventory()) {
+                            ServerInventorySorter.sort(
+                                    serverPlayer,
+                                    SortTarget.PLAYER_INVENTORY,
+                                    settings
                             );
                         }
 

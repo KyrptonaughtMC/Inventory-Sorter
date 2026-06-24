@@ -1,30 +1,31 @@
 package net.kyrptonaught.inventorysorter.commands;
 
+import net.kyrptonaught.inventorysorter.compat.ServerComponent;
+
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.kyrptonaught.inventorysorter.network.ReloadConfigPacket;
 import net.kyrptonaught.inventorysorter.permissions.CommandPermission;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.server.level.ServerPlayer;
 
 public class ReloadCommand {
-    public static void register(CommandDispatcher<ServerCommandSource> dispatcher, LiteralArgumentBuilder<ServerCommandSource> rootCommand) {
-        dispatcher.register(rootCommand.then(CommandManager.literal("reload")
-                .requires(CommandPermission.require("reload", 0))
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher, LiteralArgumentBuilder<CommandSourceStack> rootCommand) {
+        dispatcher.register(rootCommand.then(Commands.literal("reload")
+                .requires(CommandPermission.require(CommandRegistry.RELOAD, 0))
                 .executes(ReloadCommand::run)));
     }
 
-    public static int run(CommandContext<ServerCommandSource> commandContext) {
-        ServerPlayerEntity player = commandContext.getSource().getPlayer();
+    public static int run(CommandContext<CommandSourceStack> commandContext) {
+        ServerPlayer player = commandContext.getSource().getPlayer();
         if (player == null) {
-            commandContext.getSource().sendFeedback(CommandTranslations::playerRequired, false);
+            commandContext.getSource().sendSuccess(CommandTranslations::playerRequired, false);
             return 0;
         }
         new ReloadConfigPacket().fire(player);
-        commandContext.getSource().sendFeedback(() -> Text.translatable("inventorysorter.cmd.reload.success"), false);
+        commandContext.getSource().sendSuccess(() -> ServerComponent.lang(player.clientInformation().language()).translate("inventorysorter.cmd.reload.success"), false);
         return 1;
     }
 }

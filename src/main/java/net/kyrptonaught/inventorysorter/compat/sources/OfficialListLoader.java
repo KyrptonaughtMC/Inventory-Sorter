@@ -1,6 +1,6 @@
 package net.kyrptonaught.inventorysorter.compat.sources;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 
 import java.io.InputStreamReader;
 import java.io.Reader;

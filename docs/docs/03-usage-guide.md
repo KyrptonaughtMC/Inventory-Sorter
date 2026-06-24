@@ -156,6 +156,18 @@ They are always available as long as the server has [Inventory Sorter installed]
 
 ---
 
+## Bundle Sorting
+
+When sorting into bundles is enabled, Inventory Sorter looks for existing non-empty bundles and moves matching loose items into them before it lays out the rest of the inventory.
+Only items that already match the bundle's contents are inserted, and Minecraft's normal bundle rules still apply.
+
+For player inventory sorts, Inventory Sorter can also use:
+
+- Bundles in the player hotbar, when hotbar bundle targets are enabled.
+- Bundles in compatible mod slots.
+
+---
+
 ## Feature Availability
 
 | Feature           | Requires Client Mod | Works with Vanilla Client | Configurable |
