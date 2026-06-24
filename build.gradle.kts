@@ -155,8 +155,9 @@ publishMods {
     }
 
     curseforge {
-        client = false
-        server = false
+        client = true
+        server = true
+
         if (mod.isFabric) {
             requires("fabric-api")
             optional("modmenu")
