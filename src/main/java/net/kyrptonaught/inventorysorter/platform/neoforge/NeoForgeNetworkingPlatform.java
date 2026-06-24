@@ -5,6 +5,8 @@ import net.kyrptonaught.inventorysorter.inventory.ServerInventorySorter;
 import net.kyrptonaught.inventorysorter.network.*;
 import net.kyrptonaught.inventorysorter.platform.NetworkingPlatform;
 import net.kyrptonaught.inventorysorter.platform.PlatformServices;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -12,6 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.extensions.ICommonPacketListener;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.client.network.event.RegisterClientPayloadHandlersEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -43,7 +46,7 @@ public class NeoForgeNetworkingPlatform implements NetworkingPlatform {
 
     @SubscribeEvent
     public static void registerPayloads(RegisterPayloadHandlersEvent event) {
-        PayloadRegistrar registrar = event.registrar(MOD_ID);
+        PayloadRegistrar registrar = event.registrar(MOD_ID).optional();
 
         registrar.playToServer(InventorySortPacket.ID, InventorySortPacket.CODEC, (payload, context) -> {
             Player contextPlayer = context.player();
@@ -102,12 +105,17 @@ public class NeoForgeNetworkingPlatform implements NetworkingPlatform {
 
     @Override
     public void sendToServer(CustomPacketPayload payload) {
-        ClientPacketDistributor.sendToServer(payload);
+        ClientPacketListener listener = Minecraft.getInstance().getConnection();
+        if (listener != null && ((ICommonPacketListener) listener).hasChannel(payload)) {
+            ClientPacketDistributor.sendToServer(payload);
+        }
     }
 
     @Override
     public void sendToPlayer(ServerPlayer player, CustomPacketPayload payload) {
-        PacketDistributor.sendToPlayer(player, payload);
+        if (((ICommonPacketListener) player.connection).hasChannel(payload)) {
+            PacketDistributor.sendToPlayer(player, payload);
+        }
     }
 
     @EventBusSubscriber(modid = MOD_ID, value = Dist.CLIENT)
