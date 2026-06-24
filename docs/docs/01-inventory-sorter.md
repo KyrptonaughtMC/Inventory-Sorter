@@ -23,7 +23,13 @@ This approach enables:
 
 Client-side installation is optional. Without the client mod, users will not see a sort button, keybind, or config menu. These features are purely visual and do not affect core functionality.
 
-There is an ongoing effort to support client-only usage, but this is not currently available.
+## Server-only support
+
+The mod can be installed on a server without requiring clients to install it. Players can sort their inventories as described in the [usage guide](/usage-guide).
+
+## Client-Only support
+
+Inventory Sorter can also be installed on the client without a server installation. This however spams the UI with a lot of actions and can cause issues when synchronizing with the server. It is not recommended to use the client mod without a server installation, but it is possible.
 
 ## Differences from other sorting mods
 
