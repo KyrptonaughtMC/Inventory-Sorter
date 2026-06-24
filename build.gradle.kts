@@ -65,7 +65,7 @@ dependencies {
     include("gg.meza:meza_core-${mod.loader}:${mod.prop("meza_core_version")}+${stonecutter.current.version}")
 
     compileOnly("maven.modrinth:trinkets-updated:${mod.prop("trinkets_version")}")
-//    localRuntime("maven.modrinth:trinkets-updated:${mod.prop("trinkets_version")}")
+    localRuntime("maven.modrinth:trinkets-updated:${mod.prop("trinkets_version")}")
     testCompileOnly("maven.modrinth:trinkets-updated:${mod.prop("trinkets_version")}")
     testRuntimeOnly("maven.modrinth:trinkets-updated:${mod.prop("trinkets_version")}")
 
@@ -92,31 +92,6 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
-    if (!mod.isFabric) {
-        val junitGameDirectory = layout.buildDirectory.dir("minecraft-junit")
-        val junitArgsFile = junitGameDirectory.map { it.file("programArgs.txt") }
-        val modFolders =
-            listOf(
-                layout.buildDirectory.dir("classes/java/main"),
-                layout.buildDirectory.dir("resources/main"),
-                layout.buildDirectory.dir("classes/java/test"),
-            ).joinToString(File.pathSeparator) { directory ->
-                "${mod.id}%%${directory.get().asFile.absolutePath}"
-            }
-
-        workingDir = junitGameDirectory.get().asFile
-        systemProperty("fml.junit.argsfile", junitArgsFile.get().asFile.absolutePath)
-        jvmArgs(
-            "--add-opens=java.base/java.lang.invoke=ALL-UNNAMED",
-            "-Dfml.modFolders=$modFolders",
-        )
-        doFirst {
-            junitArgsFile.get().asFile.apply {
-                parentFile.mkdirs()
-                writeText("")
-            }
-        }
-    }
     finalizedBy(tasks.jacocoTestReport)
 }
 

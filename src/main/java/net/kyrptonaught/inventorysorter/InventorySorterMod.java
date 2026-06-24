@@ -10,12 +10,15 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 //? }
+import net.kyrptonaught.inventorysorter.client.platform.neoforge.NeoForgeConfigScreenFactory;
 import net.kyrptonaught.inventorysorter.compat.Compatibility;
 import net.kyrptonaught.inventorysorter.compat.sources.*;
 import net.kyrptonaught.inventorysorter.config.Config;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 //? if neoforge {
-/*import net.neoforged.fml.common.Mod;
+/*import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 *///? }
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +44,12 @@ public class InventorySorterMod /*? if fabric {*/implements ModInitializer/*?}*/
             ))
     );
     public static final String VERSION = "VERSION_REPL";
+
+    //? if neoforge {
+    /*public InventorySorterMod(ModContainer container) {
+        container.registerExtensionPoint(IConfigScreenFactory.class, new NeoForgeConfigScreenFactory());
+    }
+    *///?}
 
     public static NewConfigOptions getConfig() {
         return CONFIG;

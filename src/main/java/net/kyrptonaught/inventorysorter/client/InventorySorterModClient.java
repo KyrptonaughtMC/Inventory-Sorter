@@ -9,6 +9,7 @@ import net.kyrptonaught.inventorysorter.client.platform.ClientPlatformServices;
 import net.kyrptonaught.inventorysorter.compat.sources.ConfigLoader;
 import net.kyrptonaught.inventorysorter.platform.PlatformServices;
 
+
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.*;
 
 public class InventorySorterModClient /*? if fabric {*/implements ClientModInitializer/*?}*/ {
