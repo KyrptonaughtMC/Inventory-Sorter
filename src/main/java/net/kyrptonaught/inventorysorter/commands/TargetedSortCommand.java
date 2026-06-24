@@ -1,5 +1,7 @@
 package net.kyrptonaught.inventorysorter.commands;
 
+import net.kyrptonaught.inventorysorter.compat.ServerComponent;
+
 import net.kyrptonaught.inventorysorter.network.SortSettings;
 import net.kyrptonaught.inventorysorter.screen.TargetedInventoryResolver;
 import net.kyrptonaught.inventorysorter.inventory.ContainerInventorySorter;
@@ -33,12 +35,12 @@ public final class TargetedSortCommand {
         });
 
         if (result == null) {
-            return Component.translatable("inventorysorter.cmd.sort.error");
+            return ServerComponent.lang(player.clientInformation().language()).translate("inventorysorter.cmd.sort.error");
         }
         if (result) {
-            return Component.translatable("inventorysorter.cmd.sort.sorted");
+            return ServerComponent.lang(player.clientInformation().language()).translate("inventorysorter.cmd.sort.sorted");
         }
 
-        return Component.translatable("inventorysorter.cmd.sort.notsortable");
+        return ServerComponent.lang(player.clientInformation().language()).translate("inventorysorter.cmd.sort.notsortable");
     }
 }

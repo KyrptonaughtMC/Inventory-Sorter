@@ -9,6 +9,10 @@ plugins {
 stonecutter {
     constants["hasModMenu"] = mod.prop("modmenu_version", "0") != "0"
 
+    replacements.string(project.mod.isNeoforge) {
+        replace("player.clientInformation().language()", "player.getLanguage()")
+    }
+
     replacements.string(stonecutter.current.parsed < "26.2") {
         replace("Minecraft.getInstance().gui.screen()", "Minecraft.getInstance().screen")
         replace("minecraft.gui.screen()", "minecraft.screen")
@@ -60,13 +64,8 @@ dependencies {
     implementation("gg.meza:meza_core-${mod.loader}:${mod.prop("meza_core_version")}+${stonecutter.current.version}")
     include("gg.meza:meza_core-${mod.loader}:${mod.prop("meza_core_version")}+${stonecutter.current.version}")
 
-    if (mod.isFabric) {
-        implementation("xyz.nucleoid:server-translations-api:${mod.prop("server_translations_api_version")}")
-        include("xyz.nucleoid:server-translations-api:${mod.prop("server_translations_api_version")}")
-    }
-
     compileOnly("maven.modrinth:trinkets-updated:${mod.prop("trinkets_version")}")
-    localRuntime("maven.modrinth:trinkets-updated:${mod.prop("trinkets_version")}")
+//    localRuntime("maven.modrinth:trinkets-updated:${mod.prop("trinkets_version")}")
     testCompileOnly("maven.modrinth:trinkets-updated:${mod.prop("trinkets_version")}")
     testRuntimeOnly("maven.modrinth:trinkets-updated:${mod.prop("trinkets_version")}")
 

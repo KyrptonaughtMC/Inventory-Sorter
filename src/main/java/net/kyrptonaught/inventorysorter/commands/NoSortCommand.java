@@ -1,5 +1,7 @@
 package net.kyrptonaught.inventorysorter.commands;
 
+import net.kyrptonaught.inventorysorter.compat.ServerComponent;
+
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -9,7 +11,6 @@ import net.kyrptonaught.inventorysorter.platform.PlatformServices;
 import net.kyrptonaught.inventorysorter.permissions.CommandPermission;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
 public class NoSortCommand {
@@ -44,13 +45,13 @@ public class NoSortCommand {
         });
 
         if (Boolean.FALSE.equals(success)) {
-            commandContext.getSource().sendSuccess(() -> Component.translatable("inventorysorter.cmd.nosort.add.fail"), false);
+            commandContext.getSource().sendSuccess(() -> ServerComponent.lang(player.clientInformation().language()).translate("inventorysorter.cmd.nosort.add.fail"), false);
             return 0;
         }
 
         playerSortPrevention.sync(player);
 
-        commandContext.getSource().sendSuccess(() -> Component.translatable("inventorysorter.cmd.nosort.add.success"), false);
+        commandContext.getSource().sendSuccess(() -> ServerComponent.lang(player.clientInformation().language()).translate("inventorysorter.cmd.nosort.add.success"), false);
         return 1;
     }
 
@@ -69,12 +70,12 @@ public class NoSortCommand {
         });
 
         if (Boolean.FALSE.equals(success)) {
-            commandContext.getSource().sendSuccess(() -> Component.translatable("inventorysorter.cmd.nosort.remove.fail"), false);
+            commandContext.getSource().sendSuccess(() -> ServerComponent.lang(player.clientInformation().language()).translate("inventorysorter.cmd.nosort.remove.fail"), false);
             return 0;
         }
 
         playerSortPrevention.sync(player);
-        commandContext.getSource().sendSuccess(() -> Component.translatable("inventorysorter.cmd.nosort.remove.success"), false);
+        commandContext.getSource().sendSuccess(() -> ServerComponent.lang(player.clientInformation().language()).translate("inventorysorter.cmd.nosort.remove.success"), false);
         return 1;
     }
 
@@ -86,7 +87,7 @@ public class NoSortCommand {
         }
         PlayerSortPrevention playerSortPrevention = PlatformServices.PLAYER_DATA.getPlayerSortPrevention(player);
 
-        commandContext.getSource().sendSuccess(() -> Component.translatable(
+        commandContext.getSource().sendSuccess(() -> ServerComponent.lang(player.clientInformation().language()).translate(
                 "inventorysorter.cmd.nosort.list",
                 String.join(",", playerSortPrevention.preventSortForScreens())
         ), false);

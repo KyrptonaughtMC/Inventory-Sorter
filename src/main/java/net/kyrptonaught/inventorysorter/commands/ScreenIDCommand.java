@@ -1,5 +1,7 @@
 package net.kyrptonaught.inventorysorter.commands;
 
+import net.kyrptonaught.inventorysorter.compat.ServerComponent;
+
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -34,17 +36,17 @@ public class ScreenIDCommand {
         InventoryScreenId screenID = TargetedInventoryResolver.withTargetedScreen(player, TargetedScreenContext::screenId);
 
         if (screenID == null) {
-            commandContext.getSource().sendSuccess(() -> Component.translatable("inventorysorter.cmd.screenid.fail"), false);
+            commandContext.getSource().sendSuccess(() -> ServerComponent.lang(player.clientInformation().language()).translate("inventorysorter.cmd.screenid.fail"), false);
             return 0;
         }
 
-        MutableComponent feedbackText = Component.translatable("inventorysorter.cmd.screenid.success", screenID.toString());
+        MutableComponent feedbackText = ServerComponent.lang(player.clientInformation().language()).translate("inventorysorter.cmd.screenid.success", screenID.toString());
 
         Component copyableText = feedbackText
                 .withStyle(style -> style
                         .withColor(ChatFormatting.GREEN)
                         .withClickEvent(new ClickEvent.CopyToClipboard(screenID.toString()))
-                        .withHoverEvent(new HoverEvent.ShowText(Component.translatable("inventorysorter.cmd.screenid.copy.hover")))
+                        .withHoverEvent(new HoverEvent.ShowText(ServerComponent.lang(player.clientInformation().language()).translate("inventorysorter.cmd.screenid.copy.hover")))
                 );
 
         commandContext.getSource().sendSuccess(() -> copyableText, false);

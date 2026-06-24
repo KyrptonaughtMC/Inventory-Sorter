@@ -1,5 +1,7 @@
 package net.kyrptonaught.inventorysorter.commands;
 
+import net.kyrptonaught.inventorysorter.compat.ServerComponent;
+
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -9,7 +11,6 @@ import net.kyrptonaught.inventorysorter.platform.PlatformServices;
 import net.kyrptonaught.inventorysorter.permissions.CommandPermission;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
 public class SortTypeCommand {
@@ -36,7 +37,7 @@ public class SortTypeCommand {
 
         settings.sync(player);
 
-        commandContext.getSource().sendSuccess(() -> Component.translatable("inventorysorter.cmd.sorttype.success", Component.translatable(sortType.getTranslationKey())), false);
+        commandContext.getSource().sendSuccess(() -> ServerComponent.lang(player.clientInformation().language()).translate("inventorysorter.cmd.sorttype.success", ServerComponent.lang(player.clientInformation().language()).translate(sortType.getTranslationKey())), false);
         return 1;
     }
 }

@@ -1,5 +1,7 @@
 package net.kyrptonaught.inventorysorter.commands;
 
+import net.kyrptonaught.inventorysorter.compat.ServerComponent;
+
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -13,7 +15,6 @@ import net.kyrptonaught.inventorysorter.platform.PlatformServices;
 import net.kyrptonaught.inventorysorter.sort.SortPriorityRules;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.ArrayList;
@@ -128,17 +129,17 @@ public class SortPriorityRulesCommand {
 
         List<SortPriorityRuleSetting> rules = PlatformServices.PLAYER_DATA.getSortSettings(player).sortPriorityRules();
         if (rules.isEmpty()) {
-            context.getSource().sendSuccess(() -> Component.translatable("inventorysorter.cmd.priority.list.empty"), false);
+            context.getSource().sendSuccess(() -> ServerComponent.lang(player.clientInformation().language()).translate("inventorysorter.cmd.priority.list.empty"), false);
             return 1;
         }
 
         for (int i = 0; i < rules.size(); i++) {
             int userIndex = i + 1;
             SortPriorityRuleSetting rule = rules.get(i);
-            context.getSource().sendSuccess(() -> Component.translatable(
+            context.getSource().sendSuccess(() -> ServerComponent.lang(player.clientInformation().language()).translate(
                     "inventorysorter.cmd.priority.list.entry",
                     userIndex,
-                    Component.translatable(rule.position().getTranslationKey()),
+                    ServerComponent.lang(player.clientInformation().language()).translate(rule.position().getTranslationKey()),
                     rule.match()
             ), false);
         }
@@ -157,10 +158,10 @@ public class SortPriorityRulesCommand {
             SortSettings updatedSettings = currentSettings.withSortPriorityRules(update.apply(currentSettings.sortPriorityRules()));
             PlatformServices.PLAYER_DATA.setSortSettings(player, updatedSettings);
             updatedSettings.sync(player);
-            context.getSource().sendSuccess(() -> Component.translatable(successKey), false);
+            context.getSource().sendSuccess(() -> ServerComponent.lang(player.clientInformation().language()).translate(successKey), false);
             return 1;
         } catch (IllegalArgumentException e) {
-            context.getSource().sendFailure(Component.translatable("inventorysorter.cmd.priority.error", e.getMessage()));
+            context.getSource().sendFailure(ServerComponent.lang(player.clientInformation().language()).translate("inventorysorter.cmd.priority.error", e.getMessage()));
             return 0;
         }
     }

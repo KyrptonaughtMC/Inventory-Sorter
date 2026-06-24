@@ -1,5 +1,7 @@
 package net.kyrptonaught.inventorysorter.commands;
 
+import net.kyrptonaught.inventorysorter.compat.ServerComponent;
+
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -10,7 +12,6 @@ import net.kyrptonaught.inventorysorter.network.HideButton;
 import net.kyrptonaught.inventorysorter.permissions.CommandPermission;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.*;
@@ -118,11 +119,11 @@ public class AdminCommands {
         });
 
         if (Boolean.FALSE.equals(success)) {
-            commandContext.getSource().sendSuccess(() -> Component.translatable("inventorysorter.cmd.nosort.add.fail"), false);
+            commandContext.getSource().sendSuccess(() -> ServerComponent.lang(player.clientInformation().language()).translate("inventorysorter.cmd.nosort.add.fail"), false);
             return 0;
         }
 
-        commandContext.getSource().sendSuccess(() -> Component.translatable("inventorysorter.cmd.nosort.add.success"), false);
+        commandContext.getSource().sendSuccess(() -> ServerComponent.lang(player.clientInformation().language()).translate("inventorysorter.cmd.nosort.add.success"), false);
         return 1;
     }
 
@@ -142,18 +143,18 @@ public class AdminCommands {
         });
 
         if (Boolean.FALSE.equals(success)) {
-            commandContext.getSource().sendSuccess(() -> Component.translatable("inventorysorter.cmd.nosort.remove.fail"), false);
+            commandContext.getSource().sendSuccess(() -> ServerComponent.translate("inventorysorter.cmd.nosort.remove.fail"), false);
             return 0;
         }
 
-        commandContext.getSource().sendSuccess(() -> Component.translatable("inventorysorter.cmd.nosort.remove.success"), false);
+        commandContext.getSource().sendSuccess(() -> ServerComponent.translate("inventorysorter.cmd.nosort.remove.success"), false);
         return 1;
     }
 
     public static int nosortList(CommandContext<CommandSourceStack> commandContext) {
         NewConfigOptions config = getConfig();
 
-        commandContext.getSource().sendSuccess(() -> Component.translatable(
+        commandContext.getSource().sendSuccess(() -> ServerComponent.translate(
                 "inventorysorter.cmd.nosort.list",
                 String.join(",", config.preventSortForScreens)
         ), false);
@@ -177,12 +178,12 @@ public class AdminCommands {
         });
 
         if (Boolean.FALSE.equals(success)) {
-            commandContext.getSource().sendSuccess(() -> Component.translatable("inventorysorter.cmd.hideButton.add.fail"), false);
+            commandContext.getSource().sendSuccess(() -> ServerComponent.translate("inventorysorter.cmd.hideButton.add.fail"), false);
             return 0;
         }
 
         HideButton.fromConfig(getConfig()).sync(commandContext.getSource().getServer());
-        commandContext.getSource().sendSuccess(() -> Component.translatable("inventorysorter.cmd.hideButton.add.success"), false);
+        commandContext.getSource().sendSuccess(() -> ServerComponent.translate("inventorysorter.cmd.hideButton.add.success"), false);
         return 1;
     }
 
@@ -202,19 +203,19 @@ public class AdminCommands {
         });
 
         if (Boolean.FALSE.equals(success)) {
-            commandContext.getSource().sendSuccess(() -> Component.translatable("inventorysorter.cmd.hideButton.remove.fail"), false);
+            commandContext.getSource().sendSuccess(() -> ServerComponent.translate("inventorysorter.cmd.hideButton.remove.fail"), false);
             return 0;
         }
 
         HideButton.fromConfig(getConfig()).sync(commandContext.getSource().getServer());
-        commandContext.getSource().sendSuccess(() -> Component.translatable("inventorysorter.cmd.hideButton.remove.success"), false);
+        commandContext.getSource().sendSuccess(() -> ServerComponent.translate("inventorysorter.cmd.hideButton.remove.success"), false);
         return 1;
     }
 
     public static int hidebuttonList(CommandContext<CommandSourceStack> commandContext) {
         NewConfigOptions config = getConfig();
 
-        commandContext.getSource().sendSuccess(() -> Component.translatable(
+        commandContext.getSource().sendSuccess(() -> ServerComponent.translate(
                 "inventorysorter.cmd.hideButton.list",
                 String.join(",", config.hideButtonsForScreens)
         ), false);
@@ -228,7 +229,7 @@ public class AdminCommands {
         config.customCompatibilityListDownloadUrl = url;
         config.save();
         reloadConfig();
-        commandContext.getSource().sendSuccess(() -> Component.translatable("inventorysorter.cmd.remote.set.success", url), false);
+        commandContext.getSource().sendSuccess(() -> ServerComponent.translate("inventorysorter.cmd.remote.set.success", url), false);
         return 1;
     }
 
@@ -237,19 +238,19 @@ public class AdminCommands {
         config.customCompatibilityListDownloadUrl = "";
         config.save();
         reloadConfig();
-        commandContext.getSource().sendSuccess(() -> Component.translatable("inventorysorter.cmd.remote.clear.success"), false);
+        commandContext.getSource().sendSuccess(() -> ServerComponent.translate("inventorysorter.cmd.remote.clear.success"), false);
         return 1;
     }
 
     public static int remoteShow(CommandContext<CommandSourceStack> commandContext) {
         NewConfigOptions config = getConfig();
-        commandContext.getSource().sendSuccess(() -> Component.translatable("inventorysorter.cmd.remote.show", config.customCompatibilityListDownloadUrl), false);
+        commandContext.getSource().sendSuccess(() -> ServerComponent.translate("inventorysorter.cmd.remote.show", config.customCompatibilityListDownloadUrl), false);
         return 1;
     }
 
     public static int reload(CommandContext<CommandSourceStack> commandContext) {
         reloadConfig();
-        commandContext.getSource().sendSuccess(() -> Component.translatable("inventorysorter.cmd.reload.success"), false);
+        commandContext.getSource().sendSuccess(() -> ServerComponent.translate("inventorysorter.cmd.reload.success"), false);
         return 1;
     }
 }

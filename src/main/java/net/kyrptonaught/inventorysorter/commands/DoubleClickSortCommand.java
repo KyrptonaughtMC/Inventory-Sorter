@@ -40,7 +40,7 @@ public class DoubleClickSortCommand {
 
         settings.sync(player);
 
-        commandContext.getSource().sendSuccess(() -> CommandTranslations.getOffMessage(SET_KEY), false);
+        commandContext.getSource().sendSuccess(() -> CommandTranslations.getOffMessage(player, SET_KEY), false);
         return 1;
     }
 
@@ -56,7 +56,7 @@ public class DoubleClickSortCommand {
 
         settings.sync(player);
 
-        commandContext.getSource().sendSuccess(() -> CommandTranslations.getOnMessage(SET_KEY), false);
+        commandContext.getSource().sendSuccess(() -> CommandTranslations.getOnMessage(player, SET_KEY), false);
         return 1;
     }
 
@@ -69,7 +69,7 @@ public class DoubleClickSortCommand {
 
         SortSettings settings = PlatformServices.PLAYER_DATA.getSortSettings(player);
 
-        commandContext.getSource().sendSuccess(() -> CommandTranslations.getFeedbackMessageForState(GET_KEY, settings.enableDoubleClick()), false);
+        commandContext.getSource().sendSuccess(() -> CommandTranslations.getFeedbackMessageForState(player, GET_KEY, settings.enableDoubleClick()), false);
         return 1;
     }
 }

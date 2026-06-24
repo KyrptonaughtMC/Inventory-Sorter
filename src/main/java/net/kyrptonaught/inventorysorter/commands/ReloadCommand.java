@@ -1,5 +1,7 @@
 package net.kyrptonaught.inventorysorter.commands;
 
+import net.kyrptonaught.inventorysorter.compat.ServerComponent;
+
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -7,7 +9,6 @@ import net.kyrptonaught.inventorysorter.network.ReloadConfigPacket;
 import net.kyrptonaught.inventorysorter.permissions.CommandPermission;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
 public class ReloadCommand {
@@ -24,7 +25,7 @@ public class ReloadCommand {
             return 0;
         }
         new ReloadConfigPacket().fire(player);
-        commandContext.getSource().sendSuccess(() -> Component.translatable("inventorysorter.cmd.reload.success"), false);
+        commandContext.getSource().sendSuccess(() -> ServerComponent.lang(player.clientInformation().language()).translate("inventorysorter.cmd.reload.success"), false);
         return 1;
     }
 }

@@ -34,6 +34,17 @@ The versions are defined in the `settings.gradle.kts` file.
 - `./gradlew buildActive` - build just the current active version
 - `./gradlew testActiveServer` - run the current active version's server tests
 
+## Translation management
+
+### In the codebase
+
+In the codebase we use `Component.translatable(key)` function for **CLIENT SIDE ONLY** text.
+For text that can come from the **SERVER SIDE** for clients that don't have the mod installed (like command feedback), we use the `ServerComponent.lang(player.getLanguage()).translatable(key)` function.
+
+### In the translation files
+
+We use the `en_us.json` file as the source of truth for all translations. All other translation files are generated from it via Crowdin. DO NOT MODIFY OTHER TRANSLATION FILES DIRECTLY. If you want to add a new translation, add it to the `en_us.json` files and let the Crowdin sync process handle the rest.
+
 ## Verifying Changes
 
 ### Quick Check
