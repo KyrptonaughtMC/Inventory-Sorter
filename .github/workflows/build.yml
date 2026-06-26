@@ -13,11 +13,12 @@ env:
   TYPE: ${{ endsWith(github.ref_name, 'main') && 'release' || (endsWith(github.ref_name, 'beta') && 'beta' || 'dev') }}
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'push' && github.ref_name != 'main' && github.ref_name != 'beta' }}
+  group:  ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
 
 jobs:
   build:
+    name: build-${{ github.event_name }}
     runs-on: ubuntu-latest
     steps:
       - name: "⬇️ Checkout"
@@ -77,7 +78,7 @@ jobs:
         if: ${{ steps.get-next-version.outputs.new-release-published == 'true' }}
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          DO_PUBLISH: steps.get-next-version.outputs.new-release-published
+          DO_PUBLISH: ${{ steps.get-next-version.outputs.new-release-published }}
           MODRINTH_ID: ${{ vars.MODRINTH_ID }}
           MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
           CURSEFORGE_ID: ${{ vars.CURSEFORGE_ID }}
