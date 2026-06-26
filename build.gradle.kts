@@ -152,6 +152,8 @@ publishMods {
             optional("modmenu")
         }
         requires("cloth-config")
+
+        environment.set(CLIENT_OR_SERVER_PREFERS_BOTH)
     }
 
     curseforge {
