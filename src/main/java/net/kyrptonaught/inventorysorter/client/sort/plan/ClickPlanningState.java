@@ -80,29 +80,19 @@ final class ClickPlanningState {
         return -1;
     }
 
-    int findMergeOrigin(ItemStack desiredStack, int target) {
+    int findAvailableMergeStack(ItemStack desiredStack, int excludedSlot, boolean[] reservedSlots) {
         for (int i = 0; i < simulated.size(); i++) {
-            if (canUseAsMergeOrigin(i, target, desiredStack)) {
+            if (i != excludedSlot
+                    && !reservedSlots[i]
+                    && SortableItemStackRules.canMergeToward(simulated.get(i), desiredStack)) {
                 return i;
             }
         }
         return -1;
     }
 
-    int findMergeOrigin(ItemStack desiredStack, int target, boolean[] reservedSlots) {
-        for (int i = 0; i < simulated.size(); i++) {
-            if (!reservedSlots[i] && canUseAsMergeOrigin(i, target, desiredStack)) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    private boolean canUseAsMergeOrigin(int slot, int target, ItemStack desiredStack) {
-        return slot != target
-                && SortableItemStackRules.canMergeToward(simulated.get(slot), desiredStack)
-                && simulated.get(slot).getCount() < simulated.get(slot).getMaxStackSize()
-                && !SortableItemStackRules.sameLayoutStack(simulated.get(slot), desired.get(slot));
+    boolean stackMatches(int slot, ItemStack desiredStack) {
+        return SortableItemStackRules.sameLayoutStack(simulated.get(slot), desiredStack);
     }
 
     void moveStack(int origin, int target) {
