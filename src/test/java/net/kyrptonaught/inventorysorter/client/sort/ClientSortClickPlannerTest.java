@@ -3,6 +3,8 @@ package net.kyrptonaught.inventorysorter.client.sort;
 import net.kyrptonaught.inventorysorter.client.sort.plan.ClientSortClickPlanner;
 import net.kyrptonaught.inventorysorter.client.sort.plan.PlannedContainerClick;
 import net.kyrptonaught.inventorysorter.client.sort.plan.SlotState;
+import net.kyrptonaught.inventorysorter.sort.SortType;
+import net.kyrptonaught.inventorysorter.sort.SortedInventoryLayout;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentPatch;
@@ -19,6 +21,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 import static net.minecraft.core.component.DataComponents.ITEM_NAME;
 public class ClientSortClickPlannerTest {
@@ -173,6 +176,52 @@ public class ClientSortClickPlannerTest {
                 click(1)
         ), clicks.orElseThrow());
         assertClicksReachDesiredLayout(current, clicks.get(), desired);
+    }
+
+    @Test
+    void partialStacksCanMergeWhenTheirSortedTargetContainsAnotherItem() {
+        List<ItemStack> current = List.of(
+                stack(Items.APPLE, 1),
+                stack(Items.DIAMOND, 52),
+                stack(Items.DIAMOND, 1),
+                ItemStack.EMPTY
+        );
+        List<ItemStack> desired = List.of(
+                stack(Items.DIAMOND, 53),
+                stack(Items.APPLE, 1),
+                ItemStack.EMPTY,
+                ItemStack.EMPTY
+        );
+
+        Optional<List<PlannedContainerClick>> clicks = planner.plan(slots(current), desired);
+
+        Assertions.assertTrue(clicks.isPresent());
+        assertClicksReachDesiredLayout(current, clicks.get(), desired);
+    }
+
+    @Test
+    void variedPartialStackLayoutsAlwaysProduceAValidPlan() {
+        Random random = new Random(0x5EED);
+        List<Item> itemTypes = List.of(Items.APPLE, Items.CACTUS, Items.DIAMOND, Items.STICK);
+
+        for (int scenario = 0; scenario < 500; scenario++) {
+            List<ItemStack> current = new java.util.ArrayList<>();
+            int emptySlotsOutOfTen = scenario % 11;
+            for (int slot = 0; slot < 54; slot++) {
+                if (random.nextInt(10) < emptySlotsOutOfTen) {
+                    current.add(ItemStack.EMPTY);
+                } else {
+                    Item item = itemTypes.get(random.nextInt(itemTypes.size()));
+                    current.add(stack(item, 1 + random.nextInt(64)));
+                }
+            }
+            List<ItemStack> desired = SortedInventoryLayout.from(current, SortType.NAME, "en_us").stacks();
+
+            Optional<List<PlannedContainerClick>> clicks = planner.plan(slots(current), desired);
+
+            Assertions.assertTrue(clicks.isPresent(), "scenario " + scenario + " could not be planned");
+            assertClicksReachDesiredLayout(current, clicks.get(), desired);
+        }
     }
 
     @Test
