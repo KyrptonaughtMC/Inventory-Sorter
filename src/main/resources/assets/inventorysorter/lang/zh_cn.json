@@ -58,7 +58,7 @@
   "inventorysorter.config.sortHovered.tooltip": "仅当使用按键或双击整理时才整理鼠标所指向的容器",
   "inventorysorter.config.sortPriorityRules": "排序优先级规则",
   "inventorysorter.config.sortPriorityRules.header": "排序优先级规则",
-  "inventorysorter.config.sortPriorityRules.description": "添加匹配表达式来移动物品组到正常排序之前或之后。 匹配物品ID，#物品标签，@数据组件，或name:\"显示名称\"；将它们与!，&，|和括号结合起来。 列表中靠前的规则将在同一个位置中获得更高优先级。名称规则使用服务器语言。",
+  "inventorysorter.config.sortPriorityRules.description": "添加匹配表达式来移动物品组到正常排序之前或之后。匹配物品ID，#物品标签，@数据组件，或name:\"显示名称\"；将它们与 !，&，| 和括号结合起来。列表中靠前的规则将在同一个位置中获得更高优先级。名称规则使用服务器语言。",
   "inventorysorter.config.sortPriorityRules.rule": "规则 %s",
   "inventorysorter.config.sortPriorityRules.newRule": "新建规则",
   "inventorysorter.config.sortPriorityRules.add": "添加",
