@@ -5,8 +5,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.kyrptonaught.inventorysorter.compat.config.CompatConfig;
 import net.kyrptonaught.inventorysorter.platform.NetworkingPlatform;
 import net.kyrptonaught.inventorysorter.platform.PlatformServices;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
@@ -26,13 +26,10 @@ public record PlayerSortPrevention(
     public static final PlayerSortPrevention DEFAULT = new PlayerSortPrevention(Set.of());
 
     public static final StreamCodec<RegistryFriendlyByteBuf, PlayerSortPrevention> CODEC =
-            StreamCodec.ofMember(
-                    (value, buf) -> {
-                        buf.writeCollection(value.preventSortForScreens(), FriendlyByteBuf::writeUtf);
-                    },
-                    buf -> new PlayerSortPrevention(
-                            buf.readCollection(HashSet::new, FriendlyByteBuf::readUtf)
-                    )
+            StreamCodec.composite(
+                    ByteBufCodecs.collection(HashSet::new, ByteBufCodecs.STRING_UTF8),
+                    PlayerSortPrevention::preventSortForScreens,
+                    PlayerSortPrevention::new
             );
 
     public static final Codec<PlayerSortPrevention> NBT_CODEC =

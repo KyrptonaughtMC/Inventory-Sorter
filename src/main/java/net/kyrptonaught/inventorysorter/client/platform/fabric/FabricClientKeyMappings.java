@@ -11,7 +11,7 @@ import net.minecraft.resources.Identifier;
 public class FabricClientKeyMappings implements ClientKeyMappings {
     private static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(Identifier.fromNamespaceAndPath(InventorySorterMod.MOD_ID, "main"));
 
-    private final InputConstants.Key modifierKey = InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_LCONTROL);
+    private final InputConstants.Key modifierKey = InputConstants.Type.KEYBOARD.getOrCreate(InputConstants.KEY_LCONTROL);
     private final KeyMapping configKeyMapping = new KeyMapping(
             "inventorysorter.key.config",
             InputConstants.KEY_P,

@@ -19,6 +19,17 @@ stonecutter {
         replace("DYED_SHULKER_BOX.white()", "WHITE_SHULKER_BOX")
         replace("DYED_SHULKER_BOX.purple()", "PURPLE_SHULKER_BOX")
     }
+
+    replacements.string(stonecutter.current.parsed < "26.3") {
+        replace("InputConstants.Type.KEYBOARD", "InputConstants.Type.KEYSYM")
+        replace("BundleContents::itemCopies", "BundleContents::itemCopyStream")
+        replace(".itemCopies()", ".itemCopyStream()")
+        replace("BundleContents.EMPTY.asMutable()", "new BundleContents.Mutable(BundleContents.EMPTY)")
+        replace("contents.asMutable()", "new BundleContents.Mutable(contents)")
+        replace("eu.pb4.trinkets.impl.slots.SlotGroupImpl", "eu.pb4.trinkets.impl.SlotGroupImpl")
+        replace("eu.pb4.trinkets.impl.slots.SlotTypeImpl", "eu.pb4.trinkets.impl.SlotTypeImpl")
+        replace("eu.pb4.trinkets.impl.slots.TrinketSlot", "eu.pb4.trinkets.impl.TrinketSlot")
+    }
 }
 
 modSettings {
@@ -38,6 +49,11 @@ modSettings {
             "fabricPermissionsApiVersion" to mod.prop("fabric_permissions_api_version"),
             "fabricVersion" to mod.prop("fabric_version"),
             "minecraftVersionVirtual" to mod.prop("minecraft_version_virtual", stonecutter.current.version),
+            "neoforgeLogo" to
+                when (stonecutter.current.parsed < "26.3") {
+                    true -> "logoFile"
+                    false -> "iconFile"
+                },
         )
 }
 

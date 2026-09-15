@@ -495,7 +495,7 @@ public class ClientFallbackPlanningTest {
 
         BundleContents contents = slot.get(DataComponents.BUNDLE_CONTENTS);
         if (contents != null && slot.getCount() == 1) {
-            BundleContents.Mutable mutable = new BundleContents.Mutable(contents);
+            BundleContents.Mutable mutable = contents.asMutable();
             int inserted = mutable.tryInsert(cursor);
             if (inserted > 0) {
                 slot.set(DataComponents.BUNDLE_CONTENTS, mutable.toImmutable());
@@ -547,7 +547,7 @@ public class ClientFallbackPlanningTest {
 
     private static Map<Item, Integer> bundleContents(ItemStack bundle) {
         return bundle.get(DataComponents.BUNDLE_CONTENTS)
-                .itemCopyStream()
+                .itemCopies()
                 .collect(java.util.stream.Collectors.toMap(ItemStack::getItem, ItemStack::getCount, Integer::sum));
     }
 
@@ -591,7 +591,7 @@ public class ClientFallbackPlanningTest {
     }
 
     private static ItemStack bundleContaining(ItemStack... contents) {
-        BundleContents.Mutable mutable = new BundleContents.Mutable(BundleContents.EMPTY);
+        BundleContents.Mutable mutable = BundleContents.EMPTY.asMutable();
         for (ItemStack content : contents) {
             mutable.tryInsert(content.copy());
         }

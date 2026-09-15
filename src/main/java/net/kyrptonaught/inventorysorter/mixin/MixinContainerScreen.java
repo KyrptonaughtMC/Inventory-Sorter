@@ -108,10 +108,6 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
 
     @Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
     private void invsort$keyPressed(KeyEvent input, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
-        int keycode = input.key();
-        int scancode = input.scancode();
-
-
         // Keybind check for key bindings, client only
         if (minecraft == null || minecraft.player == null) return;
 

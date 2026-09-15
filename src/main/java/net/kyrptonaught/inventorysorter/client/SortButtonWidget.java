@@ -160,7 +160,11 @@ public class SortButtonWidget extends ImageButton {
     }
 
     private boolean isModifierPressed() {
-        return InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), modifierKey.getValue());
+        return InputConstants.isKeyDown(
+                //? < 26.3
+                //Minecraft.getInstance().getWindow(),
+                modifierKey.getValue()
+        );
     }
 
 
