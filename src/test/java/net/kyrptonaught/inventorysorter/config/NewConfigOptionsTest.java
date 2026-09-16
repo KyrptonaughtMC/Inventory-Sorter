@@ -6,6 +6,30 @@ import org.junit.jupiter.api.Test;
 
 class NewConfigOptionsTest {
     @Test
+    void restoringButtonPreservesOtherInventoryAndSortPreferences() {
+        NewConfigOptions options = new NewConfigOptions();
+        options.disableButtonForScreen("minecraft:chest");
+        options.disableButtonForScreen("minecraft:furnace");
+        options.disableSortForScreen("minecraft:chest");
+
+        options.enableButtonForScreen("minecraft:chest");
+
+        Assertions.assertEquals(java.util.List.of("minecraft:furnace"), options.hideButtonsForScreens);
+        Assertions.assertEquals(java.util.List.of("minecraft:chest"), options.preventSortForScreens);
+    }
+
+    @Test
+    void restoringAlreadyVisibleButtonLeavesOtherInventoryHidden() {
+        NewConfigOptions options = new NewConfigOptions();
+        options.disableButtonForScreen("minecraft:furnace");
+
+        options.enableButtonForScreen("minecraft:chest");
+        options.enableButtonForScreen("minecraft:chest");
+
+        Assertions.assertEquals(java.util.List.of("minecraft:furnace"), options.hideButtonsForScreens);
+    }
+
+    @Test
     void oldConfigMigrationCopiesServerSafeOptions() {
         OldConfigOptions oldOptions = new OldConfigOptions();
         oldOptions.displaySort = false;

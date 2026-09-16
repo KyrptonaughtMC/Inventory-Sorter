@@ -11,7 +11,7 @@ authors = "Meza, kyrptonaught"
 description = '''
 ${description}
 '''
-logoFile = "assets/${id}/icon.png"
+${neoforgeLogo} = "assets/${id}/icon.png"
 logoBlur = false
 
 [[mixins]]

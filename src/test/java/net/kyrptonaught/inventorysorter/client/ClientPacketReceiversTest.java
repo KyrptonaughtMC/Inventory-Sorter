@@ -24,11 +24,27 @@ public class ClientPacketReceiversTest {
         receivers.register(networking);
 
         Assertions.assertNotNull(networking.sortSettingsHandler);
+        Assertions.assertNotNull(networking.preferenceHandler);
         Assertions.assertNotNull(networking.playerSortPreventionHandler);
         Assertions.assertNotNull(networking.hideButtonHandler);
         Assertions.assertNotNull(networking.reloadConfigHandler);
         Assertions.assertNotNull(networking.lastSeenVersionHandler);
         Assertions.assertNotNull(networking.serverPresenceHandler);
+    }
+
+    @Test
+    void preferenceIsSavedAndLegacySettingsCannotClearOptOut() {
+        TestConfig config = new TestConfig();
+        ClientPacketReceivers receivers = newReceivers(config);
+        RecordingNetworkingPlatform networking = new RecordingNetworkingPlatform();
+        receivers.register(networking);
+        networking.preferenceHandler.accept(new PlayerInventorySortingPreference(false));
+        receivers.applySortSettings(SortSettings.DEFAULT);
+        Assertions.assertFalse(config.allowPlayerInventorySorting);
+        Assertions.assertEquals(2, config.saveCalls);
+        receivers.applyPlayerInventorySortingPreference(new PlayerInventorySortingPreference(true));
+        Assertions.assertTrue(config.allowPlayerInventorySorting);
+        Assertions.assertEquals(3, config.saveCalls);
     }
 
     @Test
@@ -178,6 +194,12 @@ public class ClientPacketReceiversTest {
     }
 
     private static class RecordingNetworkingPlatform implements NetworkingPlatform {
+        private Consumer<PlayerInventorySortingPreference> preferenceHandler;
+
+        @Override
+        public void registerPlayerInventorySortingPreferenceReceiver(Consumer<PlayerInventorySortingPreference> handler) {
+            preferenceHandler = handler;
+        }
         private Consumer<SortSettings> sortSettingsHandler;
         private Consumer<PlayerSortPrevention> playerSortPreventionHandler;
         private Consumer<HideButton> hideButtonHandler;

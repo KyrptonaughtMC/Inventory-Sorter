@@ -19,7 +19,7 @@ import org.jspecify.annotations.NonNull;
 public final class TrinketsPlugin implements CompatibilityPlugin {
     //~ if neoforge 'trinkets' -> 'trinkets_updated'
     public static final String TRINKETS_MOD_ID = "trinkets";
-    private static final String TRINKET_SLOT_CLASS = "eu.pb4.trinkets.impl.TrinketSlot";
+    private static final String TRINKET_SLOT_CLASS = "eu.pb4.trinkets.impl.slots.TrinketSlot";
     private static final String TRINKETS_CLIENT_CLASS = "eu.pb4.trinkets.impl.client.TrinketsClient";
 
     @Override

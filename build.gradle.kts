@@ -19,6 +19,17 @@ stonecutter {
         replace("DYED_SHULKER_BOX.white()", "WHITE_SHULKER_BOX")
         replace("DYED_SHULKER_BOX.purple()", "PURPLE_SHULKER_BOX")
     }
+
+    replacements.string(stonecutter.current.parsed < "26.3") {
+        replace("InputConstants.Type.KEYBOARD", "InputConstants.Type.KEYSYM")
+        replace("BundleContents::itemCopies", "BundleContents::itemCopyStream")
+        replace(".itemCopies()", ".itemCopyStream()")
+        replace("BundleContents.EMPTY.asMutable()", "new BundleContents.Mutable(BundleContents.EMPTY)")
+        replace("contents.asMutable()", "new BundleContents.Mutable(contents)")
+        replace("eu.pb4.trinkets.impl.slots.SlotGroupImpl", "eu.pb4.trinkets.impl.SlotGroupImpl")
+        replace("eu.pb4.trinkets.impl.slots.SlotTypeImpl", "eu.pb4.trinkets.impl.SlotTypeImpl")
+        replace("eu.pb4.trinkets.impl.slots.TrinketSlot", "eu.pb4.trinkets.impl.TrinketSlot")
+    }
 }
 
 modSettings {
@@ -38,6 +49,11 @@ modSettings {
             "fabricPermissionsApiVersion" to mod.prop("fabric_permissions_api_version"),
             "fabricVersion" to mod.prop("fabric_version"),
             "minecraftVersionVirtual" to mod.prop("minecraft_version_virtual", stonecutter.current.version),
+            "neoforgeLogo" to
+                when (stonecutter.current.parsed < "26.3") {
+                    true -> "logoFile"
+                    false -> "iconFile"
+                },
         )
 }
 
@@ -65,9 +81,17 @@ dependencies {
     include("gg.meza:meza_core-${mod.loader}:${mod.prop("meza_core_version")}+${stonecutter.current.version}")
 
     compileOnly("maven.modrinth:trinkets-updated:${mod.prop("trinkets_version")}")
-    localRuntime("maven.modrinth:trinkets-updated:${mod.prop("trinkets_version")}")
     testCompileOnly("maven.modrinth:trinkets-updated:${mod.prop("trinkets_version")}")
     testRuntimeOnly("maven.modrinth:trinkets-updated:${mod.prop("trinkets_version")}")
+
+    // Compatibility Verification
+
+//    if (mod.isFabric && mod.hasProp("inventoryextended_version")) {
+//        localRuntime("maven.modrinth:inventory-extended:${mod.prop("inventoryextended_version")}")
+//    }
+    localRuntime("maven.modrinth:trinkets-updated:${mod.prop("trinkets_version")}")
+//    localRuntime("maven.modrinth:client-tweaks:${mod.prop("clienttweaks_version")}+${mod.loader}-${mod.prop("minecraft_version")}")
+//    localRuntime("maven.modrinth:balm:${mod.prop("balm_version")}+${mod.loader}-${mod.prop("minecraft_version")}")
 
     if (mod.isFabric) {
         try {
@@ -152,6 +176,8 @@ publishMods {
             optional("modmenu")
         }
         requires("cloth-config")
+
+        environment.set(CLIENT_OR_SERVER_PREFERS_BOTH)
     }
 
     curseforge {

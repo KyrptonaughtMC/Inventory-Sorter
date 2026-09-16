@@ -42,10 +42,11 @@ public final class ClientSortRuntime {
             Supplier<List<SortPriorityRuleSetting>> sortPriorityRules,
             BooleanSupplier sortPlayerInventory,
             BooleanSupplier sortIntoBundles,
-            BooleanSupplier sortIntoHotbarBundles
+            BooleanSupplier sortIntoHotbarBundles,
+            BooleanSupplier allowPlayerInventorySorting
     ) {
         ClientServerSupport serverSupport = new ClientServerSupport();
-        ClientInventoryClickExecutor clickExecutor = new ClientInventoryClickExecutor();
+        ClientInventoryClickExecutor clickExecutor = new ClientInventoryClickExecutor(allowPlayerInventorySorting);
         ClientSideInventorySorter fallbackSorter = new ClientSideInventorySorter(
                 minecraft,
                 languageCode,
@@ -54,13 +55,15 @@ public final class ClientSortRuntime {
                 sortPlayerInventory,
                 sortIntoBundles,
                 sortIntoHotbarBundles,
+                allowPlayerInventorySorting,
                 clickExecutor,
                 new ClientFallbackSortPlanBuilder(new ClientSortClickPlanner())
         );
         ClientSortRequests sortRequests = new ClientSortRequests(
                 serverSupport,
                 InventorySortPacket::sendSortPacket,
-                fallbackSorter::enqueueCurrentScreenSort
+                fallbackSorter::enqueueCurrentScreenSort,
+                allowPlayerInventorySorting
         );
         return new ClientSortRuntime(serverSupport, clickExecutor, sortRequests);
     }

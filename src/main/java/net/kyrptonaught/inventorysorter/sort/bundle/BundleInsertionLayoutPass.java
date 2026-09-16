@@ -45,7 +45,7 @@ public final class BundleInsertionLayoutPass {
         List<ItemStack> directBundleContents = stacks.stream()
                 .map(stack -> stack.get(DataComponents.BUNDLE_CONTENTS))
                 .filter(contents -> contents != null && !contents.isEmpty())
-                .flatMap(BundleContents::itemCopyStream)
+                .flatMap(BundleContents::itemCopies)
                 .toList();
         return Comparator
                 .comparingInt((ItemStack stack) -> bundleSortBucket(stack, directBundleContents))
@@ -137,7 +137,7 @@ public final class BundleInsertionLayoutPass {
             if (contents == null || contents.isEmpty()) {
                 return null;
             }
-            return new BundleTarget(stack, new BundleContents.Mutable(contents), contents.itemCopyStream().toList(), location);
+            return new BundleTarget(stack, contents.asMutable(), contents.itemCopies().toList(), location);
         }
 
         boolean tryInsert(ItemStack candidate) {

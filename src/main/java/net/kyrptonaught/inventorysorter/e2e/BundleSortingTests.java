@@ -3,8 +3,8 @@ package net.kyrptonaught.inventorysorter.e2e;
 import eu.pb4.trinkets.api.TrinketDropRule;
 import eu.pb4.trinkets.api.TrinketInventory;
 import eu.pb4.trinkets.api.TrinketsApi;
-import eu.pb4.trinkets.impl.SlotGroupImpl;
-import eu.pb4.trinkets.impl.SlotTypeImpl;
+import eu.pb4.trinkets.impl.slots.SlotGroupImpl;
+import eu.pb4.trinkets.impl.slots.SlotTypeImpl;
 import eu.pb4.trinkets.impl.data.EntitySlotLoader;
 //? if fabric
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
@@ -153,7 +153,7 @@ public class BundleSortingTests {
         assertBundleContents(ctx, scenario.chest().getItem(0), Map.of(Items.APPLE, 7));
         ctx.assertValueEqual(
                 "Lunch",
-                scenario.chest().getItem(0).get(DataComponents.BUNDLE_CONTENTS).itemCopyStream().findFirst().orElseThrow().getHoverName().getString(),
+                scenario.chest().getItem(0).get(DataComponents.BUNDLE_CONTENTS).itemCopies().findFirst().orElseThrow().getHoverName().getString(),
                 Component.nullToEmpty("Named apple should keep its display name inside the bundle")
         );
         ctx.succeed();
@@ -510,12 +510,14 @@ public class BundleSortingTests {
         player.getInventory().setItem(0, appleBundle);
         player.getInventory().setItem(12, new ItemStack(Items.STICK, 6));
         player.getInventory().setItem(14, new ItemStack(Items.APPLE, 12));
-        player.getInventory().setItem(18, new ItemStack(Items.DIAMOND, 1));
+        int lastStorageSlot = player.getInventory().getNonEquipmentItems().size() - 1;
+        player.getInventory().setItem(lastStorageSlot, new ItemStack(Items.DIAMOND, 1));
 
         sortPlayerInventoryWithBundles(player);
 
         assertHotbarContents(ctx, player, Map.of(0, appleBundle));
         assertBundleContents(ctx, player.getInventory().getItem(0), Map.of(Items.APPLE, 20));
+        ctx.assertTrue(player.getInventory().getItem(lastStorageSlot).isEmpty(), "Last storage slot should be included in sorting");
         assertPlayerMainInventoryContents(ctx, player, Map.of(
                 9, new ItemStack(Items.DIAMOND, 1),
                 10, new ItemStack(Items.STICK, 6)
@@ -526,26 +528,7 @@ public class BundleSortingTests {
     //? if fabric
     @GameTest
     public void testServerPlayerInventorySortCanUseTrinketsBundleAsTarget(GameTestHelper ctx) {
-        configureTrinketsRingSlot();
-        TestUtils.Scenario scenario = setUpScene(ctx, Map.of());
-        ServerPlayer player = scenario.player();
-        TrinketInventory ring = TrinketsApi.getAttachment(player).getInventory("hand/ring");
-        ItemStack appleBundle = bundleContaining(new ItemStack(Items.APPLE, 8));
-
-        ctx.assertValueEqual(ring != null, true, Component.nullToEmpty("Expected Trinkets hand/ring inventory"));
-        ring.setItem(0, appleBundle);
-        player.getInventory().setItem(12, new ItemStack(Items.STICK, 6));
-        player.getInventory().setItem(14, new ItemStack(Items.APPLE, 12));
-        player.getInventory().setItem(18, new ItemStack(Items.DIAMOND, 1));
-
-        sortPlayerInventoryWithBundles(player);
-
-        assertBundleContents(ctx, ring.getItem(0), Map.of(Items.APPLE, 20));
-        assertPlayerMainInventoryContents(ctx, player, Map.of(
-                9, new ItemStack(Items.DIAMOND, 1),
-                10, new ItemStack(Items.STICK, 6)
-        ));
-        ctx.succeed();
+        TrinketsBundleScenario.run(ctx);
     }
 
     //? if fabric
@@ -557,7 +540,8 @@ public class BundleSortingTests {
 
         player.getInventory().setItem(0, appleBundle);
         player.getInventory().setItem(14, new ItemStack(Items.APPLE, 12));
-        player.getInventory().setItem(18, new ItemStack(Items.DIAMOND, 1));
+        int lastStorageSlot = player.getInventory().getNonEquipmentItems().size() - 1;
+        player.getInventory().setItem(lastStorageSlot, new ItemStack(Items.DIAMOND, 1));
 
         ServerInventorySorter.sort(player, SortTarget.PLAYER_INVENTORY, new SortSettings(
                 true,
@@ -570,6 +554,7 @@ public class BundleSortingTests {
 
         assertHotbarContents(ctx, player, Map.of(0, appleBundle));
         assertBundleContents(ctx, player.getInventory().getItem(0), Map.of(Items.APPLE, 8));
+        ctx.assertTrue(player.getInventory().getItem(lastStorageSlot).isEmpty(), "Last storage slot should be included in sorting");
         assertPlayerMainInventoryContents(ctx, player, Map.of(
                 9, new ItemStack(Items.APPLE, 12),
                 10, new ItemStack(Items.DIAMOND, 1)
@@ -630,7 +615,7 @@ public class BundleSortingTests {
     }
 
     private static ItemStack bundleContaining(ItemStack... contents) {
-        BundleContents.Mutable mutable = new BundleContents.Mutable(BundleContents.EMPTY);
+        BundleContents.Mutable mutable = BundleContents.EMPTY.asMutable();
         for (ItemStack content : contents) {
             mutable.tryInsert(content.copy());
         }
@@ -668,39 +653,66 @@ public class BundleSortingTests {
         ));
     }
 
-    private static void configureTrinketsRingSlot() {
-        SlotTypeImpl ring = new SlotTypeImpl(
-                "hand/ring",
-                "hand",
-                0,
-                1,
-                Optional.empty(),
-                //? >= 26.2 {
-                new SlotTypeImpl.Predicates(
-                        new SlotTypeImpl.ConstantCondition(true),
-                        new SlotTypeImpl.ConstantCondition(true),
-                        new SlotTypeImpl.ConstantCondition(true),
-                        new SlotTypeImpl.ConstantCondition(true)
-                ),
-                //? }
-                //? < 26.2 {
-                /*new SlotTypeImpl.ConstantCondition(true),
-                new SlotTypeImpl.ConstantCondition(true),
-                new SlotTypeImpl.ConstantCondition(true),
-                *///? }
-                TrinketDropRule.DEFAULT,
-                false,
-                false,
-                1
-        );
-        SlotGroupImpl hand = new SlotGroupImpl.Builder("hand", -1, 0)
-                .addSlot("ring", ring)
-                .build();
+    private static final class TrinketsBundleScenario {
+        private static void run(GameTestHelper ctx) {
+            configureTrinketsRingSlot();
+            TestUtils.Scenario scenario = setUpScene(ctx, Map.of());
+            ServerPlayer player = scenario.player();
+            TrinketInventory ring = TrinketsApi.getAttachment(player).getInventory("hand/ring");
+            ItemStack appleBundle = bundleContaining(new ItemStack(Items.APPLE, 8));
 
-        //? >= 26.2
-        EntitySlotLoader.SERVER.setGroupsLegacy(Map.of(EntityTypes.PLAYER, Map.of("hand", hand)));
-        //? < 26.2
-        //EntitySlotLoader.SERVER.setSlots(Map.of(EntityType.PLAYER, Map.of("hand", hand)));
+            ctx.assertValueEqual(ring != null, true, Component.nullToEmpty("Expected Trinkets hand/ring inventory"));
+            ring.setItem(0, appleBundle);
+            player.getInventory().setItem(12, new ItemStack(Items.STICK, 6));
+            player.getInventory().setItem(14, new ItemStack(Items.APPLE, 12));
+            player.getInventory().setItem(18, new ItemStack(Items.DIAMOND, 1));
+
+            sortPlayerInventoryWithBundles(player);
+
+            assertBundleContents(ctx, ring.getItem(0), Map.of(Items.APPLE, 20));
+            assertPlayerMainInventoryContents(ctx, player, Map.of(
+                    9, new ItemStack(Items.DIAMOND, 1),
+                    10, new ItemStack(Items.STICK, 6)
+            ));
+            ctx.succeed();
+        }
+
+        private static void configureTrinketsRingSlot() {
+            SlotTypeImpl ring = new SlotTypeImpl(
+                    "hand/ring",
+                    "hand",
+                    0,
+                    1,
+                    Optional.empty(),
+                    //? >= 26.2 {
+                    new SlotTypeImpl.Predicates(
+                            new SlotTypeImpl.ConstantCondition(true),
+                            new SlotTypeImpl.ConstantCondition(true),
+                            new SlotTypeImpl.ConstantCondition(true),
+                            new SlotTypeImpl.ConstantCondition(true)
+                    ),
+                    //? }
+                    //? < 26.2 {
+                    /*new SlotTypeImpl.ConstantCondition(true),
+                    new SlotTypeImpl.ConstantCondition(true),
+                    new SlotTypeImpl.ConstantCondition(true),
+                    *///? }
+                    TrinketDropRule.DEFAULT,
+                    false,
+                    false,
+                    //? >= 26.3
+                    false,
+                    1
+            );
+            SlotGroupImpl hand = new SlotGroupImpl.Builder("hand", -1, 0)
+                    .addSlot("ring", ring)
+                    .build();
+
+            //? >= 26.2
+            EntitySlotLoader.SERVER.setGroupsLegacy(Map.of(EntityTypes.PLAYER, Map.of("hand", hand)));
+            //? < 26.2
+            //EntitySlotLoader.SERVER.setSlots(Map.of(EntityType.PLAYER, Map.of("hand", hand)));
+        }
     }
 
     private static void assertHotbarContents(GameTestHelper ctx, ServerPlayer player, Map<Integer, ItemStack> expectedContents) {
@@ -727,7 +739,7 @@ public class BundleSortingTests {
         ctx.assertValueEqual(contents != null, true, Component.nullToEmpty("Expected bundle contents"));
 
         Map<Item, Integer> actualContents = new HashMap<>();
-        contents.itemCopyStream().forEach(stack -> actualContents.merge(stack.getItem(), stack.getCount(), Integer::sum));
+        contents.itemCopies().forEach(stack -> actualContents.merge(stack.getItem(), stack.getCount(), Integer::sum));
 
         ctx.assertValueEqual(actualContents, expectedContents, Component.nullToEmpty("Bundle does not have the expected contents"));
     }
@@ -738,14 +750,14 @@ public class BundleSortingTests {
         ctx.assertValueEqual(contents != null, true, Component.nullToEmpty("Expected bundle contents"));
 
         Map<String, Integer> actualContents = new HashMap<>();
-        contents.itemCopyStream().forEach(stack -> actualContents.merge(stack.getHoverName().getString(), stack.getCount(), Integer::sum));
+        contents.itemCopies().forEach(stack -> actualContents.merge(stack.getHoverName().getString(), stack.getCount(), Integer::sum));
 
         ctx.assertValueEqual(actualContents, expectedContents, Component.nullToEmpty("Bundle does not have the expected named contents"));
     }
 
     private static void assertNestedBundleContents(GameTestHelper ctx, ItemStack bundle, Map<Item, Integer> expectedNestedContents) {
         BundleContents contents = bundle.get(DataComponents.BUNDLE_CONTENTS);
-        ItemStack nestedBundle = contents.itemCopyStream()
+        ItemStack nestedBundle = contents.itemCopies()
                 .filter(stack -> stack.is(Items.BUNDLE))
                 .findFirst()
                 .orElse(ItemStack.EMPTY);

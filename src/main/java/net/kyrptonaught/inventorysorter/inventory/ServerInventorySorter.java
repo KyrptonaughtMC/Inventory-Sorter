@@ -4,6 +4,7 @@ import net.kyrptonaught.inventorysorter.network.SortSettings;
 import net.kyrptonaught.inventorysorter.inventory.container.ScreenInventory;
 import net.kyrptonaught.inventorysorter.SortTarget;
 import net.kyrptonaught.inventorysorter.sort.SortType;
+import net.kyrptonaught.inventorysorter.platform.PlatformServices;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 
@@ -16,6 +17,10 @@ public final class ServerInventorySorter {
     }
 
     public static boolean sort(ServerPlayer player, SortTarget target, SortSettings settings) {
+        if (!SortabilityPolicy.isTargetAllowed(target, settings.allowPlayerInventorySorting())
+                || !SortabilityPolicy.isTargetAllowed(target, PlatformServices.PLAYER_DATA.getSortSettings(player).allowPlayerInventorySorting())) {
+            return false;
+        }
         String languageCode = player.clientInformation().language().toLowerCase();
         if (target == SortTarget.PLAYER_INVENTORY) {
             PlayerInventorySorter.sort(player, settings, languageCode);

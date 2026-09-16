@@ -1,4 +1,8 @@
 {
+  "inventorysorter.sortButton.chat.hidden": "You hid the button for the %s inventory.",
+  "inventorysorter.sortButton.chat.undo": "[Undo]",
+  "inventorysorter.sortButton.chat.restored": "Restored the button for the %s inventory.",
+  "inventorysorter.sortButton.chat.reopen": "Reopen the inventory to see it.",
   "inventorysorter.discord": "Discord",
   "key.category.inventorysorter.main": "Inventory Sorter",
   "inventorysorter.key.sort": "Sort",
@@ -52,10 +56,15 @@
   "inventorysorter.config.separateButton": "Sort Button in Player Inventory",
   "inventorysorter.config.separateButton.tooltip": "Display a separate sort button in the player's inventory",
 
-  "inventorysorter.config.sortPlayerInventory": "Sort Player Inventory",
-  "inventorysorter.config.sortPlayerInventory.tooltip": "Helpful when you want to sort the player inventory separately from the container",
-  "inventorysorter.cmd.sortPlayerInventory.set": "Sort Player Inventory is now %s",
-  "inventorysorter.cmd.sortPlayerInventory.get": "Sort Player Inventory is currently %s",
+  "inventorysorter.config.sortPlayerInventory": "Also Sort Player Inventory When Sorting Containers",
+  "inventorysorter.config.sortPlayerInventory.tooltip": "Also sort your player inventory when sorting a container. Turning this off still allows direct player-inventory sorting.",
+  "inventorysorter.config.allowPlayerInventorySorting": "Allow Player Inventory Sorting",
+  "inventorysorter.config.allowPlayerInventorySorting.tooltip": "Allow sorting your player inventory from buttons, the sort key, double-clicks, and commands. Turn this off to block both direct sorting and automatic sorting alongside containers.",
+  "inventorysorter.cmd.allowPlayerInventorySorting.set": "Player inventory sorting is now %s",
+  "inventorysorter.cmd.allowPlayerInventorySorting.get": "Player inventory sorting is currently %s",
+  "inventorysorter.cmd.sort.playerdisabled": "Player inventory sorting is disabled.",
+  "inventorysorter.cmd.sortPlayerInventory.set": "Automatic player-inventory sorting alongside containers is now %s",
+  "inventorysorter.cmd.sortPlayerInventory.get": "Automatic player-inventory sorting alongside containers is currently %s",
 
   "inventorysorter.config.sortIntoBundles": "Sort Into Bundles",
   "inventorysorter.config.sortIntoBundles.tooltip": "Controls whether bundle-aware sorting may move matching items into bundles",
@@ -70,7 +79,7 @@
   "inventorysorter.config.showTooltip.tooltip": "The tooltip shows the sort type when hovering over the sort button",
 
   "inventorysorter.config.sortHovered": "Only Sort the Inventory Under the Mouse",
-  "inventorysorter.config.sortHovered.tooltip": "Only sort the inventory under the mouse when using the keybind or double-click sort",
+  "inventorysorter.config.sortHovered.tooltip": "Choose the inventory under the mouse when using the sort key. The container-sort setting may also sort your player inventory. Double-click sorting always follows the clicked slot.",
   "inventorysorter.config.sortPriorityRules": "Sort Priority Rules",
   "inventorysorter.config.sortPriorityRules.header": "Sort Priority Rules",
   "inventorysorter.config.sortPriorityRules.description": "Add match expressions to move item groups before or after the normal sort. Match item ids, #item_tags, @data_components, or name:\"Display * Name\"; combine them with !, &, |, and parentheses. Rules higher in the list win ties inside the same position. Name rules use the server language.",

@@ -76,21 +76,22 @@ If you are proposing a feature:
 
 ## Development
 
-This project uses Kotlin with Gradle for development.
+This project uses [Stonecraft][stonecraft] with [Stonecutter][stonecutter] to manage Minecraft versions and loaders in a shared codebase.
+
+Before development, read and apply the repository's [CONTRIBUTING.md][development-guide]. It owns the build workflow, preprocessing rules, and verification requirements. Every task must consider the full declared Minecraft version–loader support matrix, including inactive paths; the active project is only a working target.
 
 ### Setting up
 
 1. Clone the repository.
 2. Open the project in your favorite IDE.
-3. Run `./gradlew build` to build the project.
+3. Follow the build and verification instructions in [CONTRIBUTING.md][development-guide].
 
 If the build is successful, you are ready to start developing.
 If you encounter any issues, please follow the steps in the error message first and then ask for help in the [Discord server][discord].
 
-The project uses [Stonecutter][stonecutter] via [Stonecraft][stonecraft] for managing different versions of Minecraft within the same codebase.
-
 [issues]: https://github.com/KyrptonaughtMC/Inventory-Sorter/issues
-[stoecraft]: https://stonecraft.meza.gg/
+[development-guide]: https://github.com/KyrptonaughtMC/Inventory-Sorter/blob/main/CONTRIBUTING.md
+[stonecraft]: https://stonecraft.meza.gg/
 [stonecutter]: https://stonecutter.kikugie.dev/
 [discord]: https://discord.gg/dvg3tcQCPW
 [architectury]: https://docs.architectury.dev/

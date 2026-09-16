@@ -6,6 +6,7 @@ import net.fabricmc.api.Environment;
 //?}
 import net.kyrptonaught.inventorysorter.ButtonType;
 import net.kyrptonaught.inventorysorter.client.SortButtonDisplayPolicy;
+import net.kyrptonaught.inventorysorter.client.PlayerInventoryButtonPosition;
 import net.kyrptonaught.inventorysorter.inventory.SortabilityPolicy;
 import net.kyrptonaught.inventorysorter.InventorySorterMod;
 import net.kyrptonaught.inventorysorter.InventoryScreenId;
@@ -17,6 +18,7 @@ import net.kyrptonaught.inventorysorter.client.sort.ClientSorts;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
@@ -31,6 +33,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import java.util.OptionalInt;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.compatibility;
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.getConfig;
@@ -41,8 +44,6 @@ import static net.kyrptonaught.inventorysorter.InventorySorterMod.getConfig;
 public abstract class MixinContainerScreen extends Screen implements SortableContainerScreen {
     @Shadow
     protected int imageWidth;
-    @Shadow
-    protected int imageHeight;
 
     @Shadow
     @Final
@@ -74,24 +75,26 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
         if (getConfig().showSortButton && SortButtonDisplayPolicy.shouldDisplayButtons(minecraft.player)) {
             boolean playerOnly = !SortabilityPolicy.canSortInventory(minecraft.player);
             if (playerOnly) {
-                invsort$PlayerSortBtn = new SortButtonWidget(ButtonType.PLAYER, this.leftPos + this.imageWidth - 20, this.topPos + (playerOnly ? (imageHeight - 95) : 6), SortTarget.PLAYER_INVENTORY, minecraft.gui.screen());
+                invsort$PlayerSortBtn = new SortButtonWidget(ButtonType.PLAYER, this.leftPos + this.imageWidth - 20, this.topPos + getMiddleHeight(), SortTarget.PLAYER_INVENTORY);
                 invsort$PlayerSortBtn.visible = compatibility.shouldShowSortButton(InventoryScreenId.PLAYER_INVENTORY.value());
                 this.addRenderableWidget(invsort$PlayerSortBtn);
             } else {
-                invsort$SortBtn = new SortButtonWidget(ButtonType.INVENTORY, this.leftPos + this.imageWidth - 20, this.topPos + (playerOnly ? (imageHeight - 95) : 6), SortTarget.CONTAINER, minecraft.gui.screen());
+                invsort$SortBtn = new SortButtonWidget(ButtonType.INVENTORY, this.leftPos + this.imageWidth - 20, this.topPos + 6, SortTarget.CONTAINER);
                 this.addRenderableWidget(invsort$SortBtn);
 
                 if (getConfig().separateButton) { // If separate button is enabled, add a player inventory sort button
-                    invsort$PlayerSortBtn = new SortButtonWidget(ButtonType.PLAYER, invsort$SortBtn.getX(), this.topPos + ((this)).getMiddleHeight(), SortTarget.PLAYER_INVENTORY, minecraft.gui.screen());
+                    invsort$PlayerSortBtn = new SortButtonWidget(ButtonType.PLAYER, invsort$SortBtn.getX(), this.topPos + getMiddleHeight(), SortTarget.PLAYER_INVENTORY);
                     invsort$PlayerSortBtn.visible = compatibility.shouldShowSortButton(InventoryScreenId.PLAYER_INVENTORY.value());
                     this.addRenderableWidget(invsort$PlayerSortBtn);
                 }
             }
         }
+        invsort$updateButtonPositions();
     }
 
     @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
     private void invsort$mouseClicked(MouseButtonEvent click, boolean doubled, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
+        invsort$updateButtonPositions();
         int button = click.button();
 
         // Keybind check for mouse bindings, client only
@@ -108,10 +111,6 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
 
     @Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
     private void invsort$keyPressed(KeyEvent input, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
-        int keycode = input.key();
-        int scancode = input.scancode();
-
-
         // Keybind check for key bindings, client only
         if (minecraft == null || minecraft.player == null) return;
 
@@ -133,6 +132,23 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
         }
     }
 
+    @Inject(method = "mouseScrolled", at = @At("HEAD"))
+    private void invsort$updateButtonsBeforeScroll(double mouseX, double mouseY, double verticalAmount, double horizontalAmount, CallbackInfoReturnable<Boolean> ci) {
+        invsort$updateButtonPositions();
+    }
+
+    @Unique
+    private void invsort$updateButtonPositions() {
+        int x = this.leftPos + this.imageWidth - 20;
+        if (invsort$SortBtn != null) {
+            invsort$SortBtn.setPosition(x, this.topPos + 6);
+        }
+        if (invsort$PlayerSortBtn != null) {
+            invsort$playerInventoryHeaderY().ifPresent(y -> invsort$PlayerSortBtn.setPosition(x, this.topPos + y));
+        }
+        invsort$updateButtonVisibility();
+    }
+
     @Unique
     private void sortInventory(CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
         SortTarget target = SortabilityPolicy.canSortInventory(minecraft.player) ? SortTarget.CONTAINER : SortTarget.PLAYER_INVENTORY;
@@ -144,9 +160,19 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
         callbackInfoReturnable.setReturnValue(true);
     }
 
+    @Inject(method = "extractContents", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/Screen;extractRenderState(Lnet/minecraft/client/gui/GuiGraphicsExtractor;IIF)V"))
+    private void invsort$updateButtonsBeforeExtraction(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+        invsort$updateButtonPositions();
+    }
+
     @Inject(method = "extractRenderState", at = @At("TAIL"))
     private void invsort$extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        if (minecraft.player == null) {
+        invsort$updateButtonVisibility();
+    }
+
+    @Unique
+    private void invsort$updateButtonVisibility() {
+        if (minecraft == null || minecraft.player == null) {
             return;
         }
 
@@ -154,12 +180,13 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
         boolean containerShouldShow = screenId != null && compatibility.shouldShowSortButton(screenId.value());
 
         if (invsort$SortBtn != null) {
-            invsort$SortBtn.setX(this.leftPos + this.imageWidth - 20);
             invsort$SortBtn.visible = containerShouldShow;
         }
 
         if (invsort$PlayerSortBtn != null) {
             invsort$PlayerSortBtn.visible = (screenId == null || containerShouldShow)
+                    && getConfig().allowPlayerInventorySorting
+                    && invsort$playerInventoryHeaderY().isPresent()
                     && compatibility.shouldShowSortButton(InventoryScreenId.PLAYER_INVENTORY.value());
         }
 
@@ -179,7 +206,17 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
 
     @Override
     public int getMiddleHeight() {
-        if (this.menu.slots.size() == 0) return 0;
-        return this.menu.getSlot(this.menu.slots.size() - 36).y - 12;
+        return invsort$playerInventoryHeaderY().orElse(0);
+    }
+
+    @Unique
+    private OptionalInt invsort$playerInventoryHeaderY() {
+        if (minecraft == null || minecraft.player == null) {
+            return OptionalInt.empty();
+        }
+        AbstractContainerMenu wrappedMenu = (Object) this instanceof CreativeModeInventoryScreen
+                ? minecraft.player.inventoryMenu
+                : null;
+        return PlayerInventoryButtonPosition.headerY(menu, minecraft.player.getInventory(), wrappedMenu);
     }
 }

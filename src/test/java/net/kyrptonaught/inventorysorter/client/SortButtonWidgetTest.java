@@ -40,6 +40,20 @@ public class SortButtonWidgetTest {
         Assertions.assertEquals(4, button.horizontalAmount);
     }
 
+    @Test
+    void scrollFollowsCurrentButtonBoundsAfterContainerMoves() {
+        RecordingSortButtonWidget button = new RecordingSortButtonWidget(false, true);
+        button.setPosition(100, 200);
+
+        Assertions.assertTrue(SortButtonWidget.scrollIfHovered(button, 101, 202, 3, 4));
+        button.scrolled = false;
+        button.setPosition(177, 220);
+
+        Assertions.assertFalse(SortButtonWidget.scrollIfHovered(button, 101, 202, 3, 4));
+        Assertions.assertFalse(button.scrolled);
+        Assertions.assertTrue(SortButtonWidget.scrollIfHovered(button, 178, 222, 3, 4));
+    }
+
     private static class RecordingSortButtonWidget extends SortButtonWidget {
         private final boolean hovered;
         private final boolean scrollResult;
@@ -50,7 +64,7 @@ public class SortButtonWidgetTest {
         private double horizontalAmount;
 
         private RecordingSortButtonWidget(boolean hovered, boolean scrollResult) {
-            super(ButtonType.INVENTORY, 0, 0, SortTarget.CONTAINER, null);
+            super(ButtonType.INVENTORY, hovered ? 0 : 100, hovered ? 0 : 200, SortTarget.CONTAINER);
             this.hovered = hovered;
             this.scrollResult = scrollResult;
         }

@@ -14,16 +14,12 @@ import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.kyrptonaught.inventorysorter.config.ScrollBehaviour;
 import net.kyrptonaught.inventorysorter.client.platform.ClientPlatformServices;
 import net.kyrptonaught.inventorysorter.client.sort.ClientSorts;
-import net.kyrptonaught.inventorysorter.mixin.RecipeBookScreenAccessor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.components.toasts.SystemToast;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.inventory.AbstractRecipeBookScreen;
-import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
 import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
@@ -51,24 +47,17 @@ public class SortButtonWidget extends ImageButton {
     private static final WidgetSprites TEXTURES = new WidgetSprites(
             Identifier.fromNamespaceAndPath(InventorySorterMod.MOD_ID, "textures/gui/button_unfocused.png"),
             Identifier.fromNamespaceAndPath(InventorySorterMod.MOD_ID, "textures/gui/button_focused.png"));
-    // Offset used to align the sort button with the recipe book in the UI.
-    // The value 77 was determined based on the default layout of the Minecraft inventory screen.
-    private static final int RECIPE_BOOK_OFFSET = 77;
     private static final ScheduledExecutorService debounceExecutor = Executors.newSingleThreadScheduledExecutor();
     private static ScheduledFuture<?> debounceTask;
     private final ButtonType buttonType;
     private final SortTarget target;
     private final InputConstants.Key modifierKey;
-    private final Screen parentScreen;
-    private final int initialX;
 
-    public SortButtonWidget(ButtonType buttonType, int x, int y, SortTarget target, Screen parent) {
+    public SortButtonWidget(ButtonType buttonType, int x, int y, SortTarget target) {
         super(x, y, BUTTON_WIDTH, BUTTON_HEIGHT, TEXTURES, null, net.minecraft.network.chat.Component.literal(""));
         this.buttonType = buttonType;
         this.target = target;
         this.modifierKey = ClientPlatformServices.KEY_MAPPINGS.modifierKey();
-        this.parentScreen = parent;
-        this.initialX = x;
     }
 
     @Override
@@ -97,6 +86,12 @@ public class SortButtonWidget extends ImageButton {
                     net.minecraft.network.chat.Component.translatable("inventorysorter.sortButton.toast.hide.success.description", screenId.serialized()));
             this.visible = false;
 
+            Component message = HideButtonUndo.hideMessage(screenId.serialized());
+            //? >= 26.2
+            instance.gui.chatListener().handleSystemMessage(message, false);
+            //? < 26.2
+            //instance.getChatListener().handleSystemMessage(message, false);
+
         } else {
             ClientSorts.requestCurrentScreenSort(target);
         }
@@ -104,15 +99,7 @@ public class SortButtonWidget extends ImageButton {
 
     @Override
     public void extractContents(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {
-        int offset = 0;
         if (!this.visible) return;
-
-        if (this.parentScreen != null && this.parentScreen instanceof AbstractRecipeBookScreen<?> s) {
-            RecipeBookComponent<?> widget = ((RecipeBookScreenAccessor) s).getRecipeBook();
-            offset = widget.isVisible() ? RECIPE_BOOK_OFFSET : 0;
-        }
-
-        setX(this.initialX + offset);
         Identifier identifier = TEXTURES.get(true, isHovered());
         context.blit(RenderPipelines.GUI_TEXTURED, identifier, getX(), getY(), 0, 0, BUTTON_WIDTH, BUTTON_HEIGHT, TEXTURE_WIDTH, TEXTURE_HEIGHT, TEXTURE_WIDTH, TEXTURE_HEIGHT);
         this.renderTooltip(context, mouseX, mouseY);
@@ -152,7 +139,7 @@ public class SortButtonWidget extends ImageButton {
     }
 
     public static boolean scrollIfHovered(SortButtonWidget button, double x, double y, double verticalAmount, double horizontalAmount) {
-        if (button == null || !button.visible || !button.isHovered()) {
+        if (button == null || !button.visible || !button.isMouseOver(x, y)) {
             return false;
         }
 
@@ -160,7 +147,11 @@ public class SortButtonWidget extends ImageButton {
     }
 
     private boolean isModifierPressed() {
-        return InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), modifierKey.getValue());
+        return InputConstants.isKeyDown(
+                //? < 26.3
+                //Minecraft.getInstance().getWindow(),
+                modifierKey.getValue()
+        );
     }
 
 

@@ -1,6 +1,7 @@
 package net.kyrptonaught.inventorysorter.network;
 
 import net.kyrptonaught.inventorysorter.SortTarget;
+import net.kyrptonaught.inventorysorter.inventory.SortabilityPolicy;
 import net.kyrptonaught.inventorysorter.sort.SortType;
 import net.kyrptonaught.inventorysorter.config.NewConfigOptions;
 import net.kyrptonaught.inventorysorter.platform.NetworkingPlatform;
@@ -26,6 +27,9 @@ public record InventorySortPacket(SortTarget target, SortType sortType) implemen
     }
 
     static void sendSortPacket(SortTarget target, NewConfigOptions config, NetworkingPlatform networking) {
+        if (!SortabilityPolicy.isTargetAllowed(target, config.allowPlayerInventorySorting)) {
+            return;
+        }
         networking.sendToServer(new InventorySortPacket(target, config.sortType));
         if (target == SortTarget.CONTAINER && config.sortPlayerInventory) {
             sendSortPacket(SortTarget.PLAYER_INVENTORY, config, networking);

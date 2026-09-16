@@ -4,6 +4,9 @@ import net.kyrptonaught.inventorysorter.SortTarget;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.EntityEquipment;
+import net.minecraft.core.NonNullList;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
@@ -16,10 +19,48 @@ import java.util.Optional;
 
 public class ClientSortScopeTest {
     @Test
+    void expandedPlayerInventoryScopeIncludesExtraStorageButExcludesEquipment() {
+        Inventory playerInventory = new Inventory(null, new EntityEquipment()) {
+            private final NonNullList<ItemStack> storage = NonNullList.withSize(63, ItemStack.EMPTY);
+
+            @Override
+            public NonNullList<ItemStack> getNonEquipmentItems() {
+                return storage;
+            }
+        };
+        TestMenu menu = new TestMenu();
+        addSlots(menu, new SimpleContainer(9), 0, 9);
+        addSlots(menu, playerInventory, 0, 70);
+
+        ClientSortScope scope = ClientSortScope.resolve(menu, playerInventory, SortTarget.PLAYER_INVENTORY, null)
+                .orElseThrow();
+
+        Assertions.assertEquals(54, scope.slots().size());
+        Assertions.assertEquals(9, scope.slots().getFirst().slot().getContainerSlot());
+        Assertions.assertEquals(62, scope.slots().getLast().slot().getContainerSlot());
+        Assertions.assertEquals(71, scope.slots().getLast().menuSlotIndex());
+        Assertions.assertEquals(9, scope.hotbarBundleTargetSlots().size());
+    }
+
+    @Test
+    void playerInventoryScopeOnlyIncludesStorageExposedByTheCurrentMenu() {
+        Inventory playerInventory = new Inventory(null, new EntityEquipment());
+        TestMenu menu = new TestMenu();
+        addSlots(menu, playerInventory, 0, 18);
+        addSlots(menu, playerInventory, 36, 7);
+
+        ClientSortScope scope = ClientSortScope.resolve(menu, playerInventory, SortTarget.PLAYER_INVENTORY, null)
+                .orElseThrow();
+
+        Assertions.assertEquals(9, scope.slots().size());
+        Assertions.assertEquals(17, scope.slots().getLast().slot().getContainerSlot());
+    }
+
+    @Test
     void playerInventoryScopeUsesMainInventorySlotsAndExcludesHotbar() {
         TestMenu menu = new TestMenu();
         Container container = new SimpleContainer(9);
-        Container playerInventory = new SimpleContainer(36);
+        Inventory playerInventory = new Inventory(null, new EntityEquipment());
         addSlots(menu, container, 0, 9);
         addSlots(menu, playerInventory, 0, 36);
 
@@ -37,7 +78,7 @@ public class ClientSortScopeTest {
     void playerInventoryScopeIncludesHotbarAndCompatibilitySlotsAsExtraBundleTargets() {
         TestMenu menu = new TestMenu();
         Container container = new SimpleContainer(9);
-        Container playerInventory = new SimpleContainer(36);
+        Inventory playerInventory = new Inventory(null, new EntityEquipment());
         Container compatibilityInventory = new SimpleContainer(2);
         addSlots(menu, container, 0, 9);
         addSlots(menu, playerInventory, 0, 36);
@@ -65,7 +106,7 @@ public class ClientSortScopeTest {
     void playerInventoryScopeIncludesInactiveCompatibilitySlotsBecausePluginsCanPrepareThemBeforeClicking() {
         TestMenu menu = new TestMenu();
         Container container = new SimpleContainer(9);
-        Container playerInventory = new SimpleContainer(36);
+        Inventory playerInventory = new Inventory(null, new EntityEquipment());
         Container compatibilityInventory = new SimpleContainer(1);
         addSlots(menu, container, 0, 9);
         addSlots(menu, playerInventory, 0, 36);
@@ -89,7 +130,7 @@ public class ClientSortScopeTest {
     void containerScopeUsesOnlyTheFirstBackingContainer() {
         TestMenu menu = new TestMenu();
         Container container = new SimpleContainer(9);
-        Container playerInventory = new SimpleContainer(36);
+        Inventory playerInventory = new Inventory(null, new EntityEquipment());
         addSlots(menu, container, 0, 9);
         addSlots(menu, playerInventory, 0, 36);
 
@@ -106,7 +147,7 @@ public class ClientSortScopeTest {
     void containerScopeRejectsFallbackWhenContainerPolicyRejectsSorting() {
         TestMenu menu = new TestMenu();
         Container container = new SimpleContainer(9);
-        Container playerInventory = new SimpleContainer(36);
+        Inventory playerInventory = new Inventory(null, new EntityEquipment());
         addSlots(menu, container, 0, 9);
         addSlots(menu, playerInventory, 0, 36);
 
@@ -127,7 +168,7 @@ public class ClientSortScopeTest {
         Container container = new SimpleContainer(1);
         menu.add(new InactiveSlot(container, 0));
 
-        Optional<ClientSortScope> scope = ClientSortScope.resolve(menu, new SimpleContainer(36), SortTarget.CONTAINER, null);
+        Optional<ClientSortScope> scope = ClientSortScope.resolve(menu, new Inventory(null, new EntityEquipment()), SortTarget.CONTAINER, null);
 
         Assertions.assertTrue(scope.isEmpty());
     }
@@ -138,7 +179,7 @@ public class ClientSortScopeTest {
         Container container = new SimpleContainer(1);
         menu.add(new FakeSlot(container, 0));
 
-        Optional<ClientSortScope> scope = ClientSortScope.resolve(menu, new SimpleContainer(36), SortTarget.CONTAINER, null);
+        Optional<ClientSortScope> scope = ClientSortScope.resolve(menu, new Inventory(null, new EntityEquipment()), SortTarget.CONTAINER, null);
 
         Assertions.assertTrue(scope.isEmpty());
     }
@@ -149,7 +190,7 @@ public class ClientSortScopeTest {
         Container container = new SimpleContainer(1);
         menu.add(new NonModifiableSlot(container, 0));
 
-        Optional<ClientSortScope> scope = ClientSortScope.resolve(menu, new SimpleContainer(36), SortTarget.CONTAINER, null);
+        Optional<ClientSortScope> scope = ClientSortScope.resolve(menu, new Inventory(null, new EntityEquipment()), SortTarget.CONTAINER, null);
 
         Assertions.assertTrue(scope.isEmpty());
     }

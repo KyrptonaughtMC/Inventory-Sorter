@@ -29,7 +29,10 @@ public class SortMeCommand {
             return 0;
         }
         SortSettings settings = PlatformServices.PLAYER_DATA.getSortSettings(player);
-        ServerInventorySorter.sort(player, SortTarget.PLAYER_INVENTORY, settings);
+        if (!ServerInventorySorter.sort(player, SortTarget.PLAYER_INVENTORY, settings)) {
+            commandContext.getSource().sendSuccess(() -> ServerComponent.lang(player.clientInformation().language()).translate("inventorysorter.cmd.sort.playerdisabled"), false);
+            return 0;
+        }
 
         commandContext.getSource().sendSuccess(() -> ServerComponent.lang(player.clientInformation().language()).translate("inventorysorter.cmd.sort.sorted"), false);
         return 1;

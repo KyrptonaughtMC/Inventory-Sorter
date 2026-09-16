@@ -22,14 +22,19 @@ The default **permission level is 0**, which means that all players can use them
 | Permission Node                                    | Command                                    |
 |----------------------------------------------------|--------------------------------------------|
 | `inventorysorter.command.sort`                     | `/invsort sort`                            |
-| `inventorysorter.command.sortme`                   | `/invsort sortMe`                          |
+| `inventorysorter.command.sortme`                   | `/invsort sortme`                          |
 | `inventorysorter.command.sorttype`                 | `/invsort sortType`                        |
 | `inventorysorter.command.sortplayerinventory`      | `/invsort sortPlayerInventory on/off`      |
+| `inventorysorter.command.allowplayerinventorysorting` | `/invsort allowPlayerInventorySorting on/off` |
 | `inventorysorter.command.sorthighlightedinventory` | `/invsort sortHighlightedInventory on/off` |
 | `inventorysorter.command.nosort`                   | `/invsort nosort add/remove/list`          |
 | `inventorysorter.command.doubleclicksort`          | `/invsort doubleClickSort on/off`          |
 | `inventorysorter.command.reload`                   | `/invsort reload`                          |
 | `inventorysorter.command.screenid`                 | `/invsort screenID`                        |
+
+The `allowplayerinventorysorting` permission controls access to the opt-out command, not whether an inventory is sortable.
+The command can also be used without an argument to show the player's current preference.
+See [Allow Player Inventory Sorting](/configuration#allowplayerinventorysorting) for its effect and persistence.
 
 
 ### Admin Permissions

@@ -23,6 +23,8 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.tags.TagLoader;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.EntityEquipment;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.MenuType;
@@ -137,7 +139,7 @@ public class ClientFallbackPlanningTest {
         chest.setItem(4, stack(Items.APPLE, 6));
         chest.setItem(7, stack(Items.DIAMOND, 1));
 
-        ClientSortScope scope = ClientSortScope.resolve(menu, new SimpleContainer(36), net.kyrptonaught.inventorysorter.SortTarget.CONTAINER, null)
+        ClientSortScope scope = ClientSortScope.resolve(menu, new Inventory(null, new EntityEquipment()), net.kyrptonaught.inventorysorter.SortTarget.CONTAINER, null)
                 .orElseThrow();
         Optional<List<PlannedContainerClick>> clicks = new ClientFallbackSortPlanBuilder(new ClientSortClickPlanner()).build(
                 scope,
@@ -163,7 +165,7 @@ public class ClientFallbackPlanningTest {
 
     @Test
     void clientFallbackCanUseHotbarBundleWhenSortingPlayerInventory() {
-        SimpleContainer playerInventory = new SimpleContainer(36);
+        Inventory playerInventory = new Inventory(null, new EntityEquipment());
         TestMenu menu = new TestMenu();
         addSlots(menu, playerInventory, 36);
         playerInventory.setItem(0, bundleContaining(stack(Items.APPLE, 8)));
@@ -193,7 +195,7 @@ public class ClientFallbackPlanningTest {
 
     @Test
     void clientFallbackDoesNotUseHotbarBundleWhenHotbarBundleSortingIsOff() {
-        SimpleContainer playerInventory = new SimpleContainer(36);
+        Inventory playerInventory = new Inventory(null, new EntityEquipment());
         TestMenu menu = new TestMenu();
         addSlots(menu, playerInventory, 36);
         playerInventory.setItem(0, bundleContaining(stack(Items.APPLE, 8)));
@@ -298,7 +300,7 @@ public class ClientFallbackPlanningTest {
             List<SortPriorityRuleSetting> rules
     ) {
         SimpleContainer chest = new SimpleContainer(27);
-        SimpleContainer playerInventory = new SimpleContainer(36);
+        Inventory playerInventory = new Inventory(null, new EntityEquipment());
         TestMenu menu = new TestMenu();
         addSlots(menu, chest, 27);
         addSlots(menu, playerInventory, 36);
@@ -495,7 +497,7 @@ public class ClientFallbackPlanningTest {
 
         BundleContents contents = slot.get(DataComponents.BUNDLE_CONTENTS);
         if (contents != null && slot.getCount() == 1) {
-            BundleContents.Mutable mutable = new BundleContents.Mutable(contents);
+            BundleContents.Mutable mutable = contents.asMutable();
             int inserted = mutable.tryInsert(cursor);
             if (inserted > 0) {
                 slot.set(DataComponents.BUNDLE_CONTENTS, mutable.toImmutable());
@@ -547,7 +549,7 @@ public class ClientFallbackPlanningTest {
 
     private static Map<Item, Integer> bundleContents(ItemStack bundle) {
         return bundle.get(DataComponents.BUNDLE_CONTENTS)
-                .itemCopyStream()
+                .itemCopies()
                 .collect(java.util.stream.Collectors.toMap(ItemStack::getItem, ItemStack::getCount, Integer::sum));
     }
 
@@ -591,7 +593,7 @@ public class ClientFallbackPlanningTest {
     }
 
     private static ItemStack bundleContaining(ItemStack... contents) {
-        BundleContents.Mutable mutable = new BundleContents.Mutable(BundleContents.EMPTY);
+        BundleContents.Mutable mutable = BundleContents.EMPTY.asMutable();
         for (ItemStack content : contents) {
             mutable.tryInsert(content.copy());
         }

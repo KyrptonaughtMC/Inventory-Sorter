@@ -12,8 +12,8 @@ import java.util.List;
 
 public class ConfigScreenTest {
     private static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(Identifier.fromNamespaceAndPath("inventorysorter", "test"));
-    private static final InputConstants.Key CONFIG_KEY = InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_P);
-    private static final InputConstants.Key SORT_KEY = InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_O);
+    private static final InputConstants.Key CONFIG_KEY = InputConstants.Type.KEYBOARD.getOrCreate(InputConstants.KEY_P);
+    private static final InputConstants.Key SORT_KEY = InputConstants.Type.KEYBOARD.getOrCreate(InputConstants.KEY_O);
 
     @Test
     void consumeConfigScreenClickUsesConfigButtonWhenKeysDiffer() {

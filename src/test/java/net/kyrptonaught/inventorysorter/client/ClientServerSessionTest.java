@@ -208,6 +208,9 @@ public class ClientServerSessionTest {
     }
 
     private static class RecordingNetworkingPlatform implements NetworkingPlatform {
+        @Override
+        public void registerPlayerInventorySortingPreferenceReceiver(Consumer<PlayerInventorySortingPreference> handler) {
+        }
         private final List<CustomPacketPayload> serverboundPayloads = new ArrayList<>();
 
         @Override

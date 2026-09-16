@@ -158,6 +158,12 @@ public class ConfigScreen {
                         .setTooltip(Component.translatable("inventorysorter.config.sortPlayerInventory.tooltip"))
                         .setSaveConsumer(val -> options.sortPlayerInventory = val)
                         .build());
+        logicCategory.addEntry(entryBuilder.startBooleanToggle(Component.translatable("inventorysorter.config.allowPlayerInventorySorting"), options.allowPlayerInventorySorting)
+                        .setDefaultValue(true)
+                        .setYesNoTextSupplier(ConfigScreen::toggleState)
+                        .setTooltip(Component.translatable("inventorysorter.config.allowPlayerInventorySorting.tooltip"))
+                        .setSaveConsumer(val -> options.allowPlayerInventorySorting = val)
+                        .build());
         logicCategory.addEntry(entryBuilder.startBooleanToggle(Component.translatable("inventorysorter.config.sortHovered"), options.sortHighlightedItem)
                         .setDefaultValue(true)
                         .setYesNoTextSupplier(ConfigScreen::toggleState)

@@ -318,7 +318,7 @@ class BundleInsertionLayoutPassTest {
     }
 
     private static ItemStack bundleContaining(ItemStack... contents) {
-        BundleContents.Mutable mutable = new BundleContents.Mutable(BundleContents.EMPTY);
+        BundleContents.Mutable mutable = BundleContents.EMPTY.asMutable();
         for (ItemStack content : contents) {
             mutable.tryInsert(content.copy());
         }
@@ -330,13 +330,13 @@ class BundleInsertionLayoutPassTest {
 
     private static Map<Item, Integer> bundleContents(ItemStack bundle) {
         return bundle.get(DataComponents.BUNDLE_CONTENTS)
-                .itemCopyStream()
+                .itemCopies()
                 .collect(Collectors.toMap(ItemStack::getItem, ItemStack::getCount, Integer::sum));
     }
 
     private static Map<String, Integer> namedBundleContents(ItemStack bundle) {
         return bundle.get(DataComponents.BUNDLE_CONTENTS)
-                .itemCopyStream()
+                .itemCopies()
                 .collect(Collectors.toMap(stack -> stack.getHoverName().getString(), ItemStack::getCount, Integer::sum));
     }
 

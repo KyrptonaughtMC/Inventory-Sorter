@@ -35,11 +35,16 @@ public class ClientConfigSyncTest {
 
         Assertions.assertEquals(List.of(
                 SortSettings.fromConfig(config),
+                new PlayerInventorySortingPreference(config.allowPlayerInventorySorting),
                 new PlayerSortPrevention(Set.of("minecraft:anvil", "minecraft:chest"))
         ), networking.serverboundPayloads);
     }
 
     private static class RecordingNetworkingPlatform implements NetworkingPlatform {
+        @Override
+        public void registerPlayerInventorySortingPreferenceReceiver(Consumer<PlayerInventorySortingPreference> handler) {
+            throw new UnsupportedOperationException("Not needed for client sync tests");
+        }
         private final List<CustomPacketPayload> serverboundPayloads = new ArrayList<>();
 
         @Override

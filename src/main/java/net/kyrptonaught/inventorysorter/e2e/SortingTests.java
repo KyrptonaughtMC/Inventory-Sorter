@@ -40,6 +40,52 @@ import static net.kyrptonaught.inventorysorter.e2e.TestUtils.*;
 public class SortingTests {
     //? if fabric
     @GameTest
+    public void testPlayerInventoryOptOutBlocksCommandsAndDirectSorts(GameTestHelper ctx) {
+        Scenario scenario = setUpScene(ctx, Map.of(5, new ItemStack(Items.DIAMOND, 32), 6, new ItemStack(Items.DIAMOND, 32)));
+        ServerPlayer player = scenario.player();
+        player.getInventory().setItem(14, new ItemStack(Items.DIAMOND, 32));
+        player.getInventory().setItem(15, new ItemStack(Items.DIAMOND, 32));
+        runCommand(player, "/invsort allowPlayerInventorySorting off");
+        ctx.assertValueEqual(PlatformServices.PLAYER_DATA.getSortSettings(player).allowPlayerInventorySorting(), false, Component.literal("Opt-out command persists per-player preference"));
+        runCommand(player, "/invsort allowPlayerInventorySorting");
+        runCommand(player, "/invsort sortme");
+        ctx.assertValueEqual(ServerInventorySorter.sort(player, SortTarget.PLAYER_INVENTORY, SortType.NAME), false, Component.literal("Convenience sort cannot bypass stored opt-out"));
+        ctx.assertValueEqual(ServerInventorySorter.sort(player, SortTarget.PLAYER_INVENTORY, SortSettings.DEFAULT), false, Component.literal("Explicit settings cannot bypass stored opt-out"));
+        assertPlayerInventoryContents(ctx, player, Map.of(14, new ItemStack(Items.DIAMOND, 32), 15, new ItemStack(Items.DIAMOND, 32)));
+        ServerInventorySorter.sort(player, SortTarget.CONTAINER, SortType.NAME);
+        assertContents(ctx, scenario, Map.of(0, new ItemStack(Items.DIAMOND, 64)));
+        runCommand(player, "/invsort allowPlayerInventorySorting on");
+        runCommand(player, "/invsort sortme");
+        assertPlayerInventoryContents(ctx, player, Map.of(9, new ItemStack(Items.DIAMOND, 64)));
+        ctx.succeed();
+    }
+
+    //? if fabric
+    @GameTest
+    public void testPlayerInventoryOptOutBlocksDoubleClickButKeepsContainerSorting(GameTestHelper ctx) {
+        Scenario scenario = setUpScene(ctx, Map.of(5, new ItemStack(Items.DIAMOND, 32), 6, new ItemStack(Items.DIAMOND, 32)));
+        ServerPlayer player = scenario.player();
+        player.getInventory().setItem(14, new ItemStack(Items.DIAMOND, 32));
+        player.getInventory().setItem(15, new ItemStack(Items.DIAMOND, 32));
+        PlatformServices.PLAYER_DATA.setSortSettings(player, SortSettings.DEFAULT.withSortPlayerInventory(true).withAllowPlayerInventorySorting(false));
+        int emptyPlayerSlot = java.util.stream.IntStream.range(0, player.containerMenu.slots.size())
+                .filter(index -> player.containerMenu.slots.get(index).container == player.getInventory() && player.containerMenu.slots.get(index).getItem().isEmpty())
+                .findFirst().orElseThrow();
+        player.containerMenu.clicked(emptyPlayerSlot, 0, net.minecraft.world.inventory.ContainerInput.PICKUP_ALL, player);
+        assertPlayerInventoryContents(ctx, player, Map.of(14, new ItemStack(Items.DIAMOND, 32), 15, new ItemStack(Items.DIAMOND, 32)));
+        player.containerMenu.clicked(0, 0, net.minecraft.world.inventory.ContainerInput.PICKUP_ALL, player);
+        assertContents(ctx, scenario, Map.of(0, new ItemStack(Items.DIAMOND, 64)));
+        assertPlayerInventoryContents(ctx, player, Map.of(14, new ItemStack(Items.DIAMOND, 32), 15, new ItemStack(Items.DIAMOND, 32)));
+        ServerPlayer otherPlayer = createMockServerPlayer(ctx, false);
+        otherPlayer.getInventory().setItem(14, new ItemStack(Items.DIAMOND, 32));
+        otherPlayer.getInventory().setItem(15, new ItemStack(Items.DIAMOND, 32));
+        ctx.assertValueEqual(ServerInventorySorter.sort(otherPlayer, SortTarget.PLAYER_INVENTORY, SortType.NAME), true, Component.literal("Preference is isolated to its player"));
+        assertPlayerInventoryContents(ctx, otherPlayer, Map.of(9, new ItemStack(Items.DIAMOND, 64)));
+        ctx.succeed();
+    }
+
+    //? if fabric
+    @GameTest
     public void testSortCommandSortsTargetInventory(GameTestHelper ctx) {
         Scenario scenario = setUpScene(ctx, Map.of(
                 5, new ItemStack(Items.DIAMOND, 32),

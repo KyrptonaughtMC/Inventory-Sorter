@@ -23,8 +23,12 @@ public record SortSettings(
         boolean sortIntoBundles,
         boolean sortIntoHotbarBundles,
         SortType sortType,
-        List<SortPriorityRuleSetting> sortPriorityRules
+        List<SortPriorityRuleSetting> sortPriorityRules,
+        boolean allowPlayerInventorySorting
 ) implements CustomPacketPayload {
+    public SortSettings(boolean sortHighlightedItem, boolean sortPlayerInventory, boolean enableDoubleClick, boolean sortIntoBundles, boolean sortIntoHotbarBundles, SortType sortType, List<SortPriorityRuleSetting> sortPriorityRules) {
+        this(sortHighlightedItem, sortPlayerInventory, enableDoubleClick, sortIntoBundles, sortIntoHotbarBundles, sortType, sortPriorityRules, true);
+    }
     public SortSettings(boolean sortHighlightedItem, boolean sortPlayerInventory, boolean enableDoubleClick, SortType sortType) {
         this(sortHighlightedItem, sortPlayerInventory, enableDoubleClick, sortType, List.of());
     }
@@ -87,7 +91,8 @@ public record SortSettings(
                     .fieldOf("sortType").forGetter(SortSettings::sortType),
             SortPriorityRuleSetting.CODEC.listOf()
                     .optionalFieldOf("sortPriorityRules", List.of())
-                    .forGetter(SortSettings::sortPriorityRules)
+                    .forGetter(SortSettings::sortPriorityRules),
+            Codec.BOOL.optionalFieldOf("allowPlayerInventorySorting", true).forGetter(SortSettings::allowPlayerInventorySorting)
     ).apply(instance, SortSettings::new));
 
     public static final CustomPacketPayload.Type<SortSettings> ID = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(MOD_ID, "sync_settings_packet"));
@@ -102,7 +107,8 @@ public record SortSettings(
                 config.sortIntoBundles,
                 config.sortIntoHotbarBundles,
                 config.sortType,
-                config.sortPriorityRules
+                config.sortPriorityRules,
+                config.allowPlayerInventorySorting
         );
     }
 
@@ -112,38 +118,43 @@ public record SortSettings(
     }
 
     public SortSettings withDoubleClick(boolean enabled) {
-        return new SortSettings(this.sortHighlightedItem(), this.sortPlayerInventory(), enabled, this.sortIntoBundles(), this.sortIntoHotbarBundles(), this.sortType(), this.sortPriorityRules());
+        return new SortSettings(this.sortHighlightedItem(), this.sortPlayerInventory(), enabled, this.sortIntoBundles(), this.sortIntoHotbarBundles(), this.sortType(), this.sortPriorityRules(), this.allowPlayerInventorySorting());
     }
 
     public SortSettings withSortType(SortType sortType) {
-        return new SortSettings(this.sortHighlightedItem(), this.sortPlayerInventory(), this.enableDoubleClick(), this.sortIntoBundles(), this.sortIntoHotbarBundles(), sortType, this.sortPriorityRules());
+        return new SortSettings(this.sortHighlightedItem(), this.sortPlayerInventory(), this.enableDoubleClick(), this.sortIntoBundles(), this.sortIntoHotbarBundles(), sortType, this.sortPriorityRules(), this.allowPlayerInventorySorting());
     }
 
     public SortSettings withSortPlayerInventory(boolean enabled) {
-        return new SortSettings(this.sortHighlightedItem(), enabled, this.enableDoubleClick(), this.sortIntoBundles(), this.sortIntoHotbarBundles(), this.sortType(), this.sortPriorityRules());
+        return new SortSettings(this.sortHighlightedItem(), enabled, this.enableDoubleClick(), this.sortIntoBundles(), this.sortIntoHotbarBundles(), this.sortType(), this.sortPriorityRules(), this.allowPlayerInventorySorting());
     }
 
     public SortSettings withSortHighlightedInventory(boolean enabled) {
-        return new SortSettings(enabled, this.sortPlayerInventory(), this.enableDoubleClick(), this.sortIntoBundles(), this.sortIntoHotbarBundles(), this.sortType(), this.sortPriorityRules());
+        return new SortSettings(enabled, this.sortPlayerInventory(), this.enableDoubleClick(), this.sortIntoBundles(), this.sortIntoHotbarBundles(), this.sortType(), this.sortPriorityRules(), this.allowPlayerInventorySorting());
     }
 
     public SortSettings withSortIntoBundles(boolean enabled) {
-        return new SortSettings(this.sortHighlightedItem(), this.sortPlayerInventory(), this.enableDoubleClick(), enabled, this.sortIntoHotbarBundles(), this.sortType(), this.sortPriorityRules());
+        return new SortSettings(this.sortHighlightedItem(), this.sortPlayerInventory(), this.enableDoubleClick(), enabled, this.sortIntoHotbarBundles(), this.sortType(), this.sortPriorityRules(), this.allowPlayerInventorySorting());
     }
 
     public SortSettings withSortIntoHotbarBundles(boolean enabled) {
-        return new SortSettings(this.sortHighlightedItem(), this.sortPlayerInventory(), this.enableDoubleClick(), this.sortIntoBundles(), enabled, this.sortType(), this.sortPriorityRules());
+        return new SortSettings(this.sortHighlightedItem(), this.sortPlayerInventory(), this.enableDoubleClick(), this.sortIntoBundles(), enabled, this.sortType(), this.sortPriorityRules(), this.allowPlayerInventorySorting());
     }
 
     public SortSettings withSortPriorityRules(List<SortPriorityRuleSetting> sortPriorityRules) {
-        return new SortSettings(this.sortHighlightedItem(), this.sortPlayerInventory(), this.enableDoubleClick(), this.sortIntoBundles(), this.sortIntoHotbarBundles(), this.sortType(), sortPriorityRules);
+        return new SortSettings(this.sortHighlightedItem(), this.sortPlayerInventory(), this.enableDoubleClick(), this.sortIntoBundles(), this.sortIntoHotbarBundles(), this.sortType(), sortPriorityRules, this.allowPlayerInventorySorting());
+    }
+
+    public SortSettings withAllowPlayerInventorySorting(boolean enabled) {
+        return new SortSettings(sortHighlightedItem, sortPlayerInventory, enableDoubleClick, sortIntoBundles, sortIntoHotbarBundles, sortType, sortPriorityRules, enabled);
     }
 
     public void sync(ServerPlayer player) {
         this.sync(player, PlatformServices.NETWORK);
     }
 
-    void sync(ServerPlayer player, NetworkingPlatform networking) {
+    public void sync(ServerPlayer player, NetworkingPlatform networking) {
         networking.sendToPlayer(player, this);
+        networking.sendToPlayer(player, new PlayerInventorySortingPreference(allowPlayerInventorySorting));
     }
 }

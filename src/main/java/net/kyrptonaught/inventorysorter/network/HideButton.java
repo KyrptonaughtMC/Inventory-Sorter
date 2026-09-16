@@ -3,8 +3,8 @@ package net.kyrptonaught.inventorysorter.network;
 import net.kyrptonaught.inventorysorter.compat.config.CompatConfig;
 import net.kyrptonaught.inventorysorter.platform.NetworkingPlatform;
 import net.kyrptonaught.inventorysorter.platform.PlatformServices;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
@@ -24,13 +24,10 @@ public record HideButton(
     public static final HideButton DEFAULT = new HideButton(Set.of());
 
     public static final StreamCodec<RegistryFriendlyByteBuf, HideButton> CODEC =
-            StreamCodec.ofMember(
-                    (value, buf) -> {
-                        buf.writeCollection(value.hideButtonForScreens(), FriendlyByteBuf::writeUtf);
-                    },
-                    buf -> new HideButton(
-                            buf.readCollection(HashSet::new, FriendlyByteBuf::readUtf)
-                    )
+            StreamCodec.composite(
+                    ByteBufCodecs.collection(HashSet::new, ByteBufCodecs.STRING_UTF8),
+                    HideButton::hideButtonForScreens,
+                    HideButton::new
             );
 
     public static HideButton fromConfig(CompatConfig config) {

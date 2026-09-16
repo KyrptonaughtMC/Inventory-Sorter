@@ -29,6 +29,8 @@ import static net.kyrptonaught.inventorysorter.InventorySorterMod.MOD_ID;
 public class NeoForgeNetworkingPlatform implements NetworkingPlatform {
     private static Consumer<SortSettings> sortSettingsHandler = payload -> {
     };
+    private static Consumer<PlayerInventorySortingPreference> playerInventorySortingPreferenceHandler = payload -> {
+    };
     private static Consumer<PlayerSortPrevention> playerSortPreventionHandler = payload -> {
     };
     private static Consumer<HideButton> hideButtonHandler = payload -> {
@@ -64,7 +66,12 @@ public class NeoForgeNetworkingPlatform implements NetworkingPlatform {
 
         registrar.playBidirectional(SortSettings.ID, SortSettings.CODEC, (payload, context) -> {
             if (context.player() instanceof ServerPlayer player) {
-                PlatformServices.PLAYER_DATA.setSortSettings(player, payload);
+                PlatformServices.PLAYER_DATA.setSortSettings(player, payload.withAllowPlayerInventorySorting(PlatformServices.PLAYER_DATA.getSortSettings(player).allowPlayerInventorySorting()));
+            }
+        });
+        registrar.playBidirectional(PlayerInventorySortingPreference.ID, PlayerInventorySortingPreference.CODEC, (payload, context) -> {
+            if (context.player() instanceof ServerPlayer player) {
+                PlatformServices.PLAYER_DATA.setSortSettings(player, PlatformServices.PLAYER_DATA.getSortSettings(player).withAllowPlayerInventorySorting(payload.allowed()));
             }
         });
 
@@ -112,6 +119,11 @@ public class NeoForgeNetworkingPlatform implements NetworkingPlatform {
     }
 
     @Override
+    public void registerPlayerInventorySortingPreferenceReceiver(Consumer<PlayerInventorySortingPreference> handler) {
+        playerInventorySortingPreferenceHandler = handler;
+    }
+
+    @Override
     public void sendToPlayer(ServerPlayer player, CustomPacketPayload payload) {
         if (((ICommonPacketListener) player.connection).hasChannel(payload)) {
             PacketDistributor.sendToPlayer(player, payload);
@@ -123,6 +135,7 @@ public class NeoForgeNetworkingPlatform implements NetworkingPlatform {
         @SubscribeEvent
         public static void registerClientPayloadHandlers(RegisterClientPayloadHandlersEvent event) {
             event.register(SortSettings.ID, (payload, context) -> sortSettingsHandler.accept(payload));
+            event.register(PlayerInventorySortingPreference.ID, (payload, context) -> playerInventorySortingPreferenceHandler.accept(payload));
             event.register(PlayerSortPrevention.ID, (payload, context) -> playerSortPreventionHandler.accept(payload));
             event.register(HideButton.ID, (payload, context) -> hideButtonHandler.accept(payload));
             event.register(ReloadConfigPacket.ID, (payload, context) -> reloadConfigHandler.run());

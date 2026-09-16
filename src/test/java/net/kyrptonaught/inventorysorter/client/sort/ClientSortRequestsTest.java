@@ -7,6 +7,24 @@ import org.junit.jupiter.api.Test;
 
 public class ClientSortRequestsTest {
     @Test
+    void optOutBlocksPlayerRequestsForEverySupportStateAndCanBeReenabled() {
+        for (int state = 0; state < 3; state++) {
+            ClientServerSupport support = new ClientServerSupport();
+            if (state == 1) support.markPresent();
+            if (state == 2) support.markAbsent();
+            RecordingServerSortSender sender = new RecordingServerSortSender();
+            RecordingFallbackSorter fallback = new RecordingFallbackSorter(true);
+            boolean[] allow = {false};
+            ClientSortRequests requests = new ClientSortRequests(support, sender, fallback, () -> allow[0]);
+            Assertions.assertFalse(requests.requestSort(SortTarget.PLAYER_INVENTORY));
+            Assertions.assertEquals(0, sender.calls + fallback.calls);
+            Assertions.assertTrue(requests.requestSort(SortTarget.CONTAINER));
+            allow[0] = true;
+            Assertions.assertTrue(requests.requestSort(SortTarget.PLAYER_INVENTORY));
+            Assertions.assertEquals(2, sender.calls + fallback.calls);
+        }
+    }
+    @Test
     void unknownServerSupportUsesFallback() {
         RecordingServerSortSender serverSortSender = new RecordingServerSortSender();
         RecordingFallbackSorter fallbackSorter = new RecordingFallbackSorter(true);

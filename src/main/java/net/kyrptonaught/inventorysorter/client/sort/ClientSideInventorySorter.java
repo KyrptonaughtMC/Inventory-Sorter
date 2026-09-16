@@ -1,6 +1,7 @@
 package net.kyrptonaught.inventorysorter.client.sort;
 
 import net.kyrptonaught.inventorysorter.SortTarget;
+import net.kyrptonaught.inventorysorter.inventory.SortabilityPolicy;
 import net.kyrptonaught.inventorysorter.client.sort.plan.ClientFallbackSortPlanBuilder;
 import net.kyrptonaught.inventorysorter.client.sort.plan.PlannedContainerClick;
 import net.kyrptonaught.inventorysorter.network.SortPriorityRuleSetting;
@@ -22,6 +23,7 @@ class ClientSideInventorySorter {
     private final BooleanSupplier sortPlayerInventory;
     private final BooleanSupplier sortIntoBundles;
     private final BooleanSupplier sortIntoHotbarBundles;
+    private final BooleanSupplier allowPlayerInventorySorting;
     private final ClientInventoryClickExecutor clickExecutor;
     private final ClientFallbackSortPlanBuilder sortPlanBuilder;
 
@@ -33,6 +35,7 @@ class ClientSideInventorySorter {
             BooleanSupplier sortPlayerInventory,
             BooleanSupplier sortIntoBundles,
             BooleanSupplier sortIntoHotbarBundles,
+            BooleanSupplier allowPlayerInventorySorting,
             ClientInventoryClickExecutor clickExecutor,
             ClientFallbackSortPlanBuilder sortPlanBuilder
     ) {
@@ -43,6 +46,7 @@ class ClientSideInventorySorter {
         this.sortPlayerInventory = sortPlayerInventory;
         this.sortIntoBundles = sortIntoBundles;
         this.sortIntoHotbarBundles = sortIntoHotbarBundles;
+        this.allowPlayerInventorySorting = allowPlayerInventorySorting;
         this.clickExecutor = clickExecutor;
         this.sortPlanBuilder = sortPlanBuilder;
     }
@@ -60,6 +64,7 @@ class ClientSideInventorySorter {
         return enqueueSortPlans(
                 target,
                 sortPlayerInventory,
+                allowPlayerInventorySorting,
                 requestedTarget -> plan(currentMinecraft, requestedTarget),
                 clickExecutor
         );
@@ -71,6 +76,15 @@ class ClientSideInventorySorter {
             Function<SortTarget, Optional<ClientInventoryClickExecutor.QueuedSort>> planner,
             ClientInventoryClickExecutor clickExecutor
     ) {
+        return enqueueSortPlans(target, sortPlayerInventory, () -> true, planner, clickExecutor);
+    }
+
+    static boolean enqueueSortPlans(SortTarget target, BooleanSupplier sortPlayerInventory, BooleanSupplier allowPlayerInventorySorting,
+                                    Function<SortTarget, Optional<ClientInventoryClickExecutor.QueuedSort>> planner,
+                                    ClientInventoryClickExecutor clickExecutor) {
+        if (!SortabilityPolicy.isTargetAllowed(target, allowPlayerInventorySorting.getAsBoolean())) {
+            return false;
+        }
         Optional<ClientInventoryClickExecutor.QueuedSort> sortPlan = planner.apply(target);
         if (sortPlan.isEmpty()) {
             return false;
@@ -78,7 +92,7 @@ class ClientSideInventorySorter {
 
         List<ClientInventoryClickExecutor.QueuedSort> sortPlans = new ArrayList<>();
         sortPlans.add(sortPlan.get());
-        if (target == SortTarget.CONTAINER && sortPlayerInventory.getAsBoolean()) {
+        if (target == SortTarget.CONTAINER && sortPlayerInventory.getAsBoolean() && allowPlayerInventorySorting.getAsBoolean()) {
             planner.apply(SortTarget.PLAYER_INVENTORY).ifPresent(sortPlans::add);
         }
 
@@ -105,6 +119,6 @@ class ClientSideInventorySorter {
             return Optional.empty();
         }
 
-        return Optional.of(new ClientInventoryClickExecutor.QueuedSort(sortScope.menuId(), plannedClicks.get()));
+        return Optional.of(new ClientInventoryClickExecutor.QueuedSort(sortScope.menuId(), plannedClicks.get(), target));
     }
 }

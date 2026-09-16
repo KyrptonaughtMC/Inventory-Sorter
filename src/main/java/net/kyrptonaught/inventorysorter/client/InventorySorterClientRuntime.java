@@ -38,7 +38,8 @@ public class InventorySorterClientRuntime {
                 () -> getConfig().sortPriorityRules,
                 () -> getConfig().sortPlayerInventory,
                 () -> getConfig().sortIntoBundles,
-                () -> getConfig().sortIntoHotbarBundles
+                () -> getConfig().sortIntoHotbarBundles,
+                () -> getConfig().allowPlayerInventorySorting
         );
         ClientSorts.configure(clientSortRuntime);
 

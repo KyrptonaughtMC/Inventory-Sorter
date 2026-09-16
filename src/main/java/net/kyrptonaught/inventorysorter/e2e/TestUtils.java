@@ -77,7 +77,10 @@ public class TestUtils {
         BlockPos abspos = ctx.absolutePos(inventoryPosition);
         ctx.setBlock(inventoryPosition, Blocks.CHEST.defaultBlockState());
 
-        player.randomTeleport(abspos.getX() + 2, abspos.getY(), abspos.getZ() + 2, false);
+        //? >= 26.3
+        player.randomTeleport(abspos.getX() + 2, abspos.getY(), abspos.getZ() + 2, false, blockState -> false);
+        //? < 26.3
+        //player.randomTeleport(abspos.getX() + 2, abspos.getY(), abspos.getZ() + 2, false);
         player.lookAt(
                 EntityAnchorArgument.Anchor.EYES,
                 //? >= 26.2
