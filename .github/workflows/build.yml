@@ -1,7 +1,9 @@
 name: build
 on:
-  - push
-  - pull_request
+  push:
+    branches:
+      - main
+  pull_request:
 
 permissions:
   issues: write
@@ -20,6 +22,8 @@ jobs:
   build:
     name: build-${{ github.event_name }}
     runs-on: ubuntu-latest
+    env:
+      HAS_SECRETS: ${{ secrets.DISCORD_WEBHOOK != '' }}
     steps:
       - name: "⬇️ Checkout"
         uses: actions/checkout@v4
@@ -37,6 +41,7 @@ jobs:
           distribution: 'temurin'
 
       - name: "Patch completed languages"
+        if: env.HAS_SECRETS == 'true'
         run: ./scripts/patch-completed-langs.sh
         env:
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
@@ -63,7 +68,7 @@ jobs:
         run: npx semantic-release --dry-run
         id: get-next-version
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
 
       - name: "ℹ️ Needs Release?"
@@ -75,7 +80,7 @@ jobs:
           ./scripts/datagen.sh
 
       - name: "🏗️ Build & Release to GitHub"
-        if: ${{ steps.get-next-version.outputs.new-release-published == 'true' }}
+        if: ${{ steps.get-next-version.outputs.new-release-published == 'true' && env.HAS_SECRETS == 'true' }}
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           DO_PUBLISH: ${{ steps.get-next-version.outputs.new-release-published }}
