@@ -510,12 +510,14 @@ public class BundleSortingTests {
         player.getInventory().setItem(0, appleBundle);
         player.getInventory().setItem(12, new ItemStack(Items.STICK, 6));
         player.getInventory().setItem(14, new ItemStack(Items.APPLE, 12));
-        player.getInventory().setItem(18, new ItemStack(Items.DIAMOND, 1));
+        int lastStorageSlot = player.getInventory().getNonEquipmentItems().size() - 1;
+        player.getInventory().setItem(lastStorageSlot, new ItemStack(Items.DIAMOND, 1));
 
         sortPlayerInventoryWithBundles(player);
 
         assertHotbarContents(ctx, player, Map.of(0, appleBundle));
         assertBundleContents(ctx, player.getInventory().getItem(0), Map.of(Items.APPLE, 20));
+        ctx.assertTrue(player.getInventory().getItem(lastStorageSlot).isEmpty(), "Last storage slot should be included in sorting");
         assertPlayerMainInventoryContents(ctx, player, Map.of(
                 9, new ItemStack(Items.DIAMOND, 1),
                 10, new ItemStack(Items.STICK, 6)
@@ -538,7 +540,8 @@ public class BundleSortingTests {
 
         player.getInventory().setItem(0, appleBundle);
         player.getInventory().setItem(14, new ItemStack(Items.APPLE, 12));
-        player.getInventory().setItem(18, new ItemStack(Items.DIAMOND, 1));
+        int lastStorageSlot = player.getInventory().getNonEquipmentItems().size() - 1;
+        player.getInventory().setItem(lastStorageSlot, new ItemStack(Items.DIAMOND, 1));
 
         ServerInventorySorter.sort(player, SortTarget.PLAYER_INVENTORY, new SortSettings(
                 true,
@@ -551,6 +554,7 @@ public class BundleSortingTests {
 
         assertHotbarContents(ctx, player, Map.of(0, appleBundle));
         assertBundleContents(ctx, player.getInventory().getItem(0), Map.of(Items.APPLE, 8));
+        ctx.assertTrue(player.getInventory().getItem(lastStorageSlot).isEmpty(), "Last storage slot should be included in sorting");
         assertPlayerMainInventoryContents(ctx, player, Map.of(
                 9, new ItemStack(Items.APPLE, 12),
                 10, new ItemStack(Items.DIAMOND, 1)

@@ -30,7 +30,7 @@ public abstract class MixinCreativeInventoryScreen implements SortableContainerS
         if (getConfig().showSortButton) {
             SortButtonWidget sortbtn = this.inventorySorter$getPlayerSortButton();
             if (sortbtn != null) {
-                sortbtn.visible = this.isInventoryOpen();
+                sortbtn.visible = sortbtn.visible && this.isInventoryOpen();
             }
         }
     }
@@ -40,9 +40,8 @@ public abstract class MixinCreativeInventoryScreen implements SortableContainerS
         if (getConfig().showSortButton) {
             SortButtonWidget sortbtn = this.inventorySorter$getPlayerSortButton();
             if (sortbtn != null) {
-                sortbtn.visible = this.isInventoryOpen();
+                sortbtn.visible = sortbtn.visible && this.isInventoryOpen();
             }
         }
     }
 }
-

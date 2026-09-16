@@ -7,6 +7,7 @@ import net.kyrptonaught.inventorysorter.compat.CompatibilityPlugins;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 
@@ -22,8 +23,6 @@ public record ClientSortScope(
         List<ScopedSlot> hotbarBundleTargetSlots,
         List<ScopedSlot> compatibilityBundleTargetSlots
 ) {
-    private static final int FIRST_MAIN_INVENTORY_SLOT = 9;
-    private static final int LAST_MAIN_INVENTORY_SLOT = 35;
     private static final int FIRST_HOTBAR_SLOT = 0;
     private static final int LAST_HOTBAR_SLOT = 8;
 
@@ -50,7 +49,7 @@ public record ClientSortScope(
 
     static Optional<ClientSortScope> resolve(
             AbstractContainerMenu menu,
-            Container playerInventory,
+            Inventory playerInventory,
             SortTarget target,
             Player player
     ) {
@@ -59,7 +58,7 @@ public record ClientSortScope(
 
     static Optional<ClientSortScope> resolve(
             AbstractContainerMenu menu,
-            Container playerInventory,
+            Inventory playerInventory,
             SortTarget target,
             Player player,
             BooleanSupplier canSortContainer
@@ -69,7 +68,7 @@ public record ClientSortScope(
 
     static Optional<ClientSortScope> resolve(
             AbstractContainerMenu menu,
-            Container playerInventory,
+            Inventory playerInventory,
             SortTarget target,
             Player player,
             BooleanSupplier canSortContainer,
@@ -114,16 +113,16 @@ public record ClientSortScope(
         return List.copyOf(targets);
     }
 
-    private static List<ScopedSlot> playerInventorySlots(AbstractContainerMenu menu, Container playerInventory) {
+    private static List<ScopedSlot> playerInventorySlots(AbstractContainerMenu menu, Inventory playerInventory) {
         return IntStream.range(0, menu.slots.size())
                 .mapToObj(index -> new ScopedSlot(index, menu.slots.get(index)))
                 .filter(slot -> slot.container() == playerInventory)
-                .filter(slot -> slot.getContainerSlot() >= FIRST_MAIN_INVENTORY_SLOT)
-                .filter(slot -> slot.getContainerSlot() <= LAST_MAIN_INVENTORY_SLOT)
+                .filter(slot -> slot.getContainerSlot() >= Inventory.getSelectionSize())
+                .filter(slot -> slot.getContainerSlot() < playerInventory.getNonEquipmentItems().size())
                 .toList();
     }
 
-    private static List<ScopedSlot> hotbarSlots(AbstractContainerMenu menu, Container playerInventory, Player player) {
+    private static List<ScopedSlot> hotbarSlots(AbstractContainerMenu menu, Inventory playerInventory, Player player) {
         return IntStream.range(0, menu.slots.size())
                 .mapToObj(index -> new ScopedSlot(index, menu.slots.get(index)))
                 .filter(slot -> isHotbarSlot(slot, playerInventory))
@@ -143,7 +142,7 @@ public record ClientSortScope(
                 .toList();
     }
 
-    private static boolean isHotbarSlot(ScopedSlot slot, Container playerInventory) {
+    private static boolean isHotbarSlot(ScopedSlot slot, Inventory playerInventory) {
         return slot.container() == playerInventory
                 && slot.getContainerSlot() >= FIRST_HOTBAR_SLOT
                 && slot.getContainerSlot() <= LAST_HOTBAR_SLOT;
