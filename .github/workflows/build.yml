@@ -83,7 +83,7 @@ jobs:
         if: ${{ steps.get-next-version.outputs.new-release-published == 'true' && env.HAS_SECRETS == 'true' }}
         env:
           GH_TOKEN: ${{ github.token }}
-          DO_PUBLISH: ${{ steps.get-next-version.outputs.new-release-published }}
+          DO_PUBLISH: steps.get-next-version.outputs.new-release-published
           MODRINTH_ID: ${{ vars.MODRINTH_ID }}
           MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
           CURSEFORGE_ID: ${{ vars.CURSEFORGE_ID }}
