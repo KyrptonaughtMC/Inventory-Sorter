@@ -1,4 +1,8 @@
 {
+  "inventorysorter.sortButton.chat.hidden": "You hid the button for the %s inventory.",
+  "inventorysorter.sortButton.chat.undo": "[Undo]",
+  "inventorysorter.sortButton.chat.restored": "Restored the button for the %s inventory.",
+  "inventorysorter.sortButton.chat.reopen": "Reopen the inventory to see it.",
   "inventorysorter.discord": "Discord",
   "key.category.inventorysorter.main": "Inventory Sorter",
   "inventorysorter.key.sort": "Sort",

@@ -2,6 +2,7 @@
 /*package net.kyrptonaught.inventorysorter.client.platform.neoforge;
 
 import net.kyrptonaught.inventorysorter.client.ConfigScreen;
+import net.kyrptonaught.inventorysorter.client.HideButtonUndo;
 import net.kyrptonaught.inventorysorter.client.InventorySorterClientRuntime;
 import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
@@ -9,6 +10,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.MOD_ID;
 
@@ -21,6 +23,11 @@ public final class NeoForgeClientEvents {
 
     static void initialize(InventorySorterClientRuntime clientRuntime) {
         runtime = clientRuntime;
+    }
+
+    @SubscribeEvent
+    public static void onRegisterClientCommands(RegisterClientCommandsEvent event) {
+        HideButtonUndo.register(event.getDispatcher());
     }
 
     @SubscribeEvent

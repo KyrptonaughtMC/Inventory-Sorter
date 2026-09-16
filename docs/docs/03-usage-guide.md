@@ -67,7 +67,12 @@ To disable player sorting through every Inventory Sorter trigger, use [Allow Pla
 Clicking the sort button while holding `Left Control` will hide the button for the current screen.
 This is useful if the button overlaps with other UI elements or mods.
 
-To re-enable it, use the GUI configuration menu or manually update the config file.
+The chat message identifies the inventory and includes a clickable **Undo** link. Close the inventory,
+open chat, and click **Undo** to re-enable the button. Reopen the inventory to see the button again.
+Each Undo link re-enables the button for the inventory named in its message.
+If that button is already enabled, the link makes no change.
+
+You can also re-enable the button through the GUI configuration menu or manually update the config file.
 
 :::tip
 If you’re trying to restore a hidden sort button but aren’t sure which screen it was hidden from, the last inventory 

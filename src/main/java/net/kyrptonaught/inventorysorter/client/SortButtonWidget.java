@@ -86,6 +86,12 @@ public class SortButtonWidget extends ImageButton {
                     net.minecraft.network.chat.Component.translatable("inventorysorter.sortButton.toast.hide.success.description", screenId.serialized()));
             this.visible = false;
 
+            Component message = HideButtonUndo.hideMessage(screenId.serialized());
+            //? >= 26.2
+            instance.gui.chatListener().handleSystemMessage(message, false);
+            //? < 26.2
+            //instance.getChatListener().handleSystemMessage(message, false);
+
         } else {
             ClientSorts.requestCurrentScreenSort(target);
         }

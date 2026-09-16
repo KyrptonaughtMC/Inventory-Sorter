@@ -2,6 +2,7 @@ package net.kyrptonaught.inventorysorter.client;
 
 //? if fabric {
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.kyrptonaught.inventorysorter.client.platform.ClientPlatformServices;
@@ -32,6 +33,7 @@ public class InventorySorterModClient /*? if fabric {*/implements ClientModIniti
         InventorySorterClientRuntime runtime = initializeClient();
 
         ClientPlatformServices.KEY_MAPPINGS.register();
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, buildContext) -> HideButtonUndo.register(dispatcher));
 
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
             runtime.clientServerSession().join(client);
