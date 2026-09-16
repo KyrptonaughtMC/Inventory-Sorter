@@ -18,7 +18,10 @@ When the mod is installed on the client, this file stores **user preferences** s
 - Preferred sorting method
 
 These preferences affect only the player who owns the client. 
-They are editable in-game using the configuration menu (see [Usage Guide](/usage-guide#config-menu)) or by editing the JSON file directly.
+They are editable in-game using the [configuration menu](/usage-guide#config-menu) or by editing the JSON file directly.
+
+Player sorting preferences are synchronized to a supporting server for commands and double-click sorting.
+With a vanilla client, use the player commands instead; those preferences are saved per player on that server.
 
 :::warning
 Client preferences cannot override server-defined rules.
@@ -44,7 +47,8 @@ Please refer to the [Admin Guide](/admin-guide) for more details on server confi
 
 ## Default config file
 
-Below is a complete version of the default configuration. This is the file you will find in `config/inventorysorter.json` after installing the mod.
+This excerpt shows default values for the main sorting controls and target-selection settings.
+The generated file also contains other options.
 
 ```json
 {
@@ -52,6 +56,7 @@ Below is a complete version of the default configuration. This is the file you w
   "showTooltips": true,
   "separateButton": true,
   "sortPlayerInventory": false,
+  "allowPlayerInventorySorting": true,
   "sortType": "NAME",
   "enableDoubleClickSort": true,
   "sortHighlightedItem": true,
@@ -92,21 +97,23 @@ When **off (`false`)**, no tooltip is shown.
 ---
 
 ### `sortHighlightedItem`
-**GUI label:** *Sorting sorts mouse hovered inventory*  
-**Config file key:** `sortHighlightedItem`  
-**Default:** `true` (on)
 
-Controls which inventory is affected by the keybind or double-click.
-This does not affect sorting via the sort button, which always targets its assigned inventory.
+GUI label: Only Sort the Inventory Under the Mouse<br/>
+Config file key: `sortHighlightedItem`<br/>
+Default: `true` (on)
 
-When **on (`true`)**, sorting only affects the inventory under your mouse cursor.  
-When **off (`false`)**, sorting applies to both the container and the player inventory.
+Chooses the primary target of the sort keybind when a sortable container is open:
 
-If both this setting and `sortPlayerInventory` are enabled:
-- Only the inventory under the mouse is sorted.
-- If the mouse is not over an inventory area, the keybind will sort both the player inventory and the open container.
+- when on, hovering a player-inventory slot targets the player inventory; a container slot or empty space targets the container
+- when off, the keybind targets the container regardless of the hovered slot
 
-Can be changed with the command:
+A container-targeted sort can also include the player inventory when `sortPlayerInventory` is on.
+With only the player-inventory screen open, the keybind targets the player inventory regardless of this setting.
+
+This setting does not change a sort button's target or the server's double-click target, which follows the clicked slot.
+The [sorting behavior reference](/usage-guide#sorting-behavior-reference) shows these combinations.
+
+With a vanilla client, change the saved server preference with:
 ```
 /invsort sortHighlightedInventory on|off
 ```
@@ -119,22 +126,21 @@ And you can check the current value with:
 ---
 
 ### `sortPlayerInventory`
-**GUI label:** *Sort player inventory while another inventory is open*  
-**Config file key:** `sortPlayerInventory`  
-**Default:** `true` (on)
 
-Controls whether your player inventory is included when sorting another container.
+GUI label: Also Sort Player Inventory When Sorting Containers<br/>
+Config file key: `sortPlayerInventory`<br/>
+Default: `false` (off)
 
-When **on (`true`)**, sorting actions apply to both the open container and your player inventory (unless overridden by other settings).  
-When **off (`false`)**, sorting applies only to the container you sorted.
+Controls automatic inclusion of your player inventory when a container is sorted by a button, keybind, or double-click.
+The `/invsort sort` command sorts only the targeted container.
 
-This setting works in combination with `sortHighlightedItem`.
+When on, a container-targeted action also sorts your player inventory, provided `allowPlayerInventorySorting` is on.
+When off, a container-targeted action sorts only the container.
 
-If both this setting and `sortHighlightedItem` are enabled:
-- Only the inventory under the mouse is sorted.
-- If the mouse is not over an inventory area, the keybind will sort both the player inventory and the open container.
+Turning this off does not disable direct player-inventory sorts from a player button, keybind, double-click, or `/invsort sortme`.
+Use [`allowPlayerInventorySorting`](#allowplayerinventorysorting) to disable both direct and automatic player sorts.
 
-Can be changed with the command:
+With a vanilla client, change the saved server preference with:
 ```
 /invsort sortPlayerInventory on|off
 ```
@@ -146,10 +152,57 @@ And you can check the current value with:
 
 ---
 
+### `allowPlayerInventorySorting`
+
+GUI label: Allow Player Inventory Sorting<br/>
+Config file key: `allowPlayerInventorySorting`<br/>
+Type: boolean (`true` or `false`)<br/>
+Default: `true` (on), including when the field is omitted from an existing config or saved player data
+
+When off, Inventory Sorter does not sort your player inventory through buttons, the sort keybind, double-clicks, or `/invsort sortme`.
+It also blocks automatic player sorts alongside container sorts, even if `sortPlayerInventory` is on.
+Player sort buttons are hidden. Container sorting and its existing restrictions are unchanged.
+
+A keybind that targets the disabled player inventory does nothing; it does not switch to sorting the container.
+Pending client-fallback player sorts are discarded before they start. Already-sent clicks are not undone.
+
+To turn player sorting off using the client mod:
+
+1. Open the [config menu](/usage-guide#config-menu).
+2. In the Logic category, turn Allow Player Inventory Sorting off and save.
+
+The preference is saved in the client config and synchronized to supporting servers.
+It applies to client fallback when the server does not have Inventory Sorter.
+Full enforcement of server commands and server double-click sorting requires a server version that supports this setting.
+Older servers cannot enforce this preference.
+
+To check support, look for Allow Player Inventory Sorting in the client config menu and run `/invsort allowPlayerInventorySorting` on the server.
+A supporting server reports whether player sorting is on or off.
+If the command is unknown or you cannot access it, do not assume server enforcement; ask the server operator.
+
+With Inventory Sorter installed on a supporting server, modded and vanilla clients can use:
+
+```text
+/invsort allowPlayerInventorySorting off
+/invsort allowPlayerInventorySorting on
+/invsort allowPlayerInventorySorting
+```
+
+The first two commands disable or enable player sorting; the last shows the current preference.
+The command updates only the issuing player's saved server settings and synchronizes the value to a supporting client mod.
+With a vanilla client, it remains a per-player, per-server preference.
+With a supporting client mod, the synchronized value is also saved to that client's config.
+
+This is a player preference, not a global server rule: setting this field in a dedicated server's config does not disable player sorting for everyone.
+It is separate from container deny lists and from hiding a sort button with `separateButton` or `showSortButton`.
+
+---
+
 ### `separateButton`
-**GUI label:** *Always display button in player inventory*  
-**Config file key:** `separateButton`  
-**Default:** `false` (off)
+
+GUI label: Sort Button in Player Inventory<br/>
+Config file key: `separateButton`<br/>
+Default: `true` (on)
 
 Determines whether a second sort button is shown next to the player inventory in dual-inventory screens (like chests or crafting tables).
 This setting is useful if you want finer control over which inventory to sort using the button.
@@ -158,6 +211,8 @@ When **on (`true`)**, two buttons are shown—one for the open container, and on
 When **off (`false`)**, only a single button appears, usually for the open container.
 
 This is particularly useful when you have the `sortPlayerInventory` setting enabled, as you will only need the one button to sort both inventories.
+
+This controls button visibility, not permission to sort. Player buttons remain hidden when `allowPlayerInventorySorting` is off.
 
 ---
 
@@ -220,7 +275,9 @@ When **off (`false`)**, scrolling changes the sorting method without needing to 
 **Config file key:** `preventSortForScreens`  
 **Default:** `[]` (empty list)
 
-Defines a list of screen identifiers where **all sorting is disabled**, including button, keybind, double-click, and commands.
+Defines container menu identifiers whose container inventory cannot be sorted through buttons, keybinds, double-clicks, or commands.
+This does not disable sorting of the player inventory while that container is open.
+Use [`allowPlayerInventorySorting`](#allowplayerinventorysorting) for a complete player-inventory opt-out on supporting clients and servers.
 
 This setting is enforced by the server and applies to all players.  
 Client-defined entries only affect the local player.
@@ -261,7 +318,7 @@ Server-defined entries override client preferences and force hiding for all play
 Sorting by keybind, double-click, or command remains functional, this only affects the button’s visibility.
 
 You can hide the button for a specific screen by `CTRL+clicking` the button while looking at that screen. 
-Check the [Usage Guide](/usage-guide#ctrlclick-to-hide) for more details.
+Check the [button-hiding guidance](/usage-guide#hiding-the-main-sort-button) for more details.
 
 The screens with hidden buttons show up in the GUI in the Compatibility Config screen.
 
@@ -303,6 +360,23 @@ To learn more about how to set up a remote config, check the [Admin Guide](/admi
 
 The configuration file is a standard JSON file.
 This means you can edit it with any text editor, but be careful to follow the JSON syntax rules.
+
+For client preferences, including `allowPlayerInventorySorting`:
+
+1. Close Minecraft before editing `config/inventorysorter.json`.
+2. Save the file with your changes.
+3. Start Minecraft and join your world or server again.
+
+The client loads the edited preferences on startup and synchronizes them when joining a supporting server.
+Changing the file on disk while Minecraft is running does not apply the preference immediately.
+`/invsort reload` alone does not synchronize edited client preferences to the server.
+For an immediate change during play, use the config menu and save, or use the player preference command.
+
+For dedicated-server compatibility rules, follow [Reloading the Server Config](/admin-guide#reloading-the-server-config).
+Those global rules are separate from player sorting preferences.
+
+JSON syntax rules:
+
 - Use double quotes (`"`) for keys and string values.
 - Use commas (`,`) to separate key-value pairs.
 - Do not use trailing commas after the last item in an object or array. 
@@ -317,4 +391,3 @@ needing to edit the file directly.
 If you make a mistake while editing the file, the mod may not load correctly. In that case, you can delete the file and let the mod regenerate it with default settings.
 
 You can validate your JSON file using online tools like [JSONLint](https://jsonlint.com/) or [JSON Formatter & Validator](https://jsonformatter.curiousconcept.com/).
-

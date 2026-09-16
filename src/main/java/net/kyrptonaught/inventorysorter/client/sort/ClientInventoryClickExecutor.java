@@ -1,6 +1,8 @@
 package net.kyrptonaught.inventorysorter.client.sort;
 
 import net.kyrptonaught.inventorysorter.InventorySorterMod;
+import net.kyrptonaught.inventorysorter.SortTarget;
+import net.kyrptonaught.inventorysorter.inventory.SortabilityPolicy;
 import net.kyrptonaught.inventorysorter.client.sort.plan.PlannedContainerClick;
 import net.kyrptonaught.inventorysorter.compat.CompatibilityPlugins;
 import net.minecraft.client.Minecraft;
@@ -9,9 +11,19 @@ import net.minecraft.world.inventory.Slot;
 import java.util.ArrayDeque;
 import java.util.List;
 import java.util.Queue;
+import java.util.function.BooleanSupplier;
 
 class ClientInventoryClickExecutor {
     private final Queue<PlannedSort> pendingSorts = new ArrayDeque<>();
+    private final BooleanSupplier allowPlayerInventorySorting;
+
+    ClientInventoryClickExecutor() {
+        this(() -> true);
+    }
+
+    ClientInventoryClickExecutor(BooleanSupplier allowPlayerInventorySorting) {
+        this.allowPlayerInventorySorting = allowPlayerInventorySorting;
+    }
 
     /**
      * Replaces pending work with the menu-bound click plans for the latest request.
@@ -23,7 +35,7 @@ class ClientInventoryClickExecutor {
         pendingSorts.clear();
         for (QueuedSort sort : sorts) {
             if (!sort.clicks().isEmpty()) {
-                pendingSorts.add(new PlannedSort(sort.menuId(), new ArrayDeque<>(sort.clicks())));
+                pendingSorts.add(new PlannedSort(sort.menuId(), new ArrayDeque<>(sort.clicks()), sort.target()));
             }
         }
     }
@@ -53,6 +65,11 @@ class ClientInventoryClickExecutor {
         int sentClickCount = 0;
         PlannedSort plannedSort = pendingSorts.peek();
         while (plannedSort != null) {
+            if (!SortabilityPolicy.isTargetAllowed(plannedSort.target(), allowPlayerInventorySorting.getAsBoolean())) {
+                pendingSorts.poll();
+                plannedSort = pendingSorts.peek();
+                continue;
+            }
             if (!clickSender.canSend(plannedSort.menuId())) {
                 InventorySorterMod.LOGGER.debug("Aborted client-side sort before sending clicks because the menu changed");
                 clear();
@@ -86,10 +103,13 @@ class ClientInventoryClickExecutor {
         void send(PlannedContainerClick click);
     }
 
-    record QueuedSort(int menuId, List<PlannedContainerClick> clicks) {
+    record QueuedSort(int menuId, List<PlannedContainerClick> clicks, SortTarget target) {
+        QueuedSort(int menuId, List<PlannedContainerClick> clicks) {
+            this(menuId, clicks, SortTarget.CONTAINER);
+        }
     }
 
-    private record PlannedSort(int menuId, Queue<PlannedContainerClick> clicks) {
+    private record PlannedSort(int menuId, Queue<PlannedContainerClick> clicks, SortTarget target) {
     }
 
     private record MinecraftClickSender(Minecraft minecraft) implements ClickSender {

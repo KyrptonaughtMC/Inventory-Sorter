@@ -57,7 +57,8 @@ The sort button must be enabled in the configuration to appear.
 ### Hiding the Player Inventory Sort Button
 
 If you have enabled sorting for both inventories at once, you may want to hide the sort button shown next to the player inventory.
-This can be toggled in the configuration screen or directly in the config file.
+Use `separateButton` in the configuration screen or config file to hide that button without disabling player sorting.
+To disable player sorting through every Inventory Sorter trigger, use [Allow Player Inventory Sorting](#disabling-player-inventory-sorting).
 
 ![](/img/usage-guide/player-inventory-button-config.png)
 
@@ -110,14 +111,38 @@ That’s fine. Inventory Sorter handles this safely, you don’t need to separat
 ![](/img/usage-guide/keybinds.png)
 
 
-#### Sort inventory
+#### Sort
 
 Sorts your inventory when inside a container.
 
-#### Open Config 
+#### Open settings
 
 Opens the Inventory Sorter settings when no container is open.  
-By default, the **Sort inventory** key (`P`) also opens the config screen when pressed **outside of any container**.
+By default, the Sort key (`P`) also opens the config screen when pressed outside any inventory screen.
+
+## Config menu
+
+With the client mod installed, press the Open Settings key while no inventory screen is open.
+The default key is `P`; you can change it in Minecraft's Controls menu.
+Change the settings and save to apply them and update `config/inventorysorter.json`.
+
+## Disabling player inventory sorting
+
+In the [config menu](#config-menu), turn Allow Player Inventory Sorting off and save.
+This blocks direct player sorts and automatic player sorts alongside container sorts, while leaving container sorting available.
+It is different from hiding the player sort button or turning off automatic inclusion with `sortPlayerInventory`.
+
+On a supporting Inventory Sorter server, you can also use:
+
+```text
+/invsort allowPlayerInventorySorting off
+```
+
+Use `on` to restore player sorting, or omit the argument to check the current preference.
+The command works with vanilla clients and saves the preference for that player on that server.
+With a supporting client mod, it also updates the client's saved preference.
+
+See the [configuration reference](/configuration#allowplayerinventorysorting) for defaults, synchronization, pending-sort behavior, and older-server limitations.
 
 ## Double-Click
 
@@ -149,10 +174,11 @@ This command controls whether double-clicking an empty slot will trigger sorting
 Two commands are available to sort inventories directly:
 
 - `/invsort sort` sorts the container you are currently looking at
-- `/invsort sortMe` sorts your player inventory
+- `/invsort sortme` sorts your player inventory, unless player sorting is disabled
 
 Commands work with both modded and vanilla clients.
 They are always available as long as the server has [Inventory Sorter installed][server-installation].
+`/invsort sort` does not automatically include the player inventory.
 
 ---
 
@@ -177,7 +203,7 @@ For player inventory sorts, Inventory Sorter can also use:
 | Config Menu       | ✅                   | ❌                         | ✅            |
 | Double-Click      | ❌                   | ✅                         | ✅            |
 | `/invsort sort`   | ❌                   | ✅                         | ❌            |
-| `/invsort sortMe` | ❌                   | ✅                         | ❌            |
+| `/invsort sortme` | ❌                   | ✅                         | ✅            |
 
 If a feature doesn't seem to work, it may be disabled in the configuration.
 See the [Configuration][configuration] section for more information.
@@ -188,9 +214,14 @@ See the [Configuration][configuration] section for more information.
 
 Inventory Sorter offers multiple ways to sort your inventory. The behavior depends on which method you use and how the following settings are configured:
 
-- `sortPlayerInventory`: Whether sorting actions also affect your player inventory.
-- `sortHighlightedItem`: Whether sorting is limited to the inventory under your mouse cursor.
+- `allowPlayerInventorySorting`: Whether player-inventory sorting is permitted at all.
+- `sortPlayerInventory`: Whether container-triggered button, keybind, or double-click sorts also include the player inventory.
+- `sortHighlightedItem`: Whether the keybind uses the hovered inventory as its primary target.
 - `enableDoubleClickSort`: Whether double-clicking an empty slot triggers sorting.
+
+The tables below assume `allowPlayerInventorySorting = true` and a sortable container is open.
+When it is false, remove the player inventory from every result: Container + Player becomes Container only, and Player only becomes no sort.
+Existing container restrictions still apply.
 
 ### Sort Button
 
@@ -215,38 +246,39 @@ When using the sort keybind, behavior depends on what inventory (if any) is unde
 |---------------------|-----------------------|-----------------------|--------------------|
 | Container Inventory | `false`               | `false`               | Container only     |
 | Container Inventory | `true`                | `false`               | Container + Player |
-| Container Inventory | Any                   | `true`                | Container only     |
-| Player Inventory    | `false`               | `false`               | Container + Player |
+| Container Inventory | `false`               | `true`                | Container only     |
+| Container Inventory | `true`                | `true`                | Container + Player |
+| Player Inventory    | `false`               | `false`               | Container only     |
 | Player Inventory    | `true`                | `false`               | Container + Player |
 | Player Inventory    | Any                   | `true`                | Player only        |
 | Empty space         | `false`               | `false`               | Container only     |
 | Empty space         | `true`                | `false`               | Container + Player |
-| Empty space         | Any                   | `true`                | Container + Player |
+| Empty space         | `false`               | `true`                | Container only     |
+| Empty space         | `true`                | `true`                | Container + Player |
 
-If no container is open and the keybind is used, the player inventory is always sorted.
+With the player-inventory screen open, or a menu whose container inventory is not sortable, the keybind targets the player inventory.
+It sorts only if `allowPlayerInventorySorting` is on.
+With no inventory screen open, the default `P` key opens the config menu instead of sorting.
 
 ### Double-Click
 
 Double-clicking on an empty slot will attempt to sort the inventory, but only if `enableDoubleClickSort = true`.
 
-| Mouse Over          | `sortPlayerInventory` | `sortHighlightedItem` | Sorted Inventories         |
-|---------------------|-----------------------|-----------------------|----------------------------|
-| Container Inventory | `false`               | `false`               | Container only             |
-| Container Inventory | `true`                | `false`               | Container + Player         |
-| Container Inventory | Any                   | `true`                | Container only             |
-| Player Inventory    | `false`               | `false`               | Container + Player         |
-| Player Inventory    | `true`                | `false`               | Container + Player         |
-| Player Inventory    | Any                   | `true`                | Player only                |
+Server double-click sorting follows the clicked empty slot; `sortHighlightedItem` does not change that target.
 
-### Known UX Edge Cases
+| Clicked Empty Slot  | `sortPlayerInventory` | Sorted Inventories |
+|---------------------|-----------------------|--------------------|
+| Container Inventory | `false`               | Container only     |
+| Container Inventory | `true`                | Container + Player |
+| Player Inventory    | Any                   | Player only        |
 
-There are a few common situations where user intent may not match what actually happens.
+### Settings interactions
 
 - If `separateButton = false` and `sortPlayerInventory = true`, pressing the container’s button will also sort the player inventory.
-- If `separateButton = false` and `sortPlayerInventory = false`, there is no visible way to sort the player inventory unless a keybind is pressed.
-- If `enableDoubleClickSort = false`, double-clicking will never trigger sorting, even if `sortHighlightedItem = true`.
-- The sort keybind is always available when the client mod is installed. It acts as a fallback to manually sort the player inventory if no other method is enabled.
-- The `/invsort sort` and `/invsort sortme` commands are always available, regardless of the client mod. They can be used to sort the player inventory or any targeted container.
+- `separateButton = false` hides the additional player button in container screens; it does not disable keybind, double-click, or command sorts.
+- `enableDoubleClickSort = false` disables the double-click sorting trigger.
+- `allowPlayerInventorySorting = false` blocks player sorts even when `sortPlayerInventory = true`, and hides player sort buttons.
+- The `/invsort sort` and `/invsort sortme` commands work without the client mod. The player command respects the opt-out on supporting servers.
 
 
 

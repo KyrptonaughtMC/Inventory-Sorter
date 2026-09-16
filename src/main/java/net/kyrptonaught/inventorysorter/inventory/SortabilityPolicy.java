@@ -1,6 +1,7 @@
 package net.kyrptonaught.inventorysorter.inventory;
 
 import net.kyrptonaught.inventorysorter.InventoryScreenId;
+import net.kyrptonaught.inventorysorter.SortTarget;
 import net.kyrptonaught.inventorysorter.network.PlayerSortPrevention;
 import net.kyrptonaught.inventorysorter.platform.PlatformServices;
 import net.minecraft.server.level.ServerPlayer;
@@ -11,6 +12,10 @@ import net.minecraft.world.inventory.InventoryMenu;
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.compatibility;
 
 public final class SortabilityPolicy {
+    public static boolean isTargetAllowed(SortTarget target, boolean allowPlayerInventorySorting) {
+        return target != SortTarget.PLAYER_INVENTORY || allowPlayerInventorySorting;
+    }
+
     private SortabilityPolicy() {
     }
 

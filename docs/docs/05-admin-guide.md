@@ -24,6 +24,10 @@ When installed on the server, Inventory Sorter reads `config/inventorysorter.jso
 These values define which screens can be sorted and whether buttons should appear.  
 All other values in the file are ignored on the server.
 
+`allowPlayerInventorySorting` is a per-player preference, not a global server rule.
+Players use `/invsort allowPlayerInventorySorting off` on a supporting server to disable their own player-inventory sorting.
+The [configuration reference](/configuration#allowplayerinventorysorting) explains how this is saved and synchronized.
+
 :::warning
 Server rules are **authoritative**. If a screen is blocked by the server, players cannot bypass it even if they have the client mod installed.
 :::
@@ -34,12 +38,15 @@ If you ever need to find the screen ID of a container, you can use the `/invsort
 
 ## Preventing Sorting on Specific Screens
 
-The `preventSortForScreens` list defines screens where **all sorting is disabled**, including:
+The `preventSortForScreens` list blocks sorting of the matching container inventory through:
 
 - Sort button
 - Keybind
 - Double-click
 - Commands
+
+It does not block sorting of the player's own inventory while that container is open.
+Container deny lists cannot replace the [player-inventory sorting opt-out](/configuration#allowplayerinventorysorting).
 
 Useful for modded containers that break when sorted or for containers that need to preserve a specific item layout.
 Each screen must be specified by its screen ID (not its display name). Example:
@@ -68,7 +75,7 @@ minecraft:shulker_box
 
 This is useful when the button overlaps with other UI elements or if you want a cleaner interface for certain screens.
 
-Players with the client mod can also hide buttons for themselves using [`CTRL+Click` on the sort button](/usage-guide#ctrlclick-to-hide).  
+Players with the client mod can also hide buttons for themselves using [`CTRL+Click` on the sort button](/usage-guide#hiding-the-main-sort-button).<br/>
 However, **server-defined entries override player preferences**.
 
 To manage this list in-game:

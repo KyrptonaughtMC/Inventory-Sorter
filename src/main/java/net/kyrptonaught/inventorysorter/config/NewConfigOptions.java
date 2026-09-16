@@ -24,6 +24,7 @@ public class NewConfigOptions extends CompatConfig {
     public boolean showTooltips = true;
     public boolean separateButton = true;
     public boolean sortPlayerInventory = false;
+    public boolean allowPlayerInventorySorting = true;
     public SortType sortType = SortType.NAME;
     public boolean enableDoubleClickSort = true;
     public boolean sortIntoBundles = true;

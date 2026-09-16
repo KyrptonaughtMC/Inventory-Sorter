@@ -78,7 +78,7 @@ public class ServerPlayerJoinSync {
 
         SortSettings sortSettings = playerData.getSortSettings(player);
         if (sortSettings != SortSettings.DEFAULT) {
-            networking.sendToPlayer(player, sortSettings);
+            sortSettings.sync(player, networking);
         }
     }
 }

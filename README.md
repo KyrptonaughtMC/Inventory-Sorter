@@ -34,6 +34,10 @@ For player inventory sorting, bundles in the hotbar and in compatible mod slots 
 Inventory Sorter supports **all inventories**, including those from other mods. 
 You can control where sorting is enabled, customize how it behaves, and hide UI elements for specific containers.
 
+To keep your player inventory untouched while still sorting containers, turn Allow Player Inventory Sorting off.
+On a supporting server, `/invsort allowPlayerInventorySorting off` also works with a vanilla client.
+See the [player-inventory sorting settings](docs/docs/04-configuration.md#allowplayerinventorysorting) for details.
+
 All configuration options are documented at:
 
 [https://inventorysorter.meza.gg](https://inventorysorter.meza.gg)

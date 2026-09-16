@@ -22,7 +22,8 @@ flowchart TD
     TriggerKind -->|packet| ExplicitTarget
     TriggerKind -->|player inventory command| PlayerCommandTarget["Use PLAYER_INVENTORY target"]
     TriggerKind -->|look-at-block command| LookAtBlock["Raycast up to lookup distance"]
-    TriggerKind -->|keybind or double-click| ImplicitTarget["Choose target from current screen"]
+    TriggerKind -->|keybind| ImplicitTarget["Choose target from current screen"]
+    TriggerKind -->|server double-click| ClickedSlot["Choose target from clicked empty slot<br/>player inventory or container"]
 
     ImplicitTarget --> ContainerSortable{"Current menu can sort<br/>container slots?"}
     ContainerSortable -->|no| PlayerTarget["Use PLAYER_INVENTORY target"]
@@ -47,21 +48,26 @@ flowchart TD
     PlayerCommandTarget --> SortTarget
     PlayerTarget --> SortTarget
     ContainerTarget --> SortTarget
+    ClickedSlot --> SortTarget
 
     SortTarget --> ExecutionPath{"Where will sorting execute?"}
 
     ExecutionPath -->|server support present| ServerPath["Send sort request to server<br/>or run command on server"]
     ExecutionPath -->|no server support| ClientPath["Use client fallback"]
 
-    ServerPath --> ServerGate["Server checks menu validity,<br/>screen id, compatibility, and prevention settings"]
-    ServerGate --> ServerTarget{"Resolved server target?"}
-    ServerTarget -->|container| ServerSnapshot["Read target container slots"]
-    ServerTarget -->|container| NoExtraBundleTargets["Use no extra bundle targets"]
-    ServerTarget -->|player inventory| ServerPlayerSnapshot["Read player main inventory slots"]
-    ServerTarget -->|player inventory| ServerExtraBundleTargets["Read server extra bundle targets<br/>from hotbar and compatibility plugins"]
-    ServerGate --> ServerSettings["Read server-stored player settings<br/>with requested sort type"]
+    ServerPath --> ServerSettings["Read server-stored player settings<br/>with requested sort type"]
+    ServerSettings --> ServerTarget{"Resolved server target?"}
+    ServerTarget -->|container| ServerGate["Check menu validity, screen id,<br/>compatibility, and container prevention settings"]
+    ServerGate --> ServerSnapshot["Read target container slots"]
+    ServerGate --> NoExtraBundleTargets["Use no extra bundle targets"]
+    ServerTarget -->|player inventory| ServerPlayerGate{"Player inventory sorting allowed?"}
+    ServerPlayerGate -->|no| Abort
+    ServerPlayerGate -->|yes| ServerPlayerSnapshot["Read player main inventory slots"]
+    ServerPlayerGate -->|yes| ServerExtraBundleTargets["Read server extra bundle targets<br/>from hotbar and compatibility plugins"]
 
-    ClientPath --> ClientGate["Client checks menu validity,<br/>spectator state, carried stack,<br/>slot activity, fake slots, and modification permission"]
+    ClientPath --> ClientTargetGate{"Player target and<br/>player sorting disabled?"}
+    ClientTargetGate -->|yes| Abort
+    ClientTargetGate -->|no| ClientGate["Client checks menu validity,<br/>spectator state, carried stack,<br/>slot activity, fake slots, and modification permission"]
     ClientGate --> ClientScope["Resolve sortable client slot scope<br/>container slots or player main inventory slots"]
     ClientScope --> ClientSnapshot["Read stacks from scoped client slots"]
     ClientScope --> ClientExtraTargetScope{"Client target is<br/>player inventory?"}
@@ -151,11 +157,22 @@ flowchart TD
     ClickPlan --> Clicks{"Can vanilla clicks<br/>realize the layout?"}
     Clicks -->|no| Abort
     Clicks -->|yes| QueueClicks["Queue container clicks<br/>for later client ticks"]
-    QueueClicks --> PrepareCompatibilitySlot["Compatibility plugins may prepare<br/>extra target slots before clicks"]
+    QueueClicks --> QueuedTargetGate{"Queued target still allowed<br/>before replay starts?"}
+    QueuedTargetGate -->|no| Abort
+    QueuedTargetGate -->|yes| PrepareCompatibilitySlot["Compatibility plugins may prepare<br/>extra target slots before clicks"]
     PrepareCompatibilitySlot --> SendClicks["Send queued container clicks"]
 ```
 
 The core owns the flow from `Snapshot` through `Layout`. Server sorting and client fallback must both enter through that same path. Everything before it is target selection, authorization, and snapshot/settings collection. Everything after it is application: direct server mutation for server sorting, or vanilla click planning and execution for client fallback.
+
+`allowPlayerInventorySorting` is an integration permission, not an item-layout rule.
+Server routing and client request/replay policy reject a disabled player target before invoking the core.
+`sortPlayerInventory` separately requests an additional player sort after a container trigger; that additional target must pass the same permission check.
+Container sorting remains independent of the player's opt-out.
+
+The preference is stored in the existing per-player settings and config, with missing values defaulting to allowed.
+It is synchronized through an optional preference payload rather than changing the legacy settings payload's wire format.
+Servers without the feature cannot enforce it. See the [configuration reference](../../../../../../../docs/docs/04-configuration.md#allowplayerinventorysorting) for the supported player controls and limitations.
 
 Extra bundle targets are not part of the sorted layout. Player-inventory sorting may supply hotbar bundle targets, and compatibility plugins may supply additional slot-backed targets. The layout algorithm consumes all of them through the same bundle target snapshot so ordering rules stay independent of where the bundle was found. Client fallback keeps the same target model, then lets compatibility plugins prepare those slots before click replay when the screen needs it.
 

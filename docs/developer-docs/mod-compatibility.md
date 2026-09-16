@@ -55,6 +55,7 @@ Button visibility and sort permission are independent. Hiding a button does not 
 For a targetable block container, a player with access to `/invsort screenID` can look at the block within six blocks and run the command. Inventory Sorter opens and closes the target's menu while resolving its ID and returns copyable feedback. This command does not inspect arbitrary currently open or portable menus. For those, inspect the other mod's menu registration and confirm the ID used by `InventoryScreenId`.
 
 Player inventory menus use the special identifier constructed from `player_inventory`. They have separate UI and sorting paths; the ordinary container rules described here should not be treated as a global player-inventory sorting switch.
+Use the per-player `allowPlayerInventorySorting` preference for that purpose, as described in the [configuration reference](../docs/04-configuration.md#allowplayerinventorysorting).
 
 ### Loading and enforcement
 

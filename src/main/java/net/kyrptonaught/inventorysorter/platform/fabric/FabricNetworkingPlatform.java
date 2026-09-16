@@ -31,6 +31,12 @@ public class FabricNetworkingPlatform implements NetworkingPlatform {
 
         PayloadTypeRegistry.serverboundPlay().register(SortSettings.ID, SortSettings.CODEC);
         PayloadTypeRegistry.clientboundPlay().register(SortSettings.ID, SortSettings.CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(PlayerInventorySortingPreference.ID, PlayerInventorySortingPreference.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(PlayerInventorySortingPreference.ID, PlayerInventorySortingPreference.CODEC);
+        ServerPlayNetworking.registerGlobalReceiver(PlayerInventorySortingPreference.ID, (payload, context) -> {
+            ServerPlayer player = context.player();
+            PlatformServices.PLAYER_DATA.setSortSettings(player, PlatformServices.PLAYER_DATA.getSortSettings(player).withAllowPlayerInventorySorting(payload.allowed()));
+        });
 
         PayloadTypeRegistry.serverboundPlay().register(InventorySortPacket.ID, InventorySortPacket.CODEC);
 
@@ -45,7 +51,8 @@ public class FabricNetworkingPlatform implements NetworkingPlatform {
         }));
 
         ServerPlayNetworking.registerGlobalReceiver(SortSettings.ID, (payload, context) -> {
-            PlatformServices.PLAYER_DATA.setSortSettings(context.player(), payload);
+            ServerPlayer player = context.player();
+            PlatformServices.PLAYER_DATA.setSortSettings(player, payload.withAllowPlayerInventorySorting(PlatformServices.PLAYER_DATA.getSortSettings(player).allowPlayerInventorySorting()));
         });
 
         ServerPlayNetworking.registerGlobalReceiver(PlayerSortPrevention.ID, (payload, context) -> {
@@ -76,12 +83,23 @@ public class FabricNetworkingPlatform implements NetworkingPlatform {
 
     @Override
     public void sendToServer(CustomPacketPayload payload) {
+        if (payload instanceof PlayerInventorySortingPreference && !ClientPlayNetworking.canSend(PlayerInventorySortingPreference.ID)) {
+            return;
+        }
         ClientPlayNetworking.send(payload);
     }
 
     @Override
     public void sendToPlayer(ServerPlayer player, CustomPacketPayload payload) {
+        if (payload instanceof PlayerInventorySortingPreference && !ServerPlayNetworking.canSend(player, PlayerInventorySortingPreference.ID)) {
+            return;
+        }
         ServerPlayNetworking.send(player, payload);
+    }
+
+    @Override
+    public void registerPlayerInventorySortingPreferenceReceiver(Consumer<PlayerInventorySortingPreference> handler) {
+        ClientPlayNetworking.registerGlobalReceiver(PlayerInventorySortingPreference.ID, (payload, context) -> handler.accept(payload));
     }
 }
 //?}

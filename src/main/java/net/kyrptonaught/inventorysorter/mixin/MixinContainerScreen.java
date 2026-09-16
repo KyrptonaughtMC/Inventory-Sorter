@@ -185,6 +185,7 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
 
         if (invsort$PlayerSortBtn != null) {
             invsort$PlayerSortBtn.visible = (screenId == null || containerShouldShow)
+                    && getConfig().allowPlayerInventorySorting
                     && invsort$playerInventoryHeaderY().isPresent()
                     && compatibility.shouldShowSortButton(InventoryScreenId.PLAYER_INVENTORY.value());
         }

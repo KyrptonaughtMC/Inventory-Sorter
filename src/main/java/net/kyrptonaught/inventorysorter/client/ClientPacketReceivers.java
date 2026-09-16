@@ -64,6 +64,7 @@ public class ClientPacketReceivers {
     }
 
     public void register(NetworkingPlatform networking) {
+        networking.registerPlayerInventorySortingPreferenceReceiver(this::applyPlayerInventorySortingPreference);
         networking.registerClientReceivers(
                 this::applySortSettings,
                 this::applyPlayerSortPrevention,
@@ -81,6 +82,12 @@ public class ClientPacketReceivers {
         currentConfig.sortIntoHotbarBundles = payload.sortIntoHotbarBundles();
         currentConfig.sortType = payload.sortType();
         currentConfig.sortPriorityRules = payload.sortPriorityRules().stream().toList();
+        currentConfig.save();
+    }
+
+    void applyPlayerInventorySortingPreference(PlayerInventorySortingPreference payload) {
+        NewConfigOptions currentConfig = config.get();
+        currentConfig.allowPlayerInventorySorting = payload.allowed();
         currentConfig.save();
     }
 

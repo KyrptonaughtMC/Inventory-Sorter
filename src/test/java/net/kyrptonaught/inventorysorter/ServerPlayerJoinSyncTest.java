@@ -53,6 +53,7 @@ class ServerPlayerJoinSyncTest {
                 LastSeenVersionPacket.DEFAULT,
                 new PlayerSortPrevention(Set.of("minecraft:anvil")),
                 new SortSettings(false, true, false, SortType.MOD),
+                new PlayerInventorySortingPreference(true),
                 new HideButton(Set.of("minecraft:chest"))
         ), networking.playerboundPayloads);
     }
@@ -113,6 +114,10 @@ class ServerPlayerJoinSyncTest {
     }
 
     private static class RecordingNetworkingPlatform implements NetworkingPlatform {
+        @Override
+        public void registerPlayerInventorySortingPreferenceReceiver(Consumer<PlayerInventorySortingPreference> handler) {
+            throw new UnsupportedOperationException("Not needed for join sync tests");
+        }
         private final List<CustomPacketPayload> playerboundPayloads = new ArrayList<>();
 
         @Override

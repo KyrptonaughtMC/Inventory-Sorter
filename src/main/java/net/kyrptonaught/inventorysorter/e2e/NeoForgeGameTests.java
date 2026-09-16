@@ -29,6 +29,8 @@ public final class NeoForgeGameTests {
     private static final List<TestCase> TESTS = List.of(
             test("sorting/sort_command_sorts_target_inventory", SORTING_TESTS::testSortCommandSortsTargetInventory),
             test("sorting/sort_me_command_sorts_player_inventory", SORTING_TESTS::testSortMeCommandSortsPlayerInventory),
+            test("sorting/player_inventory_opt_out_blocks_commands_and_direct_sorts", SORTING_TESTS::testPlayerInventoryOptOutBlocksCommandsAndDirectSorts),
+            test("sorting/player_inventory_opt_out_blocks_double_click_but_keeps_container_sorting", SORTING_TESTS::testPlayerInventoryOptOutBlocksDoubleClickButKeepsContainerSorting),
             test("sorting/player_data_platform_stores_player_data", SORTING_TESTS::testPlayerDataPlatformStoresPlayerData),
             test("sorting/simple_stackable", SORTING_TESTS::testSimpleStackable),
             test("sorting/simple_stackable_with_leftovers", SORTING_TESTS::testSimpleStackableWithLeftovers),

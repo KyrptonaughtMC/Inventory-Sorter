@@ -26,6 +26,7 @@ public class NetworkingPlatformDelegationTest {
 
         Assertions.assertEquals(List.of(
                 SortSettings.DEFAULT,
+                new PlayerInventorySortingPreference(true),
                 PlayerSortPrevention.DEFAULT,
                 HideButton.DEFAULT,
                 new ReloadConfigPacket(),
@@ -58,7 +59,23 @@ public class NetworkingPlatformDelegationTest {
         ), networking.serverboundPayloads);
     }
 
+    @Test
+    void optedOutSortPacketRejectsDirectPlayerSortAndOnlySendsContainer() {
+        RecordingNetworkingPlatform networking = new RecordingNetworkingPlatform();
+        NewConfigOptions config = new NewConfigOptions();
+        config.sortPlayerInventory = true;
+        config.allowPlayerInventorySorting = false;
+        InventorySortPacket.sendSortPacket(SortTarget.PLAYER_INVENTORY, config, networking);
+        Assertions.assertTrue(networking.serverboundPayloads.isEmpty());
+        InventorySortPacket.sendSortPacket(SortTarget.CONTAINER, config, networking);
+        Assertions.assertEquals(List.of(new InventorySortPacket(SortTarget.CONTAINER, SortType.NAME)), networking.serverboundPayloads);
+    }
+
     private static class RecordingNetworkingPlatform implements NetworkingPlatform {
+        @Override
+        public void registerPlayerInventorySortingPreferenceReceiver(Consumer<PlayerInventorySortingPreference> handler) {
+            throw new UnsupportedOperationException("Not needed for packet send tests");
+        }
         private final List<CustomPacketPayload> serverboundPayloads = new ArrayList<>();
         private final List<CustomPacketPayload> playerboundPayloads = new ArrayList<>();
 

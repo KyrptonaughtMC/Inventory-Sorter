@@ -16,6 +16,7 @@ public class CommandRegistry {
     public static final String SORT_HIGHLIGHTED_INVENTORY = "sorthighlightedinventory";
     public static final String SORT_INTO_BUNDLES = "sortintobundles";
     public static final String SORT_PLAYER_INVENTORY = "sortplayerinventory";
+    public static final String ALLOW_PLAYER_INVENTORY_SORTING = "allowplayerinventorysorting";
     public static final String PRIORITY = "priority";
     public static final String SORT_TYPE = "sorttype";
 
@@ -60,6 +61,7 @@ public class CommandRegistry {
         SortCommand.register(dispatcher, rootCommand);
         DoubleClickSortCommand.register(dispatcher, rootCommand);
         SortPlayerInventoryCommand.register(dispatcher, rootCommand);
+        AllowPlayerInventorySortingCommand.register(dispatcher, rootCommand);
         SortHighlightedInventoryCommand.register(dispatcher, rootCommand);
         SortIntoBundlesCommand.register(dispatcher, rootCommand);
         SortMeCommand.register(dispatcher, rootCommand);

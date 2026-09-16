@@ -20,5 +20,7 @@ public interface NetworkingPlatform {
 
     void sendToServer(CustomPacketPayload payload);
 
+    void registerPlayerInventorySortingPreferenceReceiver(Consumer<PlayerInventorySortingPreference> handler);
+
     void sendToPlayer(ServerPlayer player, CustomPacketPayload payload);
 }
