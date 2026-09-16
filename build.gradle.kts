@@ -89,7 +89,7 @@ dependencies {
 //    if (mod.isFabric && mod.hasProp("inventoryextended_version")) {
 //        localRuntime("maven.modrinth:inventory-extended:${mod.prop("inventoryextended_version")}")
 //    }
-//    localRuntime("maven.modrinth:trinkets-updated:${mod.prop("trinkets_version")}")
+    localRuntime("maven.modrinth:trinkets-updated:${mod.prop("trinkets_version")}")
 //    localRuntime("maven.modrinth:client-tweaks:${mod.prop("clienttweaks_version")}+${mod.loader}-${mod.prop("minecraft_version")}")
 //    localRuntime("maven.modrinth:balm:${mod.prop("balm_version")}+${mod.loader}-${mod.prop("minecraft_version")}")
 
