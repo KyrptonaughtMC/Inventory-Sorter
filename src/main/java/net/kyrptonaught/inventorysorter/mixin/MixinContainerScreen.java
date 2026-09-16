@@ -74,15 +74,15 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
         if (getConfig().showSortButton && SortButtonDisplayPolicy.shouldDisplayButtons(minecraft.player)) {
             boolean playerOnly = !SortabilityPolicy.canSortInventory(minecraft.player);
             if (playerOnly) {
-                invsort$PlayerSortBtn = new SortButtonWidget(ButtonType.PLAYER, this.leftPos + this.imageWidth - 20, this.topPos + (playerOnly ? (imageHeight - 95) : 6), SortTarget.PLAYER_INVENTORY, minecraft.gui.screen());
+                invsort$PlayerSortBtn = new SortButtonWidget(ButtonType.PLAYER, this.leftPos + this.imageWidth - 20, this.topPos + imageHeight - 95, SortTarget.PLAYER_INVENTORY);
                 invsort$PlayerSortBtn.visible = compatibility.shouldShowSortButton(InventoryScreenId.PLAYER_INVENTORY.value());
                 this.addRenderableWidget(invsort$PlayerSortBtn);
             } else {
-                invsort$SortBtn = new SortButtonWidget(ButtonType.INVENTORY, this.leftPos + this.imageWidth - 20, this.topPos + (playerOnly ? (imageHeight - 95) : 6), SortTarget.CONTAINER, minecraft.gui.screen());
+                invsort$SortBtn = new SortButtonWidget(ButtonType.INVENTORY, this.leftPos + this.imageWidth - 20, this.topPos + 6, SortTarget.CONTAINER);
                 this.addRenderableWidget(invsort$SortBtn);
 
                 if (getConfig().separateButton) { // If separate button is enabled, add a player inventory sort button
-                    invsort$PlayerSortBtn = new SortButtonWidget(ButtonType.PLAYER, invsort$SortBtn.getX(), this.topPos + ((this)).getMiddleHeight(), SortTarget.PLAYER_INVENTORY, minecraft.gui.screen());
+                    invsort$PlayerSortBtn = new SortButtonWidget(ButtonType.PLAYER, invsort$SortBtn.getX(), this.topPos + getMiddleHeight(), SortTarget.PLAYER_INVENTORY);
                     invsort$PlayerSortBtn.visible = compatibility.shouldShowSortButton(InventoryScreenId.PLAYER_INVENTORY.value());
                     this.addRenderableWidget(invsort$PlayerSortBtn);
                 }
@@ -92,6 +92,7 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
 
     @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
     private void invsort$mouseClicked(MouseButtonEvent click, boolean doubled, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
+        invsort$updateButtonPositions();
         int button = click.button();
 
         // Keybind check for mouse bindings, client only
@@ -129,6 +130,23 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
         }
     }
 
+    @Inject(method = "mouseScrolled", at = @At("HEAD"))
+    private void invsort$updateButtonsBeforeScroll(double mouseX, double mouseY, double verticalAmount, double horizontalAmount, CallbackInfoReturnable<Boolean> ci) {
+        invsort$updateButtonPositions();
+    }
+
+    @Unique
+    private void invsort$updateButtonPositions() {
+        int x = this.leftPos + this.imageWidth - 20;
+        if (invsort$SortBtn != null) {
+            invsort$SortBtn.setPosition(x, this.topPos + 6);
+        }
+        if (invsort$PlayerSortBtn != null) {
+            int y = invsort$SortBtn == null ? this.imageHeight - 95 : getMiddleHeight();
+            invsort$PlayerSortBtn.setPosition(x, this.topPos + y);
+        }
+    }
+
     @Unique
     private void sortInventory(CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
         SortTarget target = SortabilityPolicy.canSortInventory(minecraft.player) ? SortTarget.CONTAINER : SortTarget.PLAYER_INVENTORY;
@@ -138,6 +156,11 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
         }
         ClientSorts.requestCurrentScreenSort(target);
         callbackInfoReturnable.setReturnValue(true);
+    }
+
+    @Inject(method = "extractContents", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/Screen;extractRenderState(Lnet/minecraft/client/gui/GuiGraphicsExtractor;IIF)V"))
+    private void invsort$updateButtonsBeforeExtraction(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+        invsort$updateButtonPositions();
     }
 
     @Inject(method = "extractRenderState", at = @At("TAIL"))
@@ -150,7 +173,6 @@ public abstract class MixinContainerScreen extends Screen implements SortableCon
         boolean containerShouldShow = screenId != null && compatibility.shouldShowSortButton(screenId.value());
 
         if (invsort$SortBtn != null) {
-            invsort$SortBtn.setX(this.leftPos + this.imageWidth - 20);
             invsort$SortBtn.visible = containerShouldShow;
         }
 

@@ -44,6 +44,15 @@ The versions are defined in the `settings.gradle.kts` file.
 
 These tasks provide focused feedback for the active target. Success on that target does not establish compatibility across the full support matrix. Use the supported Gradle tasks to switch the active project; do not manually edit the generated active-project declaration in `stonecutter.gradle.kts`.
 
+### Local Client Tweaks compatibility checks
+
+Client Tweaks and its required Balm dependency are available to local development runs, alongside Trinkets. They are not published as Inventory Sorter dependencies. Run the target explicitly when checking this integration:
+
+- `./gradlew.bat :26.1-fabric:runClient` for Minecraft 26.1.2 Fabric (also advertised for 26.1 and 26.1.1)
+- `./gradlew.bat :26.3-fabric:runClient` for Minecraft 26.3 Fabric
+
+In Client Tweaks, test with [No Recipe Book Shifting](https://mods.twelveiterations.com/minecraft/client-tweaks/features) both enabled and disabled. With the recipe book open and closed, verify that the inventory sort button follows the inventory panel and sorts the intended inventory. Repeat at a narrow or resized game window and in crafting-table and furnace screens with their recipe books open and closed.
+
 ## Translation management
 
 ### In the codebase

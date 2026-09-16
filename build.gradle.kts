@@ -81,9 +81,13 @@ dependencies {
     include("gg.meza:meza_core-${mod.loader}:${mod.prop("meza_core_version")}+${stonecutter.current.version}")
 
     compileOnly("maven.modrinth:trinkets-updated:${mod.prop("trinkets_version")}")
-    localRuntime("maven.modrinth:trinkets-updated:${mod.prop("trinkets_version")}")
     testCompileOnly("maven.modrinth:trinkets-updated:${mod.prop("trinkets_version")}")
     testRuntimeOnly("maven.modrinth:trinkets-updated:${mod.prop("trinkets_version")}")
+
+    // Compatibility Verification
+//    localRuntime("maven.modrinth:trinkets-updated:${mod.prop("trinkets_version")}")
+//    localRuntime("maven.modrinth:client-tweaks:${mod.prop("clienttweaks_version")}+${mod.loader}-${mod.prop("minecraft_version")}")
+//    localRuntime("maven.modrinth:balm:${mod.prop("balm_version")}+${mod.loader}-${mod.prop("minecraft_version")}")
 
     if (mod.isFabric) {
         try {

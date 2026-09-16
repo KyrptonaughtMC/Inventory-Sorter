@@ -7,8 +7,7 @@
   ],
   "client": [
     "MixinContainerScreen",
-    "MixinCreativeInventoryScreen",
-    "RecipeBookScreenAccessor"
+    "MixinCreativeInventoryScreen"
   ],
   "injectors": {
     "defaultRequire": 1
