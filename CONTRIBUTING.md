@@ -2,6 +2,14 @@
 
 This project uses [Stonecraft](https://stonecraft.meza.gg) as the main build system, which uses [Stonecutter](https://stonecutter.kikugie.dev/wiki/) under the hood. This means that traditional gradle understanding might not be enough.
 
+## Full support matrix
+
+For every task, including investigation, design, implementation, review, and verification, consider every supported Minecraft version–loader combination. Derive the build targets from [settings.gradle.kts](settings.gradle.kts) and inspect the corresponding files in [versions/dependencies](versions/dependencies) for actual Minecraft versions, loader dependencies, and additional advertised versions. The active project selects a working target; it does not define the support scope.
+
+Assess each change against every declared target, including paths inactive in the current checkout. Preserve shared behavior and use the project's Stonecutter conditionals, constants, and replacements where Minecraft versions or loaders differ. Inspect existing preprocessing rules in [build.gradle.kts](build.gradle.kts) and the affected source branches before changing API names, imports, dependencies, or apparently inactive code. Apply this requirement to tests, resources, and configuration as well as production code.
+
+Additional advertised Minecraft versions are compatibility claims, not separate build targets unless settings declares them. Consider those claims when assessing compatibility; a build against one patch version does not establish runtime behavior on every advertised patch version.
+
 ## COMMENTS ARE SPECIAL
 
 We're using [Stonecutter](https://stonecutter.kikugie.dev/wiki/) to manage multiple Minecraft versions and loaders.
@@ -34,6 +42,8 @@ The versions are defined in the `settings.gradle.kts` file.
 - `./gradlew buildActive` - build just the current active version
 - `./gradlew testActiveServer` - run the current active version's server tests
 
+These tasks provide focused feedback for the active target. Success on that target does not establish compatibility across the full support matrix. Use the supported Gradle tasks to switch the active project; do not manually edit the generated active-project declaration in `stonecutter.gradle.kts`.
+
 ## Translation management
 
 ### In the codebase
@@ -47,6 +57,10 @@ We use the `en_us.json` file as the source of truth for all translations. All ot
 
 ## Verifying Changes
 
+Choose verification appropriate to the changed surface: behavior tests for production behavior, content and link checks for documentation, and parser or tool-native checks for configuration. Full-matrix consideration applies to every change; it does not require running production tests for documentation-only edits.
+
+For build and behavior checks, confirm that the selected tasks cover every declared version–loader target and the relevant checks. Inspect the configured task scope rather than inferring coverage from a task name or prefix. Report which targets and checks were verified and any that remain unverified. Do not declare full-matrix verification complete from active-project results alone.
+
 ### Quick Check
 
 To make sure that the project tests and builds correctly:
@@ -56,6 +70,14 @@ To make sure that the project tests and builds correctly:
 ### Full E2E Check
 
 - `./gradlew chiseledGameTest`
+
+### CI development check
+
+The development-build step in [.github/workflows/build.yml](.github/workflows/build.yml) invokes:
+
+- `./gradlew chiseledGameTest chiseledBuildAndCollect --stacktrace`
+
+Use this as the repository's CI command reference for GameTests and artifact builds. The quick check, active-target checks, and CI command cover different kinds of verification; confirm target coverage before treating any invocation as full-matrix evidence.
 
 ### Test Coverage
 

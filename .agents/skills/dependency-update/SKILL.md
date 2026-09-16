@@ -3,7 +3,7 @@ name: Dependency Update
 description: MUST CONSULT When asked to update and refresh dependencies in the project.
 ---
 
-This project uses Stonecutter to manage multiple Minecraft versions and loaders. Please refer to the [Contributing Guide](../../CONTRIBUTING.md) for more information on how to work with Stonecutter.
+This project uses Stonecraft with Stonecutter to manage multiple Minecraft versions and loaders. Before updating dependencies, read and apply the [Contributing Guide](../../../CONTRIBUTING.md), including its full support matrix and verification requirements.
 
 The dependency versions are separated per supported Minecraft version.
 
@@ -21,11 +21,11 @@ Your sources for available versions are the repositories in the build.gradle.kts
 
 When asked to update a dependency, you should:
 
-1. Take the first versions/dependency/*.properties file that contains the dependency to update that you haven't updated yet.
+1. Take the first versions/dependencies/*.properties file that contains the dependency to update that you haven't updated yet.
 2. Check the current version of the first dependency you haven't updated yet in the file.
 3. Look up the latest version for the given Minecraft version in the repositories defined in the build.gradle.kts file. - you might need to look online or on Modrinth to find out the correct version/loader combination.
 4. Update the version in the properties file.
 5. Repeat from step 2 until there are no more dependencies to update in the file.
 6. Repeat from step 1 until all the properties files have been updated.
-7. Once all the properties files have been updated, run `./gradlew buildAndCollect` to make sure everything builds correctly.
-8. Stop and notify the user
+7. Once all the properties files have been updated, run `./gradlew buildAndCollect` and complete the applicable verification in [CONTRIBUTING.md](../../../CONTRIBUTING.md#verifying-changes). Confirm the configured task scope covers every declared version–loader target and choose any additional checks required by the dependency change.
+8. Stop and notify the user, reporting which targets and checks were verified and any that remain unverified.
