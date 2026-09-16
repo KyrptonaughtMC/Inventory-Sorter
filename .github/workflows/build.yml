@@ -20,7 +20,7 @@ concurrency:
 
 jobs:
   build:
-    name: build-${{ github.event_name }}
+    name: build
     runs-on: ubuntu-latest
     env:
       HAS_SECRETS: ${{ secrets.DISCORD_WEBHOOK != '' }}
@@ -82,7 +82,7 @@ jobs:
       - name: "🏗️ Build & Release to GitHub"
         if: ${{ steps.get-next-version.outputs.new-release-published == 'true' && env.HAS_SECRETS == 'true' }}
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
           DO_PUBLISH: ${{ steps.get-next-version.outputs.new-release-published }}
           MODRINTH_ID: ${{ vars.MODRINTH_ID }}
           MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
