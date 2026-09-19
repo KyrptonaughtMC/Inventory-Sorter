@@ -1,24 +1,6 @@
 # Contributing
 
-This project uses [Stonecraft](https://stonecraft.meza.gg) as the main build system, which uses [Stonecutter](https://stonecutter.kikugie.dev/wiki/) under the hood. This means that traditional gradle understanding might not be enough.
-
-## Full support matrix
-
-For every task, including investigation, design, implementation, review, and verification, consider every supported Minecraft version–loader combination. Derive the build targets from [settings.gradle.kts](settings.gradle.kts) and inspect the corresponding files in [versions/dependencies](versions/dependencies) for actual Minecraft versions, loader dependencies, and additional advertised versions. The active project selects a working target; it does not define the support scope.
-
-Assess each change against every declared target, including paths inactive in the current checkout. Preserve shared behavior and use the project's Stonecutter conditionals, constants, and replacements where Minecraft versions or loaders differ. Inspect existing preprocessing rules in [build.gradle.kts](build.gradle.kts) and the affected source branches before changing API names, imports, dependencies, or apparently inactive code. Apply this requirement to tests, resources, and configuration as well as production code.
-
-Additional advertised Minecraft versions are compatibility claims, not separate build targets unless settings declares them. Consider those claims when assessing compatibility; a build against one patch version does not establish runtime behavior on every advertised patch version.
-
-## COMMENTS ARE SPECIAL
-
-We're using [Stonecutter](https://stonecutter.kikugie.dev/wiki/) to manage multiple Minecraft versions and loaders.
-
-Stonecutter enhances the coding process by being a preprocessor for the code. The preprocessor is managed via comments.
-
-DO NOT ASSUME THAT COMMENTED OUT CODE IS DEAD CODE.
-
-It's more likely to be a different Minecraft version/loader path managed by Stonecutter.
+This project uses [Stonecraft](https://stonecraft.meza.gg) as the main build system, which uses [Stonecutter](https://stonecutter.kikugie.dev/wiki/) under the hood.
 
 ## Adding support for a new Minecraft version
 
