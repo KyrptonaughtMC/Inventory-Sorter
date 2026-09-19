@@ -25,7 +25,6 @@
   "inventorysorter.config.scrollbehaviour.modifier": "Modificatore",
   "inventorysorter.config.scrollbehaviour.disabled": "Disattivato",
   "inventorysorter.config.separateButton": "Pulsante di ordinamento nell'inventario giocatore",
-  "inventorysorter.config.sortPlayerInventory": "Ordina Inventario Giocatore",
   "inventorysorter.sorttype.name": "Nome",
   "inventorysorter.sorttype.mod": "Modalità",
   "inventorysorter.sortButton.tooltip.sortType": "Ordinato da: %s",
