@@ -1,3 +1,16 @@
 # Inventory Sorter
 
-Before investigating, planning, changing, reviewing, or verifying this project, read [CONTRIBUTING.md](CONTRIBUTING.md) in full and apply its development and compatibility requirements. This project uses Stonecraft with Stonecutter; every task must consider the full declared Minecraft version–loader support matrix, including paths inactive in the current checkout.
+## Read before working
+
+Before repository work, read:
+
+- [README.md](./README.md) for the project, its current direction, and the workspace map.
+- [CONTRIBUTING.md](./CONTRIBUTING.md) for the project specific development workflow.
+
+Before changing or running code in an application, package, or module, read its nearest `README.md`.
+Read the local guide for every affected workspace. A local guide governs its workspace when it is
+more specific, unless it conflicts with a repository-wide requirement.
+
+## Operator facing documentation
+
+- [Full Documentation](./docs/docs/)
