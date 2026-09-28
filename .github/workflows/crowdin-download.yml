@@ -26,7 +26,7 @@ jobs:
           ref: 'l10n-updates'
 
       - name: Synchronize with Crowdin
-        uses: crowdin/github-action@v2
+        uses: crowdin/github-action@v3.3.0
         with:
           upload_sources: false
           upload_translations: false
@@ -42,6 +42,6 @@ jobs:
 
           pull_request_labels: 'l10n, translation'
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
