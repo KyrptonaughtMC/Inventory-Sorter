@@ -3,6 +3,7 @@ package net.kyrptonaught.inventorysorter.client;
 //? if fabric {
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.kyrptonaught.inventorysorter.client.platform.ClientPlatformServices;
@@ -40,12 +41,15 @@ public class InventorySorterModClient /*? if fabric {*/implements ClientModIniti
         });
 
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
+            runtime.flushSortModeScrollDebounce();
             runtime.clientServerSession().disconnect();
         });
 
         ClientTickEvents.END_CLIENT_TICK.register(ConfigScreen::openIfConfigKeyPressed);
         ClientTickEvents.END_CLIENT_TICK.register(runtime.clientServerSession()::tick);
         ClientTickEvents.END_CLIENT_TICK.register(runtime.clientSortRuntime()::tickClickExecutor);
+        ClientTickEvents.END_CLIENT_TICK.register(client -> runtime.tickSortModeScrollDebounce());
+        ClientLifecycleEvents.CLIENT_STOPPING.register(client -> runtime.flushSortModeScrollDebounce());
     }
     /*?}*/
 }

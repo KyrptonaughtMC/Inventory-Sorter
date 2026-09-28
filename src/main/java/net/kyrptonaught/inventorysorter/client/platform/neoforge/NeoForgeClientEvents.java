@@ -11,6 +11,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
+import net.neoforged.neoforge.event.GameShuttingDownEvent;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.MOD_ID;
 
@@ -40,7 +41,15 @@ public final class NeoForgeClientEvents {
     @SubscribeEvent
     public static void onClientDisconnect(ClientPlayerNetworkEvent.LoggingOut event) {
         if (runtime != null) {
+            runtime.flushSortModeScrollDebounce();
             runtime.clientServerSession().disconnect();
+        }
+    }
+
+    @SubscribeEvent
+    public static void onClientStopping(GameShuttingDownEvent event) {
+        if (runtime != null) {
+            runtime.flushSortModeScrollDebounce();
         }
     }
 
@@ -54,6 +63,7 @@ public final class NeoForgeClientEvents {
         ConfigScreen.openIfConfigKeyPressed(client);
         runtime.clientServerSession().tick(client);
         runtime.clientSortRuntime().tickClickExecutor(client);
+        runtime.tickSortModeScrollDebounce();
     }
 }
 *//*?}*/

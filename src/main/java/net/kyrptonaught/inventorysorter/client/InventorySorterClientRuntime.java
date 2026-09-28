@@ -16,6 +16,11 @@ import static net.kyrptonaught.inventorysorter.InventorySorterMod.getConfig;
  * keeping {@link InventorySorterModClient} focused on loader registration.
  */
 public class InventorySorterClientRuntime {
+    private static final SortModeScrollDebounce SORT_MODE_SCROLL_DEBOUNCE = new SortModeScrollDebounce(
+            System::nanoTime,
+            () -> getConfig().save(),
+            ClientConfigSync::syncConfigToServer
+    );
     private final ClientSortRuntime clientSortRuntime;
     private final ClientPacketReceivers clientPacketReceivers;
     private final ClientServerSession clientServerSession;
@@ -70,6 +75,18 @@ public class InventorySorterClientRuntime {
 
     public ClientServerSession clientServerSession() {
         return clientServerSession;
+    }
+
+    public static void sortModeChanged() {
+        SORT_MODE_SCROLL_DEBOUNCE.changed();
+    }
+
+    public void tickSortModeScrollDebounce() {
+        SORT_MODE_SCROLL_DEBOUNCE.tick();
+    }
+
+    public void flushSortModeScrollDebounce() {
+        SORT_MODE_SCROLL_DEBOUNCE.flushOnStop();
     }
 
     private static String languageCode() {
