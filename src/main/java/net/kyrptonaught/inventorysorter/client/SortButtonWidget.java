@@ -29,10 +29,6 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.compatibility;
 import static net.kyrptonaught.inventorysorter.InventorySorterMod.getConfig;
@@ -47,8 +43,6 @@ public class SortButtonWidget extends ImageButton {
     private static final WidgetSprites TEXTURES = new WidgetSprites(
             Identifier.fromNamespaceAndPath(InventorySorterMod.MOD_ID, "textures/gui/button_unfocused.png"),
             Identifier.fromNamespaceAndPath(InventorySorterMod.MOD_ID, "textures/gui/button_focused.png"));
-    private static final ScheduledExecutorService debounceExecutor = Executors.newSingleThreadScheduledExecutor();
-    private static ScheduledFuture<?> debounceTask;
     private final ButtonType buttonType;
     private final SortTarget target;
     private final InputConstants.Key modifierKey;
@@ -125,14 +119,7 @@ public class SortButtonWidget extends ImageButton {
         int current = Mth.positiveModulo(config.sortType.ordinal() + direction, sortTypes.length);
         config.sortType = sortTypes[current];
 
-        if (debounceTask != null) {
-            debounceTask.cancel(false);
-        }
-
-        debounceTask = debounceExecutor.schedule(() -> {
-            config.save();
-            ClientConfigSync.syncConfigToServer();
-        }, 300, TimeUnit.MILLISECONDS);
+        InventorySorterClientRuntime.sortModeChanged();
 
         return true;
 
