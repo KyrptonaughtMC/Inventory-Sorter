@@ -12,6 +12,9 @@ permissions:
   pages: write
   id-token: write
 
+env:
+  NPM_CONFIG_CACHE: /cache/npm
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
