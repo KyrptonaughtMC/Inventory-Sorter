@@ -105,3 +105,36 @@ jobs:
             build/libs/*.jar
             build/reports/**/*
 
+      - name: Detect documentation changes
+        uses: dorny/paths-filter@v4
+        id: docs-changes
+        with:
+          base: ${{ github.event_name == 'push' && github.ref || '' }}
+          ref: ${{ github.sha }}
+          filters: |
+            docs:
+              - 'docs/**'
+
+      - uses: pnpm/action-setup@v4.1.0
+        if: steps.changes.outputs.docs == 'true'
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: latest
+          run_install: false
+
+      - name: Use Node.js 25
+        if: steps.changes.outputs.docs == 'true'
+        uses: actions/setup-node@v4.3.0
+        with:
+          node-version: 25
+
+      - name: "📚 Build documentation"
+        if: steps.changes.outputs.docs == 'true'
+        working-directory: ./docs
+        env:
+          ALGOLIA_API_KEY: ${{ secrets.ALGOLIA_API_KEY }}
+          ALGOLIA_APP_ID: ${{ secrets.ALGOLIA_APP_ID }}
+        run: |
+          pnpm install --frozen-lockfile && \
+          pnpm run build
