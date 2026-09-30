@@ -21,10 +21,10 @@ jobs:
     runs-on: meza-ubuntu-slim
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Crowdin push
-        uses: crowdin/github-action@v2
+        uses: crowdin/github-action@df474cdfb9f41d6ae777118749477c2cdf7cacc8 # v3
         with:
           upload_sources: true
           upload_translations: false
