@@ -22,7 +22,7 @@ concurrency:
 jobs:
   build:
     name: build
-    runs-on: ubuntu-latest
+    runs-on: meza-ubuntu-slim
     env:
       HAS_SECRETS: ${{ secrets.DISCORD_WEBHOOK != '' }}
     steps:
