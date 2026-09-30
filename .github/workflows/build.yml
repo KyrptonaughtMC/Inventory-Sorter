@@ -38,7 +38,10 @@ jobs:
             versions/*.properties
             *.properties
             *.gradle.kts
-          java-version: 25
+          java-version: |
+            17
+            21
+            25
           check-latest: true
           distribution: 'temurin'
           cache-path: /cache/Minecraft/InventorySorter
