@@ -30,8 +30,29 @@ jobs:
       - name: "⬇️ Checkout"
         uses: actions/checkout@v4
 
+      - name: Detect documentation changes
+        uses: dorny/paths-filter@v4
+        id: changes
+        with:
+          base: ${{ github.event_name == 'push' && github.ref || '' }}
+          ref: ${{ github.sha }}
+          filters: |
+            docs:
+              - 'docs/**'
+            mod:
+              - 'gradle/**'
+              - 'scripts/**'
+              - 'src/**'
+              - 'versions/**'
+              - '**/*.kts'
+              - '**/*.properties'
+              - 'gradlew'
+              - 'gradlew.bat'
+              - '.releaserc.json'
+
       - name: "☕ Setup Jdk"
         uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        if: steps.changes.outputs.mod == 'true'
         with:
           cache: 'gradle'
           cache-dependency-path: |
@@ -47,19 +68,21 @@ jobs:
           cache-path: /cache/Minecraft/InventorySorter
 
       - name: "Patch completed languages"
-        if: env.HAS_SECRETS == 'true'
+        if: env.HAS_SECRETS == 'true' && steps.changes.outputs.mod == 'true'
         run: ./scripts/patch-completed-langs.sh
         env:
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
       - name: "🛂 Setup Gradle"
+        if: steps.changes.outputs.mod == 'true'
         uses: gradle/actions/setup-gradle@v6
         with:
           validate-wrappers: true
           cache-provider: basic
 
       - name: "🔓 Adjust the release permissions"
+        if: steps.changes.outputs.mod == 'true'
         run: chmod a+x ./scripts/release.sh && chmod +x ./gradlew
 
       - name: Use Node.js
@@ -68,9 +91,11 @@ jobs:
           node-version: 25
 
       - name: "🧵 Install semantic release"
+        if: steps.changes.outputs.mod == 'true'
         run: npm i --location=global @meza/mezas-conventional-changelog semantic-release semantic-release-discord-notifier conventional-changelog-conventionalcommits @semantic-release/github @semantic-release/changelog @semantic-release/exec semantic-release-export-data semantic-release-discord
 
       - name: "🔢 Determine version"
+        if: steps.changes.outputs.mod == 'true'
         run: npx semantic-release --dry-run
         id: get-next-version
         env:
@@ -78,15 +103,17 @@ jobs:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
 
       - name: "ℹ️ Needs Release?"
+        if: steps.changes.outputs.mod == 'true'
         run: echo "Needs release published? ${{ steps.get-next-version.outputs.new-release-published == 'true' }}"
 
       - name: "🔨 Data Gen"
+        if: steps.changes.outputs.mod == 'true'
         run: |
           chmod +x ./scripts/datagen.sh
           ./scripts/datagen.sh
 
       - name: "🏗️ Build & Release to GitHub"
-        if: ${{ steps.get-next-version.outputs.new-release-published == 'true' && env.HAS_SECRETS == 'true' }}
+        if: ${{ steps.get-next-version.outputs.new-release-published == 'true' && env.HAS_SECRETS == 'true' && steps.changes.outputs.mod == 'true' }}
         env:
           GH_TOKEN: ${{ github.token }}
           DO_PUBLISH: steps.get-next-version.outputs.new-release-published
@@ -99,26 +126,17 @@ jobs:
         run: npx semantic-release
 
       - name: "🧪 Run Dev Build"
-        if: ${{ steps.get-next-version.outputs.new-release-published != 'true' }}
+        if: ${{ steps.get-next-version.outputs.new-release-published != 'true' && steps.changes.outputs.mod == 'true' }}
         run: ./gradlew chiseledGameTest chiseledBuildAndCollect --stacktrace
 
       - name: "🕵️‍♂️ Collect jars"
+        if: steps.changes.outputs.mod == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: Artifacts
           path: |
             build/libs/*.jar
             build/reports/**/*
-
-      - name: Detect documentation changes
-        uses: dorny/paths-filter@v4
-        id: docs-changes
-        with:
-          base: ${{ github.event_name == 'push' && github.ref || '' }}
-          ref: ${{ github.sha }}
-          filters: |
-            docs:
-              - 'docs/**'
 
       - uses: pnpm/action-setup@v4.1.0
         if: steps.changes.outputs.docs == 'true'
