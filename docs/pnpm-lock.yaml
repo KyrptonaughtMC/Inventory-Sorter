@@ -36,7 +36,7 @@ importers:
         specifier: 2.1.1
         version: 2.1.1
       dotenv:
-        specifier: ^18.0.0
+        specifier: 18.0.4
         version: 18.0.4
       prism-react-renderer:
         specifier: 2.4.1
