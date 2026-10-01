@@ -24,16 +24,16 @@
     "clsx": "2.1.1",
     "dotenv": "^16.5.0",
     "prism-react-renderer": "2.4.1",
-    "react": "19.0.0",
-    "react-dom": "19.0.0"
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "3.7.0",
     "@docusaurus/preset-classic": "3.7.0",
     "@docusaurus/tsconfig": "3.7.0",
     "@docusaurus/types": "3.7.0",
-    "@types/react": "19.0.12",
-    "@types/react-dom": "19.0.4",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
     "pnpm": "12.6.0",
     "typescript": "7.0.2"
   }
