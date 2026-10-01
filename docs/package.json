@@ -35,6 +35,6 @@
     "@types/react": "19.0.12",
     "@types/react-dom": "19.0.4",
     "pnpm": "12.6.0",
-    "typescript": "5.8.2"
+    "typescript": "5.9.3"
   }
 }
